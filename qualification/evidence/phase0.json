@@ -1,0 +1,417 @@
+{
+  "schema": "lac.phase0-qualification/v1",
+  "started_at": "2026-09-07T06:46:36.486159+00:00",
+  "status": "PASS",
+  "candidates": [
+    {
+      "key": "airlock",
+      "sha": "68a71c7f0139c823971b95a79cf800e837630d3a",
+      "license": {
+        "family": "MIT",
+        "file": "LICENSE",
+        "sha256": "f1027213c17d8c043b66f63a84baa0a57d5a776b9721b03f1640af1b383f5450",
+        "first_line": "MIT License"
+      },
+      "version": "0.2.38",
+      "stable_tag": "airlock-bot-v0.2.38",
+      "build_metadata": {
+        "manifests": [
+          "package.json",
+          "package-lock.json"
+        ],
+        "runtime_requirements": {
+          "node": ">=18"
+        },
+        "declared_dependency_count": 13
+      },
+      "probe": {
+        "status": "PASS",
+        "finding": "Stock HITL path lacks LAC canonical exact-binding and immediate pre-dispatch policy recheck; AIRLOCK_WRAPPED remains required.",
+        "capability_assessment": {
+          "exact_request_approval_binding": "NO_LAC_CANONICAL_BINDING",
+          "one_use_approval": "YES_PENDING_TICKET_CONSUMED",
+          "approval_expiry": "YES_TIMEOUT",
+          "pre_dispatch_policy_recheck": "NO",
+          "durable_state": "PARTIAL_PENDING_HITL_RECOVERY",
+          "idempotency": "NOT_DEMONSTRATED_AS_LAC_EFFECT_IDEMPOTENCY",
+          "emergency_pause": "NOT_DEMONSTRATED",
+          "credential_isolation": "NOT_A_LAC_CREDENTIAL_BOUNDARY",
+          "sandbox_enforcement": "PRESENT_IN_AIRLOCK_PIPELINE_REQUIRES_PHASE2_HOST_BOUNDARY_QUALIFICATION",
+          "crash_restart": "PENDING_APPROVAL_RECOVERY_PRESENT_EXECUTION_RECONCILIATION_NOT_LAC_CANONICAL",
+          "audit": "DISPATCH_SUCCESS_ERROR_ROWS_PRESENT"
+        }
+      },
+      "component_check": {
+        "kind": "DEFERRED",
+        "status": "NOT_RUN"
+      }
+    },
+    {
+      "key": "preloop",
+      "sha": "5c9e8bc31ccd850b41ada6c1b4be3d0a3793ad3d",
+      "license": {
+        "family": "Apache-2.0",
+        "file": "LICENSE",
+        "sha256": "5c63a63317cd10a8efe4f07879cc01058152e0087fb35314abe031836cbadeb0",
+        "first_line": "                                 Apache License"
+      },
+      "version": "0.15.0",
+      "stable_tag": "v0.15.0",
+      "build_metadata": {
+        "manifests": [
+          "pyproject.toml",
+          "docker-compose.yml"
+        ],
+        "runtime_requirements": {
+          "python": ">=3.11"
+        },
+        "declared_dependency_count": 51
+      },
+      "probe": {
+        "status": "PASS"
+      },
+      "component_check": {
+        "kind": "SOURCE_PROBE",
+        "status": "PASS",
+        "note": "Component is reference/deferred in the active phase; no runtime dependency stack is introduced by Phase 0."
+      }
+    },
+    {
+      "key": "agentgateway",
+      "sha": "748b38b25d6e8c981c42e40b5e808d84c483c1bf",
+      "license": {
+        "family": "Apache-2.0",
+        "file": "LICENSE",
+        "sha256": "3b1ee5b1e14fda40515c18ec2f0796d632e65a20b2aca8f017c654bc26ca77bd",
+        "first_line": "Apache License"
+      },
+      "version": "0.0.0",
+      "stable_tag": "v1.5.0",
+      "build_metadata": {
+        "manifests": [
+          "Cargo.toml",
+          "Cargo.lock",
+          "go.mod",
+          "go.sum",
+          "Makefile"
+        ],
+        "runtime_requirements": {
+          "rust": "1.90",
+          "go": "1.27.0"
+        },
+        "declared_dependency_count": null
+      },
+      "probe": {
+        "status": "PASS"
+      },
+      "component_check": {
+        "kind": "SOURCE_PROBE",
+        "status": "PASS",
+        "note": "Component is reference/deferred in the active phase; no runtime dependency stack is introduced by Phase 0."
+      }
+    },
+    {
+      "key": "stonefold",
+      "sha": "cd8743d00e9c7863baa957dddc8f4f4b86e61f49",
+      "license": {
+        "family": "Apache-2.0",
+        "file": "LICENSE",
+        "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "first_line": "                                 Apache License"
+      },
+      "version": "0.1.0",
+      "stable_tag": "v0.4.0",
+      "build_metadata": {
+        "manifests": [
+          "pyproject.toml",
+          "Makefile"
+        ],
+        "runtime_requirements": {
+          "python": ">=3.11"
+        },
+        "declared_dependency_count": 3
+      },
+      "probe": {
+        "status": "PASS"
+      },
+      "component_check": {
+        "kind": "SOURCE_PROBE",
+        "status": "PASS",
+        "note": "Component is reference/deferred in the active phase; no runtime dependency stack is introduced by Phase 0."
+      }
+    },
+    {
+      "key": "waggle",
+      "sha": "db9e3d3aed66714d665fd1c5c40d66534bf44ed7",
+      "license": {
+        "family": "UNRESOLVED",
+        "file": null,
+        "sha256": null,
+        "first_line": null
+      },
+      "version": "0.7.0",
+      "stable_tag": null,
+      "build_metadata": {
+        "manifests": [
+          "package.json",
+          "pnpm-lock.yaml",
+          "docker-compose.yml"
+        ],
+        "runtime_requirements": {
+          "node": ">=24.0.0"
+        },
+        "declared_dependency_count": 0
+      },
+      "probe": {
+        "status": "PASS"
+      },
+      "component_check": {
+        "kind": "SOURCE_PROBE",
+        "status": "PASS",
+        "note": "Component is reference/deferred in the active phase; no runtime dependency stack is introduced by Phase 0."
+      }
+    },
+    {
+      "key": "openclaw",
+      "sha": "4cb260cd132f1315fccecc8c9dcb765d3ccd1f28",
+      "license": {
+        "family": "MIT",
+        "file": "LICENSE",
+        "sha256": "73571b25326281d369087f469842c02444fe39faaecebda4d82ed21ff3a1c29d",
+        "first_line": "MIT License"
+      },
+      "version": "2026.9.1",
+      "stable_tag": "v2026.9.2",
+      "build_metadata": {
+        "manifests": [
+          "package.json",
+          "pnpm-lock.yaml",
+          "docker-compose.yml"
+        ],
+        "runtime_requirements": {
+          "node": ">=22.22.3 <23 || >=24.15.0 <25 || >=25.9.0"
+        },
+        "declared_dependency_count": 66
+      },
+      "probe": {
+        "status": "PASS"
+      },
+      "component_check": {
+        "kind": "SOURCE_PROBE",
+        "status": "PASS",
+        "note": "Component is reference/deferred in the active phase; no runtime dependency stack is introduced by Phase 0."
+      }
+    },
+    {
+      "key": "pi",
+      "sha": "da840b6216578c2a571d0374ac6a2091a83f9d91",
+      "license": {
+        "family": "MIT",
+        "file": "LICENSE",
+        "sha256": "0457f5bcec3b3b211605dfb5d1a49042fd638f3686a410fe099c24a25af13c48",
+        "first_line": "MIT License"
+      },
+      "version": "0.0.3",
+      "stable_tag": "v0.85.1",
+      "build_metadata": {
+        "manifests": [
+          "package.json",
+          "package-lock.json"
+        ],
+        "runtime_requirements": {
+          "node": ">=22.19.0"
+        },
+        "declared_dependency_count": 0
+      },
+      "probe": {
+        "status": "PASS"
+      },
+      "component_check": {
+        "kind": "SOURCE_PACKAGE_CHECK",
+        "status": "PASS",
+        "qualification_node": "v22.23.2",
+        "command": {
+          "command": [
+            "/usr/bin/mise",
+            "exec",
+            "node@22.23.2",
+            "--",
+            "node",
+            "--check",
+            "scripts/check-pinned-deps.mjs"
+          ],
+          "cwd": "${HOME}/.cache/local-agent-controller/phase0/upstream/pi",
+          "rc": 0,
+          "seconds": 0.022,
+          "output": ""
+        }
+      }
+    },
+    {
+      "key": "freetoken",
+      "sha": "af71ba43206e124f5ff6419b47ee36c6e9981078",
+      "license": {
+        "family": "Apache-2.0",
+        "file": "LICENSE",
+        "sha256": "1d28009bf66a66c90fa9c5561d9a73b7460ab611eeb3e90169d22a3b5a2a2326",
+        "first_line": "                                 Apache License"
+      },
+      "version": "0.1.2",
+      "stable_tag": "v0.1.2",
+      "build_metadata": {
+        "manifests": [
+          "pyproject.toml"
+        ],
+        "runtime_requirements": {
+          "python": ">=3.10"
+        },
+        "declared_dependency_count": 20
+      },
+      "probe": {
+        "status": "PASS"
+      },
+      "component_check": {
+        "kind": "SOURCE_COMPILE_CHECK",
+        "status": "PASS",
+        "command": {
+          "command": [
+            "/usr/bin/python3",
+            "-m",
+            "compileall",
+            "-q",
+            "python/freetoken"
+          ],
+          "cwd": "${HOME}/.cache/local-agent-controller/phase0/upstream/freetoken",
+          "rc": 0,
+          "seconds": 0.348,
+          "output": ""
+        },
+        "note": "GPU/runtime pytest suite deferred to Phase 3; Phase 0 does not install the CUDA inference stack."
+      }
+    },
+    {
+      "key": "cedar",
+      "sha": "144048d44d9450106690a37b6a22203be2936d8c",
+      "license": {
+        "family": "Apache-2.0",
+        "file": "LICENSE",
+        "sha256": "09e8a9bcec8067104652c168685ab0931e7868f9c8284b66f5ae6edae5f1130b",
+        "first_line": ""
+      },
+      "version": "4.12.0",
+      "stable_tag": "v4.12.0",
+      "build_metadata": {
+        "manifests": [
+          "Cargo.toml",
+          "Cargo.lock"
+        ],
+        "runtime_requirements": {
+          "rust": "1.89"
+        },
+        "declared_dependency_count": null
+      },
+      "probe": {
+        "status": "PASS"
+      },
+      "component_check": {
+        "kind": "SOURCE_PROBE",
+        "status": "PASS",
+        "note": "Component is reference/deferred in the active phase; no runtime dependency stack is introduced by Phase 0."
+      }
+    },
+    {
+      "key": "opa",
+      "sha": "855776c6b19d2a0498b88566a2ef882ecfe1a2c8",
+      "license": {
+        "family": "Apache-2.0",
+        "file": "LICENSE",
+        "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08",
+        "first_line": "                                 Apache License"
+      },
+      "version": null,
+      "stable_tag": "v1.20.2",
+      "build_metadata": {
+        "manifests": [
+          "go.mod",
+          "go.sum",
+          "Makefile"
+        ],
+        "runtime_requirements": {
+          "go": "1.26.0"
+        },
+        "declared_dependency_count": null
+      },
+      "probe": {
+        "status": "PASS"
+      },
+      "component_check": {
+        "kind": "SOURCE_PROBE",
+        "status": "PASS",
+        "note": "Component is reference/deferred in the active phase; no runtime dependency stack is introduced by Phase 0."
+      }
+    }
+  ],
+  "airlock_test": {
+    "status": "PASS",
+    "node": "v22.23.2",
+    "npm": "10.9.8",
+    "qualification_runtime": "mise node@22.23.2",
+    "npm_ci": {
+      "command": [
+        "/usr/bin/mise",
+        "exec",
+        "node@22.23.2",
+        "--",
+        "npm",
+        "ci",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "${HOME}/.cache/local-agent-controller/phase0/upstream/airlock",
+      "rc": 0,
+      "seconds": 40.597,
+      "output": "npm warn deprecated prebuild-install@7.1.3: No longer maintained. Please contact the author of the relevant native addon; alternatives are available.\nnpm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me\n\nadded 517 packages in 41s\n"
+    },
+    "typecheck": {
+      "command": [
+        "/usr/bin/mise",
+        "exec",
+        "node@22.23.2",
+        "--",
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "${HOME}/.cache/local-agent-controller/phase0/upstream/airlock",
+      "rc": 0,
+      "seconds": 2.206,
+      "output": "\n> airlock-bot@0.2.38 typecheck\n> tsc --noEmit\n\n"
+    },
+    "targeted_tests": {
+      "command": [
+        "/usr/bin/mise",
+        "exec",
+        "node@22.23.2",
+        "--",
+        "npx",
+        "--no-install",
+        "vitest",
+        "run",
+        "test/hitl.test.ts",
+        "test/middleware/core-middlewares.test.ts",
+        "test/agent-server.test.ts",
+        "--maxWorkers=2",
+        "--minWorkers=1"
+      ],
+      "cwd": "${HOME}/.cache/local-agent-controller/phase0/upstream/airlock",
+      "rc": 0,
+      "seconds": 1.883,
+      "output": "\n RUN  v3.2.6 ${HOME}/.cache/local-agent-controller/phase0/upstream/airlock\n\n \u2713 test/hitl.test.ts (19 tests) 12ms\n[02:47:21.855] \u001b[32mINFO\u001b[39m (airlock/3871057): \u001b[36mTool call denied by allowlist\u001b[39m\n    \u001b[35mcomponent\u001b[39m: \"mw:allowlist\"\n    \u001b[35magentId\u001b[39m: \"agent1\"\n    \u001b[35mtoolName\u001b[39m: \"slack/send_message\"\n[02:47:21.857] \u001b[32mINFO\u001b[39m (airlock/3871057): \u001b[36mTool call denied by allowlist\u001b[39m\n    \u001b[35mcomponent\u001b[39m: \"mw:allowlist\"\n    \u001b[35magentId\u001b[39m: \"agent1\"\n    \u001b[35mtoolName\u001b[39m: \"slack/send_message\"\n[02:47:21.864] \u001b[32mINFO\u001b[39m (airlock/3871057): \u001b[36mexec command denied by policy\u001b[39m\n    \u001b[35mcomponent\u001b[39m: \"mw:exec-policy\"\n    \u001b[35magentId\u001b[39m: \"agent1\"\n    \u001b[35mcommand\u001b[39m: \"sudo rm -rf /\"\n[02:47:21.869] \u001b[32mINFO\u001b[39m (airlock/3871057): \u001b[36mTool registry refreshed\u001b[39m\n    \u001b[35mcomponent\u001b[39m: \"registry\"\n    \u001b[35mcount\u001b[39m: 1\n    \u001b[35mprovidersWithInstructions\u001b[39m: 0\n[02:47:21.874] \u001b[32mINFO\u001b[39m (airlock/3871057): \u001b[36mHITL request created\u001b[39m\n    \u001b[35mcomponent\u001b[39m: \"hitl-engine\"\n    \u001b[35mid\u001b[39m: \"ccc62072-7ef5-4991-b6bb-95e30c0ae08f\"\n    \u001b[35mcode\u001b[39m: \"1RBI8W74\"\n    \u001b[35magent\u001b[39m: \"agent1\"\n    \u001b[35mtool\u001b[39m: \"github/create_pr\"\n[02:47:21.884] \u001b[32mINFO\u001b[39m (airlock/3871057): \u001b[36mHITL approved\u001b[39m\n    \u001b[35mcomponent\u001b[39m: \"hitl-engine\"\n    \u001b[35mid\u001b[39m: \"ccc62072-7ef5-4991-b6bb-95e30c0ae08f\"\n    \u001b[35mcode\u001b[39m: \"1RBI8W74\"\n[02:47:21.885] \u001b[32mINFO\u001b[39m (airlock/3871057): \u001b[36mHITL request created\u001b[39m\n    \u001b[35mcomponent\u001b[39m: \"hitl-engine\"\n    \u001b[35mid\u001b[39m: \"38923183-fa35-4bca-8413-0edb3546355c\"\n    \u001b[35mcode\u001b[39m: \"06GTOSUK\"\n    \u001b[35magent\u001b[39m: \"agent1\"\n    \u001b[35mtool\u001b[39m: \"github/create_pr\"\n[02:47:21.895] \u001b[32mINFO\u001b[39m (airlock/3871057): \u001b[36mHITL denied\u001b[39m\n    \u001b[35mcomponent\u001b[39m: \"hitl-engine\"\n    \u001b[35mid\u001b[39m: \"38923183-fa35-4bca-8413-0edb3546355c\"\n    \u001b[35mcode\u001b[39m: \"06GTOSUK\"\n    \u001b[35mreason\u001b[39m: \"not now\"\n[02:47:21.897] \u001b[32mINFO\u001b[39m (airlock/3871057): \u001b[36mHITL request created\u001b[39m\n    \u001b[35mcomponent\u001b[39m: \"hitl-engine\"\n    \u001b[35mid\u001b[39m: \"5f33b7be-2542-40cd-be12-eb816d54702b\"\n    \u001b[35mcode\u001b[39m: \"R9SW0FOU\"\n    \u001b[35magent\u001b[39m: \"agent1\"\n    \u001b[35mtool\u001b[39m: \"github/create_pr\"\n[02:47:21.925] \u001b[32mINFO\u001b[39m (airlock/3871057): \u001b[36mBatch window closed, firing\u001b[39m\n    \u001b[35mcomponent\u001b[39m: \"hitl-batcher\"\n    \u001b[35magentId\u001b[39m: \"agent1\"\n    \u001b[35mcount\u001b[39m: 1\n[02:47:21.934] \u001b[32mINFO\u001b[39m (airlock/3871057): \u001b[36mBatch window closed, firing\u001b[39m\n    \u001b[35mcomponent\u001b[39m: \"hitl-batcher\"\n    \u001b[35magentId\u001b[39m: \"agent1\"\n    \u001b[35mcount\u001b[39m: 1\n[02:47:21.947] \u001b[32mINFO\u001b[39m (airlock/3871057): \u001b[36mBatch window closed, firing\u001b[39m\n    \u001b[35mcomponent\u001b[39m: \"hitl-batcher\"\n    \u001b[35magentId\u001b[39m: \"agent1\"\n    \u001b[35mcount\u001b[39m: 1\n[02:47:22.397] \u001b[33mWARN\u001b[39m (airlock/3871057): \u001b[36mHITL request timed out\u001b[39m\n    \u001b[35mcomponent\u001b[39m: \"hitl-engine\"\n    \u001b[35mid\u001b[39m: \"5f33b7be-2542-40cd-be12-eb816d54702b\"\n    \u001b[35mcode\u001b[39m: \"R9SW0FOU\"\n    \u001b[35mtool\u001b[39m: \"github/create_pr\"\n[02:47:22.399] \u001b[32mINFO\u001b[39m (airlock/3871057): \u001b[36mHITL request created\u001b[39m\n    \u001b[35mcomponent\u001b[39m: \"hitl-engine\"\n    \u001b[35mid\u001b[39m: \"4b1b7362-26a2-4bfc-94cc-26e34292c936\"\n    \u001b[35mcode\u001b[39m: \"BZ4PIL4H\"\n    \u001b[35magent\u001b[39m: \"agent1\"\n    \u001b[35mtool\u001b[39m: \"github/create_pr\"\n[02:47:22.448] \u001b[32mINFO\u001b[39m (airlock/3871057): \u001b[36mBatch window closed, firing\u001b[39m\n    \u001b[35mcomponent\u001b[39m: \"hitl-batcher\"\n    \u001b[35magentId\u001b[39m: \"agent1\"\n    \u001b[35mcount\u001b[39m: 1\n[02:47:22.599] \u001b[32mINFO\u001b[39m (airlock/3871057): \u001b[36mHITL approved\u001b[39m\n    \u001b[35mcomponent\u001b[39m: \"hitl-engine\"\n    \u001b[35mid\u001b[39m: \"4b1b7362-26a2-4bfc-94cc-26e34292c936\"\n    \u001b[35mcode\u001b[39m: \"BZ4PIL4H\"\n[02:47:22.600] \u001b[32mINFO\u001b[39m (airlock/3871057): \u001b[36mHITL request created\u001b[39m\n    \u001b[35mcomponent\u001b[39m: \"hitl-engine\"\n    \u001b[35mid\u001b[39m: \"a505610f-a363-44c1-a37f-6d171ce2ef10\"\n    \u001b[35mcode\u001b[39m: \"7OXSFG2U\"\n    \u001b[35magent\u001b[39m: \"agent1\"\n    \u001b[35mtool\u001b[39m: \"github/create_pr\"\n[02:47:22.611] \u001b[32mINFO\u001b[39m (airlock/3871057): \u001b[36mHITL cancelled (session disconnected)\u001b[39m\n    \u001b[35mcomponent\u001b[39m: \"hitl-engine\"\n    \u001b[35mid\u001b[39m: \"a505610f-a363-44c1-a37f-6d171ce2ef10\"\n    \u001b[35mcode\u001b[39m: \"7OXSFG2U\"\n \u2713 test/agent-server.test.ts (19 tests) 885ms\n   \u2713 call_tool \u2014 HITL gate > returns timeout error when approval times out  503ms\n \u2713 test/middleware/core-middlewares.test.ts (16 tests) 6ms\n\n Test Files  3 passed (3)\n      Tests  54 passed (54)\n   Start at  02:47:21\n   Duration  1.52s (transform 139ms, setup 0ms, collect 480ms, tests 904ms, environment 0ms, prepare 87ms)\n\n"
+    }
+  },
+  "blockers": [],
+  "nonblocking_findings": [
+    "Waggle remains concepts-only/no-code-reuse while authoritative reuse licensing is unresolved or requires deliberate requalification."
+  ],
+  "completed_at": "2026-09-07T06:47:56.327083+00:00"
+}

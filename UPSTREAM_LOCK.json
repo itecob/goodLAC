@@ -1,0 +1,407 @@
+{
+  "schema": "lac.upstream-lock/v1",
+  "status": "QUALIFIED",
+  "observed_date": "2026-09-05",
+  "qualified_at": "2026-09-07T06:47:56.327074+00:00",
+  "policy": "Exact checked-out commit LICENSE controls. Qualification does not incorporate upstream source.",
+  "upstreams": [
+    {
+      "key": "airlock",
+      "repo": "airlock-dev/airlock",
+      "sha": "68a71c7f0139c823971b95a79cf800e837630d3a",
+      "expected_license": "MIT",
+      "role": "compatibility_gateway",
+      "phase0_disposition": "AIRLOCK_WRAPPED",
+      "expected_version": "0.2.38",
+      "source_url": "https://github.com/airlock-dev/airlock",
+      "checkout_sha": "68a71c7f0139c823971b95a79cf800e837630d3a",
+      "license_verified": true,
+      "license_file": "LICENSE",
+      "license_family": "MIT",
+      "license_sha256": "f1027213c17d8c043b66f63a84baa0a57d5a776b9721b03f1640af1b383f5450",
+      "observed_version": "0.2.38",
+      "observed_stable_tag": "airlock-bot-v0.2.38",
+      "build_metadata": {
+        "manifests": [
+          "package.json",
+          "package-lock.json"
+        ],
+        "runtime_requirements": {
+          "node": ">=18"
+        },
+        "declared_dependency_count": 13
+      },
+      "qualification_status": "PASS",
+      "probe": {
+        "status": "PASS",
+        "finding": "Stock HITL path lacks LAC canonical exact-binding and immediate pre-dispatch policy recheck; AIRLOCK_WRAPPED remains required.",
+        "capability_assessment": {
+          "exact_request_approval_binding": "NO_LAC_CANONICAL_BINDING",
+          "one_use_approval": "YES_PENDING_TICKET_CONSUMED",
+          "approval_expiry": "YES_TIMEOUT",
+          "pre_dispatch_policy_recheck": "NO",
+          "durable_state": "PARTIAL_PENDING_HITL_RECOVERY",
+          "idempotency": "NOT_DEMONSTRATED_AS_LAC_EFFECT_IDEMPOTENCY",
+          "emergency_pause": "NOT_DEMONSTRATED",
+          "credential_isolation": "NOT_A_LAC_CREDENTIAL_BOUNDARY",
+          "sandbox_enforcement": "PRESENT_IN_AIRLOCK_PIPELINE_REQUIRES_PHASE2_HOST_BOUNDARY_QUALIFICATION",
+          "crash_restart": "PENDING_APPROVAL_RECOVERY_PRESENT_EXECUTION_RECONCILIATION_NOT_LAC_CANONICAL",
+          "audit": "DISPATCH_SUCCESS_ERROR_ROWS_PRESENT"
+        }
+      },
+      "component_check": {
+        "kind": "DEFERRED",
+        "status": "NOT_RUN"
+      }
+    },
+    {
+      "key": "preloop",
+      "repo": "preloop/preloop",
+      "sha": "5c9e8bc31ccd850b41ada6c1b4be3d0a3793ad3d",
+      "expected_license": "Apache-2.0",
+      "role": "lab_reference",
+      "phase0_disposition": "REFERENCE_ONLY_PHASE0",
+      "source_url": "https://github.com/preloop/preloop",
+      "checkout_sha": "5c9e8bc31ccd850b41ada6c1b4be3d0a3793ad3d",
+      "license_verified": true,
+      "license_file": "LICENSE",
+      "license_family": "Apache-2.0",
+      "license_sha256": "5c63a63317cd10a8efe4f07879cc01058152e0087fb35314abe031836cbadeb0",
+      "observed_version": "0.15.0",
+      "observed_stable_tag": "v0.15.0",
+      "build_metadata": {
+        "manifests": [
+          "pyproject.toml",
+          "docker-compose.yml"
+        ],
+        "runtime_requirements": {
+          "python": ">=3.11"
+        },
+        "declared_dependency_count": 51
+      },
+      "qualification_status": "PASS",
+      "probe": {
+        "status": "PASS"
+      },
+      "component_check": {
+        "kind": "SOURCE_PROBE",
+        "status": "PASS",
+        "note": "Component is reference/deferred in the active phase; no runtime dependency stack is introduced by Phase 0."
+      }
+    },
+    {
+      "key": "agentgateway",
+      "repo": "agentgateway/agentgateway",
+      "sha": "748b38b25d6e8c981c42e40b5e808d84c483c1bf",
+      "expected_license": "Apache-2.0",
+      "role": "optional_protocol_gateway",
+      "phase0_disposition": "DEFER_OPTIONAL_PROTOCOL_GATEWAY",
+      "source_url": "https://github.com/agentgateway/agentgateway",
+      "checkout_sha": "748b38b25d6e8c981c42e40b5e808d84c483c1bf",
+      "license_verified": true,
+      "license_file": "LICENSE",
+      "license_family": "Apache-2.0",
+      "license_sha256": "3b1ee5b1e14fda40515c18ec2f0796d632e65a20b2aca8f017c654bc26ca77bd",
+      "observed_version": "0.0.0",
+      "observed_stable_tag": "v1.5.0",
+      "build_metadata": {
+        "manifests": [
+          "Cargo.toml",
+          "Cargo.lock",
+          "go.mod",
+          "go.sum",
+          "Makefile"
+        ],
+        "runtime_requirements": {
+          "rust": "1.90",
+          "go": "1.27.0"
+        },
+        "declared_dependency_count": null
+      },
+      "qualification_status": "PASS",
+      "probe": {
+        "status": "PASS"
+      },
+      "component_check": {
+        "kind": "SOURCE_PROBE",
+        "status": "PASS",
+        "note": "Component is reference/deferred in the active phase; no runtime dependency stack is introduced by Phase 0."
+      }
+    },
+    {
+      "key": "stonefold",
+      "repo": "stonefold-ai/stonefold",
+      "sha": "cd8743d00e9c7863baa957dddc8f4f4b86e61f49",
+      "expected_license": "Apache-2.0",
+      "role": "specification_tck_reference",
+      "phase0_disposition": "SPEC_TCK_REFERENCE_ONLY",
+      "source_url": "https://github.com/stonefold-ai/stonefold",
+      "checkout_sha": "cd8743d00e9c7863baa957dddc8f4f4b86e61f49",
+      "license_verified": true,
+      "license_file": "LICENSE",
+      "license_family": "Apache-2.0",
+      "license_sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "observed_version": "0.1.0",
+      "observed_stable_tag": "v0.4.0",
+      "build_metadata": {
+        "manifests": [
+          "pyproject.toml",
+          "Makefile"
+        ],
+        "runtime_requirements": {
+          "python": ">=3.11"
+        },
+        "declared_dependency_count": 3
+      },
+      "qualification_status": "PASS",
+      "probe": {
+        "status": "PASS"
+      },
+      "component_check": {
+        "kind": "SOURCE_PROBE",
+        "status": "PASS",
+        "note": "Component is reference/deferred in the active phase; no runtime dependency stack is introduced by Phase 0."
+      }
+    },
+    {
+      "key": "waggle",
+      "repo": "CrewBeeLab/Waggle",
+      "sha": "db9e3d3aed66714d665fd1c5c40d66534bf44ed7",
+      "expected_license": "UNRESOLVED",
+      "role": "conceptual_reference",
+      "phase0_disposition": "IDEAS_ONLY_NO_CODE_REUSE",
+      "source_url": "https://github.com/CrewBeeLab/Waggle",
+      "checkout_sha": "db9e3d3aed66714d665fd1c5c40d66534bf44ed7",
+      "license_verified": false,
+      "license_file": null,
+      "license_family": "UNRESOLVED",
+      "license_sha256": null,
+      "observed_version": "0.7.0",
+      "observed_stable_tag": null,
+      "build_metadata": {
+        "manifests": [
+          "package.json",
+          "pnpm-lock.yaml",
+          "docker-compose.yml"
+        ],
+        "runtime_requirements": {
+          "node": ">=24.0.0"
+        },
+        "declared_dependency_count": 0
+      },
+      "qualification_status": "PASS",
+      "probe": {
+        "status": "PASS"
+      },
+      "component_check": {
+        "kind": "SOURCE_PROBE",
+        "status": "PASS",
+        "note": "Component is reference/deferred in the active phase; no runtime dependency stack is introduced by Phase 0."
+      }
+    },
+    {
+      "key": "openclaw",
+      "repo": "openclaw/openclaw",
+      "sha": "4cb260cd132f1315fccecc8c9dcb765d3ccd1f28",
+      "expected_license": "MIT",
+      "role": "future_harness_integration_security_reference",
+      "phase0_disposition": "FUTURE_INTEGRATION_SECURITY_REFERENCE",
+      "source_url": "https://github.com/openclaw/openclaw",
+      "checkout_sha": "4cb260cd132f1315fccecc8c9dcb765d3ccd1f28",
+      "license_verified": true,
+      "license_file": "LICENSE",
+      "license_family": "MIT",
+      "license_sha256": "73571b25326281d369087f469842c02444fe39faaecebda4d82ed21ff3a1c29d",
+      "observed_version": "2026.9.1",
+      "observed_stable_tag": "v2026.9.2",
+      "build_metadata": {
+        "manifests": [
+          "package.json",
+          "pnpm-lock.yaml",
+          "docker-compose.yml"
+        ],
+        "runtime_requirements": {
+          "node": ">=22.22.3 <23 || >=24.15.0 <25 || >=25.9.0"
+        },
+        "declared_dependency_count": 66
+      },
+      "qualification_status": "PASS",
+      "probe": {
+        "status": "PASS"
+      },
+      "component_check": {
+        "kind": "SOURCE_PROBE",
+        "status": "PASS",
+        "note": "Component is reference/deferred in the active phase; no runtime dependency stack is introduced by Phase 0."
+      }
+    },
+    {
+      "key": "pi",
+      "repo": "earendil-works/pi",
+      "sha": "da840b6216578c2a571d0374ac6a2091a83f9d91",
+      "expected_license": "MIT",
+      "role": "initial_agent_harness",
+      "phase0_disposition": "PHASE3_HARNESS",
+      "source_url": "https://github.com/earendil-works/pi",
+      "checkout_sha": "da840b6216578c2a571d0374ac6a2091a83f9d91",
+      "license_verified": true,
+      "license_file": "LICENSE",
+      "license_family": "MIT",
+      "license_sha256": "0457f5bcec3b3b211605dfb5d1a49042fd638f3686a410fe099c24a25af13c48",
+      "observed_version": "0.0.3",
+      "observed_stable_tag": "v0.85.1",
+      "build_metadata": {
+        "manifests": [
+          "package.json",
+          "package-lock.json"
+        ],
+        "runtime_requirements": {
+          "node": ">=22.19.0"
+        },
+        "declared_dependency_count": 0
+      },
+      "qualification_status": "PASS",
+      "probe": {
+        "status": "PASS"
+      },
+      "component_check": {
+        "kind": "SOURCE_PACKAGE_CHECK",
+        "status": "PASS",
+        "qualification_node": "v22.23.2",
+        "command": {
+          "command": [
+            "/usr/bin/mise",
+            "exec",
+            "node@22.23.2",
+            "--",
+            "node",
+            "--check",
+            "scripts/check-pinned-deps.mjs"
+          ],
+          "cwd": "${HOME}/.cache/local-agent-controller/phase0/upstream/pi",
+          "rc": 0,
+          "seconds": 0.022,
+          "output": ""
+        }
+      }
+    },
+    {
+      "key": "freetoken",
+      "repo": "FlashML-org/FreeToken",
+      "sha": "af71ba43206e124f5ff6419b47ee36c6e9981078",
+      "expected_license": "Apache-2.0",
+      "role": "initial_model_runtime",
+      "phase0_disposition": "PHASE3_MODEL_RUNTIME",
+      "source_url": "https://github.com/FlashML-org/FreeToken",
+      "checkout_sha": "af71ba43206e124f5ff6419b47ee36c6e9981078",
+      "license_verified": true,
+      "license_file": "LICENSE",
+      "license_family": "Apache-2.0",
+      "license_sha256": "1d28009bf66a66c90fa9c5561d9a73b7460ab611eeb3e90169d22a3b5a2a2326",
+      "observed_version": "0.1.2",
+      "observed_stable_tag": "v0.1.2",
+      "build_metadata": {
+        "manifests": [
+          "pyproject.toml"
+        ],
+        "runtime_requirements": {
+          "python": ">=3.10"
+        },
+        "declared_dependency_count": 20
+      },
+      "qualification_status": "PASS",
+      "probe": {
+        "status": "PASS"
+      },
+      "component_check": {
+        "kind": "SOURCE_COMPILE_CHECK",
+        "status": "PASS",
+        "command": {
+          "command": [
+            "/usr/bin/python3",
+            "-m",
+            "compileall",
+            "-q",
+            "python/freetoken"
+          ],
+          "cwd": "${HOME}/.cache/local-agent-controller/phase0/upstream/freetoken",
+          "rc": 0,
+          "seconds": 0.348,
+          "output": ""
+        },
+        "note": "GPU/runtime pytest suite deferred to Phase 3; Phase 0 does not install the CUDA inference stack."
+      }
+    },
+    {
+      "key": "cedar",
+      "repo": "cedar-policy/cedar",
+      "sha": "144048d44d9450106690a37b6a22203be2936d8c",
+      "expected_license": "Apache-2.0",
+      "role": "candidate_policy_provider",
+      "phase0_disposition": "DEFERRED_POLICY_PROVIDER_CANDIDATE",
+      "source_url": "https://github.com/cedar-policy/cedar",
+      "checkout_sha": "144048d44d9450106690a37b6a22203be2936d8c",
+      "license_verified": true,
+      "license_file": "LICENSE",
+      "license_family": "Apache-2.0",
+      "license_sha256": "09e8a9bcec8067104652c168685ab0931e7868f9c8284b66f5ae6edae5f1130b",
+      "observed_version": "4.12.0",
+      "observed_stable_tag": "v4.12.0",
+      "build_metadata": {
+        "manifests": [
+          "Cargo.toml",
+          "Cargo.lock"
+        ],
+        "runtime_requirements": {
+          "rust": "1.89"
+        },
+        "declared_dependency_count": null
+      },
+      "qualification_status": "PASS",
+      "probe": {
+        "status": "PASS"
+      },
+      "component_check": {
+        "kind": "SOURCE_PROBE",
+        "status": "PASS",
+        "note": "Component is reference/deferred in the active phase; no runtime dependency stack is introduced by Phase 0."
+      }
+    },
+    {
+      "key": "opa",
+      "repo": "open-policy-agent/opa",
+      "sha": "855776c6b19d2a0498b88566a2ef882ecfe1a2c8",
+      "expected_license": "Apache-2.0",
+      "role": "candidate_policy_provider",
+      "phase0_disposition": "DEFERRED_POLICY_PROVIDER_CANDIDATE",
+      "source_url": "https://github.com/open-policy-agent/opa",
+      "checkout_sha": "855776c6b19d2a0498b88566a2ef882ecfe1a2c8",
+      "license_verified": true,
+      "license_file": "LICENSE",
+      "license_family": "Apache-2.0",
+      "license_sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08",
+      "observed_version": null,
+      "observed_stable_tag": "v1.20.2",
+      "build_metadata": {
+        "manifests": [
+          "go.mod",
+          "go.sum",
+          "Makefile"
+        ],
+        "runtime_requirements": {
+          "go": "1.26.0"
+        },
+        "declared_dependency_count": null
+      },
+      "qualification_status": "PASS",
+      "probe": {
+        "status": "PASS"
+      },
+      "component_check": {
+        "kind": "SOURCE_PROBE",
+        "status": "PASS",
+        "note": "Component is reference/deferred in the active phase; no runtime dependency stack is introduced by Phase 0."
+      }
+    }
+  ]
+}

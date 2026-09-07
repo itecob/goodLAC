@@ -1,0 +1,13 @@
+{
+  "schema": "lac.project-state/v1",
+  "project_version": "0.1.0-dev",
+  "phase": "PHASE_0_UPSTREAM_QUALIFICATION",
+  "phase_status": "CANDIDATE_FOR_INDEPENDENT_REVIEW",
+  "active_task": "LAC-P0-REVIEW",
+  "last_accepted_release": null,
+  "blockers": [],
+  "nonblocking_findings": [
+    "Waggle remains concepts-only/no-code-reuse while authoritative reuse licensing is unresolved or requires deliberate requalification."
+  ],
+  "next_action": "Run one fresh independent Phase 0 review; on PASS advance to PHASE_1_CONTROLLER_WALKING_SKELETON / LAC-C001."
+}
