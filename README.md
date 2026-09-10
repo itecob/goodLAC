@@ -8,9 +8,18 @@ The AI may propose an action. Deterministic software decides whether that action
 
 ## Current status
 
-Phase 0 only: upstream qualification and adoption lock. No controller runtime, model integration, host-effect adapter, service, production credential, or future-phase feature is installed by this bootstrap.
+Phase 0 upstream qualification received its fresh independent review PASS at
+`41dd4173ce62b311a1ab6fdde107937237940c2d`. The review was preserved across
+the verified workflow-only delta through
+`3ca7febb9699910fb26b91b5dd290637e332524d`.
 
-The Phase 0 package pins upstream revisions, verifies checked-out licenses, performs code-level probes, runs targeted Airlock tests, records the Airlock disposition, and prepares one candidate for one fresh independent phase-boundary review.
+Phase 1 (`PHASE_1_CONTROLLER_WALKING_SKELETON`) is in progress. `LAC-C001`
+established the durable SQLite/WAL `StateStore` foundation with migration
+integrity and deterministic restart/transaction tests. The active task is
+`LAC-C002`, canonical effect request.
+
+No model integration, host-effect adapter, sandbox, production credential,
+or consequential external effect is introduced by C001.
 
 ## Mandatory session reads
 
@@ -21,12 +30,16 @@ Every development session starts with exactly:
 3. `UPSTREAM_LOCK.json`
 4. `tasks/ACTIVE_TASK.md`
 
-Read other files only as the active task requires.
+Then read `docs/NEXT_SESSION_PROMPT_TEMPLATE.md` and only the additional
+files needed for the active task.
 
 ## Repository history
 
-Git is the implementation audit trail. `PROJECT_STATE.json` is current durable project truth. Do not create per-conversation checkpoint directory chains.
+Git is the implementation audit trail. `PROJECT_STATE.json` is current durable
+project truth. Do not create per-conversation checkpoint directory chains.
 
 ## Controlling specification
 
-The owner-provided planning baseline is preserved at `docs/TECHNICAL_DESIGN_AND_IMPLEMENTATION_SPECIFICATION_v0.1.md`. It is controlling. The concise operating files do not supersede it.
+The owner-provided planning baseline is preserved at
+`docs/TECHNICAL_DESIGN_AND_IMPLEMENTATION_SPECIFICATION_v0.1.md`. It is
+controlling. The concise operating files do not supersede it.

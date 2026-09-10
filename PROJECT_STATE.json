@@ -3,11 +3,11 @@
   "project_version": "0.1.0-dev",
   "phase": "PHASE_1_CONTROLLER_WALKING_SKELETON",
   "phase_status": "IN_PROGRESS",
-  "active_task": "LAC-C001",
+  "active_task": "LAC-C002",
   "last_accepted_release": null,
   "blockers": [],
   "nonblocking_findings": [
     "Waggle remains concepts-only/no-code-reuse while authoritative reuse licensing is unresolved or requires deliberate requalification."
   ],
-  "next_action": "Implement LAC-C001: establish the durable SQLite/WAL StateStore foundation and deterministic state-store tests."
+  "next_action": "Implement LAC-C002: canonical versioned effect request and deterministic canonical request hashing on the C001 StateStore foundation."
 }
