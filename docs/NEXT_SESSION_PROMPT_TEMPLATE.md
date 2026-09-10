@@ -1,6 +1,6 @@
 # LOCAL AGENT CONTROLLER — NEXT SESSION PROMPT TEMPLATE
 
-**Template version:** 0.1.0  
+**Template version:** 0.1.1  
 **Purpose:** Preserve forward progress, fresh-session objectivity, durable state, bounded verification, and the LAC anti-review-loop discipline.
 
 This template is subordinate to the controlling Local Agent Controller Technical Design and Implementation Specification v0.1. `PROJECT_STATE.json`, Git, `UPSTREAM_LOCK.json`, and `tasks/ACTIVE_TASK.md` are durable truth. A prompt never overrides them.
@@ -60,7 +60,17 @@ Resolve and preserve these fields whenever a predecessor session supplies them:
 
 Treat predecessor conclusions as claims to verify, not as substitutes for evidence.
 
-A prior **fresh phase-boundary review PASS** is not to be repeated merely because the repository still says `CANDIDATE_FOR_INDEPENDENT_REVIEW`. Instead, verify that the reviewed commit is still the live commit and that no material state changed, then transition to the next phase/task.
+A prior **fresh phase-boundary review PASS** is not to be repeated merely because the repository still says `CANDIDATE_FOR_INDEPENDENT_REVIEW`.
+
+First compare the reviewed commit to live `HEAD`.
+
+- If `HEAD == REVIEWED_GIT_COMMIT`, the review remains valid.
+- If `HEAD != REVIEWED_GIT_COMMIT`, inspect the complete Git delta from `REVIEWED_GIT_COMMIT..HEAD` before deciding anything.
+- The prior review may be preserved only when every intervening change is demonstrably **non-material session-control/handoff administration** and does not alter the phase candidate that was reviewed. Examples include only `NEXT_SESSION_PROMPT.md` and `docs/NEXT_SESSION_PROMPT_TEMPLATE.md`.
+- Any change to implementation, tests, qualification scripts/evidence, architecture, contracts, threat model, ADRs, upstream pins/licenses/notices, acceptance criteria, or other reviewed candidate substance invalidates review preservation and requires a fresh phase-boundary review of the changed candidate.
+- When preservation is used, explicitly record `REVIEW_PRESERVED_ACROSS_NONMATERIAL_DELTA=true`, `REVIEWED_GIT_COMMIT=<reviewed commit>`, and `LIVE_GIT_COMMIT=<current HEAD>` in the session evidence. Do not manufacture a second formal review.
+
+After validating the review or its preservation, transition to the next phase/task and continue implementation in the same session.
 
 ## 5. Establish project position — but do not stop there
 
@@ -204,7 +214,7 @@ The reviewer must provide a **verbatim successor builder prompt** that records:
 - `BLOCKER_IDS=NONE`
 - exact next phase/task from durable project plan.
 
-That successor prompt must instruct the next Lead Implementation Engineer to verify the live commit still equals the reviewed commit, advance durable state, and **begin the first real task of the next phase in the same session**. It must not stop after merely changing phase metadata.
+That successor prompt must instruct the next Lead Implementation Engineer to validate the reviewed commit against live Git. Exact equality is sufficient; if `HEAD` is later, the engineer may preserve the review only under the review-preserving non-material-delta rule in Section 4. The engineer must then advance durable state and **begin the first real task of the next phase in the same session**. It must not stop after merely changing phase metadata.
 
 ### If BLOCKED
 

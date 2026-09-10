@@ -39,7 +39,7 @@ Unless the owner supplies more specific predecessor facts with this prompt, use:
 - `OWNER_EXECUTION_EVIDENCE=NONE`
 - `EXPECTED_NEXT_TASK=AUTO_FROM_DURABLE_STATE`
 
-If the owner pastes a fresh independent review result or owner-execution output along with this prompt, preserve those exact facts and apply the template's rules for that handoff. Do not repeat a valid phase-boundary review merely because the repository could not be mutated by the read-only reviewer.
+If the owner pastes a fresh independent review result or owner-execution output along with this prompt, preserve those exact facts and apply the template's rules for that handoff. Do not repeat a valid phase-boundary review merely because the repository could not be mutated by the read-only reviewer or because a later commit changed only review-preserving workflow/handoff files. Verify the exact Git delta first; any material candidate change invalidates review preservation.
 
 ## Required behavior
 
