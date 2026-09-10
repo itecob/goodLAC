@@ -1,19 +1,19 @@
 # Active Task
 
-**Task ID:** LAC-P0-REVIEW
+**Task ID:** LAC-C001
 
-**Objective:** Fresh independent read-only review of the Phase 0 upstream qualification candidate against the controlling specification and invariants.
+**Objective:** Establish the Phase 1 durable local state-store foundation using SQLite in WAL mode.
 
-**In scope:** pinned revision/license evidence, Airlock trace and ADR-001, secondary dispositions, deterministic Phase 0 evidence, package/install reproducibility.
+**In scope:** the `StateStore` internal interface; SQLite database creation/configuration; forward-only schema migration registry with integrity checks; transactional primitives; minimal durable `system_state`; restart persistence; fail-closed handling of unsupported or inconsistent schema state; deterministic C001 tests.
 
-**Out of scope:** implementation mutation; Phase 1 code; redesign; future-phase features.
+**Out of scope:** canonical effect-request semantics, policy decisions, approvals, approval binding, execution leases, dispatcher behavior, simulated effects, emergency pause behavior, receipts/audit semantics, host adapters, sandboxing, model or harness integration, credentials, and external effects.
 
-**Required inputs:** `PROJECT_STATE.json`, `docs/ARCHITECTURE.md`, `UPSTREAM_LOCK.json`, `tasks/ACTIVE_TASK.md`, then Phase 0 qualification/ADR/evidence files as required.
+**Required inputs:** `PROJECT_STATE.json`, `docs/ARCHITECTURE.md`, `docs/CONTRACTS.md`, `docs/TEST_STRATEGY.md`, `docs/TECHNICAL_DESIGN_AND_IMPLEMENTATION_SPECIFICATION_v0.1.md`, and the Phase 0 PASS handoff.
 
-**Required outputs:** `PASS` or `BLOCKED`, with findings classified only as `BLOCKER` or `NONBLOCKING`.
+**Required outputs:** `packages/state/`, `tests/unit/test_state_store.py`, and `scripts/test-c001`.
 
-**Acceptance tests:** identify a concrete violated invariant/acceptance criterion/security boundary/required functionality/package/data-integrity/license requirement for any BLOCKER.
+**Acceptance tests:** new state databases use SQLite WAL with foreign keys enabled; supported schema initializes deterministically; durable state survives close/reopen; failed transactions roll back; unsupported future schema and migration-integrity mismatch fail closed; database file permissions are owner-only on POSIX; no external service, credential, or consequential effect is introduced.
 
 **Package required?** no
 
-**Next task on success:** `LAC-C001` in Phase 1.
+**Next task on success:** `LAC-C002` canonical effect request.
