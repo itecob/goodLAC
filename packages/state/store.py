@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any, ContextManager, Iterator, Protocol, runtime_checkable
 
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 
 class StateStoreError(RuntimeError):
@@ -51,6 +51,32 @@ _MIGRATIONS: tuple[_Migration, ...] = (
                 value_json TEXT NOT NULL,
                 updated_at_utc TEXT NOT NULL
             )
+            """,
+        ),
+    ),
+    _Migration(
+        version=2,
+        name="002_effect_requests",
+        statements=(
+            """
+            CREATE TABLE effect_requests (
+                request_id TEXT PRIMARY KEY NOT NULL CHECK(length(request_id) > 0),
+                schema TEXT NOT NULL CHECK(length(schema) > 0),
+                run_id TEXT NOT NULL CHECK(length(run_id) > 0),
+                principal_id TEXT NOT NULL CHECK(length(principal_id) > 0),
+                agent_id TEXT NOT NULL CHECK(length(agent_id) > 0),
+                action TEXT NOT NULL CHECK(length(action) > 0),
+                resource TEXT NOT NULL CHECK(length(resource) > 0),
+                arguments_json TEXT NOT NULL,
+                idempotency_key TEXT NOT NULL CHECK(length(idempotency_key) > 0),
+                created_at TEXT NOT NULL,
+                expires_at TEXT NOT NULL,
+                canonical_hash TEXT NOT NULL CHECK(length(canonical_hash) = 71)
+            )
+            """,
+            """
+            CREATE INDEX effect_requests_idempotency_idx
+                ON effect_requests(idempotency_key)
             """,
         ),
     ),
@@ -95,10 +121,7 @@ class SQLiteStateStore:
 
         try:
             self._conn = sqlite3.connect(
-                str(self.path),
-                timeout=5.0,
-                isolation_level=None,
-                check_same_thread=True,
+                str(self.path), timeout=5.0, isolation_level=None, check_same_thread=True
             )
             self._conn.row_factory = sqlite3.Row
             self._configure_connection()
@@ -112,8 +135,7 @@ class SQLiteStateStore:
             raise
 
     def _prepare_parent(self) -> None:
-        parent = self.path.parent
-        parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+        self.path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
 
     def _harden_file_permissions(self) -> None:
         if os.name == "posix" and self.path.exists():
@@ -125,12 +147,10 @@ class SQLiteStateStore:
             raise StateStoreError(
                 f"SQLite WAL mode required; observed journal_mode={journal_mode!r}"
             )
-
         self._conn.execute("PRAGMA foreign_keys=ON")
         foreign_keys = self._conn.execute("PRAGMA foreign_keys").fetchone()[0]
         if int(foreign_keys) != 1:
             raise StateStoreError("SQLite foreign_keys enforcement could not be enabled")
-
         self._conn.execute("PRAGMA synchronous=FULL")
         self._conn.execute("PRAGMA busy_timeout=5000")
         self._conn.execute("PRAGMA trusted_schema=OFF")
@@ -143,29 +163,22 @@ class SQLiteStateStore:
             checksum_sha256 TEXT NOT NULL CHECK(length(checksum_sha256) = 64)
         )
         """
-
         with self.transaction() as conn:
             conn.execute(bootstrap)
             user_version = int(conn.execute("PRAGMA user_version").fetchone()[0])
-
             if user_version > SCHEMA_VERSION:
                 raise UnsupportedSchemaVersion(
-                    f"database schema version {user_version} exceeds supported "
-                    f"version {SCHEMA_VERSION}"
+                    f"database schema version {user_version} exceeds supported version {SCHEMA_VERSION}"
                 )
-
             expected = {migration.version: migration for migration in _MIGRATIONS}
             rows = conn.execute(
-                "SELECT version, name, checksum_sha256 "
-                "FROM schema_migrations ORDER BY version"
+                "SELECT version, name, checksum_sha256 FROM schema_migrations ORDER BY version"
             ).fetchall()
-
             recorded_versions = [int(row["version"]) for row in rows]
             if recorded_versions != list(range(1, user_version + 1)):
                 raise MigrationIntegrityError(
                     "schema_migrations ledger does not match PRAGMA user_version"
                 )
-
             for row in rows:
                 version = int(row["version"])
                 migration = expected.get(version)
@@ -175,35 +188,26 @@ class SQLiteStateStore:
                     )
                 if row["name"] != migration.name:
                     raise MigrationIntegrityError(
-                        f"migration {version} name mismatch: "
-                        f"{row['name']!r} != {migration.name!r}"
+                        f"migration {version} name mismatch: {row['name']!r} != {migration.name!r}"
                     )
                 if row["checksum_sha256"] != migration.checksum:
-                    raise MigrationIntegrityError(
-                        f"migration {version} checksum mismatch"
-                    )
-
+                    raise MigrationIntegrityError(f"migration {version} checksum mismatch")
             for migration in _MIGRATIONS:
                 if migration.version <= user_version:
                     continue
                 if migration.version != user_version + 1:
-                    raise MigrationIntegrityError(
-                        "migration sequence is not contiguous"
-                    )
+                    raise MigrationIntegrityError("migration sequence is not contiguous")
                 for statement in migration.statements:
                     conn.execute(statement)
                 conn.execute(
-                    "INSERT INTO schema_migrations(version, name, checksum_sha256) "
-                    "VALUES (?, ?, ?)",
+                    "INSERT INTO schema_migrations(version, name, checksum_sha256) VALUES (?, ?, ?)",
                     (migration.version, migration.name, migration.checksum),
                 )
                 user_version = migration.version
                 conn.execute(f"PRAGMA user_version={user_version}")
-
             if user_version != SCHEMA_VERSION:
                 raise MigrationIntegrityError(
-                    f"schema initialization ended at {user_version}, "
-                    f"expected {SCHEMA_VERSION}"
+                    f"schema initialization ended at {user_version}, expected {SCHEMA_VERSION}"
                 )
 
     def _require_open(self) -> None:
@@ -230,7 +234,6 @@ class SQLiteStateStore:
         self._require_open()
         if self._conn.in_transaction:
             raise StateStoreError("nested StateStore transactions are not supported")
-
         self._conn.execute("BEGIN IMMEDIATE")
         try:
             yield self._conn
@@ -249,44 +252,31 @@ class SQLiteStateStore:
     def _encode_json(value: Any) -> str:
         try:
             return json.dumps(
-                value,
-                sort_keys=True,
-                separators=(",", ":"),
-                ensure_ascii=False,
-                allow_nan=False,
+                value, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False
             )
         except (TypeError, ValueError) as exc:
             raise StateStoreError("system_state value must be canonical JSON") from exc
 
     @staticmethod
     def _utc_now() -> str:
-        return (
-            datetime.now(timezone.utc)
-            .isoformat(timespec="microseconds")
-            .replace("+00:00", "Z")
-        )
+        return datetime.now(timezone.utc).isoformat(timespec="microseconds").replace("+00:00", "Z")
 
     def get_system_state(self, key: str, default: Any = None) -> Any:
         self._require_open()
         self._validate_key(key)
-        row = self._conn.execute(
-            "SELECT value_json FROM system_state WHERE key = ?", (key,)
-        ).fetchone()
+        row = self._conn.execute("SELECT value_json FROM system_state WHERE key = ?", (key,)).fetchone()
         if row is None:
             return default
         try:
             return json.loads(row["value_json"])
         except json.JSONDecodeError as exc:
-            raise StateStoreError(
-                f"durable system_state value for {key!r} is invalid JSON"
-            ) from exc
+            raise StateStoreError(f"durable system_state value for {key!r} is invalid JSON") from exc
 
     def set_system_state(self, key: str, value: Any) -> None:
         self._require_open()
         self._validate_key(key)
         encoded = self._encode_json(value)
         updated_at = self._utc_now()
-
         with self.transaction() as conn:
             conn.execute(
                 """

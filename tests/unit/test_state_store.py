@@ -27,20 +27,18 @@ class SQLiteStateStoreTests(unittest.TestCase):
             self.assertEqual(store.schema_version, SCHEMA_VERSION)
             self.assertEqual(store.journal_mode, "wal")
             self.assertTrue(store.foreign_keys_enabled)
-
-            rows = store._conn.execute(  # test-only inspection of migration ledger
-                "SELECT version, name, checksum_sha256 FROM schema_migrations"
+            rows = store._conn.execute(
+                "SELECT version, name, checksum_sha256 FROM schema_migrations ORDER BY version"
             ).fetchall()
-            self.assertEqual(len(rows), 1)
-            self.assertEqual(rows[0]["version"], SCHEMA_VERSION)
-            self.assertEqual(len(rows[0]["checksum_sha256"]), 64)
+            self.assertEqual(len(rows), SCHEMA_VERSION)
+            self.assertEqual([row["version"] for row in rows], list(range(1, SCHEMA_VERSION + 1)))
+            for row in rows:
+                self.assertEqual(len(row["checksum_sha256"]), 64)
 
     def test_system_state_survives_close_and_reopen(self) -> None:
         payload = {"paused": False, "generation": 7, "labels": ["local", "durable"]}
-
         with SQLiteStateStore(self.db) as store:
             store.set_system_state("controller.test", payload)
-
         with SQLiteStateStore(self.db) as reopened:
             self.assertEqual(reopened.get_system_state("controller.test"), payload)
 
@@ -49,12 +47,10 @@ class SQLiteStateStoreTests(unittest.TestCase):
             with self.assertRaises(RuntimeError):
                 with store.transaction() as conn:
                     conn.execute(
-                        "INSERT INTO system_state(key, value_json, updated_at_utc) "
-                        "VALUES (?, ?, ?)",
+                        "INSERT INTO system_state(key, value_json, updated_at_utc) VALUES (?, ?, ?)",
                         ("rollback.test", '{"should":"not persist"}', "test"),
                     )
                     raise RuntimeError("force rollback")
-
             self.assertIsNone(store.get_system_state("rollback.test"))
 
     def test_nested_transaction_fails_closed(self) -> None:
@@ -70,22 +66,16 @@ class SQLiteStateStoreTests(unittest.TestCase):
         conn.execute("PRAGMA user_version=99")
         conn.commit()
         conn.close()
-
         with self.assertRaises(UnsupportedSchemaVersion):
             SQLiteStateStore(self.db)
 
     def test_migration_checksum_mismatch_fails_closed(self) -> None:
         with SQLiteStateStore(self.db):
             pass
-
         conn = sqlite3.connect(self.db)
-        conn.execute(
-            "UPDATE schema_migrations SET checksum_sha256 = ? WHERE version = 1",
-            ("0" * 64,),
-        )
+        conn.execute("UPDATE schema_migrations SET checksum_sha256 = ? WHERE version = 1", ("0" * 64,))
         conn.commit()
         conn.close()
-
         with self.assertRaises(MigrationIntegrityError):
             SQLiteStateStore(self.db)
 
@@ -98,8 +88,7 @@ class SQLiteStateStoreTests(unittest.TestCase):
     @unittest.skipUnless(os.name == "posix", "POSIX permission check")
     def test_database_file_is_owner_only(self) -> None:
         with SQLiteStateStore(self.db):
-            mode = stat.S_IMODE(self.db.stat().st_mode)
-            self.assertEqual(mode, 0o600)
+            self.assertEqual(stat.S_IMODE(self.db.stat().st_mode), 0o600)
 
     def test_in_memory_database_is_rejected(self) -> None:
         with self.assertRaises(StateStoreError):

@@ -8,18 +8,20 @@ The AI may propose an action. Deterministic software decides whether that action
 
 ## Current status
 
-Phase 0 upstream qualification received its fresh independent review PASS at
-`41dd4173ce62b311a1ab6fdde107937237940c2d`. The review was preserved across
-the verified workflow-only delta through
-`3ca7febb9699910fb26b91b5dd290637e332524d`.
+Phase 1 (`PHASE_1_CONTROLLER_WALKING_SKELETON`) is in progress.
 
-Phase 1 (`PHASE_1_CONTROLLER_WALKING_SKELETON`) is in progress. `LAC-C001`
-established the durable SQLite/WAL `StateStore` foundation with migration
-integrity and deterministic restart/transaction tests. The active task is
-`LAC-C002`, canonical effect request.
+Completed Phase 1 tasks:
 
-No model integration, host-effect adapter, sandbox, production credential,
-or consequential external effect is introduced by C001.
+- `LAC-C001`: durable SQLite/WAL `StateStore` foundation.
+- `LAC-C002`: canonical versioned effect request, deterministic SHA-256 binding,
+  strict input validation, durable request persistence, and request-identity
+  conflict protection.
+
+The active task is `LAC-C003`, the deterministic policy interface.
+
+No approval, execution lease, dispatcher, simulated/real effect, sandbox,
+model/harness integration, production credential, or consequential external
+effect is introduced through C002.
 
 ## Mandatory session reads
 
@@ -30,8 +32,8 @@ Every development session starts with exactly:
 3. `UPSTREAM_LOCK.json`
 4. `tasks/ACTIVE_TASK.md`
 
-Then read `docs/NEXT_SESSION_PROMPT_TEMPLATE.md` and only the additional
-files needed for the active task.
+Then read `docs/NEXT_SESSION_PROMPT_TEMPLATE.md` and only the additional files
+needed for the active task.
 
 ## Repository history
 

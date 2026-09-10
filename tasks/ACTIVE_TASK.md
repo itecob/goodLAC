@@ -1,19 +1,19 @@
 # Active Task
 
-**Task ID:** LAC-C002
+**Task ID:** LAC-C003
 
-**Objective:** Implement the canonical versioned effect request and deterministic canonical request hash on the C001 durable StateStore foundation.
+**Objective:** Implement the deterministic `PolicyDecisionProvider` interface and initial local policy-decision semantics over canonical effect requests.
 
-**In scope:** `lac.effect-request/v1`; request/run/principal/agent identity; action; resource; typed JSON arguments; idempotency key; creation/expiry timestamps; deterministic canonicalization and SHA-256; validation; durable persistence needed for the effect request.
+**In scope:** versioned policy-decision domain model; `PolicyDecisionProvider` internal interface; deterministic `ALLOW`, `REQUIRE_APPROVAL`, and `DENY` outcomes; deny precedence; binding each decision to request ID and canonical request hash; policy revision and deterministic reason codes; durable policy-decision persistence needed by this task; fail-closed treatment of unknown policy state/action/principal/agent/resource as required by the current policy provider.
 
-**Out of scope:** policy decisions, approvals, approval binding, execution leases, dispatch, simulated or real effects, emergency pause, receipts/audit semantics beyond persistence required by this task, sandboxing, credentials, model/harness integration, and external services.
+**Out of scope:** approval records and approval surfaces, exact approval consumption, execution leases, dispatch, simulated or real effects, emergency pause, receipts/audit semantics beyond persistence required by this task, host adapters, sandboxing, credentials, model/harness integration, and external services.
 
-**Required inputs:** `PROJECT_STATE.json`, `docs/ARCHITECTURE.md`, `docs/CONTRACTS.md`, `docs/TECHNICAL_DESIGN_AND_IMPLEMENTATION_SPECIFICATION_v0.1.md`, `packages/state/`, and C001 deterministic test results.
+**Required inputs:** `PROJECT_STATE.json`, `docs/ARCHITECTURE.md`, `docs/CONTRACTS.md`, `docs/TECHNICAL_DESIGN_AND_IMPLEMENTATION_SPECIFICATION_v0.1.md`, C001 StateStore, C002 canonical effect request, and deterministic C001/C002 tests.
 
-**Required outputs:** canonical effect-request implementation, required state-store migration/persistence, and deterministic C002 tests.
+**Required outputs:** policy-decision domain/interface implementation, required state-store migration/persistence, and deterministic C003 tests.
 
-**Acceptance tests:** identical semantic requests canonicalize identically regardless of JSON object key order; every security-relevant field participates in the canonical hash; changing a security-relevant field changes the hash; malformed/unknown required fields fail closed; non-canonical JSON values are rejected; persisted requests survive restart; duplicate request identity cannot silently overwrite a different canonical request.
+**Acceptance tests:** decisions bind request ID and canonical hash; explicit deny wins over weaker authority; approval-required cannot become allow through ambiguity; unknown or malformed policy state fails closed; deterministic inputs produce deterministic decisions and reason codes; policy decisions persist across restart without changing their request binding; no approval or dispatch behavior is introduced.
 
 **Package required?** no
 
-**Next task on success:** `LAC-C003` policy interface.
+**Next task on success:** `LAC-C004` approval state.
