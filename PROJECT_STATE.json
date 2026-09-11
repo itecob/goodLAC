@@ -3,11 +3,11 @@
   "project_version": "0.1.0-dev",
   "phase": "PHASE_1_CONTROLLER_WALKING_SKELETON",
   "phase_status": "IN_PROGRESS",
-  "active_task": "LAC-C004",
+  "active_task": "LAC-C005",
   "last_accepted_release": null,
   "blockers": [],
   "nonblocking_findings": [
     "Waggle remains concepts-only/no-code-reuse while authoritative reuse licensing is unresolved or requires deliberate requalification."
   ],
-  "next_action": "Implement LAC-C004: durable approval state bound to canonical effect requests and policy decisions; no execution or dispatch yet."
+  "next_action": "Implement LAC-C005: deterministic exact post-approval binding and mutation rejection for canonical effect requests; no lease, dispatch, or execution yet."
 }

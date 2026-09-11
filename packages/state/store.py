@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any, ContextManager, Iterator, Protocol, runtime_checkable
 
 
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 
 
 class StateStoreError(RuntimeError):
@@ -105,6 +105,39 @@ _MIGRATIONS: tuple[_Migration, ...] = (
             """
             CREATE INDEX policy_decisions_request_idx
                 ON policy_decisions(request_id)
+            """,
+        ),
+    ),
+    _Migration(
+        version=4,
+        name="004_approvals",
+        statements=(
+            """
+            CREATE TABLE approvals (
+                approval_id TEXT PRIMARY KEY NOT NULL CHECK(length(approval_id) > 0),
+                schema TEXT NOT NULL CHECK(length(schema) > 0),
+                request_id TEXT NOT NULL CHECK(length(request_id) > 0),
+                policy_decision_id TEXT NOT NULL CHECK(length(policy_decision_id) > 0),
+                canonical_request_hash TEXT NOT NULL CHECK(
+                    length(canonical_request_hash) = 71
+                ),
+                approver TEXT NOT NULL CHECK(length(approver) > 0),
+                decision TEXT NOT NULL CHECK(decision IN ('APPROVE', 'REJECT')),
+                scope TEXT NOT NULL CHECK(scope = 'ONCE'),
+                created_at TEXT NOT NULL,
+                expires_at TEXT NOT NULL,
+                consumed_at TEXT,
+                FOREIGN KEY(request_id) REFERENCES effect_requests(request_id)
+                    ON DELETE RESTRICT,
+                FOREIGN KEY(policy_decision_id) REFERENCES policy_decisions(decision_id)
+                    ON DELETE RESTRICT
+            )
+            """,
+            """
+            CREATE INDEX approvals_request_idx ON approvals(request_id)
+            """,
+            """
+            CREATE INDEX approvals_policy_decision_idx ON approvals(policy_decision_id)
             """,
         ),
     ),

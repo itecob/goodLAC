@@ -1,5 +1,13 @@
 """Authority-core domain types."""
 
+from .approval import (
+    APPROVAL_SCHEMA,
+    Approval,
+    ApprovalDecision,
+    ApprovalError,
+    ApprovalScope,
+    UnsupportedApprovalSchema,
+)
 from .effect_request import (
     EFFECT_REQUEST_SCHEMA,
     EffectRequest,
@@ -17,6 +25,12 @@ from .policy import (
 )
 
 __all__ = [
+    "APPROVAL_SCHEMA",
+    "Approval",
+    "ApprovalDecision",
+    "ApprovalError",
+    "ApprovalScope",
+    "UnsupportedApprovalSchema",
     "EFFECT_REQUEST_SCHEMA",
     "EffectRequest",
     "EffectRequestError",

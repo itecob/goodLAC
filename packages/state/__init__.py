@@ -1,5 +1,10 @@
 """Durable controller state-store boundary."""
 
+from .approvals import (
+    ApprovalBindingError,
+    ApprovalIdentityConflict,
+    ApprovalRepository,
+)
 from .effect_requests import EffectRequestIdentityConflict, EffectRequestRepository
 from .policy_decisions import (
     PolicyDecisionBindingError,
@@ -16,6 +21,9 @@ from .store import (
 )
 
 __all__ = [
+    "ApprovalBindingError",
+    "ApprovalIdentityConflict",
+    "ApprovalRepository",
     "EffectRequestIdentityConflict",
     "EffectRequestRepository",
     "PolicyDecisionBindingError",
