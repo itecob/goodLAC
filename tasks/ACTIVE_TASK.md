@@ -1,19 +1,19 @@
 # Active Task
 
-**Task ID:** LAC-C005
+**Task ID:** LAC-C006
 
-**Objective:** Implement deterministic exact post-approval binding validation so an approval can qualify only the same canonical effect request it was issued for, with mutation, rejection, expiry, or prior consumption failing closed, without introducing execution leases or dispatch.
+**Objective:** Implement the deterministic durable execution-lease primitive for canonical effect requests so a single-machine controller can grant at most one current short-lived executor ownership lease for a request at a time, without dispatching or executing effects.
 
-**In scope:** validate a durable `lac.approval/v1` against the current canonical `lac.effect-request/v1`; exact request ID and canonical-request-hash equality; only `APPROVE` with initial `ONCE` scope; deterministic expiry check at an explicit supplied time; reject already-consumed approval state; reject any security-relevant request mutation through canonical hash mismatch; preserve binding to the qualifying durable `REQUIRE_APPROVAL` policy decision; deterministic C005 tests across all C002 security-relevant request fields.
+**In scope:** versioned execution-lease domain record; durable SQLite persistence; request binding; executor identity; explicit deterministic issued/expiry times; transactional acquisition; rejection of a competing unexpired lease for the same request; deterministic expiry handling and bounded reacquisition after expiry; restart persistence; fail-closed handling of malformed/unknown request or lease state; deterministic C006 tests.
 
-**Out of scope:** current-policy pre-dispatch re-evaluation (`INV-006`), changing/consuming approval state as part of execution, execution leases (`LAC-C006`), dispatch, simulated or real effects, emergency pause, receipts/audit semantics beyond existing persistence, sandboxing, credentials, model/harness integration, and external services.
+**Out of scope:** treating lease acquisition as authorization; current-policy pre-dispatch re-evaluation (`INV-006`); dispatch (`LAC-C007`); simulated or real effects; approval consumption as an execution transition; emergency pause; receipts/audit semantics beyond existing persistence; sandboxing; credentials; model/harness integration; external services; distributed consensus.
 
-**Required inputs:** `PROJECT_STATE.json`, `docs/ARCHITECTURE.md`, `docs/CONTRACTS.md`, controlling specification, C002 canonical effect request, C003 durable policy decision, C004 durable approval state, and deterministic C001-C004 tests.
+**Required inputs:** `PROJECT_STATE.json`, `docs/ARCHITECTURE.md`, `docs/CONTRACTS.md`, controlling specification, C002 canonical effect request, C003 durable policy decision, C004 durable approval state, C005 exact approval-binding validator, and deterministic C001-C005 tests.
 
-**Required outputs:** exact approval-binding validator/service and deterministic C005 tests; any persistence change must be strictly required by the validator and migration-tested.
+**Required outputs:** execution-lease domain and durable transactional lease service/repository plus deterministic C006 tests; schema migration must be migration-tested if required.
 
-**Acceptance tests:** the exact unchanged canonical request can satisfy binding with a current unconsumed `APPROVE`/`ONCE` approval; `REJECT`, expired, consumed, unknown/malformed approval, wrong request ID, wrong canonical hash, or lost qualifying policy-decision binding fails closed; mutation of arguments, target/resource, principal, agent, action, run, idempotency key, or request timing invalidates the prior approval via canonical-hash mismatch; validation alone cannot lease, dispatch, or execute an effect.
+**Acceptance tests:** a durable canonical request can acquire one short-lived lease for one executor; a second competing executor cannot acquire a current unexpired lease for the same request; malformed/unknown request or lease state fails closed; lease state survives restart; explicit expiry is deterministic and permits a new bounded lease only after the prior lease is expired; lease acquisition alone cannot authorize, dispatch, or execute an effect.
 
 **Package required?** no
 
-**Next task on success:** `LAC-C006` execution lease.
+**Next task on success:** `LAC-C007` dispatcher.

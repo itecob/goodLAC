@@ -1,5 +1,6 @@
 """Durable controller state-store boundary."""
 
+from .approval_bindings import ApprovalBindingValidator, ApprovalValidationError
 from .approvals import (
     ApprovalBindingError,
     ApprovalIdentityConflict,
@@ -21,6 +22,8 @@ from .store import (
 )
 
 __all__ = [
+    "ApprovalBindingValidator",
+    "ApprovalValidationError",
     "ApprovalBindingError",
     "ApprovalIdentityConflict",
     "ApprovalRepository",
