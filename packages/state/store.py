@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any, ContextManager, Iterator, Protocol, runtime_checkable
 
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 
 
 class StateStoreError(RuntimeError):
@@ -77,6 +77,34 @@ _MIGRATIONS: tuple[_Migration, ...] = (
             """
             CREATE INDEX effect_requests_idempotency_idx
                 ON effect_requests(idempotency_key)
+            """,
+        ),
+    ),
+    _Migration(
+        version=3,
+        name="003_policy_decisions",
+        statements=(
+            """
+            CREATE TABLE policy_decisions (
+                decision_id TEXT PRIMARY KEY NOT NULL CHECK(length(decision_id) > 0),
+                schema TEXT NOT NULL CHECK(length(schema) > 0),
+                request_id TEXT NOT NULL CHECK(length(request_id) > 0),
+                decision TEXT NOT NULL CHECK(
+                    decision IN ('ALLOW', 'REQUIRE_APPROVAL', 'DENY')
+                ),
+                policy_revision TEXT NOT NULL CHECK(length(policy_revision) > 0),
+                reason_codes_json TEXT NOT NULL,
+                evaluated_at TEXT NOT NULL,
+                canonical_request_hash TEXT NOT NULL CHECK(
+                    length(canonical_request_hash) = 71
+                ),
+                FOREIGN KEY(request_id) REFERENCES effect_requests(request_id)
+                    ON DELETE RESTRICT
+            )
+            """,
+            """
+            CREATE INDEX policy_decisions_request_idx
+                ON policy_decisions(request_id)
             """,
         ),
     ),
