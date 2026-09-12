@@ -1,19 +1,19 @@
 # Active Task
 
-**Task ID:** LAC-C007
+**Task ID:** LAC-C008
 
-**Objective:** Implement the deterministic dispatcher authority boundary for canonical effect requests so an adapter invocation can occur only after immediate current-policy re-evaluation, any required exact one-time approval qualification, and successful acquisition of a current execution lease.
+**Objective:** Implement the first concrete deterministic simulated effect adapter behind the C007 `EffectAdapter` boundary so the Phase 1 authority lifecycle can invoke a bounded non-consequential effect without introducing any real external effect capability.
 
-**In scope:** dispatcher/adapter boundary contract; immediate pre-dispatch policy re-evaluation (`INV-006`) against the current canonical request; durable recording of that policy decision using the existing policy-decision model; fail-closed handling of `DENY`; exact C005 approval validation for `REQUIRE_APPROVAL`; deterministic one-time approval consumption at the dispatch transition where required; C006 execution-lease acquisition after the final authority checks and before adapter invocation; deterministic ordering tests using an injected test double only; restart-safe durable state changes required by the dispatcher gate; deterministic C007 tests and applicable C001-C006 regressions.
+**In scope:** one simulated adapter implementing the C007 adapter protocol; explicit supported simulated action/resource contract; deterministic simulated result/state sufficient to prove the adapter was invoked only after the C007 policy/approval/lease gate; fail-closed handling of unsupported or malformed simulated requests; deterministic C008 tests; applicable C001-C007 regressions; restart-safe state only if strictly required by the simulated adapter and already compatible with current Phase 1 scope.
 
-**Out of scope:** a production simulated effect adapter (`LAC-C008`); real filesystem/shell/network/email/calendar or other external effects; emergency pause (`LAC-C009`); receipt/audit expansion (`LAC-C010`) beyond state required for the dispatcher gate; sandboxing; credentials; model/harness integration; external services; distributed execution; broad idempotency/reconciliation semantics not required for the C007 dispatch transition.
+**Out of scope:** filesystem/shell/network/email/calendar or any other real external effect; emergency pause (`LAC-C009`); receipt/audit expansion and broader duplicate-effect reconciliation (`LAC-C010`); sandboxing; credentials; model/harness integration; external services; distributed execution; production business adapters.
 
-**Required inputs:** `PROJECT_STATE.json`, `docs/ARCHITECTURE.md`, `docs/CONTRACTS.md`, controlling specification, C002 canonical effect request, C003 policy decision provider/repository, C004 durable approval state, C005 exact approval-binding validator, C006 durable execution lease, and deterministic C001-C006 tests.
+**Required inputs:** `PROJECT_STATE.json`, `docs/ARCHITECTURE.md`, `docs/CONTRACTS.md`, controlling specification, C002 canonical effect request, C003 policy provider/repository, C004 approval state, C005 exact approval binding, C006 execution lease, C007 dispatcher/adapter protocol, and deterministic C001-C007 tests.
 
-**Required outputs:** deterministic dispatcher boundary and adapter protocol/test-double contract; immediate pre-dispatch current-policy gate; approval-consumption transition where required; lease-before-adapter ordering; deterministic C007 tests; schema migration must be migration-tested if C007 requires one.
+**Required outputs:** one concrete deterministic simulated effect adapter; explicit narrow support contract; deterministic integration tests proving ALLOW and qualifying REQUIRE_APPROVAL paths can reach it only through the C007 dispatcher gate while DENY/invalid authority cannot; applicable regression evidence.
 
-**Acceptance tests:** current policy is re-evaluated immediately before adapter invocation; a current `DENY` never reaches the adapter; `REQUIRE_APPROVAL` cannot reach the adapter without an unexpired unconsumed exact C005 approval; qualifying one-time approval cannot be reused after the dispatch transition; an execution lease is acquired only after authority checks and before adapter invocation; competing lease ownership prevents adapter invocation; malformed/unknown policy, approval, request, lease, or adapter state fails closed; no concrete external effect adapter or external service is introduced by C007.
+**Acceptance tests:** the adapter implements the C007 `EffectAdapter` protocol; it explicitly supports only its declared simulated request shape and fails closed otherwise; its invocation produces no filesystem, shell, network, email, calendar, credential, or other external effect; current `DENY` never invokes it; `REQUIRE_APPROVAL` reaches it only after exact one-time approval consumption and lease acquisition; deterministic simulated output is bound to the canonical request and lease used for invocation; C001-C007 regressions remain passing; no C009/C010 or later capability is introduced.
 
 **Package required?** no
 
-**Next task on success:** `LAC-C008` simulated effect adapter.
+**Next task on success:** `LAC-C009` emergency pause.

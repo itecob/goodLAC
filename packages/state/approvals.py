@@ -16,6 +16,10 @@ class ApprovalIdentityConflict(StateStoreError):
     """An approval_id already exists with different immutable approval material."""
 
 
+class _ApprovalConsumptionError(StateStoreError):
+    """Internal atomic approval-consumption failure used by the dispatcher."""
+
+
 class ApprovalRepository:
     """Durable persistence boundary for approval decisions; never dispatches effects."""
 
@@ -88,6 +92,59 @@ class ApprovalRepository:
                 ) from exc
             return existing
         return approval
+
+    def _consume_once_in_transaction(
+        self,
+        conn: sqlite3.Connection,
+        approval: Approval,
+        *,
+        consumed_at: str,
+    ) -> Approval:
+        if conn is not self._store._conn or not conn.in_transaction:
+            raise _ApprovalConsumptionError(
+                "approval consumption requires the active StateStore transaction"
+            )
+        if not isinstance(approval, Approval):
+            raise _ApprovalConsumptionError("approval must be a canonical Approval")
+        if approval.consumed_at is not None:
+            raise _ApprovalConsumptionError("approval has already been consumed")
+        try:
+            consumed = Approval.create(
+                schema=approval.schema,
+                approval_id=approval.approval_id,
+                request_id=approval.request_id,
+                policy_decision_id=approval.policy_decision_id,
+                canonical_request_hash=approval.canonical_request_hash,
+                approver=approval.approver,
+                decision=approval.decision,
+                scope=approval.scope,
+                created_at=approval.created_at,
+                expires_at=approval.expires_at,
+                consumed_at=consumed_at,
+            )
+        except ApprovalError as exc:
+            raise _ApprovalConsumptionError(
+                "approval cannot be consumed at the requested dispatch time"
+            ) from exc
+
+        cursor = conn.execute(
+            """
+            UPDATE approvals
+            SET consumed_at = ?
+            WHERE approval_id = ? AND consumed_at IS NULL
+            """,
+            (consumed.consumed_at, approval.approval_id),
+        )
+        if cursor.rowcount != 1:
+            raise _ApprovalConsumptionError(
+                "approval was not atomically available for one-time consumption"
+            )
+        loaded = self.get(approval.approval_id)
+        if loaded != consumed:
+            raise _ApprovalConsumptionError(
+                "durable approval consumption did not match the canonical transition"
+            )
+        return consumed
 
     def get(self, approval_id: str) -> Approval | None:
         if not isinstance(approval_id, str) or not approval_id:

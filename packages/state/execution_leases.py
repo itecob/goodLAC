@@ -66,7 +66,13 @@ class ExecutionLeaseRepository:
         ExecutionLeaseRepository._validate_nonoverlapping(leases)
         return leases
 
-    def acquire(self, lease: ExecutionLease) -> ExecutionLease:
+    def _acquire_in_transaction(
+        self, conn: sqlite3.Connection, lease: ExecutionLease
+    ) -> ExecutionLease:
+        if conn is not self._store._conn or not conn.in_transaction:
+            raise ExecutionLeaseAcquisitionError(
+                "execution lease acquisition requires the active StateStore transaction"
+            )
         if not isinstance(lease, ExecutionLease):
             raise ExecutionLeaseAcquisitionError(
                 "lease must be a canonical ExecutionLease"
@@ -81,64 +87,67 @@ class ExecutionLeaseRepository:
             raise ExecutionLeaseAcquisitionError("lease is not canonical")
 
         try:
-            with self._store.transaction() as conn:
-                try:
-                    request = EffectRequestRepository(self._store).get(lease.request_id)
-                except StateStoreError as exc:
-                    raise ExecutionLeaseBindingError(
-                        "durable request failed integrity validation"
-                    ) from exc
-                if request is None:
-                    raise ExecutionLeaseBindingError(
-                        f"request_id {lease.request_id!r} is not durably persisted"
-                    )
+            request = EffectRequestRepository(self._store).get(lease.request_id)
+        except StateStoreError as exc:
+            raise ExecutionLeaseBindingError(
+                "durable request failed integrity validation"
+            ) from exc
+        if request is None:
+            raise ExecutionLeaseBindingError(
+                f"request_id {lease.request_id!r} is not durably persisted"
+            )
 
-                identity_row = conn.execute(
-                    """
-                    SELECT schema, lease_id, request_id, executor_id, issued_at, expires_at
-                    FROM execution_leases WHERE lease_id = ?
-                    """,
-                    (lease.lease_id,),
-                ).fetchone()
-                existing_identity = None
-                if identity_row is not None:
-                    existing_identity = self._decode(identity_row)
-                    if existing_identity != lease:
-                        raise ExecutionLeaseIdentityConflict(
-                            f"lease_id {lease.lease_id!r} already binds different material"
-                        )
-
-                existing_leases = self._rows_for_request(conn, lease.request_id)
-                if existing_identity is not None:
-                    return existing_identity
-
-                for existing in existing_leases:
-                    try:
-                        expired = existing.is_expired(lease.issued_at)
-                    except ExecutionLeaseError as exc:
-                        raise ExecutionLeaseStateError(
-                            "persisted execution lease expiry could not be evaluated"
-                        ) from exc
-                    if not expired:
-                        raise ExecutionLeaseUnavailable(
-                            "request already has a current unexpired execution lease"
-                        )
-
-                conn.execute(
-                    """
-                    INSERT INTO execution_leases(
-                        lease_id, schema, request_id, executor_id, issued_at, expires_at
-                    ) VALUES (
-                        :lease_id, :schema, :request_id, :executor_id, :issued_at, :expires_at
-                    )
-                    """,
-                    lease.to_record(),
+        identity_row = conn.execute(
+            """
+            SELECT schema, lease_id, request_id, executor_id, issued_at, expires_at
+            FROM execution_leases WHERE lease_id = ?
+            """,
+            (lease.lease_id,),
+        ).fetchone()
+        existing_identity = None
+        if identity_row is not None:
+            existing_identity = self._decode(identity_row)
+            if existing_identity != lease:
+                raise ExecutionLeaseIdentityConflict(
+                    f"lease_id {lease.lease_id!r} already binds different material"
                 )
+
+        existing_leases = self._rows_for_request(conn, lease.request_id)
+        if existing_identity is not None:
+            return existing_identity
+
+        for existing in existing_leases:
+            try:
+                expired = existing.is_expired(lease.issued_at)
+            except ExecutionLeaseError as exc:
+                raise ExecutionLeaseStateError(
+                    "persisted execution lease expiry could not be evaluated"
+                ) from exc
+            if not expired:
+                raise ExecutionLeaseUnavailable(
+                    "request already has a current unexpired execution lease"
+                )
+
+        try:
+            conn.execute(
+                """
+                INSERT INTO execution_leases(
+                    lease_id, schema, request_id, executor_id, issued_at, expires_at
+                ) VALUES (
+                    :lease_id, :schema, :request_id, :executor_id, :issued_at, :expires_at
+                )
+                """,
+                lease.to_record(),
+            )
         except sqlite3.IntegrityError as exc:
             raise ExecutionLeaseAcquisitionError(
                 "execution lease persistence failed integrity constraints"
             ) from exc
         return lease
+
+    def acquire(self, lease: ExecutionLease) -> ExecutionLease:
+        with self._store.transaction() as conn:
+            return self._acquire_in_transaction(conn, lease)
 
     def get(self, lease_id: str) -> ExecutionLease | None:
         if not isinstance(lease_id, str) or not lease_id:
