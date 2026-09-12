@@ -212,7 +212,7 @@ class ApprovalBindingValidatorTests(unittest.TestCase):
             name for name in dir(ApprovalBindingValidator) if not name.startswith("_")
         }
         self.assertEqual(public, {"validate"})
-        self.assertEqual(SCHEMA_VERSION, 4)
+        self.assertEqual(SCHEMA_VERSION, 5)
 
 
 if __name__ == "__main__":

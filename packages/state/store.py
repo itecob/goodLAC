@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any, ContextManager, Iterator, Protocol, runtime_checkable
 
 
-SCHEMA_VERSION = 4
+SCHEMA_VERSION = 5
 
 
 class StateStoreError(RuntimeError):
@@ -141,6 +141,29 @@ _MIGRATIONS: tuple[_Migration, ...] = (
             """,
         ),
     ),
+    _Migration(
+        version=5,
+        name="005_execution_leases",
+        statements=(
+            """
+            CREATE TABLE execution_leases (
+                lease_id TEXT PRIMARY KEY NOT NULL CHECK(length(lease_id) > 0),
+                schema TEXT NOT NULL CHECK(length(schema) > 0),
+                request_id TEXT NOT NULL CHECK(length(request_id) > 0),
+                executor_id TEXT NOT NULL CHECK(length(executor_id) > 0),
+                issued_at TEXT NOT NULL,
+                expires_at TEXT NOT NULL,
+                FOREIGN KEY(request_id) REFERENCES effect_requests(request_id)
+                    ON DELETE RESTRICT
+            )
+            """,
+            """
+            CREATE INDEX execution_leases_request_idx
+                ON execution_leases(request_id)
+            """,
+        ),
+    ),
+
 )
 
 

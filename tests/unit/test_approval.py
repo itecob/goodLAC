@@ -299,7 +299,7 @@ class ApprovalTests(unittest.TestCase):
             with self.assertRaises(StateStoreError):
                 repo.get(approval.approval_id)
 
-    def test_schema_v3_database_migrates_to_v4_without_losing_predecessor_state(self) -> None:
+    def test_schema_v3_database_migrates_forward_without_losing_predecessor_state(self) -> None:
         request = make_request()
         policy_decision = make_policy_decision(request)
         conn = sqlite3.connect(self.db)
@@ -353,7 +353,7 @@ class ApprovalTests(unittest.TestCase):
 
         with SQLiteStateStore(self.db) as migrated:
             self.assertEqual(migrated.schema_version, SCHEMA_VERSION)
-            self.assertEqual(SCHEMA_VERSION, 4)
+            self.assertEqual(SCHEMA_VERSION, 5)
             self.assertEqual(EffectRequestRepository(migrated).get(request.request_id), request)
             self.assertEqual(
                 PolicyDecisionRepository(migrated).get(policy_decision.decision_id),

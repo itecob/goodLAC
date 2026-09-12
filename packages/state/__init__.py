@@ -6,6 +6,14 @@ from .approvals import (
     ApprovalIdentityConflict,
     ApprovalRepository,
 )
+from .execution_leases import (
+    ExecutionLeaseAcquisitionError,
+    ExecutionLeaseBindingError,
+    ExecutionLeaseIdentityConflict,
+    ExecutionLeaseRepository,
+    ExecutionLeaseStateError,
+    ExecutionLeaseUnavailable,
+)
 from .effect_requests import EffectRequestIdentityConflict, EffectRequestRepository
 from .policy_decisions import (
     PolicyDecisionBindingError,
@@ -27,6 +35,12 @@ __all__ = [
     "ApprovalBindingError",
     "ApprovalIdentityConflict",
     "ApprovalRepository",
+    "ExecutionLeaseAcquisitionError",
+    "ExecutionLeaseBindingError",
+    "ExecutionLeaseIdentityConflict",
+    "ExecutionLeaseRepository",
+    "ExecutionLeaseStateError",
+    "ExecutionLeaseUnavailable",
     "EffectRequestIdentityConflict",
     "EffectRequestRepository",
     "PolicyDecisionBindingError",
