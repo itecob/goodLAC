@@ -1,16 +1,16 @@
-# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 1 C010 IMPLEMENTATION SEGMENT
+# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 1 FRESH INDEPENDENT BOUNDARY REVIEW
 
 ## Purpose
 
-This is a **fresh implementation-segment session** for the user-owned Local Agent Controller.
+This is the one **fresh independent Phase 1 boundary review** for the user-owned Local Agent Controller.
 
 Use the connected read-only Tunnel/Web-File-Tool. Project root label: `Local Agent Controller`.
 
 This session owns exactly one segment:
 
-`SESSION_SEGMENT=LAC-C010`
+`SESSION_SEGMENT=LAC-P1-REVIEW`
 
-Verify C009 boundedly, complete C010, test and correct C010, prepare the one owner-executable C010 package, then stop at the owner-execution gate. **Do not begin the Phase 1 independent review or Phase 2 implementation in this conversation.**
+Act only as the **Fresh Independent Reviewer**. Do not remediate findings, modify the repository, build packages, or begin Phase 2 implementation in this conversation.
 
 ## Mandatory first reads
 
@@ -22,60 +22,64 @@ Read exactly these first, in order:
 4. `tasks/ACTIVE_TASK.md`
 5. `docs/NEXT_SESSION_PROMPT_TEMPLATE.md`
 
-Then read the controlling specification and only additional files needed for C010. Durable state and Git are authoritative.
+Then read the controlling specification and only additional files/evidence needed to review Phase 1. Durable state and Git are authoritative.
 
 ## Handoff facts
 
 - `PREDECESSOR_ROLE=Lead Implementation Engineer`
-- `PREDECESSOR_RESULT=LAC-C009 PASS`
-- `PREDECESSOR_GIT_COMMIT=edf34912fdba638abd66379848d7e09be447f166`
-- `HANDOFF_BASE_GIT_COMMIT=edf34912fdba638abd66379848d7e09be447f166`
+- `PREDECESSOR_RESULT=LAC-C010 PASS`
+- `PREDECESSOR_GIT_COMMIT=0475cb95937875515f14cf645903597362cc421e`
+- `HANDOFF_BASE_GIT_COMMIT=0475cb95937875515f14cf645903597362cc421e`
 - `REVIEWED_GIT_COMMIT=NONE`
 - `BLOCKER_IDS=NONE`
-- `OWNER_EXECUTION_EVIDENCE=${HOME}/Downloads/LAC_P1_C009_EMERGENCY_PAUSE_v0.1.1_20260912_151320.log`
-- `EXPECTED_NEXT_TASK=LAC-C010`
-- `SESSION_SEGMENT=LAC-C010`
+- `OWNER_EXECUTION_EVIDENCE=${HOME}/Downloads/LAC_P1_C010_RECEIPTS_AUDIT_v0.1.0_20260912_181144.log`
+- `EXPECTED_NEXT_TASK=LAC-P1-REVIEW`
+- `SESSION_SEGMENT=LAC-P1-REVIEW`
+- `REVIEW_CANDIDATE_GIT_COMMIT=0475cb95937875515f14cf645903597362cc421e`
 
 Historical Phase 0 review is already consumed and must not be reopened.
 
-One handoff commit is expected after `PREDECESSOR_GIT_COMMIT`. Verify `PREDECESSOR_GIT_COMMIT..HEAD`. The only permitted post-C009 path is:
+Exactly one handoff commit is expected after `REVIEW_CANDIDATE_GIT_COMMIT`. Verify `REVIEW_CANDIDATE_GIT_COMMIT..HEAD`; the only permitted path is:
 
 - `NEXT_SESSION_PROMPT.md`
 
-Any other post-C009 material is a discrepancy to classify under the template.
+If that is the complete delta, preserve the candidate identity across the non-material handoff commit and review `REVIEW_CANDIDATE_GIT_COMMIT`. Any other post-candidate material is a discrepancy to classify under template v0.2.0.
 
-Read the recorded C009 execution log directly from the authorized Downloads root if needed. Do not require the owner to paste successful deterministic output again.
+Read the recorded C010 owner execution log directly from the authorized Downloads root. Do not require the owner to paste successful deterministic output again.
 
-## C010 objective
+## Review objective
 
-The live `tasks/ACTIVE_TASK.md` is controlling.
+Independently determine whether the completed Phase 1 C001-C010 walking skeleton satisfies the binding Phase 1 specification and controller invariants.
 
-Complete the Phase 1 walking skeleton with durable effect receipts/audit and duplicate-effect reconciliation for the governed simulated-effect path. Receipt/audit state must reflect canonical effect state and outcomes, survive restart, distinguish relevant crash windows, and never become an alternate authorization source.
+Challenge implementation and deterministic evidence rather than trusting predecessor conclusions. In particular verify:
 
-Do not implement Phase 2 filesystem/shell/package/service enforcement or any real network, email, calendar, Slack, Git, deploy, credential, sandbox, model/harness, or external-service capability.
+- durable SQLite state and predecessor-to-current migrations;
+- canonical typed effect requests and deterministic policy decisions;
+- exact one-time approval binding and mutation invalidation;
+- immediate pre-dispatch policy re-evaluation and deny precedence;
+- execution-lease ordering and duplicate ownership;
+- deterministic simulated adapter path;
+- durable emergency pause before consequential invocation;
+- C010 canonical execution states, success/failure receipts, append-oriented audit, restart/crash-window semantics, and duplicate reconciliation;
+- audit/receipts never becoming authorization;
+- the required Phase 1 demonstrations and applicable permanent acceptance tests;
+- absence of Phase 2 effects or bypass capability introduced early.
+
+A review finding may block only when it concretely violates a binding invariant, acceptance criterion, security boundary, data integrity, effect-duplication rule, required functionality, package/reproducibility requirement, or other blocker class defined by the project. Optional improvements are `NONBLOCKING` and do not prevent PASS.
 
 ## Required procedure
 
-Follow template v0.2.0.
+Follow template v0.2.0 MODE B.
 
-1. Boundedly verify C009 live installation and evidence.
-2. Implement all of C010.
-3. Run C010 deterministic tests plus applicable C001-C009 regression tests.
-4. Implement and test the predecessor-to-current schema/data migration required by C010, including restart and failure behavior.
-5. Correct in-scope defects and rerun the gate until PASS or a real blocker exists.
-6. Build one owner-executable C010 package.
-7. On success that package must install/verify C010, advance durable state to a Phase 1 review candidate, install a populated root prompt for one **fresh independent Phase 1 boundary review**, record owner execution evidence, and fail closed/roll back on unexpected state or failure.
-8. Deliver exactly one owner Bash command.
-9. Stop at `OWNER_EXECUTION_REQUIRED`.
-
-Do not perform the independent review or start Phase 2 after producing the package.
-
-After successful owner execution, the owner opens a new conversation and uses the stable launcher:
-
-`Use the connected Web-File-Tool. Read and execute the live Local Agent Controller/NEXT_SESSION_PROMPT.md.`
-
-If C010 package execution fails, C010 remains the active segment and must be remediated before any Phase 1 review or Phase 2 work.
+1. Verify exact candidate Git identity, clean state, and expected handoff-only delta.
+2. Verify the C010 owner-execution evidence and deterministic Phase 1 gate.
+3. Inspect the implementation and tests needed to independently challenge all Phase 1 acceptance criteria.
+4. Separate evidence from conclusions.
+5. Return exactly `PASS` or `BLOCKED` as the formal review result.
+6. Do not remediate.
+7. If `PASS`, provide a complete populated successor prompt for one fresh implementation session whose active segment is `LAC-H001`; do not implement H001 here.
+8. If `BLOCKED`, provide a complete populated fresh remediation-segment prompt limited to the concrete blocker IDs; do not remediate here.
 
 ## Required stop status
 
-Report `WHERE_WE_ARE`, `SESSION_SEGMENT=LAC-C010`, `WHAT_WAS_VERIFIED`, `WHAT_WAS_COMPLETED`, `WHAT_REMAINS_IN_CURRENT_PHASE`, `TOTAL_PROJECT_POSITION`, `BLOCKERS`, `STOP_GATE`, and `EXACT_NEXT_SAFE_ACTION`.
+Report `WHERE_WE_ARE`, `SESSION_SEGMENT=LAC-P1-REVIEW`, `REVIEW_CANDIDATE_GIT_COMMIT`, `WHAT_WAS_VERIFIED`, `FORMAL_REVIEW_RESULT`, `BLOCKERS`, `NONBLOCKING_FINDINGS`, `WHAT_REMAINS_IN_CURRENT_PHASE`, `TOTAL_PROJECT_POSITION`, `STOP_GATE`, and `EXACT_NEXT_SAFE_ACTION`.
