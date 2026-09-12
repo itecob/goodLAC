@@ -1,19 +1,17 @@
 # Active Task
 
-**Task ID:** LAC-C009
+**Task ID:** `LAC-C010`
 
-**Objective:** Implement the Phase 1 local emergency pause so new simulated effects cannot cross the C007/C008 dispatcher boundary while paused, without erasing or making existing controller state unavailable for read-only inspection.
+**Objective:** Complete the Phase 1 walking skeleton by adding durable effect receipts/audit and duplicate-effect reconciliation for the governed simulated-effect path. The controller must be able to distinguish authorized-but-not-invoked, successful, failed, and safely reconcilable duplicate/restart cases without allowing audit data to grant authority.
 
-**In scope:** one durable local emergency-pause state and narrow API; deterministic pause/resume semantics; dispatcher enforcement that fails closed on malformed/unreadable pause authority; restart survival; deterministic C009 tests; applicable C001-C008 regressions; schema migration only if demonstrably required.
+**In scope:** versioned durable effect-receipt state; append-oriented audit events for material lifecycle transitions; receipt binding to request, adapter, canonical input, outcome/result, timing, and upstream reference where applicable; deterministic duplicate-effect prevention/reconciliation for the Phase 1 simulated adapter; restart/crash-window tests; required SQLite schema/data migration with rollback-safe verification; C001-C009 regression tests; preparation of the Phase 1 candidate for one fresh independent review after successful owner execution.
 
-**Out of scope:** receipt/audit expansion and broader duplicate-effect reconciliation (`LAC-C010`); filesystem/shell/network/email/calendar or other real external effects; sandboxing; credentials; model/harness integration; external services; distributed execution; production adapters.
+**Out of scope:** Phase 2 filesystem/shell/package/service enforcement; real network/email/calendar/Slack/Git/deploy effects; credential brokering; sandbox/OS confinement; model or harness integration; cloud/SaaS requirements; optional policy-engine replacement; broader production reconciliation beyond the Phase 1 simulated-effect acceptance surface.
 
-**Required inputs:** `PROJECT_STATE.json`, `docs/ARCHITECTURE.md`, `docs/CONTRACTS.md`, controlling specification, C001 state store, C002 canonical effect request, C003 policy provider/repository, C004 approval state, C005 exact approval binding, C006 execution lease, C007 dispatcher, C008 deterministic simulated adapter, and deterministic C001-C008 tests.
+**Required inputs:** accepted C001-C009 implementation, especially canonical `EffectRequest`, deterministic policy decisions, exact one-time approvals, execution leases, dispatcher ordering, the C008 simulated adapter, and the C009 durable emergency pause; controlling specification receipt/audit/idempotency/restart requirements; INV-008, INV-009, INV-011, INV-012, and INV-013.
 
-**Required outputs:** durable emergency-pause state/API; dispatcher integration that prevents adapter invocation while paused; pause/resume behavior that preserves inspectable controller state; restart-safe deterministic tests and applicable regression evidence.
+**Required outputs:** versioned durable receipt/audit schema and repositories; deterministic dispatcher/adapter reconciliation semantics that do not duplicate the simulated effect; verifiable success/failure receipts; append-oriented audit evidence consistent with canonical state; migration and restart coverage; deterministic C010 tests plus all applicable C001-C009 regressions.
 
-**Acceptance tests:** pause state is local and durable across restart; a paused controller prevents ALLOW and otherwise-qualifying approved simulated effects from invoking the adapter; pause does not erase canonical requests, approvals, policy decisions, leases, or other inspectable state; malformed/unreadable pause authority fails closed; resume does not itself execute anything and an expired or otherwise-invalid request remains unable to execute; existing DENY/exact-approval/lease ordering remains authoritative; C001-C008 regressions remain passing; no C010 or later capability is introduced.
+**Acceptance:** duplicate dispatch of the same governed effect does not produce a second simulated effect; crash before adapter invocation cannot produce a false-success receipt; the authorized/leased-to-invocation crash window is durably distinguishable and reconcilable without treating audit as authority; adapter failure has a durable failure outcome/receipt; successful effect has a verifiable receipt bound to the canonical request/adapter/result; restart preserves terminal effect/receipt/audit state; emergency pause remains authoritative and does not erase state; malformed/unknown reconciliation state fails closed; C001-C009 regressions remain green; no Phase 2 capability is introduced.
 
-**Package required?** yes
-
-**Next task on success:** `LAC-C010` receipts/audit and duplicate-effect reconciliation.
+**Next task on success:** `LAC-P1-REVIEW` — one fresh independent read-only Phase 1 boundary review of the completed walking-skeleton candidate. Do not begin Phase 2 before that review passes.

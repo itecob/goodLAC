@@ -19,6 +19,7 @@ from packages.state import (
     ApprovalBindingValidator,
     ApprovalRepository,
     EffectRequestRepository,
+    EmergencyPauseRepository,
     ExecutionLeaseRepository,
     PolicyDecisionRepository,
     SQLiteStateStore,
@@ -36,6 +37,10 @@ class DispatchDenied(DispatchError):
 
 class DispatchApprovalRequired(DispatchError):
     """Current policy requires a qualifying exact one-time approval."""
+
+
+class DispatchPaused(DispatchError):
+    """The durable local emergency pause blocks adapter invocation."""
 
 
 class DispatchRequestExpired(DispatchError):
@@ -298,62 +303,74 @@ class Dispatcher:
                         "current policy requires an exact one-time approval"
                     )
                 else:
-                    # Approval consumption and lease acquisition are one atomic dispatch
-                    # transition. If lease acquisition fails, consumption is rolled back,
-                    # while the current policy decision remains durable.
-                    conn.execute("SAVEPOINT lac_dispatch_authority")
-                    try:
-                        if decision.decision is PolicyDecisionValue.REQUIRE_APPROVAL:
-                            assert approval_id is not None
-                            approval: Approval = ApprovalBindingValidator(
-                                self._store
-                            ).validate(
-                                approval_id=approval_id,
-                                current_request=current_request,
-                                at=normalized_at,
-                            )
-                            ApprovalRepository(
-                                self._store
-                            )._consume_once_in_transaction(
-                                conn,
-                                approval,
-                                consumed_at=normalized_at,
-                            )
-                        elif decision.decision is not PolicyDecisionValue.ALLOW:
-                            raise DispatchAuthorityError(
-                                "unknown policy decision state fails closed"
-                            )
-
-                        lease_expires_dt = min(
-                            now_dt + timedelta(seconds=self._lease_seconds),
-                            request_expires_dt,
+                    # Pause authority is serialized with this BEGIN IMMEDIATE transaction.
+                    # A committed pause therefore blocks before approval consumption or
+                    # lease acquisition; a dispatch that wins this transaction is already
+                    # in-flight when a competing pause request later commits.
+                    pause_state = EmergencyPauseRepository(
+                        self._store
+                    )._get_in_transaction(conn)
+                    if pause_state.paused:
+                        failure = DispatchPaused(
+                            "durable local emergency pause blocks dispatch"
                         )
-                        lease_expires_at = (
-                            lease_expires_dt.isoformat(timespec="microseconds")
-                            .replace("+00:00", "Z")
-                        )
-                        try:
-                            lease = ExecutionLease.create(
-                                lease_id=lease_id,
-                                request_id=current_request.request_id,
-                                executor_id=executor_id,
-                                issued_at=normalized_at,
-                                expires_at=lease_expires_at,
-                            )
-                        except ExecutionLeaseError as exc:
-                            raise DispatchAuthorityError(
-                                "execution lease could not be formed from current authority state"
-                            ) from exc
-                        acquired_lease = ExecutionLeaseRepository(
-                            self._store
-                        )._acquire_in_transaction(conn, lease)
-                    except Exception as exc:
-                        conn.execute("ROLLBACK TO SAVEPOINT lac_dispatch_authority")
-                        conn.execute("RELEASE SAVEPOINT lac_dispatch_authority")
-                        authority_error = exc
-                        acquired_lease = None
                     else:
-                        conn.execute("RELEASE SAVEPOINT lac_dispatch_authority")
+                        # Approval consumption and lease acquisition are one atomic dispatch
+                        # transition. If lease acquisition fails, consumption is rolled back,
+                        # while the current policy decision remains durable.
+                        conn.execute("SAVEPOINT lac_dispatch_authority")
+                        try:
+                            if decision.decision is PolicyDecisionValue.REQUIRE_APPROVAL:
+                                assert approval_id is not None
+                                approval: Approval = ApprovalBindingValidator(
+                                    self._store
+                                ).validate(
+                                    approval_id=approval_id,
+                                    current_request=current_request,
+                                    at=normalized_at,
+                                )
+                                ApprovalRepository(
+                                    self._store
+                                )._consume_once_in_transaction(
+                                    conn,
+                                    approval,
+                                    consumed_at=normalized_at,
+                                )
+                            elif decision.decision is not PolicyDecisionValue.ALLOW:
+                                raise DispatchAuthorityError(
+                                    "unknown policy decision state fails closed"
+                                )
+
+                            lease_expires_dt = min(
+                                now_dt + timedelta(seconds=self._lease_seconds),
+                                request_expires_dt,
+                            )
+                            lease_expires_at = (
+                                lease_expires_dt.isoformat(timespec="microseconds")
+                                .replace("+00:00", "Z")
+                            )
+                            try:
+                                lease = ExecutionLease.create(
+                                    lease_id=lease_id,
+                                    request_id=current_request.request_id,
+                                    executor_id=executor_id,
+                                    issued_at=normalized_at,
+                                    expires_at=lease_expires_at,
+                                )
+                            except ExecutionLeaseError as exc:
+                                raise DispatchAuthorityError(
+                                    "execution lease could not be formed from current authority state"
+                                ) from exc
+                            acquired_lease = ExecutionLeaseRepository(
+                                self._store
+                            )._acquire_in_transaction(conn, lease)
+                        except Exception as exc:
+                            conn.execute("ROLLBACK TO SAVEPOINT lac_dispatch_authority")
+                            conn.execute("RELEASE SAVEPOINT lac_dispatch_authority")
+                            authority_error = exc
+                            acquired_lease = None
+                        else:
+                            conn.execute("RELEASE SAVEPOINT lac_dispatch_authority")
         except DispatchError:
             raise
         except StateStoreError as exc:
@@ -374,16 +391,44 @@ class Dispatcher:
                 "dispatch transition completed without durable authority state"
             )
 
-        # The Phase-1 local provider is immutable, but this guard prevents a mutable
-        # provider from silently changing revision between evaluation and effect call.
-        if self._current_revision() != revision_at_evaluation:
-            raise DispatchAuthorityError(
-                "policy revision changed before adapter invocation"
-            )
-
+        # The invocation gate is a second short BEGIN IMMEDIATE transaction. The lease
+        # is already durable before the effect call, while pause/resume writers are
+        # serialized until invoke returns. If pause committed in the handoff gap, the
+        # adapter is conservatively not invoked; resume never auto-runs that request.
+        adapter_result: Any = None
+        adapter_error: Exception | None = None
         try:
-            return adapter.invoke(current_request, lease=acquired_lease)
+            with self._store.transaction() as conn:
+                if self._current_revision() != revision_at_evaluation:
+                    raise DispatchAuthorityError(
+                        "policy revision changed before adapter invocation"
+                    )
+                pause_state = EmergencyPauseRepository(
+                    self._store
+                )._get_in_transaction(conn)
+                if pause_state.paused:
+                    raise DispatchPaused(
+                        "durable local emergency pause blocks adapter invocation"
+                    )
+                try:
+                    adapter_result = adapter.invoke(
+                        current_request, lease=acquired_lease
+                    )
+                except Exception as exc:
+                    adapter_error = exc
+        except DispatchError:
+            raise
+        except StateStoreError as exc:
+            raise DispatchAuthorityError(
+                "durable emergency-pause invocation gate failed closed"
+            ) from exc
         except Exception as exc:
+            raise DispatchAuthorityError(
+                "emergency-pause invocation gate failed closed"
+            ) from exc
+
+        if adapter_error is not None:
             raise DispatchAdapterError(
                 "adapter invocation failed after the durable dispatch transition"
-            ) from exc
+            ) from adapter_error
+        return adapter_result

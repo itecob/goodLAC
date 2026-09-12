@@ -6,6 +6,13 @@ from .approvals import (
     ApprovalIdentityConflict,
     ApprovalRepository,
 )
+from .emergency_pause import (
+    EMERGENCY_PAUSE_SCHEMA,
+    EMERGENCY_PAUSE_STATE_KEY,
+    EmergencyPauseRepository,
+    EmergencyPauseState,
+    EmergencyPauseStateError,
+)
 from .execution_leases import (
     ExecutionLeaseAcquisitionError,
     ExecutionLeaseBindingError,
@@ -35,6 +42,11 @@ __all__ = [
     "ApprovalBindingError",
     "ApprovalIdentityConflict",
     "ApprovalRepository",
+    "EMERGENCY_PAUSE_SCHEMA",
+    "EMERGENCY_PAUSE_STATE_KEY",
+    "EmergencyPauseRepository",
+    "EmergencyPauseState",
+    "EmergencyPauseStateError",
     "ExecutionLeaseAcquisitionError",
     "ExecutionLeaseBindingError",
     "ExecutionLeaseIdentityConflict",

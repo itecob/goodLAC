@@ -17,6 +17,7 @@ from packages.policy import LocalPolicyDecisionProvider, PolicyRule
 from packages.state import (
     ApprovalRepository,
     EffectRequestRepository,
+    EmergencyPauseRepository,
     ExecutionLeaseRepository,
     PolicyDecisionRepository,
     SCHEMA_VERSION,
@@ -161,6 +162,7 @@ class DispatcherTests(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory()
         self.db = Path(self.tmp.name) / "controller.db"
         self.store = SQLiteStateStore(self.db)
+        EmergencyPauseRepository(self.store).resume()
         self.request = make_request()
         EffectRequestRepository(self.store).put(self.request)
 
