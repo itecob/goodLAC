@@ -1,4 +1,4 @@
-# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 1 C009 IMPLEMENTATION SEGMENT
+# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 1 C010 IMPLEMENTATION SEGMENT
 
 ## Purpose
 
@@ -8,9 +8,9 @@ Use the connected read-only Tunnel/Web-File-Tool. Project root label: `Local Age
 
 This session owns exactly one segment:
 
-`SESSION_SEGMENT=LAC-C009`
+`SESSION_SEGMENT=LAC-C010`
 
-Verify C008 boundedly, complete C009, test and correct C009, prepare the one owner-executable C009 package, then stop at the owner-execution gate. **Do not begin C010 in this conversation.**
+Verify C009 boundedly, complete C010, test and correct C010, prepare the one owner-executable C010 package, then stop at the owner-execution gate. **Do not begin the Phase 1 independent review or Phase 2 implementation in this conversation.**
 
 ## Mandatory first reads
 
@@ -22,60 +22,60 @@ Read exactly these first, in order:
 4. `tasks/ACTIVE_TASK.md`
 5. `docs/NEXT_SESSION_PROMPT_TEMPLATE.md`
 
-Then read the controlling specification and only additional files needed for C009. Durable state and Git are authoritative.
+Then read the controlling specification and only additional files needed for C010. Durable state and Git are authoritative.
 
 ## Handoff facts
 
 - `PREDECESSOR_ROLE=Lead Implementation Engineer`
-- `PREDECESSOR_RESULT=LAC-C008 PASS`
-- `PREDECESSOR_GIT_COMMIT=d5efe63a71ca9c11de346dc6b0ccb2ca84132807`
-- `HANDOFF_BASE_GIT_COMMIT=d5efe63a71ca9c11de346dc6b0ccb2ca84132807`
+- `PREDECESSOR_RESULT=LAC-C009 PASS`
+- `PREDECESSOR_GIT_COMMIT=edf34912fdba638abd66379848d7e09be447f166`
+- `HANDOFF_BASE_GIT_COMMIT=edf34912fdba638abd66379848d7e09be447f166`
 - `REVIEWED_GIT_COMMIT=NONE`
 - `BLOCKER_IDS=NONE`
-- `OWNER_EXECUTION_EVIDENCE=${HOME}/Downloads/LAC_P1_C008_SIMULATED_ADAPTER_v0.1.0_20260912_143650.log`
-- `EXPECTED_NEXT_TASK=LAC-C009`
-- `SESSION_SEGMENT=LAC-C009`
+- `OWNER_EXECUTION_EVIDENCE=${HOME}/Downloads/LAC_P1_C009_EMERGENCY_PAUSE_v0.1.1_20260912_151320.log`
+- `EXPECTED_NEXT_TASK=LAC-C010`
+- `SESSION_SEGMENT=LAC-C010`
 
 Historical Phase 0 review is already consumed and must not be reopened.
 
-One handoff commit is expected after `PREDECESSOR_GIT_COMMIT`. Verify `PREDECESSOR_GIT_COMMIT..HEAD`. The only permitted post-C008 path is:
+One handoff commit is expected after `PREDECESSOR_GIT_COMMIT`. Verify `PREDECESSOR_GIT_COMMIT..HEAD`. The only permitted post-C009 path is:
 
 - `NEXT_SESSION_PROMPT.md`
 
-Any other post-C008 material is a discrepancy to classify under the template.
+Any other post-C009 material is a discrepancy to classify under the template.
 
-Read the recorded C008 execution log directly from the authorized Downloads root if needed. Do not require the owner to paste successful deterministic output again.
+Read the recorded C009 execution log directly from the authorized Downloads root if needed. Do not require the owner to paste successful deterministic output again.
 
-## C009 objective
+## C010 objective
 
 The live `tasks/ACTIVE_TASK.md` is controlling.
 
-Implement the durable local emergency pause required by INV-011. While paused, new Phase 1 simulated effects must not reach adapter invocation, while existing controller state remains available for read-only inspection. Pause/resume state must survive restart and must not become an alternate authorization source.
+Complete the Phase 1 walking skeleton with durable effect receipts/audit and duplicate-effect reconciliation for the governed simulated-effect path. Receipt/audit state must reflect canonical effect state and outcomes, survive restart, distinguish relevant crash windows, and never become an alternate authorization source.
 
-Do not implement C010 receipt/audit expansion or duplicate-effect reconciliation. Do not implement any real filesystem, shell, network, email, calendar, credential, sandbox, model/harness, or external-service capability.
+Do not implement Phase 2 filesystem/shell/package/service enforcement or any real network, email, calendar, Slack, Git, deploy, credential, sandbox, model/harness, or external-service capability.
 
 ## Required procedure
 
 Follow template v0.2.0.
 
-1. Boundedly verify C008 live installation and evidence.
-2. Implement all of C009.
-3. Run C009 deterministic tests plus applicable C001-C008 regression tests.
-4. Test predecessor-to-current schema/data migration if C009 requires one.
+1. Boundedly verify C009 live installation and evidence.
+2. Implement all of C010.
+3. Run C010 deterministic tests plus applicable C001-C009 regression tests.
+4. Implement and test the predecessor-to-current schema/data migration required by C010, including restart and failure behavior.
 5. Correct in-scope defects and rerun the gate until PASS or a real blocker exists.
-6. Build one owner-executable C009 package.
-7. On success that package must install/verify C009, advance durable state to `LAC-C010`, install a populated root prompt for a **fresh C010 implementation session**, record owner execution evidence, and fail closed/roll back on unexpected state or failure.
+6. Build one owner-executable C010 package.
+7. On success that package must install/verify C010, advance durable state to a Phase 1 review candidate, install a populated root prompt for one **fresh independent Phase 1 boundary review**, record owner execution evidence, and fail closed/roll back on unexpected state or failure.
 8. Deliver exactly one owner Bash command.
 9. Stop at `OWNER_EXECUTION_REQUIRED`.
 
-Do not start C010 after producing the package.
+Do not perform the independent review or start Phase 2 after producing the package.
 
 After successful owner execution, the owner opens a new conversation and uses the stable launcher:
 
 `Use the connected Web-File-Tool. Read and execute the live Local Agent Controller/NEXT_SESSION_PROMPT.md.`
 
-If C009 package execution fails, C009 remains the active segment and must be remediated before any C010 work.
+If C010 package execution fails, C010 remains the active segment and must be remediated before any Phase 1 review or Phase 2 work.
 
 ## Required stop status
 
-Report `WHERE_WE_ARE`, `SESSION_SEGMENT=LAC-C009`, `WHAT_WAS_VERIFIED`, `WHAT_WAS_COMPLETED`, `WHAT_REMAINS_IN_CURRENT_PHASE`, `TOTAL_PROJECT_POSITION`, `BLOCKERS`, `STOP_GATE`, and `EXACT_NEXT_SAFE_ACTION`.
+Report `WHERE_WE_ARE`, `SESSION_SEGMENT=LAC-C010`, `WHAT_WAS_VERIFIED`, `WHAT_WAS_COMPLETED`, `WHAT_REMAINS_IN_CURRENT_PHASE`, `TOTAL_PROJECT_POSITION`, `BLOCKERS`, `STOP_GATE`, and `EXACT_NEXT_SAFE_ACTION`.
