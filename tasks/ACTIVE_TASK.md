@@ -1,19 +1,19 @@
 # Active Task
 
-**Task ID:** LAC-C008
+**Task ID:** LAC-C009
 
-**Objective:** Implement the first concrete deterministic simulated effect adapter behind the C007 `EffectAdapter` boundary so the Phase 1 authority lifecycle can invoke a bounded non-consequential effect without introducing any real external effect capability.
+**Objective:** Implement the Phase 1 local emergency pause so new simulated effects cannot cross the C007/C008 dispatcher boundary while paused, without erasing or making existing controller state unavailable for read-only inspection.
 
-**In scope:** one simulated adapter implementing the C007 adapter protocol; explicit supported simulated action/resource contract; deterministic simulated result/state sufficient to prove the adapter was invoked only after the C007 policy/approval/lease gate; fail-closed handling of unsupported or malformed simulated requests; deterministic C008 tests; applicable C001-C007 regressions; restart-safe state only if strictly required by the simulated adapter and already compatible with current Phase 1 scope.
+**In scope:** one durable local emergency-pause state and narrow API; deterministic pause/resume semantics; dispatcher enforcement that fails closed on malformed/unreadable pause authority; restart survival; deterministic C009 tests; applicable C001-C008 regressions; schema migration only if demonstrably required.
 
-**Out of scope:** filesystem/shell/network/email/calendar or any other real external effect; emergency pause (`LAC-C009`); receipt/audit expansion and broader duplicate-effect reconciliation (`LAC-C010`); sandboxing; credentials; model/harness integration; external services; distributed execution; production business adapters.
+**Out of scope:** receipt/audit expansion and broader duplicate-effect reconciliation (`LAC-C010`); filesystem/shell/network/email/calendar or other real external effects; sandboxing; credentials; model/harness integration; external services; distributed execution; production adapters.
 
-**Required inputs:** `PROJECT_STATE.json`, `docs/ARCHITECTURE.md`, `docs/CONTRACTS.md`, controlling specification, C002 canonical effect request, C003 policy provider/repository, C004 approval state, C005 exact approval binding, C006 execution lease, C007 dispatcher/adapter protocol, and deterministic C001-C007 tests.
+**Required inputs:** `PROJECT_STATE.json`, `docs/ARCHITECTURE.md`, `docs/CONTRACTS.md`, controlling specification, C001 state store, C002 canonical effect request, C003 policy provider/repository, C004 approval state, C005 exact approval binding, C006 execution lease, C007 dispatcher, C008 deterministic simulated adapter, and deterministic C001-C008 tests.
 
-**Required outputs:** one concrete deterministic simulated effect adapter; explicit narrow support contract; deterministic integration tests proving ALLOW and qualifying REQUIRE_APPROVAL paths can reach it only through the C007 dispatcher gate while DENY/invalid authority cannot; applicable regression evidence.
+**Required outputs:** durable emergency-pause state/API; dispatcher integration that prevents adapter invocation while paused; pause/resume behavior that preserves inspectable controller state; restart-safe deterministic tests and applicable regression evidence.
 
-**Acceptance tests:** the adapter implements the C007 `EffectAdapter` protocol; it explicitly supports only its declared simulated request shape and fails closed otherwise; its invocation produces no filesystem, shell, network, email, calendar, credential, or other external effect; current `DENY` never invokes it; `REQUIRE_APPROVAL` reaches it only after exact one-time approval consumption and lease acquisition; deterministic simulated output is bound to the canonical request and lease used for invocation; C001-C007 regressions remain passing; no C009/C010 or later capability is introduced.
+**Acceptance tests:** pause state is local and durable across restart; a paused controller prevents ALLOW and otherwise-qualifying approved simulated effects from invoking the adapter; pause does not erase canonical requests, approvals, policy decisions, leases, or other inspectable state; malformed/unreadable pause authority fails closed; resume does not itself execute anything and an expired or otherwise-invalid request remains unable to execute; existing DENY/exact-approval/lease ordering remains authoritative; C001-C008 regressions remain passing; no C010 or later capability is introduced.
 
-**Package required?** no
+**Package required?** yes
 
-**Next task on success:** `LAC-C009` emergency pause.
+**Next task on success:** `LAC-C010` receipts/audit and duplicate-effect reconciliation.

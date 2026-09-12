@@ -3,11 +3,11 @@
   "project_version": "0.1.0-dev",
   "phase": "PHASE_1_CONTROLLER_WALKING_SKELETON",
   "phase_status": "IN_PROGRESS",
-  "active_task": "LAC-C008",
+  "active_task": "LAC-C009",
   "last_accepted_release": null,
   "blockers": [],
   "nonblocking_findings": [
     "Waggle remains concepts-only/no-code-reuse while authoritative reuse licensing is unresolved or requires deliberate requalification."
   ],
-  "next_action": "Implement LAC-C008: deterministic simulated effect adapter behind the C007 dispatcher boundary, with no real external effect, emergency pause, receipt/audit expansion, sandbox, credentials, model/harness integration, or external service."
+  "next_action": "Implement LAC-C009: durable local emergency pause that blocks new Phase 1 effects at the dispatcher boundary without erasing inspection state; do not begin C010 receipt/audit expansion."
 }
