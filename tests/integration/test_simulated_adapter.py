@@ -328,8 +328,8 @@ class SimulatedAdapterTests(unittest.TestCase):
         )
 
     def test_c008_introduces_no_schema_migration(self):
-        self.assertEqual(SCHEMA_VERSION, 5)
-        self.assertEqual(self.store.schema_version, 5)
+        self.assertEqual(SCHEMA_VERSION, 6)
+        self.assertEqual(self.store.schema_version, 6)
 
 
 if __name__ == "__main__":

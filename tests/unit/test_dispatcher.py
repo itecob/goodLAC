@@ -433,8 +433,8 @@ class DispatcherTests(unittest.TestCase):
         self.assertEqual(lease.expires_at, "2026-09-12T10:04:05.000000Z")
 
     def test_no_schema_migration_or_concrete_adapter_is_introduced(self):
-        self.assertEqual(SCHEMA_VERSION, 5)
-        self.assertEqual(self.store.schema_version, 5)
+        self.assertEqual(SCHEMA_VERSION, 6)
+        self.assertEqual(self.store.schema_version, 6)
         self.assertEqual(
             {name for name in dir(ApprovalRepository) if not name.startswith("_")},
             {"get", "put"},

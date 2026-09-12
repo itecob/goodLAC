@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any, ContextManager, Iterator, Protocol, runtime_checkable
 
 
-SCHEMA_VERSION = 5
+SCHEMA_VERSION = 6
 
 
 class StateStoreError(RuntimeError):
@@ -163,7 +163,86 @@ _MIGRATIONS: tuple[_Migration, ...] = (
             """,
         ),
     ),
-
+    _Migration(
+        version=6,
+        name="006_effect_receipts_audit",
+        statements=(
+            """
+            CREATE TABLE effect_executions (
+                schema TEXT NOT NULL CHECK(length(schema) > 0),
+                request_id TEXT PRIMARY KEY NOT NULL CHECK(length(request_id) > 0),
+                canonical_request_hash TEXT NOT NULL CHECK(length(canonical_request_hash) = 71),
+                idempotency_key TEXT NOT NULL CHECK(length(idempotency_key) > 0),
+                adapter_id TEXT NOT NULL CHECK(length(adapter_id) > 0),
+                lease_id TEXT NOT NULL CHECK(length(lease_id) > 0),
+                lease_hash TEXT NOT NULL CHECK(length(lease_hash) = 71),
+                input_hash TEXT NOT NULL CHECK(length(input_hash) = 71),
+                approval_id TEXT,
+                state TEXT NOT NULL CHECK(state IN ('LEASED', 'PREPARED', 'SUCCEEDED', 'FAILED')),
+                leased_at TEXT NOT NULL,
+                prepared_at TEXT,
+                completed_at TEXT,
+                receipt_id TEXT,
+                FOREIGN KEY(request_id) REFERENCES effect_requests(request_id) ON DELETE RESTRICT,
+                FOREIGN KEY(lease_id) REFERENCES execution_leases(lease_id) ON DELETE RESTRICT,
+                FOREIGN KEY(approval_id) REFERENCES approvals(approval_id) ON DELETE RESTRICT,
+                CHECK(
+                    (state = 'LEASED' AND prepared_at IS NULL AND completed_at IS NULL AND receipt_id IS NULL)
+                    OR
+                    (state = 'PREPARED' AND prepared_at IS NOT NULL AND completed_at IS NULL AND receipt_id IS NULL)
+                    OR
+                    (state IN ('SUCCEEDED', 'FAILED') AND prepared_at IS NOT NULL AND completed_at IS NOT NULL AND receipt_id IS NOT NULL)
+                )
+            )
+            """,
+            """
+            CREATE UNIQUE INDEX effect_executions_idempotency_idx
+                ON effect_executions(adapter_id, idempotency_key)
+            """,
+            """
+            CREATE TABLE effect_receipts (
+                schema TEXT NOT NULL CHECK(length(schema) > 0),
+                receipt_id TEXT PRIMARY KEY NOT NULL CHECK(length(receipt_id) > 0),
+                request_id TEXT UNIQUE NOT NULL CHECK(length(request_id) > 0),
+                canonical_request_hash TEXT NOT NULL CHECK(length(canonical_request_hash) = 71),
+                idempotency_key TEXT NOT NULL CHECK(length(idempotency_key) > 0),
+                approval_id TEXT,
+                adapter_id TEXT NOT NULL CHECK(length(adapter_id) > 0),
+                lease_id TEXT NOT NULL CHECK(length(lease_id) > 0),
+                input_hash TEXT NOT NULL CHECK(length(input_hash) = 71),
+                started_at TEXT NOT NULL,
+                completed_at TEXT NOT NULL,
+                outcome TEXT NOT NULL CHECK(outcome IN ('SUCCEEDED', 'FAILED')),
+                result_json TEXT NOT NULL,
+                result_hash TEXT NOT NULL CHECK(length(result_hash) = 71),
+                upstream_reference TEXT,
+                FOREIGN KEY(request_id) REFERENCES effect_requests(request_id) ON DELETE RESTRICT,
+                FOREIGN KEY(lease_id) REFERENCES execution_leases(lease_id) ON DELETE RESTRICT,
+                FOREIGN KEY(approval_id) REFERENCES approvals(approval_id) ON DELETE RESTRICT
+            )
+            """,
+            """
+            CREATE INDEX effect_receipts_idempotency_idx
+                ON effect_receipts(adapter_id, idempotency_key)
+            """,
+            """
+            CREATE TABLE audit_events (
+                sequence INTEGER PRIMARY KEY AUTOINCREMENT,
+                schema TEXT NOT NULL CHECK(length(schema) > 0),
+                event_id TEXT UNIQUE NOT NULL CHECK(length(event_id) > 0),
+                request_id TEXT NOT NULL CHECK(length(request_id) > 0),
+                event_type TEXT NOT NULL CHECK(length(event_type) > 0),
+                occurred_at TEXT NOT NULL,
+                details_json TEXT NOT NULL,
+                FOREIGN KEY(request_id) REFERENCES effect_requests(request_id) ON DELETE RESTRICT
+            )
+            """,
+            """
+            CREATE INDEX audit_events_request_sequence_idx
+                ON audit_events(request_id, sequence)
+            """,
+        ),
+    ),
 )
 
 

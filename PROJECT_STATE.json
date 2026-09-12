@@ -2,12 +2,12 @@
   "schema": "lac.project-state/v1",
   "project_version": "0.1.0-dev",
   "phase": "PHASE_1_CONTROLLER_WALKING_SKELETON",
-  "phase_status": "IN_PROGRESS",
-  "active_task": "LAC-C010",
+  "phase_status": "CANDIDATE_REVIEW_REQUIRED",
+  "active_task": "LAC-P1-REVIEW",
   "last_accepted_release": null,
   "blockers": [],
   "nonblocking_findings": [
     "Waggle remains concepts-only/no-code-reuse while authoritative reuse licensing is unresolved or requires deliberate requalification."
   ],
-  "next_action": "Implement LAC-C010: durable effect receipts/audit and duplicate-effect reconciliation for the Phase 1 simulated effect path; then prepare the Phase 1 candidate for one fresh independent review."
+  "next_action": "Run one fresh independent read-only Phase 1 boundary review of the completed C001-C010 walking-skeleton candidate. Do not begin Phase 2 until that review passes."
 }

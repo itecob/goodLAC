@@ -331,8 +331,8 @@ class ExecutionLeaseTests(unittest.TestCase):
         conn.close()
 
         with SQLiteStateStore(self.db) as migrated:
-            self.assertEqual(SCHEMA_VERSION, 5)
-            self.assertEqual(migrated.schema_version, 5)
+            self.assertEqual(SCHEMA_VERSION, 6)
+            self.assertEqual(migrated.schema_version, 6)
             self.assertEqual(EffectRequestRepository(migrated).get(request.request_id), request)
             self.assertEqual(
                 PolicyDecisionRepository(migrated).get(policy_decision.decision_id),

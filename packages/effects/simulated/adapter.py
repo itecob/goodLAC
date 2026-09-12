@@ -25,7 +25,7 @@ class SimulatedEffectError(ValueError):
 
 @dataclass(frozen=True)
 class SimulatedEffectResult:
-    """Deterministic in-memory result; it represents no external side effect."""
+    """Deterministic non-external result used by Phase 1 effect/reconciliation tests."""
 
     schema: str
     adapter_id: str
@@ -90,8 +90,42 @@ def _supported_value(request: EffectRequest) -> int:
     return value
 
 
+def _deterministic_result(
+    request: EffectRequest, *, lease: ExecutionLease
+) -> SimulatedEffectResult:
+    value = _supported_value(request)
+    canonical_request = _canonical_request(request)
+    canonical_lease = _canonical_lease(lease)
+    if canonical_lease.request_id != canonical_request.request_id:
+        raise SimulatedEffectError("execution lease binds a different request_id")
+
+    lease_material = canonical_lease.to_record()
+    lease_digest = hashlib.sha256(
+        canonical_json(lease_material).encode("utf-8")
+    ).hexdigest()
+    lease_hash = f"sha256:{lease_digest}"
+
+    result_material = {
+        "schema": SIMULATED_RESULT_SCHEMA,
+        "adapter_id": SIMULATED_ADAPTER_ID,
+        "request_id": canonical_request.request_id,
+        "canonical_request_hash": canonical_request.canonical_hash,
+        "lease_id": canonical_lease.lease_id,
+        "lease_hash": lease_hash,
+        "executor_id": canonical_lease.executor_id,
+        "simulated_value": value,
+    }
+    result_digest = hashlib.sha256(
+        canonical_json(result_material).encode("utf-8")
+    ).hexdigest()
+    return SimulatedEffectResult(
+        **result_material,
+        result_hash=f"sha256:{result_digest}",
+    )
+
+
 class SimulatedEffectAdapter:
-    """Stateless C008 adapter for one explicit, non-consequential simulated effect."""
+    """Narrow Phase 1 adapter; reconciliation never invokes a second simulated effect."""
 
     @property
     def adapter_id(self) -> str:
@@ -110,32 +144,13 @@ class SimulatedEffectAdapter:
         *,
         lease: ExecutionLease,
     ) -> SimulatedEffectResult:
-        value = _supported_value(request)
-        canonical_request = _canonical_request(request)
-        canonical_lease = _canonical_lease(lease)
-        if canonical_lease.request_id != canonical_request.request_id:
-            raise SimulatedEffectError("execution lease binds a different request_id")
+        return _deterministic_result(request, lease=lease)
 
-        lease_material = canonical_lease.to_record()
-        lease_digest = hashlib.sha256(
-            canonical_json(lease_material).encode("utf-8")
-        ).hexdigest()
-        lease_hash = f"sha256:{lease_digest}"
-
-        result_material = {
-            "schema": SIMULATED_RESULT_SCHEMA,
-            "adapter_id": SIMULATED_ADAPTER_ID,
-            "request_id": canonical_request.request_id,
-            "canonical_request_hash": canonical_request.canonical_hash,
-            "lease_id": canonical_lease.lease_id,
-            "lease_hash": lease_hash,
-            "executor_id": canonical_lease.executor_id,
-            "simulated_value": value,
-        }
-        result_digest = hashlib.sha256(
-            canonical_json(result_material).encode("utf-8")
-        ).hexdigest()
-        return SimulatedEffectResult(
-            **result_material,
-            result_hash=f"sha256:{result_digest}",
-        )
+    def reconcile(
+        self,
+        request: EffectRequest,
+        *,
+        lease: ExecutionLease,
+    ) -> SimulatedEffectResult:
+        """Safely derive the simulated outcome without calling invoke()."""
+        return _deterministic_result(request, lease=lease)

@@ -353,7 +353,7 @@ class ApprovalTests(unittest.TestCase):
 
         with SQLiteStateStore(self.db) as migrated:
             self.assertEqual(migrated.schema_version, SCHEMA_VERSION)
-            self.assertEqual(SCHEMA_VERSION, 5)
+            self.assertEqual(SCHEMA_VERSION, 6)
             self.assertEqual(EffectRequestRepository(migrated).get(request.request_id), request)
             self.assertEqual(
                 PolicyDecisionRepository(migrated).get(policy_decision.decision_id),

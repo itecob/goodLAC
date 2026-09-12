@@ -29,8 +29,8 @@ class EmergencyPauseTests(unittest.TestCase):
         state = self.repo.resume()
         self.assertEqual(state.schema, EMERGENCY_PAUSE_SCHEMA)
         self.assertFalse(state.paused)
-        self.assertEqual(self.store.schema_version, 5)
-        self.assertEqual(SCHEMA_VERSION, 5)
+        self.assertEqual(self.store.schema_version, 6)
+        self.assertEqual(SCHEMA_VERSION, 6)
 
     def test_pause_resume_are_durable_across_restart(self):
         self.repo.resume()
@@ -88,8 +88,8 @@ class EmergencyPauseTests(unittest.TestCase):
 
     def test_pause_state_uses_existing_system_state_without_schema_migration(self):
         self.repo.pause()
-        self.assertEqual(SCHEMA_VERSION, 5)
-        self.assertEqual(self.store.schema_version, 5)
+        self.assertEqual(SCHEMA_VERSION, 6)
+        self.assertEqual(self.store.schema_version, 6)
         row = self.store._conn.execute(
             "SELECT value_json FROM system_state WHERE key = ?",
             (EMERGENCY_PAUSE_STATE_KEY,),
