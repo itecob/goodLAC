@@ -68,6 +68,50 @@ _BLOCKED_EXECUTABLE_NAMES = frozenset(
     }
 )
 _BLOCKED_EXECUTABLE_PREFIXES = ("python", "pypy", "ld-linux", "ld-musl")
+
+# H004 closes the generic command-launcher/interpreter class by permitting only a
+# deliberately reviewed set of canonical /usr/bin leaf commands. Constructor
+# configuration can narrow this set but cannot broaden it. Expansion requires a
+# code-reviewed classification rather than a runtime/user supplied path.
+_TRUSTED_EXECUTABLE_DIRECTORY = PurePosixPath("/usr/bin")
+_SAFE_LEAF_EXECUTABLE_NAMES = frozenset(
+    {
+        "basename",
+        "cat",
+        "cmp",
+        "comm",
+        "cp",
+        "cut",
+        "date",
+        "diff",
+        "dirname",
+        "false",
+        "grep",
+        "head",
+        "ln",
+        "ls",
+        "md5sum",
+        "mkdir",
+        "mv",
+        "printenv",
+        "printf",
+        "pwd",
+        "readlink",
+        "realpath",
+        "rm",
+        "rmdir",
+        "sha256sum",
+        "sleep",
+        "sort",
+        "stat",
+        "tail",
+        "touch",
+        "tr",
+        "true",
+        "uniq",
+        "wc",
+    }
+)
 _BASE_ENVIRONMENT = {
     "HOME": "/nonexistent",
     "LC_ALL": "C",
@@ -209,6 +253,10 @@ def _canonical_executable(value: object) -> str:
     name = path.name.lower()
     if name in _BLOCKED_EXECUTABLE_NAMES or any(name.startswith(prefix) for prefix in _BLOCKED_EXECUTABLE_PREFIXES):
         raise ShellEffectError("interpreter, privilege, namespace, or command-launcher executable is unsupported")
+    if path.parent != _TRUSTED_EXECUTABLE_DIRECTORY or name not in _SAFE_LEAF_EXECUTABLE_NAMES:
+        raise ShellEffectError(
+            "generic shell permits only reviewed non-launching canonical /usr/bin leaf commands"
+        )
     return value
 
 

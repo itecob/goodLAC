@@ -1,19 +1,19 @@
 # Active Task
 
-**Task ID:** `LAC-H004`
+**Task ID:** `LAC-P2-REVIEW`
 
-**Objective:** Complete the Phase 2 local-host-enforcement bypass/adversarial suite against the accepted H001 sandbox, H002 filesystem adapter, and H003 shell adapter; correct only concrete in-scope defects; and produce the Phase 2 candidate for fresh independent review.
+**Objective:** Independently determine whether the complete Phase 2 local-host-enforcement candidate satisfies its binding acceptance criteria and controller invariants, including actual-effect bypass resistance across the H001 sandbox, H002 filesystem adapter, H003 shell adapter, and H004 adversarial suite.
 
-**In scope:** deterministic actual-effect challenges for parent traversal; symlink escape; reads of `~/.ssh` and out-of-workspace `.env`; writes outside the configured workspace; denied deletion; unauthorized binary execution; shell launch through an otherwise allowed command; interpreter-based command escape; subprocess network access; inherited secret environment; and child processes attempting to outlive the sandbox; preservation of exact H003 executable/argv/cwd/environment binding; preservation of H002/H001 and the applicable Phase 1 authority gates; bounded remediation of defects exposed by these tests; Phase 2 candidate state and review handoff.
+**In scope:** verify candidate Git identity and clean state; verify the H004 implementation-to-handoff delta; read binding Phase 2 acceptance criteria/invariants; inspect H001 qualification evidence, H002/H003 implementation and tests, H004 remediation and actual-effect tests; run/challenge `scripts/test-h004`, `scripts/test-h003`, `scripts/test-h002`, `scripts/test-h001`, the applicable Phase 1 regression gates, and targeted additional read-only/reproducible tests needed to assess material claims; classify findings only as `BLOCKER` or `NONBLOCKING`; return exactly `PASS` or `BLOCKED` as the formal result.
 
-**Out of scope:** Pi or FreeToken integration; Phase 3 implementation; credentials/secret-provider implementation; Gmail, Calendar, Slack, Git, deployment, package/service or other external effects; production credentials; productization; architecture redesign absent a concrete violated binding requirement.
+**Out of scope:** implementation or remediation; Phase 3 implementation; Pi or FreeToken integration; credentials/secret-provider implementation; Gmail, Calendar, Slack, Git, deployment, package/service or other external effects; architecture redesign absent a demonstrated binding violation.
 
-**Required inputs:** accepted Phase 1 authority core; H001 `qualification/evidence/h001_sandbox.json`; `decisions/ADR-004_SANDBOX_BACKEND.md`; H002 `filesystem:v1`; H003 `shell:v1`; controlling specification and Phase 2 invariants.
+**Required inputs:** controlling specification; `PROJECT_STATE.json`; `docs/ARCHITECTURE.md`; `UPSTREAM_LOCK.json`; H001 qualification evidence and ADR-004; H002/H003 adapters/contracts/tests; H004 adversarial suite and candidate commit; accepted Phase 1 authority core and its preserved review identity.
 
-**Required outputs:** one complete H004 adversarial/conformance gate covering the binding Phase 2 bypass vectors as actual effects; any narrowly required H001/H002/H003 corrections with deterministic regression tests; passing `scripts/test-h003`, `scripts/test-h002`, `scripts/test-h001`, and applicable Phase 1 regression; Phase 2 candidate durable state; one owner-executable package whose successful execution hands the candidate to a fresh independent Phase 2 reviewer.
+**Required outputs:** one independent Phase 2 verdict of `PASS` or `BLOCKED`; concrete blocker IDs for every blocking finding, if any; nonblocking findings clearly separated; if `PASS`, a complete fresh implementation-segment successor prompt for `LAC-A001`; if `BLOCKED`, a complete fresh remediation-segment successor prompt limited to the blocker IDs.
 
-**Acceptance tests:** forbidden host effects are technically unavailable rather than merely policy-denied; arbitrary host paths and symlink escapes remain unavailable; generic shell cannot reach host credentials, arbitrary network, privilege escalation, nested shells/interpreters, or unbounded child processes; allowed bounded workspace effects remain functional; current policy/approval/lease/pause/idempotency/receipt authority remains mandatory; no Phase 3 capability is introduced.
+**Acceptance tests:** every required Phase 2 forbidden effect is technically unavailable as an actual effect rather than merely policy-denied; workspace-bounded allowed effects remain functional; H001 network/environment/process containment remains effective; H002 path/symlink/deletion boundaries remain effective; H003 exact executable/argv/cwd/environment binding and H004 executable-class closure remain effective; Phase 1 policy/approval/lease/pause/idempotency/receipt authority remains mandatory; no Phase 3 capability is present.
 
-**Package required?** yes
+**Package required?** no
 
-**Next task on success:** fresh `PHASE_BOUNDARY_INDEPENDENT_REVIEW` of the Phase 2 candidate. Do not begin Phase 3 before that review passes.
+**Next task on success:** `LAC-A001` in a fresh implementation session. Do not implement it during this review.
