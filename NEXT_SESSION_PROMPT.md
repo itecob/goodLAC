@@ -1,24 +1,22 @@
-# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 2 LAC-H004 BYPASS SUITE AND PHASE CANDIDATE
+# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 2 FRESH INDEPENDENT REVIEW
 
 ## 1. Purpose and authorized role
 
-You are the **Lead Implementation Engineer** for the user-owned **Local Agent Controller (LAC)**.
+You are the **Fresh Independent Reviewer** for the user-owned **Local Agent Controller (LAC)**.
 
 Use the connected read-only Tunnel/Web-File-Tool. Project root label:
 
 `Local Agent Controller`
 
-This session owns exactly one implementation segment:
+This session owns exactly:
 
-`SESSION_SEGMENT=LAC-H004`
+`SESSION_SEGMENT=LAC-P2-REVIEW`
 
 The controlling rule remains:
 
 > AI proposes. Deterministic software determines authorization and effects.
 
-H001 established the selected Linux sandbox, H002 established the bounded typed filesystem effect path, and H003 established the typed shell effect path. Do not repeat those as new architecture exercises merely because the predecessor package advanced durable state.
-
-Do not begin Phase 3 or `LAC-A001` in this conversation.
+Do not remediate implementation in this conversation. Do not begin Phase 3 or `LAC-A001` unless this independent review first returns `PASS`; even on PASS, provide the successor prompt and stop rather than implementing A001 here.
 
 ## 2. Mandatory first reads
 
@@ -34,61 +32,56 @@ Then read:
 
 `docs/TECHNICAL_DESIGN_AND_IMPLEMENTATION_SPECIFICATION_v0.1.md`
 
-Read only the additional H001/H002/H003 implementation/evidence/tests and Phase 1 authority material needed for `LAC-H004`.
+Read only the additional Phase 1 authority and H001/H002/H003/H004 implementation/evidence/tests needed to review Phase 2.
 
 Do not reconstruct project state from conversation memory.
 
 ## 3. Handoff facts
 
-Preserve and boundedly verify:
+Preserve and independently verify:
 
 * `PREDECESSOR_ROLE=Lead Implementation Engineer`
-* `PREDECESSOR_RESULT=LAC-H003 PASS`
-* `PREDECESSOR_GIT_COMMIT=c5879721a299c0cef21c0e6aee4349947a919ee4`
-* `HANDOFF_BASE_GIT_COMMIT=c5879721a299c0cef21c0e6aee4349947a919ee4`
-* `REVIEWED_GIT_COMMIT=ba21d50c26540147c458a8e3f402e15e71efe9c7`
-* `REVIEW_PRESERVED_ACROSS_NONMATERIAL_DELTA=true`
+* `PREDECESSOR_RESULT=LAC-H004 PASS`
+* `PREDECESSOR_GIT_COMMIT=5cdd824b083ede92c192ef17f039cdbf0206cc44`
+* `HANDOFF_BASE_GIT_COMMIT=5cdd824b083ede92c192ef17f039cdbf0206cc44`
+* `REVIEWED_GIT_COMMIT=NONE_FOR_PHASE_2`
+* `PHASE1_REVIEWED_GIT_COMMIT=ba21d50c26540147c458a8e3f402e15e71efe9c7`
 * `BLOCKER_IDS=NONE`
-* `OWNER_EXECUTION_EVIDENCE=${HOME}/Downloads/LAC_P2_H003_SHELL_ADAPTER_v0.1.0_20260913_123918.log`
-* `EXPECTED_NEXT_TASK=LAC-H004`
-* `SESSION_SEGMENT=LAC-H004`
+* `OWNER_EXECUTION_EVIDENCE=${HOME}/Downloads/LAC_P2_H004_BYPASS_SUITE_v0.1.1_20260913_113423.log`
+* `EXPECTED_NEXT_TASK=LAC-P2-REVIEW`
+* `SESSION_SEGMENT=LAC-P2-REVIEW`
 * `H001_SELECTED_BACKEND=bubblewrap`
 * `H001_QUALIFICATION_EVIDENCE=qualification/evidence/h001_sandbox.json`
 * `H002_ADAPTER=filesystem:v1`
 * `H002_TEST_GATE=scripts/test-h002`
 * `H003_ADAPTER=shell:v1`
 * `H003_TEST_GATE=scripts/test-h003`
+* `H004_TEST_GATE=scripts/test-h004`
 * `LIVE_HANDOFF_GIT_COMMIT=READ_PROJECT_GIT_COMMIT_FROM_OWNER_EXECUTION_EVIDENCE_AND_REQUIRE_IT_TO_EQUAL_HEAD`
 
 Exactly one handoff-only commit is expected after `PREDECESSOR_GIT_COMMIT`. Verify the complete `PREDECESSOR_GIT_COMMIT..HEAD` delta; the only permitted path is:
 
 `NEXT_SESSION_PROMPT.md`
 
-Any implementation, tests, architecture, qualification, policy, contracts, threat-model, dependency, license, acceptance-criteria, or other H003 substance change after the H003 implementation commit is a discrepancy to classify under template v0.2.0 before proceeding.
-
-Do not reopen Phase 0 or repeat the Phase 1 formal independent review when this handoff verifies correctly.
+Any implementation, tests, architecture, qualification, policy, contracts, threat-model, dependency, license, acceptance-criteria, state/task, or other Phase 2 candidate substance change after the implementation commit is a discrepancy to classify before trusting the candidate.
 
 ## 4. Session mode
 
-Use:
+Use exactly:
 
-`MODE A — IMPLEMENTATION_SEGMENT`
+`MODE B — PHASE_BOUNDARY_INDEPENDENT_REVIEW`
 
 Role:
 
-`Lead Implementation Engineer`
+`Fresh Independent Reviewer`
 
-Perform bounded predecessor verification and then implement `LAC-H004` completely in this session.
+This is the one formal independent review for the Phase 2 candidate. Do not mutate the implementation.
 
-## 5. Active segment — LAC-H004
+## 5. Binding review target
 
-### Objective
+Review the complete Phase 2 candidate against the controlling specification, with particular attention to `INV-003`, `INV-004`, `INV-005`, `INV-006`, `INV-008`, `INV-010`, and `INV-014`.
 
-Complete the Phase 2 local-host-enforcement bypass/adversarial suite against the accepted H001 sandbox, H002 filesystem adapter, and H003 shell adapter. Correct only concrete in-scope defects exposed by the suite, then prepare the Phase 2 candidate for fresh independent review.
-
-### Required adversarial effects
-
-Challenge the complete binding Phase 2 set as actual effects, including:
+The required actual-effect adversarial set is:
 
 * `../` path traversal;
 * symlink escape;
@@ -103,65 +96,64 @@ Challenge the complete binding Phase 2 set as actual effects, including:
 * inherited secret environment variables;
 * child process attempting to outlive the sandbox.
 
-The test criterion is not that policy returned `DENY`; it is whether the forbidden effect could actually occur.
+The criterion is whether the forbidden effect can actually occur, not merely whether policy reports `DENY`.
 
-### Scope discipline
+Challenge H004's executable-class remediation specifically: runtime/user configuration must not be able to turn an unreviewed command launcher, interpreter, dynamic loader, arbitrary custom binary, privilege/namespace tool, or similar executable class into a generic `shell:v1` allowed binary.
 
-Do not implement Pi, FreeToken, credentials, external-service effects, Phase 3, or unrelated productization. Do not broaden H004 beyond the Phase 2 bypass/conformance boundary and narrow remediation required by concrete failed tests.
+## 6. Required validation
 
-## 6. Binding requirements
+At minimum:
 
-Preserve all controller invariants, especially `INV-003`, `INV-004`, `INV-005`, `INV-006`, `INV-008`, `INV-010`, and `INV-014`.
+1. verify candidate Git identity, clean state, and the single handoff-only delta;
+2. inspect H001 qualification evidence and live selected-backend contract;
+3. inspect H002 filesystem containment and deletion semantics;
+4. inspect H003 exact executable/argv/cwd/environment binding;
+5. inspect the H004 remediation and every required actual-effect adversarial test;
+6. run `scripts/test-h004`;
+7. run `scripts/test-h003`;
+8. run `scripts/test-h002`;
+9. run `scripts/test-h001`;
+10. run the complete applicable Phase 1 regression gate;
+11. challenge material bypass claims with targeted deterministic tests where useful;
+12. verify no Phase 3 capability was introduced.
 
-The H001 `network=none` and cleared-environment contracts remain binding. H002 workspace containment and H003 exact executable/argv/cwd/environment binding remain binding.
+Separate evidence from conclusions. Predecessor PASS claims are not evidence by themselves.
 
-## 7. Required validation
+## 7. Finding discipline
 
-Before handoff:
+A finding is `BLOCKER` only when it demonstrates a concrete violation of a binding invariant, acceptance criterion, security boundary, package/data integrity, credential isolation, required functionality, reproducibility, or material bypass.
 
-1. run the complete H004 actual-effect adversarial suite;
-2. correct every concrete in-scope Phase 2 defect found;
-3. rerun affected tests and the complete H004 gate;
-4. run `scripts/test-h003`;
-5. run `scripts/test-h002`;
-6. run `scripts/test-h001`;
-7. run the complete applicable Phase 1 regression gate;
-8. verify no Phase 3 capability was introduced;
-9. prepare a Phase 2 candidate for exactly one fresh independent review.
+Everything else is `NONBLOCKING` and does not prevent progression.
 
-Do not hand known Phase 2 defects to the reviewer.
+Do not redesign the project during review.
 
-## 8. Owner-executable package
+## 8. Verdict and successor rule
 
-When local mutation is required, produce one meaningful H004 package following template v0.2.0. Its successful execution must leave Git/state/task/prompt mutually consistent for a fresh `PHASE_BOUNDARY_INDEPENDENT_REVIEW` of the Phase 2 candidate, not for Phase 3 implementation.
+Return exactly one formal verdict:
 
-The package must fail closed on unexpected Git/state/task input, preserve the terminal, emit explicit PASS/FAIL, and record durable owner execution evidence.
+`PASS`
 
-## 9. Stop rule
+or
 
-This fresh session owns only `LAC-H004`.
+`BLOCKED`
 
-When the H004 package is ready, stop at:
+If `PASS`, Phase 2 may advance to a fresh `LAC-A001` Phase 3 implementation session. Produce the complete populated successor `NEXT_SESSION_PROMPT.md` for `LAC-A001`, preserving the exact reviewed Phase 2 commit identity. Do not implement A001 in this review conversation.
 
-`OWNER_EXECUTION_REQUIRED`
+If `BLOCKED`, assign blocker IDs and produce a complete fresh remediation-segment prompt limited to those blockers. The remediator must rerun affected tests plus the full Phase 2 gate and return a corrected candidate to one fresh re-review.
 
-Do not perform the independent review in the implementation conversation. After successful owner execution, a fresh independent-review session owns the Phase 2 candidate.
-
-## 10. Required stop status
+## 9. Required stop status
 
 Before stopping, report:
 
 * `WHERE_WE_ARE`
-* `SESSION_SEGMENT=LAC-H004`
-* `PREDECESSOR_GIT_COMMIT=c5879721a299c0cef21c0e6aee4349947a919ee4`
-* `H001_SELECTED_BACKEND=bubblewrap`
-* `H002_ADAPTER=filesystem:v1`
-* `H003_ADAPTER=shell:v1`
+* `SESSION_SEGMENT=LAC-P2-REVIEW`
+* `REVIEWED_PHASE2_GIT_COMMIT`
 * `WHAT_WAS_VERIFIED`
-* `WHAT_WAS_COMPLETED`
+* `FORMAL_VERDICT`
+* `BLOCKERS`
+* `NONBLOCKING_FINDINGS`
 * `WHAT_REMAINS_IN_CURRENT_PHASE`
 * `TOTAL_PROJECT_POSITION`
-* `BLOCKERS`
 * `STOP_GATE`
 * `EXACT_NEXT_SAFE_ACTION`
 
