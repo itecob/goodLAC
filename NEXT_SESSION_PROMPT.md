@@ -1,22 +1,24 @@
-# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 1 FRESH INDEPENDENT RE-REVIEW
+# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 2 LAC-H002 FILESYSTEM ADAPTER
 
 ## 1. Purpose and authorized role
 
-You are the **Fresh Independent Reviewer** for the corrected Phase 1 candidate of the user-owned **Local Agent Controller (LAC)**.
+You are the **Lead Implementation Engineer** for the user-owned **Local Agent Controller (LAC)**.
 
 Use the connected read-only Tunnel/Web-File-Tool. Project root label:
 
 `Local Agent Controller`
 
-This session owns exactly one segment:
+This session owns exactly one implementation segment:
 
-`SESSION_SEGMENT=LAC-P1-REVIEW`
-
-Act only as the Fresh Independent Reviewer. Do not remediate findings, modify the repository, build packages, or begin Phase 2 implementation in this conversation.
+`SESSION_SEGMENT=LAC-H002`
 
 The controlling rule remains:
 
 > AI proposes. Deterministic software determines authorization and effects.
+
+H001 has established the Phase 2 Linux sandbox foundation. Do not repeat H001 as a new architecture exercise merely because the predecessor package advanced durable state.
+
+Do not begin `LAC-H003`, `LAC-H004`, or later work in this conversation.
 
 ## 2. Mandatory first reads
 
@@ -32,116 +34,155 @@ Then read:
 
 `docs/TECHNICAL_DESIGN_AND_IMPLEMENTATION_SPECIFICATION_v0.1.md`
 
-and only the implementation/tests/evidence needed to independently review the corrected Phase 1 boundary.
+Read only the additional H001 evidence/ADR, filesystem implementation, tests, and Phase 1 authority material needed for `LAC-H002`.
 
 Do not reconstruct project state from conversation memory.
 
 ## 3. Handoff facts
 
-Preserve and independently verify these facts:
+Preserve and boundedly verify:
 
 * `PREDECESSOR_ROLE=Lead Implementation Engineer`
-* `PREDECESSOR_RESULT=LAC-P1-REMEDIATION-B001-B002 PASS`
-* `PREDECESSOR_GIT_COMMIT=ba21d50c26540147c458a8e3f402e15e71efe9c7`
-* `HANDOFF_BASE_GIT_COMMIT=ba21d50c26540147c458a8e3f402e15e71efe9c7`
-* `REVIEWED_GIT_COMMIT=NONE`
+* `PREDECESSOR_RESULT=LAC-H001 PASS`
+* `PREDECESSOR_GIT_COMMIT=a2808cf7ba149dfbf22c1b8089c2f9d2ff3955ee`
+* `HANDOFF_BASE_GIT_COMMIT=a2808cf7ba149dfbf22c1b8089c2f9d2ff3955ee`
+* `REVIEWED_GIT_COMMIT=ba21d50c26540147c458a8e3f402e15e71efe9c7`
+* `REVIEW_PRESERVED_ACROSS_NONMATERIAL_DELTA=true`
 * `BLOCKER_IDS=NONE`
-* `PRIOR_BLOCKER_IDS=LAC-P1-B001,LAC-P1-B002`
-* `OWNER_EXECUTION_EVIDENCE=${HOME}/Downloads/LAC_P1_REMEDIATION_B001_B002_v0.1.0_20260912_210344.log`
-* `EXPECTED_NEXT_TASK=LAC-P1-REVIEW`
-* `SESSION_SEGMENT=LAC-P1-REVIEW`
-* `REVIEW_CANDIDATE_GIT_COMMIT=ba21d50c26540147c458a8e3f402e15e71efe9c7`
-* `REMEDIATION_BASE_GIT_COMMIT=78105145197db7149026d07d210d02c2fb6668bf`
-* `ORIGINAL_REVIEWED_GIT_COMMIT=0475cb95937875515f14cf645903597362cc421e`
+* `OWNER_EXECUTION_EVIDENCE=${HOME}/Downloads/LAC_P2_H001_SANDBOX_BACKEND_v0.1.1_20260913_034902.log`
+* `EXPECTED_NEXT_TASK=LAC-H002`
+* `SESSION_SEGMENT=LAC-H002`
+* `H001_SELECTED_BACKEND=bubblewrap`
+* `H001_QUALIFICATION_EVIDENCE=qualification/evidence/h001_sandbox.json`
 * `LIVE_HANDOFF_GIT_COMMIT=READ_PROJECT_GIT_COMMIT_FROM_OWNER_EXECUTION_EVIDENCE_AND_REQUIRE_IT_TO_EQUAL_HEAD`
 
-The package records the exact live handoff commit as `PROJECT_GIT_COMMIT=` in `OWNER_EXECUTION_EVIDENCE`. Read that evidence directly from the authorized Downloads root and require the recorded value to equal live `HEAD`.
-
-Exactly one handoff-only commit is expected after `REVIEW_CANDIDATE_GIT_COMMIT`. Verify the complete `REVIEW_CANDIDATE_GIT_COMMIT..HEAD` delta; the only permitted path is:
+Exactly one handoff-only commit is expected after `PREDECESSOR_GIT_COMMIT`. Verify the complete `PREDECESSOR_GIT_COMMIT..HEAD` delta; the only permitted path is:
 
 `NEXT_SESSION_PROMPT.md`
 
-Any other post-candidate material is a discrepancy to classify under template v0.2.0.
+Any implementation, tests, architecture, qualification, policy, contracts, threat-model, dependency, license, acceptance-criteria, or other H001 substance change after the H001 implementation commit is a discrepancy to classify under template v0.2.0 before proceeding.
 
-Historical Phase 0 review is consumed and must not be reopened.
+Do not reopen Phase 0 or repeat the Phase 1 formal independent review when this handoff verifies correctly.
 
-## 4. Prior blockers that must be explicitly re-tested
+## 4. Session mode
 
-### `LAC-P1-B001` — stale/expired execution authority
+Use:
 
-Independently prove that before **every new adapter invocation**, including LEASED recovery, the controller uses fresh trusted time and fails closed if either the canonical request or execution lease has expired.
+`MODE A — IMPLEMENTATION_SEGMENT`
 
-Challenge at minimum:
+Role:
 
-* expiry after the original LEASED transition but before invocation;
-* adapter invocation count remains zero when authority expires pre-invocation;
-* no false success receipt is created;
-* durable execution state remains distinguishable/recoverable rather than becoming a fabricated PREPARED success;
-* retry does not revive expired authority;
-* normal non-expired dispatch still succeeds;
-* LEASED recovery is subject to the same fresh final gate;
-* an actually ambiguous PREPARED crash state still reconciles without a second invocation;
-* terminal receipt/audit timing uses fresh trusted completion time rather than the initial dispatch timestamp where delay occurred.
+`Lead Implementation Engineer`
 
-### `LAC-P1-B002` — agent identity/revocation
+Perform bounded predecessor verification and then implement `LAC-H002` completely in this session.
 
-Independently prove that controller-owned agent identity state is authoritative and durable, and that:
+## 5. Active segment — LAC-H002
 
-* an active known agent can proceed only through normal policy/approval/lease authority;
-* a revoked agent cannot invoke the simulated consequential adapter;
-* revocation survives controller restart;
-* revocation that occurs after initial authority is committed but before invocation still blocks invocation;
-* unknown-agent behavior still fails closed through the established policy path;
-* principal/agent binding cannot be silently rebound or revived;
-* identity state creates no alternate authorization route and does not weaken deny precedence or exact approval binding.
+### Objective
 
-## 5. Full Phase 1 regression challenge
+Implement the typed filesystem effect adapter for a bounded working root using the accepted Phase 1 authority core and the H001-qualified `SandboxBackend`.
 
-Do not limit the review to the two repaired tests. Challenge the entire corrected Phase 1 candidate sufficiently to ensure remediation did not regress previously passing requirements, including:
+The filesystem boundary must enforce actual host effect containment, not merely return policy DENY.
 
-* canonical request integrity and durable SQLite state;
-* deterministic policy evaluation and `DENY > REQUIRE_APPROVAL > ALLOW`;
-* exact one-time approval binding, expiry, and mutation invalidation;
-* immediate pre-dispatch policy re-evaluation;
-* execution lease ownership and duplicate prevention;
-* deterministic simulated adapter path;
-* durable emergency pause before consequential invocation;
-* durable execution states, success/failure receipts, append-oriented audit, restart/crash-window semantics, and reconciliation;
-* audit/receipts never becoming authority;
-* applicable INV-001 through INV-014;
-* permanent Phase 1 acceptance requirements, including `revoked agent cannot act`;
-* absence of Phase 2 host effects or other future-phase capability introduced by remediation.
+### Scope
 
-Treat the implementer's `BLOCKER_IDS=NONE` as a claim, not evidence.
+Implement only what belongs to `LAC-H002`:
 
-## 6. Required procedure and result
+* typed filesystem effect operations required for the first governed local workspace;
+* canonical path resolution under an explicitly configured working root;
+* deterministic read/write behavior required by the controlling specification;
+* symlink and traversal resistance;
+* bounded use of the selected sandbox backend where needed to make out-of-root access unavailable;
+* adapter integration behind the existing Phase 1 dispatcher/lease/receipt authority path;
+* H002-specific unit/integration/adversarial tests;
+* fail-closed behavior for malformed/unsupported paths and operations;
+* concise contract documentation only when required.
 
-Follow `docs/NEXT_SESSION_PROMPT_TEMPLATE.md` v0.2.0 MODE B.
+Do not implement:
 
-1. Verify candidate Git identity, clean state, and handoff-only delta.
-2. Read and verify the exact owner remediation execution evidence.
-3. Verify blocker-specific deterministic tests and the complete Phase 1 regression gate.
-4. Inspect implementation sufficiently to challenge the tests rather than trusting test names.
-5. Separate evidence from conclusions.
-6. Return exactly one formal review result: `PASS` or `BLOCKED`.
-7. Do not remediate in this review.
+* `LAC-H003` shell adapter;
+* complete `LAC-H004` bypass suite;
+* Pi or FreeToken integration;
+* credentials/secret-provider implementation;
+* Gmail, Calendar, Slack, Git, deployment, package/service or other external effects;
+* production credentials;
+* unrelated productization.
 
-If `PASS`, only then may the successor be one fresh Phase 2 implementation session for `LAC-H001`. Do not implement H001 in this review.
+## 6. Binding requirements relevant to H002
 
-If `BLOCKED`, provide one complete fresh remediation-segment prompt limited to concrete blocker IDs. Do not broaden remediation scope.
+Preserve all applicable controller invariants, especially:
 
-## 7. Required stop status
+* `INV-003` — governed mode has no alternate consequential-effect bypass;
+* `INV-005` — approval binds the exact security-relevant filesystem operation;
+* `INV-006` — policy is re-evaluated before dispatch;
+* `INV-008` — duplicate filesystem effects do not duplicate consequential mutations;
+* `INV-010` — unknown or unsupported authority/path state fails closed;
+* `INV-014` — deterministic work stays deterministic.
+
+Use `qualification/evidence/h001_sandbox.json` and `decisions/ADR-004_SANDBOX_BACKEND.md` as the accepted H001 backend disposition. Do not silently widen sandbox network/environment authority for filesystem convenience.
+
+## 7. Required validation
+
+Before handoff:
+
+1. run H002-specific deterministic tests;
+2. challenge traversal, symlink escape, arbitrary host-path read/write, and denied deletion as actual effect tests;
+3. run `scripts/test-h001` to preserve the qualified sandbox contract;
+4. run the complete applicable Phase 1 regression gate;
+5. correct all in-scope failures;
+6. rerun affected tests and the complete applicable gate;
+7. verify no H003/H004 or later capability was introduced.
+
+Do not hand known H002 defects to the successor.
+
+## 8. Owner-executable package
+
+When local mutation is required, produce one meaningful owner-executable H002 package following template v0.2.0.
+
+It must contain, as applicable:
+
+* `manifest.json`
+* `SHA256SUMS`
+* `install.sh`
+* `verify.sh`
+* `rollback.sh`
+* `payload/`
+* staged successor `NEXT_SESSION_PROMPT.md`
+
+Provide exactly one self-contained Bash command implementing:
+
+`package hash verification -> preflight -> backup -> H002 install -> deterministic verification -> H001 preservation gate -> Phase 1 regression -> durable-state advance -> successor-prompt install -> final result`
+
+The package must fail closed on unexpected Git/state/task input, preserve the terminal, emit explicit PASS/FAIL, and record durable owner execution evidence.
+
+## 9. Stop rule
+
+This fresh session owns only `LAC-H002`.
+
+When the H002 package is ready, stop at:
+
+`OWNER_EXECUTION_REQUIRED`
+
+Do not execute `LAC-H003` in this conversation.
+
+If owner execution later succeeds, the fresh successor session owns H003. If execution fails, H002 remains incomplete and must be remediated before progression.
+
+## 10. Required stop status
 
 Before stopping, report:
 
 * `WHERE_WE_ARE`
-* `SESSION_SEGMENT=LAC-P1-REVIEW`
-* `REVIEW_CANDIDATE_GIT_COMMIT=ba21d50c26540147c458a8e3f402e15e71efe9c7`
+* `SESSION_SEGMENT=LAC-H002`
+* `PREDECESSOR_GIT_COMMIT=a2808cf7ba149dfbf22c1b8089c2f9d2ff3955ee`
+* `H001_SELECTED_BACKEND=bubblewrap`
 * `WHAT_WAS_VERIFIED`
-* `FORMAL_REVIEW_RESULT=PASS|BLOCKED`
-* `BLOCKERS`
-* `NONBLOCKING_FINDINGS`
+* `WHAT_WAS_COMPLETED`
 * `WHAT_REMAINS_IN_CURRENT_PHASE`
 * `TOTAL_PROJECT_POSITION`
-* `STOP_GATE=PHASE_BOUNDARY_REVIEW_REQUIRED` until the judgment is issued
+* `BLOCKERS`
+* `STOP_GATE`
 * `EXACT_NEXT_SAFE_ACTION`
+
+Keep evidence separate from conclusions.
+
+Do not broaden the project.
