@@ -5,6 +5,34 @@
 
 This template is subordinate to the controlling Local Agent Controller Technical Design and Implementation Specification v0.1. `PROJECT_STATE.json`, Git, `UPSTREAM_LOCK.json`, and `tasks/ACTIVE_TASK.md` are durable truth. Conversation memory and predecessor conclusions never override durable evidence.
 
+
+## Secure-SDLC framing for security-sensitive work
+
+LAC is security-sensitive software, but ordinary implementation and review sessions are defensive Secure-SDLC work on software owned and operated by the project owner.
+
+Security validation in normal sessions is limited to source inspection and deterministic tests using the LAC repository, temporary local workspaces, synthetic files/canary values, local test databases, isolated local sandbox instances, and other non-production fixtures.
+
+Do not use real credentials, production accounts, third-party systems, external targets, unauthorized scanning, persistence, credential acquisition, or generalized procedures for circumventing security controls.
+
+Express security work as verification of documented invariants and negative security conformance. Prefer formulations such as:
+
+- verify filesystem/path containment;
+- verify symlink containment;
+- verify host-only sensitive fixtures remain inaccessible;
+- verify executable allowlist enforcement;
+- verify command-launcher and interpreter/runtime exclusion;
+- verify network isolation;
+- verify environment sanitization;
+- verify child-process lifecycle containment;
+- verify denied mutations do not occur;
+- verify authorized bounded effects remain functional.
+
+For operating-system containment properties, a policy result such as `DENY` is not sufficient evidence by itself. The deterministic test must establish that the prohibited effect did not occur.
+
+When existing evidence is insufficient, create or recommend the smallest synthetic deterministic test needed to establish the binding invariant. Do not develop generalized circumvention procedures or reusable techniques for defeating security controls.
+
+Historical task/test identifiers may retain older terminology for continuity. Their interpretation in ordinary LAC sessions is the defensive conformance meaning defined here; this process clarification does not weaken or broaden any binding invariant or acceptance criterion.
+
 ---
 
 # NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / [RESOLVED SESSION OBJECTIVE]
@@ -87,7 +115,7 @@ This is not a formal phase review.
 
 Classify discrepancies only as:
 
-- `BLOCKER` — concrete violation of a binding invariant, acceptance criterion, security boundary, package/data integrity, credential isolation, licensing requirement, reproducibility, or material bypass;
+- `BLOCKER` — concrete violation of a binding invariant, acceptance criterion, security boundary, package/data integrity, credential isolation, licensing requirement, reproducibility, or material control-boundary failure;
 - `NONBLOCKING` — real but non-gating cleanup/improvement.
 
 ### A2. Implement the active segment completely
@@ -160,7 +188,7 @@ Conserve context deliberately:
 
 ## 7. MODE B — one real independent phase review
 
-The Fresh Independent Reviewer must verify candidate Git identity/clean state, read binding phase acceptance criteria/invariants, inspect implementation and deterministic evidence, challenge material claims, and return exactly `PASS` or `BLOCKED`.
+The Fresh Independent Reviewer must verify candidate Git identity/clean state, read binding phase acceptance criteria/invariants, inspect implementation and deterministic evidence, validate material claims with bounded deterministic conformance tests, and return exactly `PASS` or `BLOCKED`.
 
 The reviewer does not remediate and does not implement future work.
 
