@@ -23,6 +23,7 @@ from packages.effects.simulated import (
 )
 from packages.policy import LocalPolicyDecisionProvider, PolicyRule
 from packages.state import (
+    AgentIdentityRepository,
     ApprovalRepository,
     EffectRequestRepository,
     EmergencyPauseRepository,
@@ -135,6 +136,7 @@ class SimulatedAdapterTests(unittest.TestCase):
         self.db = Path(self.tmp.name) / "controller.db"
         self.store = SQLiteStateStore(self.db)
         EmergencyPauseRepository(self.store).resume()
+        AgentIdentityRepository(self.store).register_active("agent:test", "principal:owner")
         self.request = make_request()
         EffectRequestRepository(self.store).put(self.request)
 

@@ -1,14 +1,14 @@
 """Deterministic governed-effect dispatcher boundary."""
 
 from .dispatcher import (
-    DispatchAdapterError, DispatchApprovalRequired, DispatchAuthorityError,
+    DispatchAdapterError, DispatchAgentRevoked, DispatchApprovalRequired, DispatchAuthorityError,
     DispatchDenied, DispatchDuplicateEffect, DispatchError, DispatchPaused,
     DispatchReconciliationRequired, DispatchRequestExpired, Dispatcher, EffectAdapter,
     ReconciliationEffectAdapter,
 )
 
 __all__ = [
-    "DispatchAdapterError", "DispatchApprovalRequired", "DispatchAuthorityError",
+    "DispatchAdapterError", "DispatchAgentRevoked", "DispatchApprovalRequired", "DispatchAuthorityError",
     "DispatchDenied", "DispatchDuplicateEffect", "DispatchError", "DispatchPaused",
     "DispatchReconciliationRequired", "DispatchRequestExpired", "Dispatcher",
     "EffectAdapter", "ReconciliationEffectAdapter",

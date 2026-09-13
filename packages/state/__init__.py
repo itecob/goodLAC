@@ -2,6 +2,10 @@
 
 from .approval_bindings import ApprovalBindingValidator, ApprovalValidationError
 from .approvals import ApprovalBindingError, ApprovalIdentityConflict, ApprovalRepository
+from .agent_identities import (
+    AGENT_IDENTITY_SCHEMA, AGENT_IDENTITY_KEY_PREFIX, AgentIdentity,
+    AgentIdentityConflict, AgentIdentityRepository, AgentIdentityStateError, AgentStatus,
+)
 from .audit import AUDIT_EVENT_SCHEMA, AuditEvent, AuditRepository, AuditStateError
 from .effect_receipts import (
     EffectExecutionTransitionError,
@@ -31,7 +35,10 @@ from .store import (
 
 __all__ = [
     "ApprovalBindingValidator", "ApprovalValidationError", "ApprovalBindingError",
-    "ApprovalIdentityConflict", "ApprovalRepository", "AUDIT_EVENT_SCHEMA", "AuditEvent",
+    "ApprovalIdentityConflict", "ApprovalRepository", "AGENT_IDENTITY_SCHEMA",
+    "AGENT_IDENTITY_KEY_PREFIX", "AgentIdentity", "AgentIdentityConflict",
+    "AgentIdentityRepository", "AgentIdentityStateError", "AgentStatus",
+    "AUDIT_EVENT_SCHEMA", "AuditEvent",
     "AuditRepository", "AuditStateError", "EffectExecutionTransitionError",
     "EffectIdempotencyConflict", "EffectReceiptRepository", "EffectReceiptStateError",
     "effect_input_hash", "lease_hash", "EMERGENCY_PAUSE_SCHEMA",

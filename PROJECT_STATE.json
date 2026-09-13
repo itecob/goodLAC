@@ -9,5 +9,5 @@
   "nonblocking_findings": [
     "Waggle remains concepts-only/no-code-reuse while authoritative reuse licensing is unresolved or requires deliberate requalification."
   ],
-  "next_action": "Run one fresh independent read-only Phase 1 boundary review of the completed C001-C010 walking-skeleton candidate. Do not begin Phase 2 until that review passes."
+  "next_action": "Run one fresh independent read-only Phase 1 re-review of the corrected candidate, explicitly re-testing LAC-P1-B001 and LAC-P1-B002 and challenging the complete Phase 1 boundary for regressions. Do not begin Phase 2 until that re-review passes."
 }

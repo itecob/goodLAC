@@ -19,6 +19,8 @@ from packages.core import (
 )
 from packages.policy import PolicyDecisionProvider
 from packages.state import (
+    AgentIdentityRepository,
+    AgentStatus,
     ApprovalBindingValidator,
     ApprovalRepository,
     AuditRepository,
@@ -41,6 +43,10 @@ class DispatchError(RuntimeError):
 
 class DispatchDenied(DispatchError):
     """Current policy denies the request."""
+
+
+class DispatchAgentRevoked(DispatchDenied):
+    """The durable controller-owned agent identity is revoked."""
 
 
 class DispatchApprovalRequired(DispatchError):
@@ -222,6 +228,24 @@ class Dispatcher:
             raise DispatchAuthorityError("trusted dispatch clock failed closed") from exc
         return _normalize_datetime(observed, "trusted dispatch clock")
 
+    def _require_active_agent(self, request: EffectRequest) -> None:
+        try:
+            identity = AgentIdentityRepository(self._store).get(request.agent_id)
+        except StateStoreError as exc:
+            raise DispatchAuthorityError("durable agent identity failed closed") from exc
+        if identity is None:
+            raise DispatchAuthorityError(
+                "policy-authorized agent has no durable controller identity"
+            )
+        if identity.principal_id != request.principal_id:
+            raise DispatchAuthorityError(
+                "durable agent identity binds a different principal"
+            )
+        if identity.status is AgentStatus.REVOKED:
+            raise DispatchAgentRevoked("durable agent identity is revoked")
+        if identity.status is not AgentStatus.ACTIVE:
+            raise DispatchAuthorityError("unknown durable agent status fails closed")
+
     def _evaluate_current_policy(
         self,
         request: EffectRequest,
@@ -280,7 +304,6 @@ class Dispatcher:
         *,
         adapter: EffectAdapter,
         execution: EffectExecution,
-        completed_at: str,
     ) -> Any:
         if not isinstance(adapter, ReconciliationEffectAdapter):
             raise DispatchReconciliationRequired(
@@ -293,12 +316,13 @@ class Dispatcher:
             reconciled = adapter.reconcile(request, lease=lease)
         except Exception as exc:
             try:
+                failed_at, _ = self._now()
                 with self._store.transaction() as conn:
                     AuditRepository(self._store)._append_in_transaction(
                         conn,
                         request_id=request.request_id,
                         event_type="EFFECT_RECONCILIATION_FAILED",
-                        occurred_at=completed_at,
+                        occurred_at=failed_at,
                         details={"adapter_id": execution.adapter_id, "state": execution.state.value},
                     )
             except Exception:
@@ -307,6 +331,7 @@ class Dispatcher:
         if reconciled is None:
             raise DispatchReconciliationRequired("adapter could not determine PREPARED effect outcome")
         upstream_reference = _upstream_reference(reconciled)
+        completed_at, _ = self._now()
         try:
             with self._store.transaction() as conn:
                 current = EffectReceiptRepository(self._store).get_execution(request.request_id)
@@ -360,6 +385,8 @@ class Dispatcher:
                     request, decision_id=decision_id, evaluated_at=normalized_at
                 )
                 PolicyDecisionRepository(self._store)._put_in_transaction(conn, decision)
+                if decision.decision is not PolicyDecisionValue.DENY:
+                    self._require_active_agent(request)
                 if decision.decision is PolicyDecisionValue.DENY:
                     failure = DispatchDenied("current pre-dispatch policy decision is DENY")
                 elif now_dt >= request_expires_dt:
@@ -412,10 +439,11 @@ class Dispatcher:
         adapter: EffectAdapter,
         execution: EffectExecution,
         revision_at_evaluation: str,
-        completed_at: str,
     ) -> Any:
         adapter_result: Any = None
         adapter_error: Exception | None = None
+        preinvoke_failure: DispatchError | None = None
+        request_expires_dt = _parse_canonical_timestamp(request.expires_at, "request expires_at")
         try:
             with self._store.transaction() as conn:
                 if self._current_revision() != revision_at_evaluation:
@@ -429,52 +457,96 @@ class Dispatcher:
                 lease = ExecutionLeaseRepository(self._store).get(current.lease_id)
                 if lease is None:
                     raise DispatchAuthorityError("prepared execution lost durable lease")
+
                 try:
-                    adapter_result = adapter.invoke(request, lease=lease)
-                except Exception as exc:
-                    adapter_error = exc
-                    failure_result = {"error_code": "ADAPTER_INVOCATION_FAILED"}
-                    terminal, _receipt = EffectReceiptRepository(self._store)._complete_in_transaction(
-                        conn,
-                        current,
-                        outcome=EffectOutcome.FAILED,
-                        result=failure_result,
-                        completed_at=completed_at,
+                    self._require_active_agent(request)
+                except DispatchError as exc:
+                    preinvoke_failure = exc
+
+                # Fresh trusted time at the last deterministic controller gate before
+                # a new adapter invocation begins closes the suspension/scheduling gap.
+                invocation_at, invocation_dt = self._now()
+                if preinvoke_failure is None and invocation_dt >= request_expires_dt:
+                    preinvoke_failure = DispatchRequestExpired(
+                        "canonical request expired before adapter invocation"
                     )
+                if preinvoke_failure is None and lease.is_expired(invocation_at):
+                    preinvoke_failure = DispatchReconciliationRequired(
+                        "execution lease expired before adapter invocation; new invocation is forbidden"
+                    )
+
+                if preinvoke_failure is not None:
+                    # PREPARED is generally ambiguous. Here invoke() provably has not
+                    # begun, so restoring LEASED prevents a retry from reconciling a
+                    # false simulated success while keeping the state recoverable.
+                    restored = EffectReceiptRepository(
+                        self._store
+                    )._restore_leased_before_invocation_in_transaction(conn, current)
                     AuditRepository(self._store)._append_in_transaction(
                         conn,
                         request_id=request.request_id,
-                        event_type="EFFECT_FAILED",
-                        occurred_at=completed_at,
+                        event_type="EFFECT_PREINVOCATION_BLOCKED",
+                        occurred_at=invocation_at,
                         details={
-                            "adapter_id": terminal.adapter_id,
-                            "receipt_id": terminal.receipt_id,
-                            "error_code": "ADAPTER_INVOCATION_FAILED",
+                            "adapter_id": restored.adapter_id,
+                            "lease_id": restored.lease_id,
+                            "restored_state": restored.state.value,
+                            "reason": type(preinvoke_failure).__name__,
                         },
                     )
                 else:
-                    upstream_reference = _upstream_reference(adapter_result)
-                    terminal, _receipt = EffectReceiptRepository(self._store)._complete_in_transaction(
-                        conn,
-                        current,
-                        outcome=EffectOutcome.SUCCEEDED,
-                        result=adapter_result,
-                        completed_at=completed_at,
-                        upstream_reference=upstream_reference,
-                    )
-                    AuditRepository(self._store)._append_in_transaction(
-                        conn,
-                        request_id=request.request_id,
-                        event_type="EFFECT_SUCCEEDED",
-                        occurred_at=completed_at,
-                        details={
-                            "adapter_id": terminal.adapter_id,
-                            "receipt_id": terminal.receipt_id,
-                            "result_hash": EffectReceiptRepository(self._store)
-                            .get_receipt(terminal.receipt_id)
-                            .result_hash,
-                        },
-                    )
+                    try:
+                        adapter_result = adapter.invoke(request, lease=lease)
+                    except Exception as exc:
+                        adapter_error = exc
+                        failure_result = {"error_code": "ADAPTER_INVOCATION_FAILED"}
+                        completed_at, _ = self._now()
+                        terminal, _receipt = EffectReceiptRepository(
+                            self._store
+                        )._complete_in_transaction(
+                            conn,
+                            current,
+                            outcome=EffectOutcome.FAILED,
+                            result=failure_result,
+                            completed_at=completed_at,
+                        )
+                        AuditRepository(self._store)._append_in_transaction(
+                            conn,
+                            request_id=request.request_id,
+                            event_type="EFFECT_FAILED",
+                            occurred_at=completed_at,
+                            details={
+                                "adapter_id": terminal.adapter_id,
+                                "receipt_id": terminal.receipt_id,
+                                "error_code": "ADAPTER_INVOCATION_FAILED",
+                            },
+                        )
+                    else:
+                        completed_at, _ = self._now()
+                        upstream_reference = _upstream_reference(adapter_result)
+                        terminal, _receipt = EffectReceiptRepository(
+                            self._store
+                        )._complete_in_transaction(
+                            conn,
+                            current,
+                            outcome=EffectOutcome.SUCCEEDED,
+                            result=adapter_result,
+                            completed_at=completed_at,
+                            upstream_reference=upstream_reference,
+                        )
+                        AuditRepository(self._store)._append_in_transaction(
+                            conn,
+                            request_id=request.request_id,
+                            event_type="EFFECT_SUCCEEDED",
+                            occurred_at=completed_at,
+                            details={
+                                "adapter_id": terminal.adapter_id,
+                                "receipt_id": terminal.receipt_id,
+                                "result_hash": EffectReceiptRepository(self._store)
+                                .get_receipt(terminal.receipt_id)
+                                .result_hash,
+                            },
+                        )
         except DispatchError:
             raise
         except StateStoreError as exc:
@@ -482,6 +554,8 @@ class Dispatcher:
         except Exception as exc:
             raise DispatchAuthorityError("effect invocation gate failed closed") from exc
 
+        if preinvoke_failure is not None:
+            raise preinvoke_failure
         if adapter_error is not None:
             raise DispatchAdapterError(
                 "adapter invocation failed after the durable dispatch transition"
@@ -538,7 +612,6 @@ class Dispatcher:
                     current_request,
                     adapter=adapter,
                     execution=existing,
-                    completed_at=normalized_at,
                 )
             if existing.state is EffectExecutionState.LEASED:
                 prepared, revision = self._prepare_recovery_from_leased(
@@ -555,7 +628,6 @@ class Dispatcher:
                     adapter=adapter,
                     execution=prepared,
                     revision_at_evaluation=revision,
-                    completed_at=normalized_at,
                 )
             raise DispatchAuthorityError("unknown durable effect execution state fails closed")
 
@@ -583,6 +655,8 @@ class Dispatcher:
                     evaluated_at=normalized_at,
                 )
                 PolicyDecisionRepository(self._store)._put_in_transaction(conn, decision)
+                if decision.decision is not PolicyDecisionValue.DENY:
+                    self._require_active_agent(current_request)
 
                 if decision.decision is PolicyDecisionValue.DENY:
                     failure = DispatchDenied("current pre-dispatch policy decision is DENY")
@@ -732,5 +806,4 @@ class Dispatcher:
             adapter=adapter,
             execution=prepared,
             revision_at_evaluation=revision_at_evaluation,
-            completed_at=normalized_at,
         )

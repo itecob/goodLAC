@@ -322,6 +322,46 @@ class EffectReceiptRepository:
             raise EffectExecutionTransitionError("durable PREPARED execution does not match transition")
         return prepared
 
+    def _restore_leased_before_invocation_in_transaction(
+        self, conn: sqlite3.Connection, execution: EffectExecution
+    ) -> EffectExecution:
+        """Clear PREPARED only when Dispatcher proves invoke() has not begun."""
+        if conn is not self._store._conn or not conn.in_transaction:
+            raise EffectExecutionTransitionError(
+                "execution transition requires the active StateStore transaction"
+            )
+        current = self.get_execution(execution.request_id)
+        if current != execution or current.state is not EffectExecutionState.PREPARED:
+            raise EffectExecutionTransitionError(
+                "only the current PREPARED execution can be restored before invocation"
+            )
+        restored = EffectExecution.create(
+            **{
+                **current.to_record(),
+                "state": EffectExecutionState.LEASED,
+                "prepared_at": None,
+            }
+        )
+        cursor = conn.execute(
+            """
+            UPDATE effect_executions
+            SET state = 'LEASED', prepared_at = NULL
+            WHERE request_id = ? AND state = 'PREPARED'
+                  AND completed_at IS NULL AND receipt_id IS NULL
+            """,
+            (restored.request_id,),
+        )
+        if cursor.rowcount != 1:
+            raise EffectExecutionTransitionError(
+                "PREPARED execution was not atomically restored before invocation"
+            )
+        loaded = self.get_execution(restored.request_id)
+        if loaded != restored:
+            raise EffectExecutionTransitionError(
+                "durable LEASED restoration does not match transition"
+            )
+        return restored
+
     def _complete_in_transaction(
         self,
         conn: sqlite3.Connection,
