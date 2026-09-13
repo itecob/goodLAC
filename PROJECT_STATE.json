@@ -3,11 +3,11 @@
   "project_version": "0.1.0-dev",
   "phase": "PHASE_2_LOCAL_HOST_ENFORCEMENT",
   "phase_status": "IN_PROGRESS",
-  "active_task": "LAC-H003",
+  "active_task": "LAC-H004",
   "last_accepted_release": null,
   "blockers": [],
   "nonblocking_findings": [
     "Waggle remains concepts-only/no-code-reuse while authoritative reuse licensing is unresolved or requires deliberate requalification."
   ],
-  "next_action": "Implement LAC-H003 shell adapter using the qualified H001 SandboxBackend and the bounded H002 workspace contract. Do not begin LAC-H004 in the same session."
+  "next_action": "Complete the LAC-H004 Phase 2 bypass/adversarial suite against the qualified H001 sandbox, H002 filesystem adapter, and H003 shell adapter, then prepare the Phase 2 candidate for fresh independent review. Do not begin Phase 3 in the same session."
 }
