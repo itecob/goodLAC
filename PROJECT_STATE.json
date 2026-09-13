@@ -1,13 +1,13 @@
 {
   "schema": "lac.project-state/v1",
   "project_version": "0.1.0-dev",
-  "phase": "PHASE_1_CONTROLLER_WALKING_SKELETON",
-  "phase_status": "CANDIDATE_REVIEW_REQUIRED",
-  "active_task": "LAC-P1-REVIEW",
+  "phase": "PHASE_2_LOCAL_HOST_ENFORCEMENT",
+  "phase_status": "IN_PROGRESS",
+  "active_task": "LAC-H002",
   "last_accepted_release": null,
   "blockers": [],
   "nonblocking_findings": [
     "Waggle remains concepts-only/no-code-reuse while authoritative reuse licensing is unresolved or requires deliberate requalification."
   ],
-  "next_action": "Run one fresh independent read-only Phase 1 re-review of the corrected candidate, explicitly re-testing LAC-P1-B001 and LAC-P1-B002 and challenging the complete Phase 1 boundary for regressions. Do not begin Phase 2 until that re-review passes."
+  "next_action": "Implement LAC-H002 filesystem adapter using the qualified H001 SandboxBackend. Do not begin LAC-H003 in the same session."
 }
