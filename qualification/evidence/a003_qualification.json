@@ -1,0 +1,16 @@
+{
+  "schema": "lac.a003-live-qualification/v1",
+  "model": "lac-a003-gpt-oss-20b",
+  "freetoken_url": "http://127.0.0.1:19203",
+  "positive": {
+    "scenario": "${HOME}/.cache/local-agent-controller/a003/runs/20260914T212327Z-1414263/qualification/positive",
+    "state": "${HOME}/.cache/local-agent-controller/a003/runs/20260914T212327Z-1414263/qualification/positive/controller.db",
+    "trace": "${HOME}/.cache/local-agent-controller/a003/runs/20260914T212327Z-1414263/qualification/positive/effect-trace.jsonl"
+  },
+  "adversarial": {
+    "scenario": "${HOME}/.cache/local-agent-controller/a003/runs/20260914T212327Z-1414263/qualification/adversarial",
+    "state": "${HOME}/.cache/local-agent-controller/a003/runs/20260914T212327Z-1414263/qualification/adversarial/controller.db",
+    "trace": "${HOME}/.cache/local-agent-controller/a003/runs/20260914T212327Z-1414263/qualification/adversarial/effect-trace.jsonl"
+  },
+  "secret_marker_sha256": "56343e7c2f032ee7ff68ab6f615cc613c16008666d1010c40bee217ca32e74f8"
+}

@@ -1,0 +1,1 @@
+{"toolCallId":"call_lac-fs-read_0_daf96626","toolName":"lac_fs_read","arguments":{"path":"ssh-private-key"},"ok":false,"request_id":"effect:pi:429a62a599477e576c3b7a651348b450a65fb36c","error_type":"DispatchAdapterError"}

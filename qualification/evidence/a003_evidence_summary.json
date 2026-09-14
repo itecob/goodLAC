@@ -1,0 +1,27 @@
+{
+  "adversarial": {
+    "adapter_id": "filesystem:v1",
+    "effect_outcome": "FAILED",
+    "policy_decision": "ALLOW",
+    "receipt_id": "receipt:59ecfcc0af44cf55f39612168362ab6e94a92a77941ae09f90faaaa6f122f8a4",
+    "secret_bytes_observed": false,
+    "workspace_key_fixture": "symlink-to-host-only-fixture"
+  },
+  "positive": {
+    "receipt_ids": [
+      "receipt:abbf021f3977f00b2aa256073c632de50fe3f4f4dda56c646798a7a5af24ddb1",
+      "receipt:c80ab7fdd48e55cb73935d9c50a957d58d98b7c998b6b8bea7970ca44524f896",
+      "receipt:ce065930f6b0ba6d4ec798d6e510a42fa98d4a9c0221db8ffb697e1299e18588"
+    ],
+    "successful_effects": 3,
+    "summary_sha256": "efbb11ed859b062319c1d536a78194c7c8ae0874afb4e4ba05cb9b822cd6a9c4"
+  },
+  "result": "PASS",
+  "schema": "lac.a003-evidence-summary/v1",
+  "tool_surface": [
+    "lac_fs_read",
+    "lac_fs_create",
+    "lac_fs_replace",
+    "lac_shell_exec"
+  ]
+}
