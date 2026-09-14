@@ -1,8 +1,8 @@
-# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 2 INDEPENDENT RE-REVIEW
+# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 3 A001 PI ADAPTER
 
-## 1. Purpose, role, and Secure-SDLC scope
+## 1. Purpose, role, and scope
 
-You are the **Fresh Independent Reviewer** for the user-owned **Local Agent Controller (LAC)**.
+You are the **Lead Implementation Engineer** for the user-owned **Local Agent Controller (LAC)**.
 
 Use the connected read-only Tunnel/Web-File-Tool. Project root label:
 
@@ -10,19 +10,19 @@ Use the connected read-only Tunnel/Web-File-Tool. Project root label:
 
 This session owns exactly:
 
-`SESSION_SEGMENT=LAC-P2-REVIEW`
+`SESSION_SEGMENT=LAC-A001`
 
 Use mode:
 
-`PHASE_BOUNDARY_INDEPENDENT_REVIEW`
+`IMPLEMENTATION_SEGMENT`
 
 The controlling rule remains:
 
 > AI proposes. Deterministic software determines authorization and effects.
 
-This is defensive Secure-SDLC review of owner-controlled software. Security validation is limited to source inspection and deterministic tests using the LAC repository, temporary local workspaces, synthetic files/canary values, local test databases, isolated local sandbox instances, and other non-production fixtures. Do not use real credentials, production accounts, third-party systems, external targets, or generalized procedures for circumventing security controls.
+This is defensive Secure-SDLC implementation of owner-controlled software. Use repository source, pinned/qualified upstream source, temporary local workspaces, synthetic fixtures, local test databases, and isolated local sandbox instances. Do not use production credentials, production accounts, external targets, or consequential third-party effects.
 
-Do not remediate. Do not begin Phase 3 or `LAC-A001` in this review session.
+Do not begin `LAC-A002`, FreeToken integration, or the full Phase 3 E2E in this session.
 
 ## 2. Mandatory first reads
 
@@ -38,127 +38,185 @@ Then read:
 
 - `docs/TECHNICAL_DESIGN_AND_IMPLEMENTATION_SPECIFICATION_v0.1.md`
 - `docs/CONTRACTS.md`
-- `packages/effects/shell/adapter.py`
-- `tests/unit/test_shell_adapter.py`
-- `tests/integration/test_shell_dispatch.py`
-- `tests/adversarial/test_h003_shell_boundary.py`
-- `tests/adversarial/test_h004_phase2_bypass.py`
-- `scripts/test-h004`
-- `scripts/test-h003`
-- `scripts/test-h002`
-- `scripts/test-h001`
+- `docs/BUILD_REUSE_MATRIX.md`
+- `docs/UPSTREAM_QUALIFICATION.md`
+- the existing dispatcher/effect/sandbox interfaces and only the Phase 1/2 tests needed to preserve their contracts
+- the pinned Pi source needed to implement A001
 
-Read only additional Phase 1 authority files/tests necessary for the regression gate.
-
-Do not reconstruct project state from conversation memory.
+Do not reconstruct current completion from conversation memory.
 
 ## 3. Handoff facts to verify
 
-Treat these as claims, not as evidence by themselves:
+Treat these as claims, not evidence by themselves:
 
-- `PREDECESSOR_ROLE=Lead Implementation Engineer`
+- `PREDECESSOR_ROLE=Fresh Independent Reviewer`
 - `PREDECESSOR_RESULT=PASS`
-- `REMEDIATED_BLOCKER_IDS=P2-B001`
-- `BLOCKER_IDS=NONE`
-- `BLOCKED_PHASE2_GIT_COMMIT=5cdd824b083ede92c192ef17f039cdbf0206cc44`
-- `BLOCKED_REVIEW_HANDOFF_BASE=dd86d0d0b8ad057139f47acd4884147155103378`
-- `CORRECTED_PHASE2_GIT_COMMIT=aab830122d85b4fcb4f1b5cb7f62e8ba82a23803`
+- `REVIEWED_GIT_COMMIT=aab830122d85b4fcb4f1b5cb7f62e8ba82a23803`
 - `PHASE1_REVIEWED_GIT_COMMIT=ba21d50c26540147c458a8e3f402e15e71efe9c7`
-- `OWNER_EXECUTION_EVIDENCE=${HOME}/Downloads/LAC_P2_REMEDIATION_P2_B001_v0.1.0_20260914_032029.log`
+- `HANDOFF_BASE_GIT_COMMIT=77ead8316c74298ce79091c18177c29db66a2271`
+- `BLOCKER_IDS=NONE`
+- `OWNER_EXECUTION_EVIDENCE=${HOME}/Downloads/LAC_P2_REVIEW_PASS_HANDOFF_A001_v0.1.0_20260914_044421.log`
+- `EXPECTED_WORKFLOW_SUBJECT=workflow: accept Phase 2 and hand off to Phase 3 A001`
+- `EXPECTED_NEXT_TASK=LAC-A001`
+- `SESSION_SEGMENT=LAC-A001`
 - `H001_SELECTED_BACKEND=bubblewrap`
 - `H002_ADAPTER=filesystem:v1`
 - `H003_ADAPTER=shell:v1`
-- `H004_TEST_GATE=scripts/test-h004`
-- `EXPECTED_NEXT_TASK=LAC-P2-REVIEW`
-- `SESSION_SEGMENT=LAC-P2-REVIEW`
+- `PI_PINNED_GIT_COMMIT=da840b6216578c2a571d0374ac6a2091a83f9d91`
 
-The corrected implementation commit must be a descendant of the blocked-review handoff base and must not rewrite the blocked candidate.
+The Phase 2 independent re-review accepted corrected candidate `aab830122d85b4fcb4f1b5cb7f62e8ba82a23803` after proving the blocked candidate admitted `/usr/bin/sort`, the corrected candidate rejected it, H001-H004 passed, the complete applicable unit/integration/acceptance regression passed, no Phase 3 capability was present, and Git remained clean.
 
-The owner package installs a workflow-only handoff after the corrected implementation commit. The expected workflow commit subject is:
-
-`workflow: hand off corrected Phase 2 candidate to re-review`
-
-Verify the complete corrected-candidate-to-live-HEAD delta. It may change only:
+The review must be preserved across workflow administration only. Verify the complete reviewed-candidate-to-live-HEAD delta. Before A001 implementation begins, every post-review change must be confined to:
 
 - `PROJECT_STATE.json`
 - `tasks/ACTIVE_TASK.md`
 - `NEXT_SESSION_PROMPT.md`
 
-Any implementation/test/architecture/contract/qualification change in that workflow commit invalidates review preservation and is a discrepancy.
+Any pre-A001 implementation/test/architecture/contract/qualification/upstream change invalidates preservation and is a blocker.
 
-## 4. Remediation claim under review
+Record:
 
-`P2-B001` found that the reviewed generic `shell:v1` leaf-command set admitted GNU `/usr/bin/sort`, whose `--compress-program=PROG` facility can invoke another program.
+`REVIEW_PRESERVED_ACROSS_NONMATERIAL_DELTA=true`
 
-The remediation claim is deliberately narrow:
+only after verifying that condition.
 
-1. `sort` was removed from `_SAFE_LEAF_EXECUTABLE_NAMES`;
-2. runtime/user configuration can no longer admit `/usr/bin/sort`;
-3. H004 contains a permanent deterministic regression for this;
-4. no generic interpreter, wrapper, shell, policy language, or new execution surface was introduced;
-5. the existing reviewed leaf set contains no other member identified as having an equivalent external-program launch facility.
+## 4. A001 implementation objective
 
-Do not accept this claim merely because the builder says it is true. Inspect the code and execute the bounded deterministic regression.
+Implement the minimum Pi integration required by the controlling Phase 3 plan:
 
-## 5. Required independent validation
+```text
+Pi Agent Core
+   |
+   | controller-backed tools only
+   |
+   +-- lac_fs_...
+   +-- lac_shell_exec
+   +-- other tool surfaces only if already required by A001
+   |
+   v
+LAC Authority Core -> Dispatcher -> reviewed effect adapters -> H001 sandbox
+```
 
-At minimum:
+Pi is the agent harness, not authority.
 
-1. verify branch, live HEAD, corrected candidate identity, ancestry, and clean Git state;
-2. verify the corrected implementation commit's complete parent delta is limited to:
-   - `packages/effects/shell/adapter.py`
-   - `tests/adversarial/test_h004_phase2_bypass.py`;
-3. verify the blocker-specific regression distinguishes the blocked behavior from the corrected behavior;
-4. verify `/usr/bin/sort` cannot be admitted through runtime/user `allowed_executables`;
-5. run `scripts/test-h004`;
-6. run `scripts/test-h003`;
-7. run `scripts/test-h002`;
-8. run `scripts/test-h001`;
-9. run the complete applicable Phase 1 unit, integration, and acceptance regression;
-10. verify Git remains clean after tests;
-11. verify no Phase 3 Pi/FreeToken implementation capability was introduced;
-12. verify applicable `INV-003`, `INV-004`, `INV-005`, `INV-006`, `INV-008`, `INV-010`, and `INV-014`.
+The adapter must preserve these boundaries:
 
-For operating-system containment claims, a policy result alone is not sufficient; retain the actual-effect standard used by the Phase 2 suite.
+1. Pi/model output proposes tool intent only.
+2. Tool translation produces exact typed/canonical LAC effect requests.
+3. Policy, approval, pre-dispatch re-evaluation, execution lease, duplicate prevention, receipts/audit, and emergency pause remain owned by existing deterministic LAC components.
+4. Governed Pi must not retain an alternate unrestricted host-effect route through stock/default Pi Bash/read/edit/write tools.
+5. The existing H001-H004 operating-system boundary remains authoritative.
+6. Credentials do not enter Pi/model context.
+7. The design remains model-runtime independent. Do not couple A001 to FreeToken.
 
-## 6. Review result
+## 5. Upstream/reuse rule
 
-Return exactly one formal result:
+Use the exact qualified Pi revision from `UPSTREAM_LOCK.json`:
 
-`PASS`
+`earendil-works/pi@da840b6216578c2a571d0374ac6a2091a83f9d91`
 
-or
+Phase 0 found Pi MIT-licensed at the pinned revision and found its agent/coding tools modular enough to construct a harness with controller-backed tools only.
 
-`BLOCKED`
+Verify the actual pinned source before relying on an API or package surface. Reuse the least invasive upstream mechanism. Do not fork Pi merely for convenience. If dependency/provenance files must change, keep those changes minimal and exact.
 
-A blocker must identify a concrete violated invariant, acceptance criterion, security boundary, package/data-integrity requirement, credential isolation requirement, reproducibility requirement, or material control-boundary failure.
+Do not requalify unrelated upstream projects.
 
-Do not turn optional improvements into blockers.
+## 6. Required deterministic validation
 
-If `PASS`:
+At minimum, create/run deterministic tests establishing:
 
-- Phase 2 is accepted;
-- prepare one workflow-only owner package that advances durable state to fresh implementation task `LAC-A001`;
-- install a complete fresh Phase 3 implementation prompt;
-- do not implement A001 in this review conversation.
+1. the Pi adapter exposes only the intended LAC-backed governed tool surface;
+2. stock/default unrestricted Pi Bash/read/edit/write capabilities are absent from governed construction;
+3. supported Pi tool inputs translate to the exact expected typed/canonical LAC request fields;
+4. unknown/malformed tool requests fail closed before host effect;
+5. tool/model output cannot directly approve, lease, dispatch, or bypass policy;
+6. filesystem and shell effects still enter the existing Dispatcher and reviewed H002/H003 adapters;
+7. exact approval binding and security-relevant mutation behavior remain unchanged;
+8. immediate pre-dispatch policy re-evaluation remains unchanged;
+9. duplicate prevention/idempotency behavior remains unchanged;
+10. emergency pause remains effective;
+11. Pi/model environment/context receives no service credential;
+12. H004 actual-effect containment still passes;
+13. `scripts/test-h004`, `scripts/test-h003`, `scripts/test-h002`, and `scripts/test-h001` pass;
+14. the complete applicable Phase 1 regression passes;
+15. all new A001 tests pass;
+16. Git remains clean after tests;
+17. no FreeToken or A002 implementation capability was introduced.
 
-If `BLOCKED`:
+Do not accept policy-result-only evidence for an operating-system containment property; retain the Phase 2 actual-effect standard.
 
-- identify exact blocker IDs;
-- prepare one workflow-only owner package installing a fresh remediation prompt limited to those blockers;
-- do not remediate in this review conversation.
+## 7. Scope constraints
 
-## 7. Required stop status
+Do not:
+
+- implement or configure FreeToken;
+- run real model inference merely to complete A001;
+- begin A002/A003;
+- add OpenClaw;
+- add Gmail/Calendar;
+- broaden generic `shell:v1`;
+- create a new policy engine or authority path;
+- make Pi state canonical controller truth;
+- expose direct host credentials to the harness;
+- weaken any accepted Phase 1/2 invariant.
+
+Routine ambiguity is not a stop condition. Choose the narrowest conservative implementation consistent with the specification and test it.
+
+## 8. Implementation lifecycle
+
+This session must complete A001:
+
+`verify predecessor -> implement A001 -> deterministic tests -> correct in-scope failures -> full applicable regression -> build one owner package -> STOP`
+
+Do not hand known A001 defects to A002.
+
+When A001 is complete, the owner package must:
+
+- fail closed on unexpected Git/state/task input;
+- verify its own package hashes;
+- install only the tested A001 implementation;
+- run required deterministic verification;
+- advance durable state to `LAC-A002`;
+- install a complete fresh A002 `NEXT_SESSION_PROMPT.md`;
+- record execution evidence;
+- print PASS/FAIL.
+
+The newly active A002 belongs to a fresh session.
+
+## 9. Applicable invariants
+
+Preserve at minimum:
+
+- `INV-001` no implicit authority;
+- `INV-002` model output is never authorization;
+- `INV-003` no alternate consequential-effect bypass in governed mode;
+- `INV-004` credentials do not enter agent context;
+- `INV-005` exact approval binding;
+- `INV-006` policy re-evaluation immediately before dispatch;
+- `INV-007` deny wins;
+- `INV-008` duplicate prevention/idempotency;
+- `INV-009` controller durable state is truth;
+- `INV-010` fail closed;
+- `INV-011` emergency pause;
+- `INV-012` audit is not authority;
+- `INV-014` deterministic work remains deterministic after typed intent translation.
+
+## 10. Required stop status
 
 Before stopping, report:
 
 - `WHERE_WE_ARE`
-- `SESSION_SEGMENT=LAC-P2-REVIEW`
+- `SESSION_SEGMENT=LAC-A001`
 - `REVIEWED_GIT_COMMIT=aab830122d85b4fcb4f1b5cb7f62e8ba82a23803`
+- `REVIEW_PRESERVED_ACROSS_NONMATERIAL_DELTA`
 - `WHAT_WAS_VERIFIED`
-- `REVIEW_RESULT`
-- `BLOCKER_IDS`
+- `WHAT_WAS_COMPLETED`
 - `WHAT_REMAINS_IN_CURRENT_PHASE`
 - `TOTAL_PROJECT_POSITION`
+- `BLOCKERS`
 - `STOP_GATE`
 - `EXACT_NEXT_SAFE_ACTION`
+
+The normal successful stop gate is:
+
+`OWNER_EXECUTION_REQUIRED`
