@@ -1,0 +1,45 @@
+{
+  "a002_implementation_commit": "1c07f57ef846895aed638c411c0c26b8fdcbf841",
+  "acceptance": {
+    "a001_regression": "PASS",
+    "a002_regression": "PASS",
+    "adversarial_boundary_block_under_policy_allow": "PASS",
+    "exact_four_tool_surface": "PASS",
+    "freetoken_inference_only": "PASS",
+    "model_visible_service_credentials": "ABSENT",
+    "phase1_h001_h004_regression": "PASS",
+    "pi_modelprovider_freetoken": "PASS",
+    "positive_governed_effects_and_receipts": "PASS"
+  },
+  "completed_at_utc": "2026-09-14T21:24:29Z",
+  "evidence_summary": "qualification/evidence/a003_evidence_summary.json",
+  "evidence_summary_sha256": "03967636294d34b206f917cc49395d951a3173554784b57f18105b366b52c70a",
+  "focused_test_harness": "scripts/test-a003",
+  "freetoken": {
+    "interface": "loopback OpenAI-compatible HTTP",
+    "pin": "af71ba43206e124f5ff6419b47ee36c6e9981078",
+    "version": "0.1.2"
+  },
+  "implementation_commit": "949ac791c077600b2ab683b63131156439ce181e",
+  "model": {
+    "local_snapshot": "${HOME}/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+    "repo": "openai/gpt-oss-20b",
+    "revision": "6cee5e81ee83917806bbde320786a8fb61efebee",
+    "served_model_id": "lac-a003-gpt-oss-20b"
+  },
+  "package_id": "LAC_A003_END_TO_END_v0.1.4",
+  "pi": {
+    "pin": "da840b6216578c2a571d0374ac6a2091a83f9d91",
+    "version": "0.85.1"
+  },
+  "result": "PASS",
+  "runtime_evidence": "qualification/evidence/a003_runtime.json",
+  "runtime_evidence_sha256": "e55b66185113795ae1d86ddbe44db7a35df8bb3516e3ac7b165b152c12baa15f",
+  "schema": "lac.a003-owner-execution/v1",
+  "session_segment": "LAC-A003",
+  "start_commit": "f940a658a7a88901c07ccbc00984ef2f70eb4bf4",
+  "test_log": "qualification/evidence/a003_owner_execution.log",
+  "test_log_sha256": "74de022648ecb3042007d5bf4d954c23aace56283cd22b3a32165e1d24746743",
+  "test_log_tracked": false,
+  "test_result": "PASS"
+}
