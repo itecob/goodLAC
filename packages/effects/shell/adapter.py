@@ -102,7 +102,6 @@ _SAFE_LEAF_EXECUTABLE_NAMES = frozenset(
         "rmdir",
         "sha256sum",
         "sleep",
-        "sort",
         "stat",
         "tail",
         "touch",

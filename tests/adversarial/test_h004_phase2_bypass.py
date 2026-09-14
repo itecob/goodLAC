@@ -318,6 +318,11 @@ class H004Phase2BypassTests(unittest.TestCase):
             self.dispatch(req, adapter, suffix="interpreter")
         self.assertFalse(marker.exists())
 
+    def test_runtime_configuration_cannot_admit_gnu_sort_external_program_launcher(self):
+        sort = system_binary("sort")
+        with self.assertRaises(ShellEffectError):
+            ShellEffectAdapter(self.workspace, allowed_executables=(sort,))
+
     def test_subprocess_network_access_is_actually_unavailable(self):
         listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
