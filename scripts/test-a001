@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+export PYTHONDONTWRITEBYTECODE=1
+ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+echo "==> A001 pinned Pi source contract"
+python3 scripts/verify_pi_pin.py
+
+echo "==> A001 governed Pi Agent Core constructor"
+node tests/integration/test_pi_harness.mjs
+
+echo "==> A001 + full Phase 1 unit/integration/acceptance regression"
+scripts/test-c010
+
+echo "==> Phase 2 sandbox and bypass regression"
+scripts/test-h001
+scripts/test-h002
+scripts/test-h003
+scripts/test-h004
+
+echo "LAC_A001_TEST_RESULT=PASS"
