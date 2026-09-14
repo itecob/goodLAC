@@ -1,9 +1,9 @@
-# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 3 FRESH INDEPENDENT REVIEW
+# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 3 P3-B001 REMEDIATION
 
-`SESSION_SEGMENT=LAC-P3-REVIEW`
-`MODE=FRESH_INDEPENDENT_REVIEW`
+`SESSION_SEGMENT=LAC-P3-REMEDIATION-P3-B001`
+`MODE=IMPLEMENTATION_SEGMENT`
 
-Use the connected Web-File-Tool. Treat durable repository state and Git history as authority. This is a fresh independent Phase 3 review; do not implement, remediate, redesign, or begin Phase 4.
+Use the connected Web-File-Tool. Treat durable repository state and Git history as authority. This is a fresh remediation implementation segment for the single Phase 3 blocker `P3-B001`. Do not begin Phase 4, broaden scope, or self-approve the corrected Phase 3 candidate.
 
 ## Mandatory first reads — exact order
 
@@ -17,78 +17,107 @@ Then inspect at minimum:
 
 - `docs/TECHNICAL_DESIGN_AND_IMPLEMENTATION_SPECIFICATION_v0.1.md`
 - `docs/CONTRACTS.md`
+- `docs/THREAT_MODEL.md`
 - `docs/MODEL_PROVIDER_CONTRACT.md`
 - `docs/PHASE3_A003_QUALIFICATION.md`
+- `decisions/ADR-004_SANDBOX_BACKEND.md`
+- `packages/sandbox/`
 - `packages/adapters/pi/adapter.py`
 - `packages/adapters/pi/governed_pi.mjs`
 - `packages/adapters/pi/model_stream_bridge.mjs`
-- `packages/model_provider/contract.py`
-- `packages/adapters/freetoken/provider.py`
+- `scripts/a003_qualification.mjs`
 - `scripts/a003_model_provider_stream.py`
 - `scripts/a003_controller_bridge.py`
-- `scripts/a003_qualification.mjs`
 - `scripts/a003_verify_evidence.py`
 - `scripts/test-a003`
-- `tests/integration/test_a003_model_boundary.py`
-- `tests/integration/test_a003_stream_bridge.mjs`
+- relevant Phase 2/H001-H004 tests and qualification evidence
 - `qualification/evidence/a003_owner_execution.json`
 - `qualification/evidence/a003_owner_execution.log`
 - `qualification/evidence/a003_runtime.json`
 - `qualification/evidence/a003_evidence_summary.json`
-- A001/A002 owner evidence and the exact pinned Pi/FreeToken source needed to verify the relevant interfaces.
 
-## Predecessor facts to verify; do not assume
+## Predecessor/review facts to verify; do not assume
 
-- `PREDECESSOR_SEGMENT=LAC-A003`
-- `PREDECESSOR_RESULT=PASS`
+- `PREDECESSOR_ROLE=Fresh Independent Reviewer`
+- `PREDECESSOR_RESULT=BLOCKED`
+- `BLOCKER_IDS=P3-B001`
 - `A003_IMPLEMENTATION_GIT_COMMIT=949ac791c077600b2ab683b63131156439ce181e`
-- `A002_IMPLEMENTATION_GIT_COMMIT=1c07f57ef846895aed638c411c0c26b8fdcbf841`
-- `A001_IMPLEMENTATION_GIT_COMMIT=93f72ded7b96801d0e619a5aa702f9ce0f87b522`
+- `REVIEW_LIVE_GIT_COMMIT=3bb011de6a626ff717cfcd04e4a4d1ff95fd0a16`
 - `PI_PIN=da840b6216578c2a571d0374ac6a2091a83f9d91`
 - `FREETOKEN_PIN=af71ba43206e124f5ff6419b47ee36c6e9981078`
 - `MODEL_REPO=openai/gpt-oss-20b`
 - `MODEL_REVISION=6cee5e81ee83917806bbde320786a8fb61efebee`
 - `EXPECTED_PHASE=PHASE_3_REAL_LOCAL_AGENT_MODEL`
-- `EXPECTED_ACTIVE_TASK=LAC-P3-REVIEW`
+- `EXPECTED_ACTIVE_TASK=LAC-P3-REMEDIATION-P3-B001`
 
-Fail closed if these facts disagree with durable state, evidence, or live Git history.
+The workflow handoff commit created by the owner's blocked-review handoff package is expected to be newer than `REVIEW_LIVE_GIT_COMMIT`. Inspect the complete delta and require it to be workflow-only (`PROJECT_STATE.json`, `tasks/ACTIVE_TASK.md`, `NEXT_SESSION_PROMPT.md`). Fail closed on unrelated implementation drift.
 
-## Review objective
+## Blocking finding — P3-B001
 
-Independently determine whether Phase 3 candidate satisfies the binding architecture and A001-A003 requirements. At minimum verify:
+The reviewed A003 candidate does not establish the binding ambient-authority boundary for the Pi agent process itself.
 
-1. no model output can authorize an effect;
-2. Pi receives exactly the four governed A001 tools and no stock/unrestricted tool surface;
-3. Pi inference crosses the LAC-owned ModelProvider boundary;
-4. FreeToken remains inference-only and cannot approve, lease, dispatch, or invoke effects directly;
-5. selected model and runtime identity are exact/reproducible;
-6. positive local-model scenario reaches Dispatcher, H001/H002/H003 as applicable, and durable successful receipts;
-7. adversarial synthetic SSH-key scenario is blocked at the effect/OS boundary under policy `ALLOW`, with a failed filesystem receipt and no secret bytes entering model-visible evidence/workspace;
-8. no service credential is inserted into model-visible context;
-9. A001 and A002 regressions, Phase 1 regressions, and H001-H004 remain green in owner evidence;
-10. Git history contains the claimed A003 implementation commit and current workflow handoff without unrelated implementation drift;
-11. Phase 4 or later scope was not implemented early.
+Binding evidence:
 
-The review is evidence-based. Do not treat the owner script's `PASS` label as proof by itself.
+- `docs/ARCHITECTURE.md`: governed tools alone are insufficient; the agent process must have bounded ambient filesystem/process/network/environment authority using an established Linux sandbox.
+- the controlling specification §17: an agent is not governed merely because its tools are governed; the process itself must have bounded ambient authority.
+- `decisions/ADR-004_SANDBOX_BACKEND.md`: tool policy alone is not an ambient-authority boundary; bubblewrap is the selected H001 backend.
+- reviewed A003 `scripts/test-a003` invokes `node scripts/a003_qualification.mjs` directly.
+- reviewed `scripts/a003_qualification.mjs` constructs and runs the Pi Agent in that host Node process; H001 sandboxing is reached only later inside governed filesystem/shell effect adapters.
+- reviewed A003 runtime/evidence proves effect subprocess containment but contains no deterministic proof that the Pi agent process itself lacks ambient host filesystem/process/network/environment/credential authority.
 
-## Review disposition
+This violates the binding process-sandbox/bypass-resistance requirement and leaves an alternate ambient authority surface even though the exposed Pi tool list is correctly limited to four governed tools.
 
-Return exactly one:
+## Required remediation scope
 
-- `PASS` — no blocking Phase 3 finding;
-- `BLOCKED` — one or more concrete blocking findings, each with stable finding id, evidence, violated requirement/invariant, and required remediation scope.
+Remediate only `P3-B001`.
 
-Do not remediate in this session. If PASS, prepare the normal owner-executable workflow handoff package for the next planned task only if the live project specification unambiguously identifies that task. If the next phase/task requires an architectural, authority, or licensing decision, stop at the corresponding gate instead of inventing scope.
+The corrected design must put the Pi agent process itself behind the already qualified H001 ambient-authority boundary while preserving:
+
+1. exactly four governed A001 tools and no stock/unrestricted tool surface;
+2. Pi inference through the LAC-owned `ModelProvider` boundary;
+3. FreeToken as inference-only, with no policy/approval/lease/dispatch/effect authority;
+4. exact Pi, FreeToken, and model revision identity unless a concrete impossibility forces an explicit gate;
+5. the existing Dispatcher -> H001/H002/H003 effect path and durable receipts;
+6. credential isolation and controller-owned authority identifiers;
+7. all Phase 1 and H001-H004 security properties.
+
+Add deterministic negative conformance using only synthetic local fixtures that proves the Pi agent process itself cannot:
+
+- read a host-only sensitive fixture outside its declared visibility;
+- inherit a synthetic service credential from the host launcher environment;
+- launch an arbitrary host executable/process outside the governed effect path;
+- obtain arbitrary host/outbound network access beyond the narrowly declared local runtime path needed for the qualification.
+
+For each negative property, prove the prohibited OS effect did not occur. A model response or policy `DENY` is not proof.
+
+## Required validation
+
+Before handoff, at minimum:
+
+- run the new Pi-process ambient-authority conformance tests;
+- rerun the real positive A003 local-model scenario and verify durable successful receipts;
+- rerun the synthetic SSH-key `ALLOW` scenario and verify the durable failed `filesystem:v1` receipt and secret absence;
+- rerun `scripts/test-a003`, including A002 and A001/Phase1/H001-H004 regressions;
+- verify exact Pi/FreeToken/model identities and current source pins;
+- verify no Phase 4 implementation was introduced;
+- verify Git diff/history contains only the intended P3-B001 remediation plus required evidence/workflow updates.
+
+Correct in-scope failures in this same remediation segment. Do not defer known P3-B001 defects to another implementation session.
+
+## Owner package and stop rule
+
+When the corrected remediation segment is complete, create one owner-executable package and exactly one self-contained Bash command following the project packaging contract. It must fail closed on unexpected Git/state/task input, install the corrected candidate, run the full deterministic verification, record owner execution evidence, update durable state/task, and install a populated root `NEXT_SESSION_PROMPT.md` for a **fresh independent Phase 3 re-review**.
+
+Do not perform that re-review in the remediation session. Do not begin Phase 4.
 
 ## Required final status fields
 
 - `WHERE_WE_ARE=`
-- `SESSION_SEGMENT=LAC-P3-REVIEW`
-- `A003_IMPLEMENTATION_GIT_COMMIT=949ac791c077600b2ab683b63131156439ce181e`
+- `SESSION_SEGMENT=LAC-P3-REMEDIATION-P3-B001`
+- `PREDECESSOR_RESULT=BLOCKED`
+- `BLOCKER_IDS=P3-B001`
 - `WHAT_WAS_VERIFIED=`
-- `REVIEW_DISPOSITION=`
-- `BLOCKING_FINDINGS=`
-- `NONBLOCKING_FINDINGS=`
+- `WHAT_WAS_COMPLETED=`
 - `WHAT_REMAINS_IN_CURRENT_PHASE=`
 - `TOTAL_PROJECT_POSITION=`
 - `BLOCKERS=`
