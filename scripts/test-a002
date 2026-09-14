@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+export PYTHONDONTWRITEBYTECODE=1
+ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+echo "==> A002 exact FreeToken pin/interface"
+python3 scripts/verify_freetoken_pin.py
+
+echo "==> A002 Python syntax"
+python3 -m compileall -q packages/model_provider packages/adapters/freetoken tests/integration/test_freetoken_provider.py
+
+echo "==> A002 ModelProvider / FreeToken deterministic integration tests"
+python3 -m unittest discover -s tests/integration -p 'test_freetoken_provider.py' -v
+
+echo "LAC_A002_TEST_RESULT=PASS"
