@@ -1,8 +1,8 @@
-# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 2 FRESH INDEPENDENT REVIEW
+# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 2 BLOCKER REMEDIATION P2-B001
 
 ## 1. Purpose, authorized role, and Secure-SDLC scope
 
-You are the **Fresh Independent Reviewer** for the user-owned **Local Agent Controller (LAC)**.
+You are the **Lead Implementation Engineer** for the user-owned **Local Agent Controller (LAC)**.
 
 Use the connected read-only Tunnel/Web-File-Tool. Project root label:
 
@@ -10,7 +10,7 @@ Use the connected read-only Tunnel/Web-File-Tool. Project root label:
 
 This session owns exactly:
 
-`SESSION_SEGMENT=LAC-P2-REVIEW`
+`SESSION_SEGMENT=LAC-P2-REMEDIATION-P2-B001`
 
 The controlling rule remains:
 
@@ -18,7 +18,7 @@ The controlling rule remains:
 
 This is defensive Secure-SDLC work on software owned and operated by the project owner. Security validation is limited to source inspection and deterministic tests using the LAC repository, temporary local workspaces, synthetic files/canary values, local test databases, isolated local sandbox instances, and other non-production fixtures. Do not use real credentials, production accounts, third-party systems, external targets, or generalized procedures for circumventing security controls.
 
-Do not remediate implementation in this conversation. Do not begin Phase 3 or `LAC-A001` unless this independent review first returns `PASS`; even on PASS, provide the successor prompt and stop rather than implementing A001 here.
+Remediate **only** blocker `P2-B001`. Do not redesign the project. Do not begin Phase 3 or `LAC-A001`. After remediation, return the corrected Phase 2 candidate to one fresh independent re-review.
 
 ## 2. Mandatory first reads
 
@@ -32,143 +32,151 @@ Read exactly these first, in order:
 
 Then read:
 
-`docs/TECHNICAL_DESIGN_AND_IMPLEMENTATION_SPECIFICATION_v0.1.md`
+- `docs/TECHNICAL_DESIGN_AND_IMPLEMENTATION_SPECIFICATION_v0.1.md`
+- `docs/CONTRACTS.md`
+- `packages/effects/shell/adapter.py`
+- `tests/unit/test_shell_adapter.py`
+- `tests/integration/test_shell_dispatch.py`
+- `tests/adversarial/test_h003_shell_boundary.py`
+- `tests/adversarial/test_h004_phase2_bypass.py`
+- `scripts/test-h004`
+- `scripts/test-h003`
+- `scripts/test-h002`
+- `scripts/test-h001`
 
-Read only the additional Phase 1 authority and H001/H002/H003/H004 implementation/evidence/tests needed to review Phase 2.
+Read only additional Phase 1 authority files/tests necessary for the regression gate.
 
 Do not reconstruct project state from conversation memory.
 
-## 3. Handoff facts and process-only delta
+## 3. Verified predecessor facts
 
 Preserve and independently verify:
 
-* `PREDECESSOR_ROLE=Lead Implementation Engineer`
-* `PREDECESSOR_RESULT=LAC-H004 PASS`
-* `PREDECESSOR_GIT_COMMIT=5cdd824b083ede92c192ef17f039cdbf0206cc44`
-* `HANDOFF_BASE_GIT_COMMIT=5cdd824b083ede92c192ef17f039cdbf0206cc44`
-* `REVIEWED_GIT_COMMIT=NONE_FOR_PHASE_2`
-* `PHASE1_REVIEWED_GIT_COMMIT=ba21d50c26540147c458a8e3f402e15e71efe9c7`
-* `BLOCKER_IDS=NONE`
-* `OWNER_EXECUTION_EVIDENCE=${HOME}/Downloads/LAC_P2_H004_BYPASS_SUITE_v0.1.1_20260913_113423.log`
-* `EXPECTED_NEXT_TASK=LAC-P2-REVIEW`
-* `SESSION_SEGMENT=LAC-P2-REVIEW`
-* `H001_SELECTED_BACKEND=bubblewrap`
-* `H001_QUALIFICATION_EVIDENCE=qualification/evidence/h001_sandbox.json`
-* `H002_ADAPTER=filesystem:v1`
-* `H002_TEST_GATE=scripts/test-h002`
-* `H003_ADAPTER=shell:v1`
-* `H003_TEST_GATE=scripts/test-h003`
-* `H004_TEST_GATE=scripts/test-h004`
-* `LIVE_HANDOFF_GIT_COMMIT=READ_LIVE_HEAD_AND_REQUIRE_OWNER_PROCESS_UPDATE_EVIDENCE_TO_MATCH`
+- `PREDECESSOR_ROLE=Fresh Independent Reviewer`
+- `PREDECESSOR_RESULT=BLOCKED`
+- `BLOCKER_IDS=P2-B001`
+- `REVIEWED_PHASE2_GIT_COMMIT=5cdd824b083ede92c192ef17f039cdbf0206cc44`
+- `PHASE1_REVIEWED_GIT_COMMIT=ba21d50c26540147c458a8e3f402e15e71efe9c7`
+- `BLOCKED_REVIEW_LIVE_HEAD=e91773530125ebcd01a441d83b6bc91018864325`
+- `HANDOFF_BASE_GIT_COMMIT=e91773530125ebcd01a441d83b6bc91018864325`
+- `OWNER_EXECUTION_EVIDENCE=${HOME}/Downloads/LAC_P2_INDEPENDENT_REVIEW_EVIDENCE_20260913_223217.log`
+- `H001_SELECTED_BACKEND=bubblewrap`
+- `H002_ADAPTER=filesystem:v1`
+- `H003_ADAPTER=shell:v1`
+- `H004_TEST_GATE=scripts/test-h004`
+- `EXPECTED_NEXT_TASK=LAC-P2-REMEDIATION-P2-B001`
+- `SESSION_SEGMENT=LAC-P2-REMEDIATION-P2-B001`
 
-The Phase 2 implementation candidate remains exactly `5cdd824b083ede92c192ef17f039cdbf0206cc44`.
+The blocked Phase 2 implementation candidate is exactly:
 
-Two post-candidate workflow commits are expected:
+`5cdd824b083ede92c192ef17f039cdbf0206cc44`
 
-1. `77cd0415aacf5566154d771c634460291e9fe850` — original Phase 2 review handoff; only `NEXT_SESSION_PROMPT.md` changed.
-2. the current `HEAD` — process-only Secure-SDLC framing update; only these paths may differ from `77cd0415aacf5566154d771c634460291e9fe850`:
-   * `NEXT_SESSION_PROMPT.md`
-   * `docs/NEXT_SESSION_PROMPT_TEMPLATE.md`
-   * `tasks/ACTIVE_TASK.md`
+The independent review verified:
 
-The current process commit must have subject:
+- live branch `main`;
+- review-time live HEAD `e91773530125ebcd01a441d83b6bc91018864325`;
+- clean Git state before and after tests;
+- candidate -> original review handoff changed only `NEXT_SESSION_PROMPT.md`;
+- original review handoff -> review-time live HEAD changed only `NEXT_SESSION_PROMPT.md`, `docs/NEXT_SESSION_PROMPT_TEMPLATE.md`, and `tasks/ACTIVE_TASK.md`;
+- `scripts/test-h004` PASS;
+- `scripts/test-h003` PASS;
+- `scripts/test-h002` PASS;
+- `scripts/test-h001` PASS;
+- complete applicable Phase 1 unit, integration, and acceptance regressions PASS;
+- no Phase 3 Pi/FreeToken implementation files were present under `packages`.
 
-`workflow: clarify secure-sdlc review framing`
+The workflow package that installed this prompt is expected to have a commit whose subject is:
 
-Verify the complete `PREDECESSOR_GIT_COMMIT..HEAD` delta. Any implementation, tests, architecture, qualification, policy, contracts, threat-model, dependency, license, acceptance-criteria substance, or other Phase 2 candidate change after the implementation commit is a discrepancy to classify before trusting the candidate. The permitted workflow edits above are non-material wording/process changes and must not alter the security acceptance semantics.
+`workflow: hand off Phase 2 blocker P2-B001 remediation`
 
-## 4. Session mode
+Treat that commit as a non-material blocked-review handoff only. Verify its complete parent-to-HEAD delta before trusting it. It may change only:
 
-Use exactly:
+- `PROJECT_STATE.json`
+- `tasks/ACTIVE_TASK.md`
+- `NEXT_SESSION_PROMPT.md`
 
-`MODE B — PHASE_BOUNDARY_INDEPENDENT_REVIEW`
+Any implementation/test/architecture/contract/qualification change in that workflow commit is a discrepancy.
 
-Role:
+## 4. Formal blocker
 
-`Fresh Independent Reviewer`
+### `P2-B001 — shell:v1 executable-class closure admits GNU sort, which can invoke another program`
 
-This is the one formal independent review for the Phase 2 candidate. Do not mutate the implementation.
+The Phase 2 contract requires runtime/user executable configuration to be narrowing-only and says generic command-launching executables cannot become a `shell:v1` route.
 
-## 5. Binding review target and negative security conformance
+The reviewed implementation includes `sort` in `_SAFE_LEAF_EXECUTABLE_NAMES`.
 
-Review the complete Phase 2 candidate against the controlling specification, with particular attention to `INV-003`, `INV-004`, `INV-005`, `INV-006`, `INV-008`, `INV-010`, and `INV-014`.
+The live review probe established:
 
-Treat the specification's historical adversarial terminology as **negative security conformance testing**. The required assertions are:
+- `/usr/bin/sort` exists;
+- `/usr/bin/sort --help` exposes `--compress-program=PROG`;
+- `ShellEffectAdapter(... allowed_executables=(Path("/usr/bin/sort"),))` accepts it;
+- the adapter reports `/usr/bin/sort` as an allowed executable.
 
-* workspace path containment, including parent-reference rejection;
-* symlink containment across read and write paths;
-* host-only sensitive fixtures remain inaccessible to the governed process;
-* writes remain confined to the configured workspace;
-* policy-denied deletion preserves the target file;
-* only reviewed executable identities can be selected;
-* generic command-launching executables cannot become a `shell:v1` execution route through runtime/user configuration;
-* interpreter/runtime executables cannot become a generic `shell:v1` execution route through runtime/user configuration;
-* subprocesses have no outbound network authority under the selected sandbox profile;
-* host secret-bearing environment state is not inherited by governed processes;
-* child processes cannot persist beyond the sandbox lifecycle;
-* explicitly allowed bounded workspace effects remain functional.
+GNU `sort` uses `--compress-program=PROG` to invoke the specified program for temporary-file processing. Therefore the reviewed "non-launching" set contains an executable with an external-program launch facility.
 
-For operating-system containment properties, a policy result such as `DENY` is not sufficient evidence by itself. The deterministic test must establish that the prohibited effect did not occur.
+The existing green H004/H003 tests demonstrate a coverage gap; they do not negate this finding.
 
-Do not develop generalized circumvention procedures or reusable techniques for defeating security controls. If existing evidence is insufficient, use or recommend the smallest synthetic deterministic regression test needed to establish the documented invariant.
+## 5. Required remediation
 
-## 6. Required validation
+Use the smallest conservative remediation.
 
 At minimum:
 
-1. verify candidate Git identity, clean state, and both workflow-only deltas described above;
-2. inspect H001 qualification evidence and live selected-backend contract;
-3. inspect H002 filesystem containment and deletion semantics;
-4. inspect H003 exact executable/argv/cwd/environment binding;
-5. inspect the H004 remediation and every required negative actual-effect conformance test;
-6. run `scripts/test-h004`;
-7. run `scripts/test-h003`;
-8. run `scripts/test-h002`;
-9. run `scripts/test-h001`;
-10. run the complete applicable Phase 1 regression gate;
-11. use bounded synthetic deterministic tests only where existing evidence is insufficient to establish a binding claim;
-12. verify no Phase 3 capability was introduced.
+1. make `/usr/bin/sort` ineligible for generic `shell:v1`;
+2. add a permanent deterministic regression proving runtime/user configuration cannot admit it;
+3. inspect the existing `_SAFE_LEAF_EXECUTABLE_NAMES` set only as necessary to ensure no other member exposes an equivalent external-program execution facility that contradicts the documented non-launching classification;
+4. if such an equivalent member is found, remove it and add the smallest corresponding regression;
+5. do not add a generic interpreter, wrapper, shell, executable policy language, or new execution surface;
+6. do not weaken the contract or convert this into documentation-only remediation.
 
-Separate evidence from conclusions. Predecessor PASS claims are not evidence by themselves.
+## 6. Required validation
 
-## 7. Finding discipline
+After remediation:
 
-A finding is `BLOCKER` only when it demonstrates a concrete violation of a binding invariant, acceptance criterion, security boundary, package/data integrity, credential isolation, required functionality, reproducibility, or material control-boundary failure.
+1. prove the blocker-specific regression distinguishes the pre-remediation behavior from corrected behavior;
+2. run `scripts/test-h004`;
+3. run `scripts/test-h003`;
+4. run `scripts/test-h002`;
+5. run `scripts/test-h001`;
+6. run the complete applicable Phase 1 regression gate;
+7. verify Git is clean after tests;
+8. verify no Phase 3 capability was introduced;
+9. preserve `INV-003`, `INV-004`, `INV-005`, `INV-006`, `INV-008`, `INV-010`, and `INV-014` as applicable.
 
-Everything else is `NONBLOCKING` and does not prevent progression.
+## 7. Package and durable handoff
 
-Do not redesign the project during review.
+Local mutation is required. Produce one owner-executable remediation package containing, as applicable:
 
-## 8. Verdict and successor rule
+- `manifest.json`
+- `SHA256SUMS`
+- `install.sh`
+- `verify.sh`
+- `rollback.sh`
+- `payload/`
+- staged successor `NEXT_SESSION_PROMPT.md`
 
-Return exactly one formal verdict:
+Provide exactly one self-contained Bash command implementing:
 
-`PASS`
+`package hash verification -> preflight -> backup -> install -> deterministic verification -> durable-state advance -> successor-prompt install -> final result`
 
-or
+The package must fail closed on unexpected Git/state/task input, create a new corrected Phase 2 implementation commit rather than rewriting the blocked candidate, record execution evidence in Downloads, and install a fresh Phase 2 **independent re-review** prompt before reporting PASS.
 
-`BLOCKED`
+After successful owner execution, the project remains in Phase 2 candidate/re-review state. Do not advance to Phase 3 until that fresh re-review returns `PASS`.
 
-If `PASS`, Phase 2 may advance to a fresh `LAC-A001` Phase 3 implementation session. Produce the complete populated successor `NEXT_SESSION_PROMPT.md` for `LAC-A001`, preserving the exact reviewed Phase 2 implementation commit identity. Do not implement A001 in this review conversation.
-
-If `BLOCKED`, assign blocker IDs and produce a complete fresh remediation-segment prompt limited to those blockers. The remediator must rerun affected tests plus the full Phase 2 gate and return a corrected candidate to one fresh re-review.
-
-## 9. Required stop status
+## 8. Required stop status
 
 Before stopping, report:
 
-* `WHERE_WE_ARE`
-* `SESSION_SEGMENT=LAC-P2-REVIEW`
-* `REVIEWED_PHASE2_GIT_COMMIT`
-* `WHAT_WAS_VERIFIED`
-* `FORMAL_VERDICT`
-* `BLOCKERS`
-* `NONBLOCKING_FINDINGS`
-* `WHAT_REMAINS_IN_CURRENT_PHASE`
-* `TOTAL_PROJECT_POSITION`
-* `STOP_GATE`
-* `EXACT_NEXT_SAFE_ACTION`
+- `WHERE_WE_ARE`
+- `SESSION_SEGMENT=LAC-P2-REMEDIATION-P2-B001`
+- `WHAT_WAS_VERIFIED`
+- `WHAT_WAS_COMPLETED`
+- `CORRECTED_PHASE2_GIT_COMMIT`
+- `BLOCKER_IDS`
+- `BLOCKER_REMEDIATION_STATUS`
+- `WHAT_REMAINS_IN_CURRENT_PHASE`
+- `TOTAL_PROJECT_POSITION`
+- `STOP_GATE`
+- `EXACT_NEXT_SAFE_ACTION`
 
-Keep evidence separate from conclusions.
-
-Do not broaden the project.
+The implementation session stops at `OWNER_EXECUTION_REQUIRED` when the remediation package is ready. It must not continue into the independent re-review or Phase 3 in the same conversation.
