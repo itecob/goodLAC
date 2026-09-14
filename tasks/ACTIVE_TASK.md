@@ -1,21 +1,41 @@
-# Active Task
+# ACTIVE TASK — LAC-A002
 
-**Task ID:** `LAC-A001`
+**Phase:** PHASE_3_REAL_LOCAL_AGENT_MODEL
+**Mode:** IMPLEMENTATION_SEGMENT
+**Role:** Lead Implementation Engineer
 
-**Mode / role:** `IMPLEMENTATION_SEGMENT` / **Lead Implementation Engineer**
+## Objective
 
-**Objective:** Implement the first Pi `AgentAdapter` integration for Phase 3 so a Pi-based agent harness can expose only LAC controller-backed governed local tools while preserving the existing Authority Core and Phase 2 host boundary. This task integrates the harness boundary only; it does not integrate FreeToken or perform the full local-model E2E.
+Integrate the pinned FreeToken revision as the first local model-runtime endpoint behind LAC's `ModelProvider` boundary, while keeping the model runtime completely outside authorization and effect execution.
 
-**In scope:** verify the preserved Phase 2 review; inspect the pinned Pi revision `da840b6216578c2a571d0374ac6a2091a83f9d91` and the qualified local checkout; implement the minimum Pi adapter/harness integration behind the `AgentAdapter` boundary; construct Pi with controller-backed tools only; map supported Pi tool requests into exact typed LAC effect requests without letting model output become authorization; route consequential filesystem/shell work through the existing Dispatcher/effect adapters/sandbox; add deterministic unit/integration/negative-conformance tests; run all applicable Phase 1 and Phase 2 regressions; prepare one owner-executable package that advances to `LAC-A002` only after A001 passes.
+## In scope
 
-**Out of scope:** FreeToken installation/configuration; real local-model inference; `LAC-A002`; `LAC-A003`; OpenClaw; Gmail/Calendar; new authority semantics; new policy language; broadening the reviewed generic shell executable class; weakening or replacing the H001-H004 boundary; production credentials or external consequential effects.
+- Verify the completed `LAC-A001` Pi adapter/harness and its owner execution evidence before mutation.
+- Inspect the pinned FreeToken revision `af71ba43206e124f5ff6419b47ee36c6e9981078` and the qualified local checkout.
+- Implement the minimum FreeToken `ModelProvider`/configuration integration required for Phase 3.
+- Keep Pi and FreeToken independently replaceable behind the documented internal interfaces.
+- Add deterministic tests for request/response translation, runtime unavailability, malformed output, timeout/cancellation where applicable, and proof that FreeToken has no authority path.
+- Preserve all Phase 1 and Phase 2 authorization, approval, lease, receipt, audit, emergency-pause, sandbox, and bypass semantics unchanged.
+- Build one fail-closed owner package that verifies, installs, tests, records evidence, and advances durable state only after success.
 
-**Required inputs:** reviewed Phase 2 candidate `aab830122d85b4fcb4f1b5cb7f62e8ba82a23803`; Phase 1 reviewed commit `ba21d50c26540147c458a8e3f402e15e71efe9c7`; selected H001 backend `bubblewrap`; `filesystem:v1`; `shell:v1`; pinned Pi upstream `earendil-works/pi@da840b6216578c2a571d0374ac6a2091a83f9d91`; `UPSTREAM_LOCK.json`; `docs/TECHNICAL_DESIGN_AND_IMPLEMENTATION_SPECIFICATION_v0.1.md`; `docs/CONTRACTS.md`; Phase 1/2 deterministic gates.
+## Out of scope
 
-**Required outputs:** a bounded Pi adapter/harness integration under the established adapter boundary; deterministic tests proving the exposed Pi tool surface is controller-backed and cannot silently fall back to unrestricted default Pi filesystem/process tools; any minimal dependency/provenance updates actually required by implementation; one owner package completing A001 and installing the fresh `LAC-A002` successor prompt.
+- Full Pi + FreeToken + LAC end-to-end agent qualification.
+- New effect adapters or broader host capabilities.
+- OpenClaw integration.
+- Alternative model runtimes such as llama.cpp or Ollama except as documented future compatibility targets.
+- Policy-engine replacement or UI work.
+- Production credentials or external consequential effects.
 
-**Acceptance tests:** Pi is constructed with only the intended LAC-backed tool surface; no stock unrestricted Bash/read/edit/write path is exposed in governed mode; supported tool calls become exact canonical LAC requests and execute only through existing deterministic authorization/dispatch/sandbox paths; malformed/unknown tool requests fail closed; model/tool text cannot grant authority; no service credential is inserted into agent/model context; existing exact approval binding, pre-dispatch policy recheck, duplicate prevention, fail-closed behavior, environment isolation, filesystem containment, network containment, and child-process containment regressions remain green; no FreeToken/model-runtime capability is introduced by A001; Git is clean after tests.
+## Acceptance
 
-**Package required?** yes.
-
-**Next task on success:** `LAC-A002` — FreeToken model configuration, in a fresh implementation session.
+1. FreeToken is used only as a local inference endpoint and cannot approve, lease, dispatch, or directly execute governed effects.
+2. The runtime integration is pinned to `af71ba43206e124f5ff6419b47ee36c6e9981078` and fails closed on pin/interface drift.
+3. Model/runtime request and response translation is deterministic and tested.
+4. Runtime failure, malformed responses, timeout/cancellation, and unavailable endpoint conditions fail closed without granting authority.
+5. No service credential is introduced into model-visible context by the integration.
+6. `LAC-A001` Pi governed-tool tests remain green.
+7. Phase 1 regression remains green.
+8. `scripts/test-h001`, `scripts/test-h002`, `scripts/test-h003`, and `scripts/test-h004` remain green.
+9. No full Phase 3 end-to-end qualification is started in this segment.
+10. Repository is clean after the successful owner workflow.

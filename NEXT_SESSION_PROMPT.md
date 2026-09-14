@@ -1,32 +1,25 @@
-# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 3 A001 PI ADAPTER
+# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 3 A002 FREETOKEN MODEL PROVIDER
 
-## 1. Purpose, role, and scope
+You are the **Lead Implementation Engineer** for exactly one implementation segment of the user-owned **Local Agent Controller (LAC)** project.
 
-You are the **Lead Implementation Engineer** for the user-owned **Local Agent Controller (LAC)**.
+`SESSION_SEGMENT=LAC-A002`
+`MODE=IMPLEMENTATION_SEGMENT`
 
-Use the connected read-only Tunnel/Web-File-Tool. Project root label:
+The controlling rule is:
 
-`Local Agent Controller`
+> **AI proposes. Deterministic software determines authorization and effects.**
 
-This session owns exactly:
+This is a defensive Secure-SDLC task on user-owned local software, temporary workspaces, and synthetic/local fixtures. Do not introduce production credentials, external consequential targets, or any new capability not required by A002.
 
-`SESSION_SEGMENT=LAC-A001`
+## Hard scope boundary
 
-Use mode:
+Own exactly `LAC-A002`: the first pinned FreeToken local model-runtime integration behind the `ModelProvider` boundary.
 
-`IMPLEMENTATION_SEGMENT`
+Do **not** begin full Pi + FreeToken + LAC end-to-end qualification, OpenClaw integration, new effect adapters, alternative local runtimes, or later phases. The FreeToken runtime is an inference endpoint only; it is never an authorization component.
 
-The controlling rule remains:
+## Mandatory first reads — exact order
 
-> AI proposes. Deterministic software determines authorization and effects.
-
-This is defensive Secure-SDLC implementation of owner-controlled software. Use repository source, pinned/qualified upstream source, temporary local workspaces, synthetic fixtures, local test databases, and isolated local sandbox instances. Do not use production credentials, production accounts, external targets, or consequential third-party effects.
-
-Do not begin `LAC-A002`, FreeToken integration, or the full Phase 3 E2E in this session.
-
-## 2. Mandatory first reads
-
-Read exactly these first, in order:
+Use the connected Web-File-Tool against the live **Local Agent Controller** root and read:
 
 1. `PROJECT_STATE.json`
 2. `docs/ARCHITECTURE.md`
@@ -34,189 +27,143 @@ Read exactly these first, in order:
 4. `tasks/ACTIVE_TASK.md`
 5. `docs/NEXT_SESSION_PROMPT_TEMPLATE.md`
 
-Then read:
+Then read only the additional live files needed to execute A002 safely, including:
 
 - `docs/TECHNICAL_DESIGN_AND_IMPLEMENTATION_SPECIFICATION_v0.1.md`
 - `docs/CONTRACTS.md`
 - `docs/BUILD_REUSE_MATRIX.md`
 - `docs/UPSTREAM_QUALIFICATION.md`
-- the existing dispatcher/effect/sandbox interfaces and only the Phase 1/2 tests needed to preserve their contracts
-- the pinned Pi source needed to implement A001
+- `packages/adapters/pi/adapter.py`
+- `packages/adapters/pi/governed_pi.mjs`
+- `scripts/test-a001`
+- `qualification/evidence/a001_owner_execution.json`
+- the minimal existing model/runtime interfaces, tests, and pinned FreeToken source required by A002
 
-Do not reconstruct current completion from conversation memory.
+Do not rely on conversation memory when live repository state can be read.
 
-## 3. Handoff facts to verify
+## Predecessor handoff facts to verify
 
-Treat these as claims, not evidence by themselves:
-
-- `PREDECESSOR_ROLE=Fresh Independent Reviewer`
+- `PREDECESSOR_SEGMENT=LAC-A001`
 - `PREDECESSOR_RESULT=PASS`
-- `REVIEWED_GIT_COMMIT=aab830122d85b4fcb4f1b5cb7f62e8ba82a23803`
-- `PHASE1_REVIEWED_GIT_COMMIT=ba21d50c26540147c458a8e3f402e15e71efe9c7`
-- `HANDOFF_BASE_GIT_COMMIT=77ead8316c74298ce79091c18177c29db66a2271`
+- `A001_IMPLEMENTATION_GIT_COMMIT=93f72ded7b96801d0e619a5aa702f9ce0f87b522`
+- `A001_START_GIT_COMMIT=7bdc9b7c11c6c128943ff495367e1576046bb13f`
+- `A001_PI_PIN=da840b6216578c2a571d0374ac6a2091a83f9d91`
+- `EXPECTED_ACTIVE_TASK=LAC-A002`
+- `EXPECTED_PHASE=PHASE_3_REAL_LOCAL_AGENT_MODEL`
+- `EXPECTED_FREETOKEN_PIN=af71ba43206e124f5ff6419b47ee36c6e9981078`
 - `BLOCKER_IDS=NONE`
-- `OWNER_EXECUTION_EVIDENCE=${HOME}/Downloads/LAC_P2_REVIEW_PASS_HANDOFF_A001_v0.1.0_20260914_044421.log`
-- `EXPECTED_WORKFLOW_SUBJECT=workflow: accept Phase 2 and hand off to Phase 3 A001`
-- `EXPECTED_NEXT_TASK=LAC-A001`
-- `SESSION_SEGMENT=LAC-A001`
-- `H001_SELECTED_BACKEND=bubblewrap`
-- `H002_ADAPTER=filesystem:v1`
-- `H003_ADAPTER=shell:v1`
-- `PI_PINNED_GIT_COMMIT=da840b6216578c2a571d0374ac6a2091a83f9d91`
 
-The Phase 2 independent re-review accepted corrected candidate `aab830122d85b4fcb4f1b5cb7f62e8ba82a23803` after proving the blocked candidate admitted `/usr/bin/sort`, the corrected candidate rejected it, H001-H004 passed, the complete applicable unit/integration/acceptance regression passed, no Phase 3 capability was present, and Git remained clean.
+Verify the live owner-execution evidence and Git history before mutation. If the repository is dirty, durable state disagrees with this handoff, the A001 evidence is missing/failed, or the pinned FreeToken checkout does not match, stop fail-closed and report the exact discrepancy.
 
-The review must be preserved across workflow administration only. Verify the complete reviewed-candidate-to-live-HEAD delta. Before A001 implementation begins, every post-review change must be confined to:
+## A001 contract that must remain true
 
-- `PROJECT_STATE.json`
-- `tasks/ACTIVE_TASK.md`
-- `NEXT_SESSION_PROMPT.md`
-
-Any pre-A001 implementation/test/architecture/contract/qualification/upstream change invalidates preservation and is a blocker.
-
-Record:
-
-`REVIEW_PRESERVED_ACROSS_NONMATERIAL_DELTA=true`
-
-only after verifying that condition.
-
-## 4. A001 implementation objective
-
-Implement the minimum Pi integration required by the controlling Phase 3 plan:
+The completed Pi integration is a proposal/translation layer only:
 
 ```text
 Pi Agent Core
-   |
-   | controller-backed tools only
-   |
-   +-- lac_fs_...
-   +-- lac_shell_exec
-   +-- other tool surfaces only if already required by A001
-   |
-   v
-LAC Authority Core -> Dispatcher -> reviewed effect adapters -> H001 sandbox
+  -> only lac_fs_read / lac_fs_create / lac_fs_replace / lac_shell_exec
+  -> PiAgentAdapter
+  -> canonical EffectRequest persisted in controller state
+  -> existing Dispatcher
+  -> reviewed filesystem:v1 or shell:v1 adapter
+  -> H001 sandbox
 ```
 
-Pi is the agent harness, not authority.
+The model cannot supply approval, decision, lease, request, principal, agent, executor, or idempotency authority fields. No stock unrestricted Pi coding-agent Bash/read/edit/write route is part of the governed harness.
 
-The adapter must preserve these boundaries:
+A002 must not weaken or bypass this contract.
 
-1. Pi/model output proposes tool intent only.
-2. Tool translation produces exact typed/canonical LAC effect requests.
-3. Policy, approval, pre-dispatch re-evaluation, execution lease, duplicate prevention, receipts/audit, and emergency pause remain owned by existing deterministic LAC components.
-4. Governed Pi must not retain an alternate unrestricted host-effect route through stock/default Pi Bash/read/edit/write tools.
-5. The existing H001-H004 operating-system boundary remains authoritative.
-6. Credentials do not enter Pi/model context.
-7. The design remains model-runtime independent. Do not couple A001 to FreeToken.
+## A002 implementation objective
 
-## 5. Upstream/reuse rule
+Use the exact qualified FreeToken revision:
 
-Use the exact qualified Pi revision from `UPSTREAM_LOCK.json`:
+- Repository: `FlashML-org/FreeToken`
+- Commit: `af71ba43206e124f5ff6419b47ee36c6e9981078`
+- Qualified version: `0.1.2`
+- License: Apache-2.0
+- Qualified local checkout: `${HOME}/.cache/local-agent-controller/phase0/upstream/freetoken`
 
-`earendil-works/pi@da840b6216578c2a571d0374ac6a2091a83f9d91`
+Implement the minimum model-runtime integration required to let LAC/Pi call FreeToken as an inference endpoint while preserving runtime independence.
 
-Phase 0 found Pi MIT-licensed at the pinned revision and found its agent/coding tools modular enough to construct a harness with controller-backed tools only.
+Required boundary:
 
-Verify the actual pinned source before relying on an API or package surface. Reuse the least invasive upstream mechanism. Do not fork Pi merely for convenience. If dependency/provenance files must change, keep those changes minimal and exact.
+```text
+Pi / AgentAdapter
+    |
+    v
+ModelProvider abstraction
+    |
+    v
+FreeToken local inference endpoint
 
-Do not requalify unrelated upstream projects.
+NO authority edge from FreeToken to:
+- policy decisions
+- approvals
+- execution leases
+- Dispatcher
+- effect adapters
+- host credentials
+```
 
-## 6. Required deterministic validation
+Prefer a thin adapter over forking or modifying FreeToken. Inspect the pinned source first and reuse its documented/native endpoint or Python API if it satisfies the boundary. Do not invent a second authority path.
 
-At minimum, create/run deterministic tests establishing:
+## Deterministic validation minimum
 
-1. the Pi adapter exposes only the intended LAC-backed governed tool surface;
-2. stock/default unrestricted Pi Bash/read/edit/write capabilities are absent from governed construction;
-3. supported Pi tool inputs translate to the exact expected typed/canonical LAC request fields;
-4. unknown/malformed tool requests fail closed before host effect;
-5. tool/model output cannot directly approve, lease, dispatch, or bypass policy;
-6. filesystem and shell effects still enter the existing Dispatcher and reviewed H002/H003 adapters;
-7. exact approval binding and security-relevant mutation behavior remain unchanged;
-8. immediate pre-dispatch policy re-evaluation remains unchanged;
-9. duplicate prevention/idempotency behavior remains unchanged;
-10. emergency pause remains effective;
-11. Pi/model environment/context receives no service credential;
-12. H004 actual-effect containment still passes;
-13. `scripts/test-h004`, `scripts/test-h003`, `scripts/test-h002`, and `scripts/test-h001` pass;
-14. the complete applicable Phase 1 regression passes;
-15. all new A001 tests pass;
-16. Git remains clean after tests;
-17. no FreeToken or A002 implementation capability was introduced.
+Before packaging, prove at least:
 
-Do not accept policy-result-only evidence for an operating-system containment property; retain the Phase 2 actual-effect standard.
+1. exact FreeToken pin and expected interface are verified fail-closed;
+2. request translation into the runtime is deterministic;
+3. response translation back to the model/agent layer is deterministic;
+4. unavailable runtime fails closed;
+5. malformed runtime response fails closed;
+6. timeout/cancellation behavior is bounded and tested where the selected interface permits it;
+7. FreeToken cannot approve, lease, dispatch, or directly invoke any LAC effect adapter;
+8. no service credential is placed in model-visible request/context by the adapter;
+9. A001 governed Pi tool-surface tests remain green;
+10. `scripts/test-h004` remains green;
+11. `scripts/test-h003` remains green;
+12. `scripts/test-h002` remains green;
+13. `scripts/test-h001` remains green;
+14. Phase 1 unit/integration/acceptance regression remains green;
+15. new A002 tests are green;
+16. no full Phase 3 end-to-end run is started;
+17. Git is clean after successful owner workflow.
 
-## 7. Scope constraints
+## Session lifecycle
 
-Do not:
+1. Verify predecessor state and evidence.
+2. Inspect the pinned FreeToken source/interface.
+3. Implement only A002.
+4. Run deterministic A002 tests.
+5. Correct any A002 defects found in this session.
+6. Run the applicable full regression.
+7. Build **one** owner-executable package.
+8. **STOP** at `OWNER_EXECUTION_REQUIRED`.
 
-- implement or configure FreeToken;
-- run real model inference merely to complete A001;
-- begin A002/A003;
-- add OpenClaw;
-- add Gmail/Calendar;
-- broaden generic `shell:v1`;
-- create a new policy engine or authority path;
-- make Pi state canonical controller truth;
-- expose direct host credentials to the harness;
-- weaken any accepted Phase 1/2 invariant.
+Do not ask the owner to create files manually. The owner package must be self-contained and must:
 
-Routine ambiguity is not a stop condition. Choose the narrowest conservative implementation consistent with the specification and test it.
+- fail closed on unexpected Git/state/task/pin conditions;
+- verify its own payload hashes;
+- install only the tested A002 changes;
+- run deterministic verification and regressions;
+- record durable A002 execution evidence;
+- advance durable state to the next task only after success;
+- install a fresh root `NEXT_SESSION_PROMPT.md` for the successor session;
+- print explicit PASS/FAIL and resulting Git commits.
 
-## 8. Implementation lifecycle
+## Required final status fields
 
-This session must complete A001:
+End the session with these exact labels:
 
-`verify predecessor -> implement A001 -> deterministic tests -> correct in-scope failures -> full applicable regression -> build one owner package -> STOP`
+- `WHERE_WE_ARE=`
+- `SESSION_SEGMENT=LAC-A002`
+- `A001_IMPLEMENTATION_GIT_COMMIT=93f72ded7b96801d0e619a5aa702f9ce0f87b522`
+- `WHAT_WAS_VERIFIED=`
+- `WHAT_WAS_COMPLETED=`
+- `WHAT_REMAINS_IN_CURRENT_PHASE=`
+- `TOTAL_PROJECT_POSITION=`
+- `BLOCKERS=`
+- `STOP_GATE=`
+- `EXACT_NEXT_SAFE_ACTION=`
 
-Do not hand known A001 defects to A002.
-
-When A001 is complete, the owner package must:
-
-- fail closed on unexpected Git/state/task input;
-- verify its own package hashes;
-- install only the tested A001 implementation;
-- run required deterministic verification;
-- advance durable state to `LAC-A002`;
-- install a complete fresh A002 `NEXT_SESSION_PROMPT.md`;
-- record execution evidence;
-- print PASS/FAIL.
-
-The newly active A002 belongs to a fresh session.
-
-## 9. Applicable invariants
-
-Preserve at minimum:
-
-- `INV-001` no implicit authority;
-- `INV-002` model output is never authorization;
-- `INV-003` no alternate consequential-effect bypass in governed mode;
-- `INV-004` credentials do not enter agent context;
-- `INV-005` exact approval binding;
-- `INV-006` policy re-evaluation immediately before dispatch;
-- `INV-007` deny wins;
-- `INV-008` duplicate prevention/idempotency;
-- `INV-009` controller durable state is truth;
-- `INV-010` fail closed;
-- `INV-011` emergency pause;
-- `INV-012` audit is not authority;
-- `INV-014` deterministic work remains deterministic after typed intent translation.
-
-## 10. Required stop status
-
-Before stopping, report:
-
-- `WHERE_WE_ARE`
-- `SESSION_SEGMENT=LAC-A001`
-- `REVIEWED_GIT_COMMIT=aab830122d85b4fcb4f1b5cb7f62e8ba82a23803`
-- `REVIEW_PRESERVED_ACROSS_NONMATERIAL_DELTA`
-- `WHAT_WAS_VERIFIED`
-- `WHAT_WAS_COMPLETED`
-- `WHAT_REMAINS_IN_CURRENT_PHASE`
-- `TOTAL_PROJECT_POSITION`
-- `BLOCKERS`
-- `STOP_GATE`
-- `EXACT_NEXT_SAFE_ACTION`
-
-The normal successful stop gate is:
-
-`OWNER_EXECUTION_REQUIRED`
+On successful preparation, `STOP_GATE=OWNER_EXECUTION_REQUIRED` and the next safe action is exactly one Bash command that verifies and runs the package. Do not continue into later scope in the same session.

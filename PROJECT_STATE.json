@@ -3,11 +3,11 @@
   "project_version": "0.1.0-dev",
   "phase": "PHASE_3_REAL_LOCAL_AGENT_MODEL",
   "phase_status": "IN_PROGRESS",
-  "active_task": "LAC-A001",
+  "active_task": "LAC-A002",
   "last_accepted_release": null,
   "blockers": [],
-  "nonblocking_findings": [
-    "Waggle remains concepts-only/no-code-reuse while authoritative reuse licensing is unresolved or requires deliberate requalification."
+  "nonblocking_notes": [
+    "Waggle remains concepts-only unless an authoritative license is resolved at the exact revision intended for reuse."
   ],
-  "next_action": "Implement LAC-A001 Pi adapter in one fresh implementation session. Do not begin A002 FreeToken integration until A001 completes and its owner package advances durable state."
+  "next_action": "Implement LAC-A002: configure the pinned FreeToken runtime as the first local ModelProvider/inference endpoint without moving authorization into the model runtime; do not begin full Phase 3 end-to-end qualification until the A002 owner package advances durable state."
 }
