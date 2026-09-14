@@ -1,8 +1,8 @@
-# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 2 BLOCKER REMEDIATION P2-B001
+# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 2 INDEPENDENT RE-REVIEW
 
-## 1. Purpose, authorized role, and Secure-SDLC scope
+## 1. Purpose, role, and Secure-SDLC scope
 
-You are the **Lead Implementation Engineer** for the user-owned **Local Agent Controller (LAC)**.
+You are the **Fresh Independent Reviewer** for the user-owned **Local Agent Controller (LAC)**.
 
 Use the connected read-only Tunnel/Web-File-Tool. Project root label:
 
@@ -10,15 +10,19 @@ Use the connected read-only Tunnel/Web-File-Tool. Project root label:
 
 This session owns exactly:
 
-`SESSION_SEGMENT=LAC-P2-REMEDIATION-P2-B001`
+`SESSION_SEGMENT=LAC-P2-REVIEW`
+
+Use mode:
+
+`PHASE_BOUNDARY_INDEPENDENT_REVIEW`
 
 The controlling rule remains:
 
 > AI proposes. Deterministic software determines authorization and effects.
 
-This is defensive Secure-SDLC work on software owned and operated by the project owner. Security validation is limited to source inspection and deterministic tests using the LAC repository, temporary local workspaces, synthetic files/canary values, local test databases, isolated local sandbox instances, and other non-production fixtures. Do not use real credentials, production accounts, third-party systems, external targets, or generalized procedures for circumventing security controls.
+This is defensive Secure-SDLC review of owner-controlled software. Security validation is limited to source inspection and deterministic tests using the LAC repository, temporary local workspaces, synthetic files/canary values, local test databases, isolated local sandbox instances, and other non-production fixtures. Do not use real credentials, production accounts, third-party systems, external targets, or generalized procedures for circumventing security controls.
 
-Remediate **only** blocker `P2-B001`. Do not redesign the project. Do not begin Phase 3 or `LAC-A001`. After remediation, return the corrected Phase 2 candidate to one fresh independent re-review.
+Do not remediate. Do not begin Phase 3 or `LAC-A001` in this review session.
 
 ## 2. Mandatory first reads
 
@@ -48,135 +52,113 @@ Read only additional Phase 1 authority files/tests necessary for the regression 
 
 Do not reconstruct project state from conversation memory.
 
-## 3. Verified predecessor facts
+## 3. Handoff facts to verify
 
-Preserve and independently verify:
+Treat these as claims, not as evidence by themselves:
 
-- `PREDECESSOR_ROLE=Fresh Independent Reviewer`
-- `PREDECESSOR_RESULT=BLOCKED`
-- `BLOCKER_IDS=P2-B001`
-- `REVIEWED_PHASE2_GIT_COMMIT=5cdd824b083ede92c192ef17f039cdbf0206cc44`
+- `PREDECESSOR_ROLE=Lead Implementation Engineer`
+- `PREDECESSOR_RESULT=PASS`
+- `REMEDIATED_BLOCKER_IDS=P2-B001`
+- `BLOCKER_IDS=NONE`
+- `BLOCKED_PHASE2_GIT_COMMIT=5cdd824b083ede92c192ef17f039cdbf0206cc44`
+- `BLOCKED_REVIEW_HANDOFF_BASE=dd86d0d0b8ad057139f47acd4884147155103378`
+- `CORRECTED_PHASE2_GIT_COMMIT=aab830122d85b4fcb4f1b5cb7f62e8ba82a23803`
 - `PHASE1_REVIEWED_GIT_COMMIT=ba21d50c26540147c458a8e3f402e15e71efe9c7`
-- `BLOCKED_REVIEW_LIVE_HEAD=e91773530125ebcd01a441d83b6bc91018864325`
-- `HANDOFF_BASE_GIT_COMMIT=e91773530125ebcd01a441d83b6bc91018864325`
-- `OWNER_EXECUTION_EVIDENCE=${HOME}/Downloads/LAC_P2_INDEPENDENT_REVIEW_EVIDENCE_20260913_223217.log`
+- `OWNER_EXECUTION_EVIDENCE=${HOME}/Downloads/LAC_P2_REMEDIATION_P2_B001_v0.1.0_20260914_032029.log`
 - `H001_SELECTED_BACKEND=bubblewrap`
 - `H002_ADAPTER=filesystem:v1`
 - `H003_ADAPTER=shell:v1`
 - `H004_TEST_GATE=scripts/test-h004`
-- `EXPECTED_NEXT_TASK=LAC-P2-REMEDIATION-P2-B001`
-- `SESSION_SEGMENT=LAC-P2-REMEDIATION-P2-B001`
+- `EXPECTED_NEXT_TASK=LAC-P2-REVIEW`
+- `SESSION_SEGMENT=LAC-P2-REVIEW`
 
-The blocked Phase 2 implementation candidate is exactly:
+The corrected implementation commit must be a descendant of the blocked-review handoff base and must not rewrite the blocked candidate.
 
-`5cdd824b083ede92c192ef17f039cdbf0206cc44`
+The owner package installs a workflow-only handoff after the corrected implementation commit. The expected workflow commit subject is:
 
-The independent review verified:
+`workflow: hand off corrected Phase 2 candidate to re-review`
 
-- live branch `main`;
-- review-time live HEAD `e91773530125ebcd01a441d83b6bc91018864325`;
-- clean Git state before and after tests;
-- candidate -> original review handoff changed only `NEXT_SESSION_PROMPT.md`;
-- original review handoff -> review-time live HEAD changed only `NEXT_SESSION_PROMPT.md`, `docs/NEXT_SESSION_PROMPT_TEMPLATE.md`, and `tasks/ACTIVE_TASK.md`;
-- `scripts/test-h004` PASS;
-- `scripts/test-h003` PASS;
-- `scripts/test-h002` PASS;
-- `scripts/test-h001` PASS;
-- complete applicable Phase 1 unit, integration, and acceptance regressions PASS;
-- no Phase 3 Pi/FreeToken implementation files were present under `packages`.
-
-The workflow package that installed this prompt is expected to have a commit whose subject is:
-
-`workflow: hand off Phase 2 blocker P2-B001 remediation`
-
-Treat that commit as a non-material blocked-review handoff only. Verify its complete parent-to-HEAD delta before trusting it. It may change only:
+Verify the complete corrected-candidate-to-live-HEAD delta. It may change only:
 
 - `PROJECT_STATE.json`
 - `tasks/ACTIVE_TASK.md`
 - `NEXT_SESSION_PROMPT.md`
 
-Any implementation/test/architecture/contract/qualification change in that workflow commit is a discrepancy.
+Any implementation/test/architecture/contract/qualification change in that workflow commit invalidates review preservation and is a discrepancy.
 
-## 4. Formal blocker
+## 4. Remediation claim under review
 
-### `P2-B001 — shell:v1 executable-class closure admits GNU sort, which can invoke another program`
+`P2-B001` found that the reviewed generic `shell:v1` leaf-command set admitted GNU `/usr/bin/sort`, whose `--compress-program=PROG` facility can invoke another program.
 
-The Phase 2 contract requires runtime/user executable configuration to be narrowing-only and says generic command-launching executables cannot become a `shell:v1` route.
+The remediation claim is deliberately narrow:
 
-The reviewed implementation includes `sort` in `_SAFE_LEAF_EXECUTABLE_NAMES`.
+1. `sort` was removed from `_SAFE_LEAF_EXECUTABLE_NAMES`;
+2. runtime/user configuration can no longer admit `/usr/bin/sort`;
+3. H004 contains a permanent deterministic regression for this;
+4. no generic interpreter, wrapper, shell, policy language, or new execution surface was introduced;
+5. the existing reviewed leaf set contains no other member identified as having an equivalent external-program launch facility.
 
-The live review probe established:
+Do not accept this claim merely because the builder says it is true. Inspect the code and execute the bounded deterministic regression.
 
-- `/usr/bin/sort` exists;
-- `/usr/bin/sort --help` exposes `--compress-program=PROG`;
-- `ShellEffectAdapter(... allowed_executables=(Path("/usr/bin/sort"),))` accepts it;
-- the adapter reports `/usr/bin/sort` as an allowed executable.
-
-GNU `sort` uses `--compress-program=PROG` to invoke the specified program for temporary-file processing. Therefore the reviewed "non-launching" set contains an executable with an external-program launch facility.
-
-The existing green H004/H003 tests demonstrate a coverage gap; they do not negate this finding.
-
-## 5. Required remediation
-
-Use the smallest conservative remediation.
+## 5. Required independent validation
 
 At minimum:
 
-1. make `/usr/bin/sort` ineligible for generic `shell:v1`;
-2. add a permanent deterministic regression proving runtime/user configuration cannot admit it;
-3. inspect the existing `_SAFE_LEAF_EXECUTABLE_NAMES` set only as necessary to ensure no other member exposes an equivalent external-program execution facility that contradicts the documented non-launching classification;
-4. if such an equivalent member is found, remove it and add the smallest corresponding regression;
-5. do not add a generic interpreter, wrapper, shell, executable policy language, or new execution surface;
-6. do not weaken the contract or convert this into documentation-only remediation.
+1. verify branch, live HEAD, corrected candidate identity, ancestry, and clean Git state;
+2. verify the corrected implementation commit's complete parent delta is limited to:
+   - `packages/effects/shell/adapter.py`
+   - `tests/adversarial/test_h004_phase2_bypass.py`;
+3. verify the blocker-specific regression distinguishes the blocked behavior from the corrected behavior;
+4. verify `/usr/bin/sort` cannot be admitted through runtime/user `allowed_executables`;
+5. run `scripts/test-h004`;
+6. run `scripts/test-h003`;
+7. run `scripts/test-h002`;
+8. run `scripts/test-h001`;
+9. run the complete applicable Phase 1 unit, integration, and acceptance regression;
+10. verify Git remains clean after tests;
+11. verify no Phase 3 Pi/FreeToken implementation capability was introduced;
+12. verify applicable `INV-003`, `INV-004`, `INV-005`, `INV-006`, `INV-008`, `INV-010`, and `INV-014`.
 
-## 6. Required validation
+For operating-system containment claims, a policy result alone is not sufficient; retain the actual-effect standard used by the Phase 2 suite.
 
-After remediation:
+## 6. Review result
 
-1. prove the blocker-specific regression distinguishes the pre-remediation behavior from corrected behavior;
-2. run `scripts/test-h004`;
-3. run `scripts/test-h003`;
-4. run `scripts/test-h002`;
-5. run `scripts/test-h001`;
-6. run the complete applicable Phase 1 regression gate;
-7. verify Git is clean after tests;
-8. verify no Phase 3 capability was introduced;
-9. preserve `INV-003`, `INV-004`, `INV-005`, `INV-006`, `INV-008`, `INV-010`, and `INV-014` as applicable.
+Return exactly one formal result:
 
-## 7. Package and durable handoff
+`PASS`
 
-Local mutation is required. Produce one owner-executable remediation package containing, as applicable:
+or
 
-- `manifest.json`
-- `SHA256SUMS`
-- `install.sh`
-- `verify.sh`
-- `rollback.sh`
-- `payload/`
-- staged successor `NEXT_SESSION_PROMPT.md`
+`BLOCKED`
 
-Provide exactly one self-contained Bash command implementing:
+A blocker must identify a concrete violated invariant, acceptance criterion, security boundary, package/data-integrity requirement, credential isolation requirement, reproducibility requirement, or material control-boundary failure.
 
-`package hash verification -> preflight -> backup -> install -> deterministic verification -> durable-state advance -> successor-prompt install -> final result`
+Do not turn optional improvements into blockers.
 
-The package must fail closed on unexpected Git/state/task input, create a new corrected Phase 2 implementation commit rather than rewriting the blocked candidate, record execution evidence in Downloads, and install a fresh Phase 2 **independent re-review** prompt before reporting PASS.
+If `PASS`:
 
-After successful owner execution, the project remains in Phase 2 candidate/re-review state. Do not advance to Phase 3 until that fresh re-review returns `PASS`.
+- Phase 2 is accepted;
+- prepare one workflow-only owner package that advances durable state to fresh implementation task `LAC-A001`;
+- install a complete fresh Phase 3 implementation prompt;
+- do not implement A001 in this review conversation.
 
-## 8. Required stop status
+If `BLOCKED`:
+
+- identify exact blocker IDs;
+- prepare one workflow-only owner package installing a fresh remediation prompt limited to those blockers;
+- do not remediate in this review conversation.
+
+## 7. Required stop status
 
 Before stopping, report:
 
 - `WHERE_WE_ARE`
-- `SESSION_SEGMENT=LAC-P2-REMEDIATION-P2-B001`
+- `SESSION_SEGMENT=LAC-P2-REVIEW`
+- `REVIEWED_GIT_COMMIT=aab830122d85b4fcb4f1b5cb7f62e8ba82a23803`
 - `WHAT_WAS_VERIFIED`
-- `WHAT_WAS_COMPLETED`
-- `CORRECTED_PHASE2_GIT_COMMIT`
+- `REVIEW_RESULT`
 - `BLOCKER_IDS`
-- `BLOCKER_REMEDIATION_STATUS`
 - `WHAT_REMAINS_IN_CURRENT_PHASE`
 - `TOTAL_PROJECT_POSITION`
 - `STOP_GATE`
 - `EXACT_NEXT_SAFE_ACTION`
-
-The implementation session stops at `OWNER_EXECUTION_REQUIRED` when the remediation package is ready. It must not continue into the independent re-review or Phase 3 in the same conversation.

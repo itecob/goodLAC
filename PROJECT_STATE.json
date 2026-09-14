@@ -2,14 +2,12 @@
   "schema": "lac.project-state/v1",
   "project_version": "0.1.0-dev",
   "phase": "PHASE_2_LOCAL_HOST_ENFORCEMENT",
-  "phase_status": "BLOCKED",
-  "active_task": "LAC-P2-REMEDIATION-P2-B001",
+  "phase_status": "CANDIDATE_FOR_INDEPENDENT_REVIEW",
+  "active_task": "LAC-P2-REVIEW",
   "last_accepted_release": null,
-  "blockers": [
-    "P2-B001"
-  ],
+  "blockers": [],
   "nonblocking_findings": [
     "Waggle remains concepts-only/no-code-reuse while authoritative reuse licensing is unresolved or requires deliberate requalification."
   ],
-  "next_action": "Remediate only P2-B001, rerun the full Phase 2 and applicable Phase 1 gates, and return the corrected Phase 2 candidate to one fresh independent re-review."
+  "next_action": "Run one fresh independent re-review of the corrected Phase 2 candidate after P2-B001 remediation. Do not begin Phase 3 until that re-review returns PASS."
 }
