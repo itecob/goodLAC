@@ -3,11 +3,11 @@
   "project_version": "0.1.0-dev",
   "phase": "PHASE_3_REAL_LOCAL_AGENT_MODEL",
   "phase_status": "IN_PROGRESS",
-  "active_task": "LAC-A002",
+  "active_task": "LAC-A003",
   "last_accepted_release": null,
   "blockers": [],
   "nonblocking_notes": [
     "Waggle remains concepts-only unless an authoritative license is resolved at the exact revision intended for reuse."
   ],
-  "next_action": "Implement LAC-A002: configure the pinned FreeToken runtime as the first local ModelProvider/inference endpoint without moving authorization into the model runtime; do not begin full Phase 3 end-to-end qualification until the A002 owner package advances durable state."
+  "next_action": "Execute LAC-A003: complete the Phase 3 Pi + LAC ModelProvider + FreeToken + one-local-model walking-skeleton qualification and produce the Phase 3 candidate; do not begin Phase 4."
 }

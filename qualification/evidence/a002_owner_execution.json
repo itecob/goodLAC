@@ -1,0 +1,51 @@
+{
+  "capabilities": {
+    "cancellation": true,
+    "reasoning": true,
+    "seed": "UNSUPPORTED_FAIL_CLOSED",
+    "streaming": true,
+    "structured_output": "UNSUPPORTED_FAIL_CLOSED",
+    "tools": true
+  },
+  "completed_at_utc": "2026-09-14T11:06:40Z",
+  "focused_test_harness": "scripts/test-a002",
+  "freetoken": {
+    "checkout": "${HOME}/.cache/local-agent-controller/phase0/upstream/freetoken",
+    "interface": "OpenAI-compatible loopback HTTP /v1/chat/completions + /v1/models",
+    "license": "Apache-2.0",
+    "pin": "af71ba43206e124f5ff6419b47ee36c6e9981078",
+    "repo": "FlashML-org/FreeToken",
+    "version": "0.1.2"
+  },
+  "implementation_commit": "1c07f57ef846895aed638c411c0c26b8fdcbf841",
+  "implementer_notes": [
+    "FreeToken is inference-only; no authority, dispatcher, effect-adapter, sandbox, or credential interface was added.",
+    "Endpoint is restricted to explicit loopback HTTP.",
+    "Pinned FreeToken v0.1.2 has no seed field; seed requests fail closed instead of being silently ignored.",
+    "Pinned FreeToken v0.1.2 rejects constrained response_format; structured-output requests fail closed.",
+    "Full Pi + FreeToken + local-model Phase 3 walking-skeleton qualification was not run in A002."
+  ],
+  "package_id": "LAC_A002_FREETOKEN_MODEL_PROVIDER_v0.1.2",
+  "result": "PASS",
+  "runtime_paths": [
+    "packages/model_provider/contract.py",
+    "packages/adapters/freetoken/provider.py"
+  ],
+  "schema": "lac.a002-owner-execution/v1",
+  "session_segment": "LAC-A002",
+  "start_commit": "01767d5260a4281c3d6eb5d586d8c6237413d62f",
+  "test_log": "qualification/evidence/a002_owner_execution.log",
+  "test_log_sha256": "e4880a834af83bd6c489bca2eeb872803cce89ade65708aa9a0095e5b0c9b227",
+  "test_log_tracked": false,
+  "test_result": "PASS",
+  "tests": [
+    "scripts/verify_freetoken_pin.py",
+    "python3 -m unittest discover -s tests/integration -p 'test_freetoken_provider.py' -v",
+    "scripts/test-a001",
+    "scripts/test-c010 (via scripts/test-a001)",
+    "scripts/test-h001 (via scripts/test-a001)",
+    "scripts/test-h002 (via scripts/test-a001)",
+    "scripts/test-h003 (via scripts/test-a001)",
+    "scripts/test-h004 (via scripts/test-a001)"
+  ]
+}

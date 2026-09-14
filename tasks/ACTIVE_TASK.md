@@ -1,4 +1,4 @@
-# ACTIVE TASK — LAC-A002
+# ACTIVE TASK — LAC-A003
 
 **Phase:** PHASE_3_REAL_LOCAL_AGENT_MODEL
 **Mode:** IMPLEMENTATION_SEGMENT
@@ -6,36 +6,33 @@
 
 ## Objective
 
-Integrate the pinned FreeToken revision as the first local model-runtime endpoint behind LAC's `ModelProvider` boundary, while keeping the model runtime completely outside authorization and effect execution.
+Complete the Phase 3 real-local-agent walking skeleton using the already-governed Pi harness, the A002 FreeToken `ModelProvider`, and one explicitly identified local model. Produce the Phase 3 candidate only after the positive and adversarial acceptance paths are demonstrated through the existing authority and sandbox boundaries.
 
 ## In scope
 
-- Verify the completed `LAC-A001` Pi adapter/harness and its owner execution evidence before mutation.
-- Inspect the pinned FreeToken revision `af71ba43206e124f5ff6419b47ee36c6e9981078` and the qualified local checkout.
-- Implement the minimum FreeToken `ModelProvider`/configuration integration required for Phase 3.
-- Keep Pi and FreeToken independently replaceable behind the documented internal interfaces.
-- Add deterministic tests for request/response translation, runtime unavailability, malformed output, timeout/cancellation where applicable, and proof that FreeToken has no authority path.
-- Preserve all Phase 1 and Phase 2 authorization, approval, lease, receipt, audit, emergency-pause, sandbox, and bypass semantics unchanged.
-- Build one fail-closed owner package that verifies, installs, tests, records evidence, and advances durable state only after success.
+- Verify completed `LAC-A002` owner evidence and the exact installed ModelProvider/FreeToken boundary before mutation.
+- Identify and record one local model suitable for the pinned FreeToken runtime; do not silently substitute a different runtime.
+- Connect Pi's model-stream path to the LAC-owned `ModelProvider`/FreeToken integration without widening Pi's governed tool surface.
+- Run the Phase 3 positive demonstration: inspect the bounded project workspace through governed read, create a summary file through governed write, and verify the resulting receipt.
+- Run the Phase 3 adversarial demonstration using synthetic/local fixtures: a request to read a host-only SSH-private-key fixture must be denied and OS enforcement must make the prohibited read unavailable.
+- Preserve Phase 1 and Phase 2 authorization, approval, lease, receipt, audit, emergency-pause, sandbox, and bypass semantics.
+- Run the applicable regression gate and create the Phase 3 candidate handoff for fresh independent review only after all Phase 3 acceptance tests pass.
 
 ## Out of scope
 
-- Full Pi + FreeToken + LAC end-to-end agent qualification.
-- New effect adapters or broader host capabilities.
+- Phase 4 Gmail/Calendar work.
 - OpenClaw integration.
-- Alternative model runtimes such as llama.cpp or Ollama except as documented future compatibility targets.
-- Policy-engine replacement or UI work.
-- Production credentials or external consequential effects.
+- Alternative inference runtimes such as llama.cpp or Ollama.
+- New effect adapters, policy-engine replacement, UI work, or production credentials.
+- External consequential targets.
 
 ## Acceptance
 
-1. FreeToken is used only as a local inference endpoint and cannot approve, lease, dispatch, or directly execute governed effects.
-2. The runtime integration is pinned to `af71ba43206e124f5ff6419b47ee36c6e9981078` and fails closed on pin/interface drift.
-3. Model/runtime request and response translation is deterministic and tested.
-4. Runtime failure, malformed responses, timeout/cancellation, and unavailable endpoint conditions fail closed without granting authority.
-5. No service credential is introduced into model-visible context by the integration.
-6. `LAC-A001` Pi governed-tool tests remain green.
-7. Phase 1 regression remains green.
-8. `scripts/test-h001`, `scripts/test-h002`, `scripts/test-h003`, and `scripts/test-h004` remain green.
-9. No full Phase 3 end-to-end qualification is started in this segment.
-10. Repository is clean after the successful owner workflow.
+1. Pi receives only the four governed A001 tools and obtains inference through the LAC-owned ModelProvider boundary.
+2. The selected local model and runtime identity are explicit and reproducible.
+3. The positive Phase 3 workspace read/write scenario succeeds only through controller-governed effect paths and produces a durable receipt.
+4. The adversarial host-only key read is denied and the prohibited OS effect does not occur.
+5. FreeToken remains inference-only and cannot approve, lease, dispatch, or execute effects.
+6. A001, A002, Phase 1, and Phase 2 deterministic regression gates remain green.
+7. No Phase 4 or later implementation begins.
+8. Successful completion leaves a clean Git tree and a Phase 3 candidate ready for fresh independent review.
