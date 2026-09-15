@@ -26,7 +26,7 @@ Then read:
 
 - `PREDECESSOR_ROLE=Owner-authorized architecture/workflow amendment`
 - `PREDECESSOR_RESULT=OWNER_EXECUTION_PASS`
-- `PREDECESSOR_GIT_COMMIT=__AMENDMENT_COMMIT__`
+- `PREDECESSOR_GIT_COMMIT=83a90c1cb20adcbfced3ba45f22146138b63b8b0`
 - `HANDOFF_BASE_GIT_COMMIT=cf29191ae05490f94e74cae9d0006f8324bebab0`
 - `OWNER_EXECUTION_EVIDENCE=qualification/evidence/permission_management_amendment_owner_execution.json`
 - `BLOCKER_IDS=NONE`
