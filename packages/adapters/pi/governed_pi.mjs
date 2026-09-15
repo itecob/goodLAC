@@ -105,7 +105,7 @@ export function createGovernedLacTools({ Type, executeLac }) {
     lac_fs_read: "Read one UTF-8 file through the LAC governed filesystem adapter.",
     lac_fs_create: "Create one UTF-8 file through the LAC governed filesystem adapter.",
     lac_fs_replace: "Replace one UTF-8 file through the LAC governed filesystem adapter.",
-    lac_shell_exec: "Execute one exact argv command through the LAC governed shell adapter.",
+    lac_shell_exec: "Execute one exact command through the LAC governed shell adapter. executable is the program path; argv contains only arguments after the executable and excludes argv[0] (do not repeat the executable in argv).",
   };
 
   return GOVERNED_TOOL_NAMES.map((name) => ({

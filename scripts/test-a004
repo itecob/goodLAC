@@ -13,6 +13,9 @@ python3 scripts/verify_freetoken_pin.py
 echo "==> A004 deterministic CUDA discovery"
 python3 -m unittest tests.unit.test_a004_freetoken_launcher -v
 
+echo "==> A004 terminal input and line-editing remediation"
+python3 -m unittest tests.unit.test_a004_terminal_input -v
+
 echo "==> A004 deterministic controller/receipt/boundary conformance"
 python3 -m unittest tests.integration.test_a004_controller_observability -v
 python3 -m unittest tests.integration.test_a004_source_contract -v

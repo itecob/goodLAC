@@ -74,6 +74,39 @@ class A004ControllerObservabilityTests(unittest.TestCase):
             self.assertEqual(len(receipt_ids), 4)
             self.assertEqual((workspace / "note.txt").read_text(encoding="utf-8"), "alpha\nbeta\n")
 
+    def test_baseline_ls_empty_argv_lists_workspace(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="lac-a004-ls-") as tmp:
+            root = Path(tmp)
+            workspace = root / "workspace"
+            workspace.mkdir()
+            (workspace / "alpha.txt").write_text("alpha\n", encoding="utf-8")
+            (workspace / "beta.txt").write_text("beta\n", encoding="utf-8")
+            state = root / "controller.db"
+            self.bridge(["init", "--state", str(state), "--workspace", str(workspace)])
+            response = self.bridge([
+                "effect", "--state", str(state), "--workspace", str(workspace), "--run-id", "run:a004:ls"
+            ], {
+                "toolCallId": "a004-ls",
+                "toolName": "lac_shell_exec",
+                "arguments": {
+                    "executable": "/usr/bin/ls",
+                    "argv": [],
+                    "cwd": ".",
+                    "environment": {},
+                },
+            })
+            self.assertTrue(response.get("ok"), response)
+            result = response.get("result")
+            self.assertIsInstance(result, dict)
+            assert isinstance(result, dict)
+            self.assertEqual(set(str(result.get("stdout", "")).split()), {"alpha.txt", "beta.txt"})
+            request_id = response.get("request_id")
+            self.assertIsInstance(request_id, str)
+            receipt = self.receipt(state, request_id)
+            self.assertIsNotNone(receipt)
+            assert receipt is not None
+            self.assertEqual(receipt["outcome"], "SUCCEEDED")
+
     def test_symlink_escape_fails_without_reading_host_fixture_and_records_failed_receipt(self) -> None:
         with tempfile.TemporaryDirectory(prefix="lac-a004-boundary-") as tmp:
             root = Path(tmp)

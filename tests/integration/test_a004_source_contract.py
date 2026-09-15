@@ -22,6 +22,17 @@ class A004SourceContractTests(unittest.TestCase):
         self.assertIn("networkmode.none", combined)
         self.assertIn("governed_pi.mjs", combined)
 
+    def test_shell_model_contract_excludes_argv0_and_pins_baseline_ls_shape(self) -> None:
+        terminal = (ROOT / "scripts/a004_terminal.py").read_text(encoding="utf-8")
+        governed = (ROOT / "packages/adapters/pi/governed_pi.mjs").read_text(encoding="utf-8")
+        contract = "argv contains only arguments after the executable and excludes argv[0]"
+        self.assertIn(contract, terminal)
+        self.assertIn(contract, governed)
+        self.assertIn(
+            "executable=/usr/bin/ls, argv=[], cwd=., environment={}",
+            terminal,
+        )
+
     def test_worker_does_not_emit_reasoning_in_turn_result(self) -> None:
         worker = (ROOT / "scripts/a004_agent_worker.mjs").read_text(encoding="utf-8")
         marker = 'type: "turn_result"'
