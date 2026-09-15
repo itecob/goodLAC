@@ -2,14 +2,17 @@
   "schema": "lac.project-state/v1",
   "project_version": "0.1.0-dev",
   "phase": "PHASE_3_5_BASELINE_USER_VALIDATION",
-  "phase_status": "OWNER_VALIDATION_REQUIRED",
-  "active_task": "LAC-A004-UAT",
+  "phase_status": "REMEDIATION_REQUIRED",
+  "active_task": "LAC-A004-REMEDIATION",
   "last_accepted_release": null,
-  "blockers": [],
+  "blockers": [
+    "A004-UAT-B001",
+    "A004-UAT-B002"
+  ],
   "nonblocking_notes": [
     "Waggle remains concepts-only unless an authoritative license is resolved at the exact revision intended for reuse.",
     "Phase 3 A003 remains independently accepted; A004 is an additive owner-usability checkpoint and does not reopen the accepted Phase 3 technical proof.",
-    "A004 deterministic implementation/package gate passed; hands-on owner usability validation remains required before LAC-B001."
+    "A004 deterministic implementation/package gate passed before owner UAT; owner UAT subsequently exposed two A004 usability defects requiring bounded remediation before LAC-B001."
   ],
-  "next_action": "Owner performs LAC-A004-UAT using docs/A004_OWNER_BASELINE_UAT.md and scripts/lac-baseline. Do not begin LAC-B001 until owner validation is explicitly accepted and durably recorded."
+  "next_action": "Fresh implementation session remediates only A004-UAT-B001 and A004-UAT-B002, reruns the full applicable A004 regression gate, and returns the project to owner A004 UAT. Do not begin LAC-B001."
 }

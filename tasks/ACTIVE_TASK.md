@@ -1,56 +1,56 @@
-# ACTIVE TASK — LAC-A004-UAT
+# ACTIVE TASK — LAC-A004-REMEDIATION
 
 ## Objective
 
-Perform owner hands-on validation of the installed A004 interactive baseline harness before Phase 4 business adapters begin.
+Remediate only the two concrete defects observed during hands-on A004 owner UAT, preserve the accepted Phase 3 authority boundary, rerun deterministic A004 regression, and return the project to owner A004 UAT.
+
+## Blocking findings
+
+### A004-UAT-B001 — interactive terminal input robustness
+
+During owner UAT, ordinary terminal left-arrow editing produced raw escape characters (`ESC [ D`) in the submitted prompt. The prompt reached the model path and the Pi session terminated with:
+
+`Bad escaped character in JSON ...`
+
+The interactive owner terminal must not allow ordinary line-editing/control sequences to reach the model in a form that can crash the session. Basic arrow-key editing must be usable, and residual terminal control characters must fail safely without terminating the A004 session.
+
+### A004-UAT-B002 — shell argv model-facing contract ambiguity
+
+The accepted H003 shell adapter defines `argv` as argument strings **excluding argv[0]**. A004's model-facing tool description/system prompt does not make this explicit. During owner UAT the model proposed:
+
+`executable='/usr/bin/ls' argv=['/usr/bin/ls'] cwd='.'`
+
+The governed effect correctly succeeded as the literal command `ls /usr/bin/ls`, so the assistant incorrectly reported `/usr/bin/ls` instead of listing the bounded workspace. The A004 model-facing contract must make the shell argument semantics unambiguous and deterministic enough for the baseline `/usr/bin/ls` UAT request to inspect the workspace correctly.
 
 ## In scope
 
-- Use `scripts/lac-baseline` and `docs/A004_OWNER_BASELINE_UAT.md` against the dedicated bounded A004 workspace.
-- Validate normal multi-turn conversation, governed read/create/replace/shell behavior, observable receipts, denied boundary behavior, and clean shutdown/restart.
-- Inspect `qualification/evidence/a004_owner_execution.json` and live installed files as predecessor evidence.
-- If the owner explicitly accepts the baseline, prepare the minimal durable transition to `LAC-B001` without implementing B001 in this session.
-- If a concrete A004 defect is observed, keep scope on A004 remediation and do not advance to B001.
+- `scripts/a004_terminal.py` terminal input handling and only the smallest supporting code/tests required for B001.
+- A004 model-facing shell tool descriptions/system prompt and only the smallest supporting code/tests required for B002.
+- Deterministic regression tests that specifically cover both defects.
+- Full applicable A004 regression gate after remediation.
+- Owner-executable remediation package that returns durable state to `LAC-A004-UAT` and installs a fresh owner-UAT successor prompt.
 
 ## Out of scope
 
-- Gmail, Calendar, Chief of Staff implementation, prompts, credentials, or production accounts.
-- New authority semantics, new effect types, sandbox redesign, model/runtime replacement, web UI, voice UI, or memory architecture.
-- Reopening the accepted Phase 3 independent review absent evidence of material regression.
-
-## Required inputs
-
-- `PROJECT_STATE.json`
-- `docs/ARCHITECTURE.md`
-- `UPSTREAM_LOCK.json`
-- `tasks/ACTIVE_TASK.md`
-- `docs/NEXT_SESSION_PROMPT_TEMPLATE.md`
-- `qualification/evidence/a004_owner_execution.json`
-- `docs/A004_OWNER_BASELINE_UAT.md`
-- installed A004 implementation and Git history
-
-## Required outputs
-
-- Owner validation result: `PASS` or a concrete defect description.
-- On owner PASS only: one minimal owner-executable transition package that makes `LAC-B001` active and installs its populated successor prompt.
-- On failure: an A004 remediation handoff; B001 remains deferred.
+- Gmail, Calendar, Chief of Staff, Phase 4 adapters, credentials, production accounts.
+- New authority semantics, new effect types, new shell executables, sandbox redesign, runtime/model replacement, web UI, voice UI, or memory architecture.
+- Reopening the accepted Phase 3 independent review absent material regression evidence.
+- Adding general host hardware introspection or diagnostics capability.
 
 ## Acceptance tests
 
-1. `/status` reports the expected pinned baseline model, Bubblewrap boundary, bounded workspace, and exactly four governed tools.
-2. A two-turn conversation demonstrates retained session context through the same sandboxed Pi agent.
-3. Governed create/read/replace operations work in the bounded workspace and show durable successful receipt identities.
-4. Governed allowed shell inspection works and shows a durable successful receipt.
-5. An out-of-workspace filesystem request fails without exposing the prohibited host content.
-6. A shell request outside the accepted executable surface fails without producing the prohibited host process effect.
-7. Hidden reasoning and service credentials are not exposed in the terminal surface.
-8. `/quit` shuts the session down cleanly and a fresh `scripts/lac-baseline` restart works.
-9. Owner explicitly accepts the baseline as sufficient to proceed to Phase 4.
+1. Ordinary left/right arrow line editing no longer injects raw terminal escape sequences that can crash the Pi/model path.
+2. Any residual disallowed terminal control characters are handled safely without terminating the A004 interactive session or dispatching a malformed request.
+3. The A004 model-facing shell contract explicitly states that `argv` contains only arguments after the executable and excludes `argv[0]`.
+4. The baseline `/usr/bin/ls` workspace-inspection request is represented with `executable='/usr/bin/ls'`, `argv=[]`, `cwd='.'`, and produces the actual workspace listing.
+5. Existing filesystem create/read/replace, shell allowlist enforcement, boundary denial, receipt behavior, hidden-reasoning suppression, credential isolation, sandbox/network constraints, startup/shutdown, and A003/A002/A001/H001-H004 regression remain PASS.
+6. Full `scripts/test-a004` applicable gate passes.
+7. Durable state returns to `LAC-A004-UAT`; `LAC-B001` remains deferred until explicit owner acceptance.
 
 ## Package required?
 
-Yes, but only for the durable post-UAT transition after explicit owner PASS.
+Yes. The remediation implementation session must produce one owner-executable package and stop at `OWNER_EXECUTION_REQUIRED`.
 
-## Next task on success
+## Next task on remediation success
 
-`LAC-B001` — Gmail adapter. Do not implement it until A004-UAT is explicitly accepted and the transition package succeeds.
+`LAC-A004-UAT` — repeat owner hands-on validation. Do not activate or implement `LAC-B001` until owner UAT explicitly passes.
