@@ -1,0 +1,21 @@
+{
+  "blockers": [],
+  "completed_at_utc": "2026-09-15T06:09:06Z",
+  "credential_mode": "synthetic_only_no_real_service_credentials",
+  "focused_tests": [
+    "tests.unit.test_gmail_adapter",
+    "tests.unit.test_gmail_google_api",
+    "tests.integration.test_gmail_dispatch"
+  ],
+  "implementation_commit": "f965b723b88475a2ced8a363d88cdd5044b6453c",
+  "live_gmail_qualification": "NOT_RUN_NOT_REQUIRED_FOR_DETERMINISTIC_B001_ACCEPTANCE",
+  "next_phase": "PHASE_4_CHIEF_OF_STAFF_PILOT",
+  "next_task": "LAC-B002",
+  "package_id": "LAC_B001_GMAIL_ADAPTER_v0.1.1",
+  "regression_gate": "scripts/test-a004",
+  "result": "PASS",
+  "schema": "lac.b001-owner-execution/v1",
+  "session_segment": "LAC-B001",
+  "start_commit": "9684486783ee7b9e2a2126ecea6a5cdf2f4353fd",
+  "test_command": "LAC_B001_RUN_ROOT=<isolated> scripts/test-b001"
+}

@@ -3,13 +3,14 @@
   "project_version": "0.1.0-dev",
   "phase": "PHASE_4_CHIEF_OF_STAFF_PILOT",
   "phase_status": "READY",
-  "active_task": "LAC-B001",
+  "active_task": "LAC-B002",
   "last_accepted_release": null,
   "blockers": [],
   "nonblocking_notes": [
     "Waggle remains concepts-only unless an authoritative license is resolved at the exact revision intended for reuse.",
     "Phase 3 A003 remains independently accepted; A004 was an additive owner-usability checkpoint and passed owner revalidation after remediation.",
-    "A004-UAT-B001 and A004-UAT-B002 were remediated and owner-revalidated before Phase 4 activation."
+    "A004-UAT-B001 and A004-UAT-B002 were remediated and owner-revalidated before Phase 4 activation.",
+    "LAC-B001 Gmail typed effects completed with deterministic synthetic provider qualification and production-shaped Gmail REST transport contract tests; production Gmail credential provisioning/live-account qualification was not performed and remains separately owner-authorized."
   ],
-  "next_action": "Fresh implementation session implements LAC-B001 Gmail adapter only. Do not begin Calendar or Chief of Staff E2E in the same session."
+  "next_action": "Fresh implementation session implements LAC-B002 Calendar adapter only. Do not begin Chief of Staff E2E in the same session."
 }
