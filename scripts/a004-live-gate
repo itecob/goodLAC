@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+: "${LAC_A004_RUN_ROOT:?LAC_A004_RUN_ROOT is required}"
+: "${LAC_A003_FREETOKEN_URL:?LAC_A003_FREETOKEN_URL is required}"
+: "${LAC_A003_MODEL_ID:?LAC_A003_MODEL_ID is required}"
+: "${LAC_PI_CHECKOUT:?LAC_PI_CHECKOUT is required}"
+
+SMOKE="$LAC_A004_RUN_ROOT/a004-smoke"
+rm -rf "$SMOKE"
+mkdir -p "$SMOKE/workspace"
+python3 scripts/a004_terminal.py \
+  --runtime external \
+  --smoke \
+  --workspace "$SMOKE/workspace" \
+  --state "$SMOKE/controller.db" \
+  --trace "$SMOKE/effect-trace.jsonl"
+
+export LAC_A003_RUN_ROOT="$LAC_A004_RUN_ROOT/a003-regression"
+rm -rf "$LAC_A003_RUN_ROOT"
+scripts/test-a003
+
+echo "LAC_A004_LIVE_GATE=PASS"

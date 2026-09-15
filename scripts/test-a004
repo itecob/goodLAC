@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+export PYTHONDONTWRITEBYTECODE=1
+: "${LAC_A004_RUN_ROOT:?LAC_A004_RUN_ROOT is required}"
+mkdir -p "$LAC_A004_RUN_ROOT"
+
+echo "==> A004 exact upstream/runtime pins"
+python3 scripts/verify_pi_pin.py
+python3 scripts/verify_freetoken_pin.py
+
+echo "==> A004 deterministic CUDA discovery"
+python3 -m unittest tests.unit.test_a004_freetoken_launcher -v
+
+echo "==> A004 deterministic controller/receipt/boundary conformance"
+python3 -m unittest tests.integration.test_a004_controller_observability -v
+python3 -m unittest tests.integration.test_a004_source_contract -v
+
+echo "==> A004 syntax/static checks"
+node --check scripts/a004_agent_worker.mjs
+PYTHONPYCACHEPREFIX="$LAC_A004_RUN_ROOT/pycache" python3 -m py_compile \
+  scripts/a004_freetoken_launcher.py \
+  scripts/a004_terminal.py
+bash -n scripts/lac-baseline scripts/a004-live-gate scripts/test-a004
+
+echo "==> A004 real runtime + multi-turn Pi + full A003/A002/A001/H001-H004 regression"
+env -u CUDA_HOME -u CUDA_PATH python3 scripts/a004_freetoken_launcher.py run -- scripts/a004-live-gate
+
+git diff --check
+
+echo "LAC_A004_TEST=PASS"
