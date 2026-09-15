@@ -91,14 +91,14 @@ But the owner must be capable of independently declaring:
 ```text
 email.read       ALLOW
 email.draft      ALLOW
-email.send       APPROVE
+email.send       ASK (REQUIRE_APPROVAL)
 email.delete     DENY
 
 calendar.read    ALLOW
 calendar.propose ALLOW
-calendar.create  APPROVE
-calendar.modify  APPROVE
-calendar.cancel  APPROVE
+calendar.create  ASK (REQUIRE_APPROVAL)
+calendar.modify  ASK (REQUIRE_APPROVAL)
+calendar.cancel  ASK (REQUIRE_APPROVAL)
 calendar.delete  DENY
 ```
 
@@ -570,6 +570,8 @@ It is not:
 * an observability product;
 * a generic secret manager.
 
+Chief of Staff is a separate software product and external LAC consumer. LAC may contain generic effect adapters and generic runtime/admin contracts, but Chief of Staff workflow, memory, prioritization, briefing, meeting-preparation, follow-up, and application business logic do not belong in the LAC repository.
+
 ---
 
 # 7. Required invariants
@@ -687,6 +689,22 @@ Generic MCP/tool proxying must be explicitly classified separately from semantic
 ## INV-014 — deterministic work stays deterministic
 
 Once fuzzy intent has been translated into typed parameters, ordinary software should perform ordinary deterministic operations wherever practical.
+
+## INV-015 — capability registration grants no authority
+
+Registering an application, skill, action, resource type, schema, or security classification is descriptive only. Registration must not create standing permission, approval, credential access, execution lease, or effect authority.
+
+## INV-016 — unknown capability/scope is terminally denied and queued
+
+An unknown/new action, resource scope, unsupported capability version, or materially new request shape is terminally denied for that effect. LAC may record a bounded pending-permission request for administrator review, but that record is not a resumable effect.
+
+## INV-017 — policy administration is isolated from the agent runtime
+
+Governed applications/agents cannot register capabilities, grant/revoke standing permissions, change administrator identity, or weaken controller invariants through the runtime effect surface. Such changes require the isolated administrator surface.
+
+## INV-018 — policy changes never revive closed effects
+
+Later capability or policy changes affect only fresh evaluations. A previously denied, rejected, expired, revoked, or otherwise closed effect never becomes executable merely because policy changed.
 
 ---
 
@@ -848,6 +866,8 @@ SandboxBackend
 SecretProvider
 AuditSink
 StateStore
+CapabilityRegistry
+AdminSurface
 ```
 
 This prevents the project from becoming hard-wired to one dependency.
@@ -1075,63 +1095,53 @@ effect_receipts
 audit_events
 system_state
 adapter_registry
+capability_manifests
+pending_permission_requests
+policy_revisions
 ```
 
 Audit events should be append-oriented.
 
 ---
 
-# 15. Policy UX
+# 15. Policy UX and permission administration
 
-Users should **not** be required to write Cedar, Rego or CEL for ordinary configuration.
+Users must **not** be required to write Cedar, Rego or CEL for ordinary configuration.
 
-Expose a high-level product policy:
+The controller exposes exactly three enforcement outcomes:
 
-```yaml
-profiles:
-  chief_of_staff:
-
-    email.read:
-      decision: allow
-
-    email.draft:
-      decision: allow
-
-    email.send:
-      decision: approve
-
-    email.delete:
-      decision: deny
-
-    calendar.read:
-      decision: allow
-
-    calendar.create:
-      decision: approve
-
-    calendar.delete:
-      decision: deny
+```text
+ALLOW
+REQUIRE_APPROVAL
+DENY
 ```
 
-Later versions may allow conditions:
+User-facing administration may label `REQUIRE_APPROVAL` as **ASK**. `ASK` is not a fourth authority state.
 
-```yaml
-email.send:
-  decision: approve
+v0.1 must support deterministic conditional policy such as “allow normally, ask for external mutation, deny destructive operations.” Conditions operate only on trusted capability/resource/request metadata; the model never decides whether an operation is dangerous.
 
-email.send.internal:
-  when:
-    recipient_domain:
-      in:
-        - example.com
-  decision: allow
-```
+Policy may be scoped by principal, application/agent, skill, action, resource selector, and deterministic conditions. Users may set broad application/skill defaults and more-specific overrides.
 
-The user policy is a configuration schema.
+Evaluation order is:
 
-It must compile into the actual policy provider.
+1. non-overridable controller invariants;
+2. canonical registered capability validation;
+3. known resource/scope validation;
+4. matching user rules;
+5. most-specific rule wins;
+6. equal-specificity conflict resolves `DENY > REQUIRE_APPROVAL > ALLOW`;
+7. configured application/skill default;
+8. otherwise `DENY`.
 
-It must **not** become another hand-written authorization engine.
+Unknown/new capability/resource/scope/material argument shape is not a waiting approval. The effect is terminally denied, and a bounded pending-permission record is created for human administration. Resolving that record never resumes the old effect; only a fresh request is eligible under new policy.
+
+Capability registration, standing permission, and exact effect approval are distinct. Registration grants zero authority.
+
+The first authoritative administration interface is local `lacctl`, backed by a separate administrator API. On Linux v0.1, administration uses an owner-only Unix-domain socket with controller-side peer-UID verification and no exposure inside governed agent sandboxes. Runtime consumers cannot mutate capability registration or standing policy.
+
+Policy/registry mutations are atomic, revisioned and audited. TUI/web clients may be added later only as clients of the same admin API; they do not directly write canonical controller state.
+
+The detailed binding contract is `docs/PERMISSION_MANAGEMENT.md`, adopted by `ADR-007_PERMISSION_ADMINISTRATION_AND_CAPABILITY_GOVERNANCE.md`.
 
 ---
 
@@ -1144,7 +1154,7 @@ The first demonstration profile should be deliberately conservative.
 ```text
 read allowed workspace                 ALLOW
 write approved workspace               ALLOW
-overwrite existing user file           APPROVE
+overwrite existing user file           ASK (REQUIRE_APPROVAL)
 delete                                 DENY
 read ~/.ssh                            DENY
 read browser profiles                  DENY
@@ -1156,8 +1166,8 @@ read arbitrary ~/.config               DENY
 ```text
 known read-only commands               ALLOW
 bounded project test commands          ALLOW
-other command                          APPROVE
-network command                        APPROVE
+other command                          ASK (REQUIRE_APPROVAL)
+network command                        ASK (REQUIRE_APPROVAL)
 sudo                                   DENY
 privilege escalation                   DENY
 ```
@@ -1310,9 +1320,9 @@ The integration should use OpenClaw's native exact-execution-binding patterns wh
 
 ---
 
-# 22. Chief of Staff effect adapters
+# 22. External service effect adapters
 
-After local authority is proven, implement typed business effects.
+After local authority is proven, implement generic typed business-service effects. Gmail and Calendar adapters are LAC capabilities reusable by any authorized consumer; they are not Chief of Staff workflow code.
 
 ## Gmail
 
@@ -1333,8 +1343,8 @@ Suggested initial policy:
 search   ALLOW
 read     ALLOW
 draft    ALLOW
-send     APPROVE
-archive  APPROVE
+send     ASK (REQUIRE_APPROVAL)
+archive  ASK (REQUIRE_APPROVAL)
 delete   DENY
 ```
 
@@ -1372,9 +1382,9 @@ Suggested initial policy:
 search    ALLOW
 read      ALLOW
 propose   ALLOW
-create    APPROVE
-modify    APPROVE
-cancel    APPROVE
+create    ASK (REQUIRE_APPROVAL)
+modify    ASK (REQUIRE_APPROVAL)
+cancel    ASK (REQUIRE_APPROVAL)
 delete    DENY
 ```
 
@@ -1759,7 +1769,7 @@ Build:
 ```text
 effect A → ALLOW → succeeds
 effect B → DENY → cannot execute
-effect C → APPROVE → waits
+effect C → REQUIRE_APPROVAL → waits
 effect C → owner approves → executes
 effect D → approved → arguments mutate → denied
 effect E → approved → emergency pause → denied
@@ -1869,46 +1879,67 @@ A004 must make the qualified local runtime reproducibly startable by the owner, 
 
 ---
 
-# 34. PHASE 4 — Chief of Staff pilot
+# 34. PHASE 4 — Permission-managed external effects
 
-Implement:
+Phase 4 must make LAC directly operable by its human owner as a reusable permission controller before an external application such as Chief of Staff relies on it.
 
-* Gmail read/search/draft;
-* Gmail send approval;
-* Calendar read/search/propose;
-* Calendar change approval.
+B001 Gmail is preserved as an accepted generic external-service adapter precursor. The prior unexecuted B002 Calendar owner package is superseded.
 
-Use dedicated test accounts or tightly bounded user-approved live qualification.
+Required sequence:
+
+```text
+P001 capability/skill registry and manifest contract
+P002 unknown-request quarantine + pending-permission queue
+P003 scoped/conditional policy model
+P004 secure admin API + OS identity boundary
+P005 lacctl permissions/skills/pending/approvals CLI
+P006 permission-management E2E/security qualification
+B002 Calendar adapter reintroduced against the permission system
+B003 generic external-consumer/LAC integration proof
+```
+
+No Chief of Staff workflow/business logic is implemented in this repository.
+
+### Permission-management requirements
+
+- registration grants zero authority;
+- unknown/new capability/resource scope/material shape is terminally `DENY` and may create a bounded pending-permission record;
+- pending permission records never resume the denied effect;
+- policy supports granular application/agent/skill/action/resource/condition rules and deterministic `ALLOW`, `REQUIRE_APPROVAL`, `DENY` results;
+- conditional “allow unless / ask when” behavior uses trusted metadata, never model judgment;
+- policy/registry administration is unavailable through the runtime agent interface;
+- Linux v0.1 administration uses an isolated owner-only local admin socket with peer-UID verification;
+- `lacctl` is the first authoritative administration client;
+- policy/registry changes are atomic, revisioned, audited, and never revive closed effects.
 
 ### Required tests
 
-Email:
+Permission administration:
 
 ```text
-read                        succeeds
-draft                       succeeds
-send without approval       impossible
-send after approval         succeeds exactly once
-recipient changed afterward impossible
-body changed afterward      impossible
-delete                      denied
+registration alone grants no authority
+unknown action is denied and queued
+unknown resource scope is denied and queued
+repeated equivalent unknown request is bounded/aggregated
+resolving pending permission never resumes original effect
+skill/application default policy works
+more-specific resource/action override works
+equal-specificity deny wins
+conditional external/destructive classification works deterministically
+runtime consumer cannot mutate registry/policy
+admin interface rejects non-owner peer
+admin interface is unavailable inside governed agent sandbox
+policy revision is durable and audited
+policy change affects fresh request only
 ```
 
-Calendar:
-
-```text
-read                        succeeds
-proposal                    succeeds
-create without approval     impossible
-create after approval       succeeds once
-attendee changed afterward  impossible
-cancel without approval     impossible
-delete                      denied
-```
+Generic external effects retain B001 Gmail coverage and add the Calendar B002 contract only after P001-P006 are complete.
 
 ### Release
 
 `v0.2.0-alpha.1`
+
+After the Phase 4 independent review passes, external products may integrate against the generic LAC runtime/admin contract. Chief of Staff then begins as separate software.
 
 ---
 
@@ -1951,7 +1982,7 @@ Only after core behavior is proven:
 
 * installer;
 * configuration wizard;
-* policy editor;
+* graphical policy editor;
 * desktop approval UI;
 * service auto-start;
 * upgrades;
@@ -1977,6 +2008,21 @@ explicit deny wins
 approval required cannot auto-run
 revoked agent cannot act
 expired approval cannot act
+```
+
+## Permission administration
+
+```text
+capability registration grants zero authority
+unknown capability is terminally denied and queued
+unknown resource scope is terminally denied and queued
+pending permission is not a resumable effect
+runtime consumer cannot administer its own permissions
+policy change never revives a closed effect
+most-specific policy wins deterministically
+equal-specificity deny wins
+admin identity is verified outside agent-supplied data
+admin surface is absent from governed agent sandbox
 ```
 
 ## Approval integrity
@@ -2305,14 +2351,24 @@ A002  FreeToken model configuration
 A003  full local-agent E2E
 A004  interactive baseline harness + owner validation gate
 
-B001  Gmail adapter
-B002  Calendar adapter
-B003  COS E2E
+B001  Gmail generic adapter (completed precursor)
+
+P001  capability/skill registry and manifest contract
+P002  unknown-request quarantine + pending-permission queue
+P003  scoped/conditional policy model
+P004  secure admin API + OS identity boundary
+P005  lacctl administration CLI
+P006  permission-management E2E/security qualification
+
+B002  Calendar generic adapter against permission system
+B003  generic external-consumer/LAC integration proof
 
 O001  OpenClaw adapter
 
 OS001 Omarchy Agent OS adapter
 ```
+
+Chief of Staff is not an LAC implementation task. It begins as separate software after the generic LAC external-consumer contract and Phase 4 independent review are accepted.
 
 Tasks may be combined where implementation naturally belongs in one change, but may not be reordered in a way that makes higher layers authoritative before the core exists.
 
@@ -2332,13 +2388,13 @@ That is the technical proof.
 
 ---
 
-# 51. Chief of Staff milestone definition
+# 51. External-consumer / Chief of Staff milestone definition
 
-The second major proof is:
+The LAC-side proof is:
 
-> A locally inferred Chief of Staff can read and prepare business information autonomously while consequential communication/calendar mutations cannot occur without the configured deterministic authorization.
+> A separate external application can register/declare capabilities, receive only user-configured standing authority, submit governed typed requests, and remain technically unable to grant itself new authority or bypass exact approvals.
 
-This demonstrates the practical reason for the project.
+After this generic contract passes LAC review, the Chief of Staff project may consume it as separate software. A subsequent Chief of Staff product milestone may demonstrate autonomous reading/preparation with consequential communication/calendar mutations controlled by LAC; that workflow logic does not move into the LAC repository.
 
 ---
 
@@ -2397,15 +2453,15 @@ The user does not need to approve ordinary low-risk reads or routine work.
 
 ### Control
 
-The user can configure:
+The user can configure the user-facing policy outcomes:
 
 ```text
 ALLOW
-APPROVE
+ASK
 DENY
 ```
 
-without writing security-policy code.
+without writing security-policy code. `ASK` maps deterministically to the internal `REQUIRE_APPROVAL` policy outcome.
 
 ### Portability
 

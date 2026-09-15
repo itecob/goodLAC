@@ -69,3 +69,34 @@ The sandbox environment is constructed deterministically. Bubblewrap clears the 
 Execution uses the H001-selected qualified `SandboxBackend`, a minimal per-effect runtime containing only the exact executable and its required dynamic libraries, `network=none`, isolated process/network namespaces, dropped capabilities, and bounded execution time. The command cannot obtain ambient host filesystem, process, network, or credential authority from the adapter.
 
 A generic shell effect can mutate workspace state. Therefore an ambiguous `PREPARED` shell execution is not automatically re-run or guessed during reconciliation; it remains fail-closed for explicit reconciliation rather than risking a duplicated consequential effect.
+
+
+## Phase 4 capability and permission contracts
+
+### Capability manifest
+
+A versioned canonical capability/skill manifest describes application/skill identity, manifest version, declared actions, resource types/selectors, bounded argument schemas, and deterministic security properties. Registration is descriptive only and grants zero authority.
+
+Capability security properties are controller/manifest metadata, never model-generated authorization judgments.
+
+### Pending permission request
+
+Unknown/new action, resource scope, unsupported capability version, or material argument shape terminates the current effect as `DENY`. A bounded durable pending-permission record may then be created for administrator review. The pending record is not executable authority and cannot resume the closed effect.
+
+Equivalent repeats aggregate with bounded first/last-seen/count metadata. Credential material is prohibited from pending-permission records.
+
+### Standing permission policy
+
+Standing policy may scope rules by principal, application/agent, skill, action, resource selector, and deterministic conditions. Final authority outcomes remain `ALLOW`, `REQUIRE_APPROVAL`, or `DENY`; UI label `ASK` maps to `REQUIRE_APPROVAL`.
+
+Non-overridable invariants are evaluated first. Registered capability/resource validity is required. Most-specific user rule wins; equal-specificity conflict resolves `DENY > REQUIRE_APPROVAL > ALLOW`; configured application/skill default follows; absence of a matching fallback is `DENY`.
+
+### Administrative mutation contract
+
+Capability registration and standing-policy mutation are unavailable through the runtime agent interface. For Linux v0.1 they are accepted only through the isolated local administration surface, authenticated using controller-observed OS peer identity and protected from governed agent sandboxes.
+
+Every registry/policy mutation is atomic, revisioned, and audited. A policy mutation never changes or revives a terminal effect request.
+
+### External consumer contract
+
+Chief of Staff and other products are external consumers. They may register/declare capabilities through the generic controller contract and submit runtime requests, but they do not own canonical policy, approval, credentials, leases, receipts, or administration state.
