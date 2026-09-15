@@ -3,15 +3,16 @@
   "project_version": "0.1.0-dev",
   "phase": "PHASE_4_PERMISSION_MANAGEMENT",
   "phase_status": "READY",
-  "active_task": "LAC-P001",
+  "active_task": "LAC-P002",
   "last_accepted_release": null,
   "blockers": [],
   "nonblocking_notes": [
     "Waggle remains concepts-only unless an authoritative license is resolved at the exact revision intended for reuse.",
     "Phase 3 A003 remains independently accepted; A004 passed owner revalidation after remediation.",
     "LAC-B001 Gmail typed effects remain accepted as a generic external-service adapter precursor.",
-    "The unexecuted LAC_B002_CALENDAR_ADAPTER_v0.1.0 owner package is superseded by this permission-management sequence amendment and must not be executed.",
-    "Chief of Staff is a separate software product and must consume LAC through a generic external-consumer/runtime contract; Chief of Staff workflow/business logic does not belong in the LAC repository."
+    "LAC-P001 capability/skill registry and canonical manifest contract completed through owner-executed deterministic verification; registration remains descriptive and grants zero authority.",
+    "The unexecuted LAC_B002_CALENDAR_ADAPTER_v0.1.0 owner package remains superseded and must not be executed.",
+    "Chief of Staff is separate software and must consume LAC through the generic external-consumer/runtime contract."
   ],
-  "next_action": "Fresh implementation session implements LAC-P001 capability/skill registry and manifest contract only."
+  "next_action": "Fresh implementation session implements LAC-P002 unknown-request quarantine and bounded pending-permission queue only."
 }
