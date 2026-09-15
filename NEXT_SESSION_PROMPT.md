@@ -1,9 +1,9 @@
-# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 3 P3-B001 REMEDIATION
+# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / FRESH PHASE 3 P3-B001 RE-REVIEW
 
-`SESSION_SEGMENT=LAC-P3-REMEDIATION-P3-B001`
-`MODE=IMPLEMENTATION_SEGMENT`
+`SESSION_SEGMENT=LAC-P3-REREVIEW-P3-B001`
+`MODE=PHASE_BOUNDARY_INDEPENDENT_REVIEW`
 
-Use the connected Web-File-Tool. Treat durable repository state and Git history as authority. This is a fresh remediation implementation segment for the single Phase 3 blocker `P3-B001`. Do not begin Phase 4, broaden scope, or self-approve the corrected Phase 3 candidate.
+Use the connected Web-File-Tool. Treat durable repository state and Git history as authority. Act only as a **fresh independent Phase 3 reviewer** of the corrected candidate. Do not remediate findings, do not begin Phase 4, and do not trust the predecessor's PASS claims without verifying them.
 
 ## Mandatory first reads — exact order
 
@@ -15,111 +15,102 @@ Use the connected Web-File-Tool. Treat durable repository state and Git history 
 
 Then inspect at minimum:
 
-- `docs/TECHNICAL_DESIGN_AND_IMPLEMENTATION_SPECIFICATION_v0.1.md`
-- `docs/CONTRACTS.md`
-- `docs/THREAT_MODEL.md`
-- `docs/MODEL_PROVIDER_CONTRACT.md`
-- `docs/PHASE3_A003_QUALIFICATION.md`
-- `decisions/ADR-004_SANDBOX_BACKEND.md`
-- `packages/sandbox/`
-- `packages/adapters/pi/adapter.py`
-- `packages/adapters/pi/governed_pi.mjs`
-- `packages/adapters/pi/model_stream_bridge.mjs`
-- `scripts/a003_qualification.mjs`
-- `scripts/a003_model_provider_stream.py`
-- `scripts/a003_controller_bridge.py`
-- `scripts/a003_verify_evidence.py`
-- `scripts/test-a003`
-- relevant Phase 2/H001-H004 tests and qualification evidence
-- `qualification/evidence/a003_owner_execution.json`
-- `qualification/evidence/a003_owner_execution.log`
-- `qualification/evidence/a003_runtime.json`
-- `qualification/evidence/a003_evidence_summary.json`
+- `docs/TECHNICAL_DESIGN_AND_IMPLEMENTATION_SPECIFICATION_v0.1.md`, especially §§17, 19, 33, and permanent sandbox/credential acceptance tests;
+- `docs/CONTRACTS.md`;
+- `docs/THREAT_MODEL.md`;
+- `docs/MODEL_PROVIDER_CONTRACT.md`;
+- `docs/PHASE3_A003_QUALIFICATION.md`;
+- `decisions/ADR-004_SANDBOX_BACKEND.md`;
+- `packages/sandbox/`;
+- `packages/adapters/pi/adapter.py`;
+- `packages/adapters/pi/governed_pi.mjs`;
+- `scripts/a003_agent_sandbox.py`;
+- `scripts/a003_agent_worker.mjs`;
+- `scripts/a003_qualification.mjs`;
+- `scripts/a003_model_provider_stream.py`;
+- `scripts/a003_controller_bridge.py`;
+- `scripts/a003_verify_agent_sandbox.py`;
+- `scripts/a003_verify_evidence.py`;
+- `scripts/test-a003`;
+- `tests/integration/test_a003_agent_process_sandbox.py`;
+- relevant A001/A002 and Phase 1/H001-H004 tests/evidence;
+- `qualification/evidence/a003_agent_sandbox_evidence.json`;
+- `qualification/evidence/a003_owner_execution.json`;
+- `qualification/evidence/a003_owner_execution.log`;
+- `qualification/evidence/a003_runtime.json`;
+- `qualification/evidence/a003_evidence_summary.json`;
+- `qualification/evidence/a003_qualification.json`.
 
-## Predecessor/review facts to verify; do not assume
+## Handoff facts to verify; do not assume
 
-- `PREDECESSOR_ROLE=Fresh Independent Reviewer`
-- `PREDECESSOR_RESULT=BLOCKED`
-- `BLOCKER_IDS=P3-B001`
-- `A003_IMPLEMENTATION_GIT_COMMIT=949ac791c077600b2ab683b63131156439ce181e`
-- `REVIEW_LIVE_GIT_COMMIT=3bb011de6a626ff717cfcd04e4a4d1ff95fd0a16`
+- `PREDECESSOR_ROLE=Lead Implementation Engineer`
+- `PREDECESSOR_RESULT=REMEDIATION_OWNER_GATE_PASS`
+- `ORIGINAL_BLOCKER_IDS=P3-B001`
+- `ORIGINAL_A003_IMPLEMENTATION_GIT_COMMIT=949ac791c077600b2ab683b63131156439ce181e`
+- `ORIGINAL_REVIEW_LIVE_GIT_COMMIT=3bb011de6a626ff717cfcd04e4a4d1ff95fd0a16`
+- `REMEDIATION_START_GIT_COMMIT=71b6d26ba648444859721daace6775467af789cf`
+- `CORRECTED_IMPLEMENTATION_GIT_COMMIT=809bb01ec52e6f04d96f22c0195c47961b3efd7a`
+- `OWNER_EXECUTION_EVIDENCE=qualification/evidence/a003_owner_execution.json`
 - `PI_PIN=da840b6216578c2a571d0374ac6a2091a83f9d91`
 - `FREETOKEN_PIN=af71ba43206e124f5ff6419b47ee36c6e9981078`
 - `MODEL_REPO=openai/gpt-oss-20b`
 - `MODEL_REVISION=6cee5e81ee83917806bbde320786a8fb61efebee`
 - `EXPECTED_PHASE=PHASE_3_REAL_LOCAL_AGENT_MODEL`
-- `EXPECTED_ACTIVE_TASK=LAC-P3-REMEDIATION-P3-B001`
+- `EXPECTED_ACTIVE_TASK=LAC-P3-REREVIEW-P3-B001`
 
-The workflow handoff commit created by the owner's blocked-review handoff package is expected to be newer than `REVIEW_LIVE_GIT_COMMIT`. Inspect the complete delta and require it to be workflow-only (`PROJECT_STATE.json`, `tasks/ACTIVE_TASK.md`, `NEXT_SESSION_PROMPT.md`). Fail closed on unrelated implementation drift.
+The owner package creates one workflow/evidence handoff commit newer than `CORRECTED_IMPLEMENTATION_GIT_COMMIT`. Inspect the complete corrected-implementation-to-live-HEAD delta and require it to contain only:
 
-## Blocking finding — P3-B001
+- `PROJECT_STATE.json`;
+- `tasks/ACTIVE_TASK.md`;
+- `NEXT_SESSION_PROMPT.md`;
+- `qualification/evidence/a003_owner_execution.json`.
 
-The reviewed A003 candidate does not establish the binding ambient-authority boundary for the Pi agent process itself.
+Fail closed on unrelated implementation drift. The corrected candidate substance is the corrected implementation commit; the later delta is permitted only for owner-evidence finalization and review workflow handoff.
 
-Binding evidence:
+## Review question — original blocker P3-B001
 
-- `docs/ARCHITECTURE.md`: governed tools alone are insufficient; the agent process must have bounded ambient filesystem/process/network/environment authority using an established Linux sandbox.
-- the controlling specification §17: an agent is not governed merely because its tools are governed; the process itself must have bounded ambient authority.
-- `decisions/ADR-004_SANDBOX_BACKEND.md`: tool policy alone is not an ambient-authority boundary; bubblewrap is the selected H001 backend.
-- reviewed A003 `scripts/test-a003` invokes `node scripts/a003_qualification.mjs` directly.
-- reviewed `scripts/a003_qualification.mjs` constructs and runs the Pi Agent in that host Node process; H001 sandboxing is reached only later inside governed filesystem/shell effect adapters.
-- reviewed A003 runtime/evidence proves effect subprocess containment but contains no deterministic proof that the Pi agent process itself lacks ambient host filesystem/process/network/environment/credential authority.
+Determine independently whether the corrected candidate now satisfies the binding ambient-authority boundary for the **Pi agent process itself**, not merely its governed effect subprocesses.
 
-This violates the binding process-sandbox/bypass-resistance requirement and leaves an alternate ambient authority surface even though the exposed Pi tool list is correctly limited to four governed tools.
+At minimum verify deterministically that:
 
-## Required remediation scope
+1. the actual pinned Pi Agent process is launched through the selected, qualified H001 Bubblewrap `SandboxBackend` rather than in the host Node process;
+2. the Pi process has exactly four governed A001 tools and no stock/unrestricted tool surface;
+3. the Pi process has no ambient workspace/controller-database/host-home/service-credential visibility;
+4. inherited host service credentials are cleared at the OS process boundary;
+5. an arbitrary host executable/process cannot produce the synthetic prohibited host effect;
+6. host loopback and arbitrary network access are unavailable to the Pi process itself;
+7. the declared model/effect path uses only fixed inherited-stdio IPC to a host broker, with no generic command/executable/network capability;
+8. Pi inference still crosses the LAC-owned `ModelProvider` boundary to the exact pinned FreeToken runtime/model, and FreeToken remains inference-only;
+9. all consequential filesystem/shell effects still cross `PiAgentAdapter -> Dispatcher -> H002/H003 -> H001` and produce durable receipts;
+10. the synthetic SSH-key request is evaluated under policy `ALLOW`, fails at the filesystem/OS boundary, records a durable failed `filesystem:v1` receipt, and exposes no secret bytes;
+11. A002, A001, Phase 1, and H001-H004 regressions remain green;
+12. no Phase 4 implementation or unrelated architecture change was introduced.
 
-Remediate only `P3-B001`.
+A policy `DENY`, model refusal, prompt instruction, or source-level claim is not sufficient evidence for an operating-system containment property. Confirm the prohibited effect did not occur using the deterministic synthetic evidence/tests.
 
-The corrected design must put the Pi agent process itself behind the already qualified H001 ambient-authority boundary while preserving:
+## Review result discipline
 
-1. exactly four governed A001 tools and no stock/unrestricted tool surface;
-2. Pi inference through the LAC-owned `ModelProvider` boundary;
-3. FreeToken as inference-only, with no policy/approval/lease/dispatch/effect authority;
-4. exact Pi, FreeToken, and model revision identity unless a concrete impossibility forces an explicit gate;
-5. the existing Dispatcher -> H001/H002/H003 effect path and durable receipts;
-6. credential isolation and controller-owned authority identifiers;
-7. all Phase 1 and H001-H004 security properties.
+Return exactly one phase-boundary result:
 
-Add deterministic negative conformance using only synthetic local fixtures that proves the Pi agent process itself cannot:
+- `PASS` — only if Phase 3 and the remediated P3-B001 boundary satisfy all binding acceptance criteria; or
+- `BLOCKED` — identify concrete blocker IDs tied to violated binding invariants/acceptance criteria.
 
-- read a host-only sensitive fixture outside its declared visibility;
-- inherit a synthetic service credential from the host launcher environment;
-- launch an arbitrary host executable/process outside the governed effect path;
-- obtain arbitrary host/outbound network access beyond the narrowly declared local runtime path needed for the qualification.
+Optional improvements are `NONBLOCKING` and may not prevent progression.
 
-For each negative property, prove the prohibited OS effect did not occur. A model response or policy `DENY` is not proof.
+Do not remediate in this review session.
 
-## Required validation
-
-Before handoff, at minimum:
-
-- run the new Pi-process ambient-authority conformance tests;
-- rerun the real positive A003 local-model scenario and verify durable successful receipts;
-- rerun the synthetic SSH-key `ALLOW` scenario and verify the durable failed `filesystem:v1` receipt and secret absence;
-- rerun `scripts/test-a003`, including A002 and A001/Phase1/H001-H004 regressions;
-- verify exact Pi/FreeToken/model identities and current source pins;
-- verify no Phase 4 implementation was introduced;
-- verify Git diff/history contains only the intended P3-B001 remediation plus required evidence/workflow updates.
-
-Correct in-scope failures in this same remediation segment. Do not defer known P3-B001 defects to another implementation session.
-
-## Owner package and stop rule
-
-When the corrected remediation segment is complete, create one owner-executable package and exactly one self-contained Bash command following the project packaging contract. It must fail closed on unexpected Git/state/task input, install the corrected candidate, run the full deterministic verification, record owner execution evidence, update durable state/task, and install a populated root `NEXT_SESSION_PROMPT.md` for a **fresh independent Phase 3 re-review**.
-
-Do not perform that re-review in the remediation session. Do not begin Phase 4.
+If `PASS`, prepare the required owner workflow handoff for the first Phase 4 implementation segment (`LAC-B001`, Gmail adapter) without implementing Phase 4 in the review session. If `BLOCKED`, prepare a fresh remediation handoff containing only the concrete blocker IDs. In either case preserve the project's one-package/one-command and fresh-session workflow.
 
 ## Required final status fields
 
 - `WHERE_WE_ARE=`
-- `SESSION_SEGMENT=LAC-P3-REMEDIATION-P3-B001`
-- `PREDECESSOR_RESULT=BLOCKED`
-- `BLOCKER_IDS=P3-B001`
+- `SESSION_SEGMENT=LAC-P3-REREVIEW-P3-B001`
+- `PREDECESSOR_RESULT=REMEDIATION_OWNER_GATE_PASS`
+- `ORIGINAL_BLOCKER_IDS=P3-B001`
+- `REVIEW_RESULT=PASS|BLOCKED`
 - `WHAT_WAS_VERIFIED=`
-- `WHAT_WAS_COMPLETED=`
 - `WHAT_REMAINS_IN_CURRENT_PHASE=`
 - `TOTAL_PROJECT_POSITION=`
 - `BLOCKERS=`
-- `STOP_GATE=`
+- `STOP_GATE=PHASE_BOUNDARY_REVIEW_REQUIRED`
 - `EXACT_NEXT_SAFE_ACTION=`

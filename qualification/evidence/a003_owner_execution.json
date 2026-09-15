@@ -30,7 +30,7 @@
     "pin": "af71ba43206e124f5ff6419b47ee36c6e9981078",
     "version": "0.1.2"
   },
-  "implementation_commit": "PENDING_IMPLEMENTATION_COMMIT",
+  "implementation_commit": "809bb01ec52e6f04d96f22c0195c47961b3efd7a",
   "model": {
     "repo": "openai/gpt-oss-20b",
     "revision": "6cee5e81ee83917806bbde320786a8fb61efebee",

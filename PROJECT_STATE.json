@@ -2,14 +2,12 @@
   "schema": "lac.project-state/v1",
   "project_version": "0.1.0-dev",
   "phase": "PHASE_3_REAL_LOCAL_AGENT_MODEL",
-  "phase_status": "BLOCKED_INDEPENDENT_REVIEW",
-  "active_task": "LAC-P3-REMEDIATION-P3-B001",
+  "phase_status": "AWAITING_INDEPENDENT_REVIEW",
+  "active_task": "LAC-P3-REREVIEW-P3-B001",
   "last_accepted_release": null,
-  "blockers": [
-    "P3-B001"
-  ],
+  "blockers": [],
   "nonblocking_notes": [
     "Waggle remains concepts-only unless an authoritative license is resolved at the exact revision intended for reuse."
   ],
-  "next_action": "Remediate P3-B001 only: place the Pi agent process behind the qualified ambient-authority sandbox boundary, rerun the complete Phase 3 deterministic gate, and return the corrected candidate to a fresh independent Phase 3 re-review."
+  "next_action": "Fresh independent Phase 3 re-review of the corrected P3-B001 candidate. Do not begin Phase 4 unless that review returns PASS."
 }
