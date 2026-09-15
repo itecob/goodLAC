@@ -89,7 +89,7 @@ Equivalent repeats aggregate with bounded first/last-seen/count metadata. Creden
 
 Standing policy may scope rules by principal, application/agent, skill, action, resource selector, and deterministic conditions. Final authority outcomes remain `ALLOW`, `REQUIRE_APPROVAL`, or `DENY`; UI label `ASK` maps to `REQUIRE_APPROVAL`.
 
-Non-overridable invariants are evaluated first. Registered capability/resource validity is required. Most-specific user rule wins; equal-specificity conflict resolves `DENY > REQUIRE_APPROVAL > ALLOW`; configured application/skill default follows; absence of a matching fallback is `DENY`.
+Non-overridable invariants are evaluated first. Registered capability/resource validity is required. For standing-policy v1, rule specificity is the number of constrained scope dimensions plus the number of matched deterministic conditions. The highest-specificity matching rule set wins; equal-specificity conflict resolves `DENY > REQUIRE_APPROVAL > ALLOW`. Configured application/skill default follows only when no rule matches; absence of a matching fallback is `DENY`.
 
 ### Administrative mutation contract
 

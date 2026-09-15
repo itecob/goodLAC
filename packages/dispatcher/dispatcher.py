@@ -8,6 +8,7 @@ from packages.capabilities import (
     CapabilityRequestDenied,
     CapabilityRequestError,
     CapabilityRequestValidator,
+    CapabilityValidation,
     PendingPermissionRepository,
 )
 from packages.core import (
@@ -264,12 +265,28 @@ class Dispatcher:
         *,
         decision_id: str,
         evaluated_at: str,
+        capability_context: CapabilityRequestContext | None = None,
+        capability_validation: CapabilityValidation | None = None,
     ) -> tuple[PolicyDecision, str]:
+        if (capability_context is None) != (capability_validation is None):
+            raise DispatchAuthorityError(
+                "capability policy evaluation requires context and validation together"
+            )
         revision_before = self._current_revision()
         try:
-            decision = self._policy_provider.evaluate(
-                request, decision_id=decision_id, evaluated_at=evaluated_at
-            )
+            evaluator = getattr(self._policy_provider, "evaluate_capability", None)
+            if capability_context is not None and callable(evaluator):
+                decision = evaluator(
+                    request,
+                    capability_context=capability_context,
+                    capability_validation=capability_validation,
+                    decision_id=decision_id,
+                    evaluated_at=evaluated_at,
+                )
+            else:
+                decision = self._policy_provider.evaluate(
+                    request, decision_id=decision_id, evaluated_at=evaluated_at
+                )
         except Exception as exc:
             raise DispatchAuthorityError("current policy evaluation failed closed") from exc
         decision = _canonical_decision(decision)
@@ -381,6 +398,8 @@ class Dispatcher:
         execution: EffectExecution,
         decision_id: str,
         approval_id: str | None,
+        capability_context: CapabilityRequestContext | None,
+        capability_validation: CapabilityValidation | None,
         normalized_at: str,
         now_dt: datetime,
         request_expires_dt: datetime,
@@ -394,7 +413,11 @@ class Dispatcher:
                 if current != execution or current.state is not EffectExecutionState.LEASED:
                     raise DispatchAuthorityError("LEASED recovery state changed before re-evaluation")
                 decision, revision = self._evaluate_current_policy(
-                    request, decision_id=decision_id, evaluated_at=normalized_at
+                    request,
+                    decision_id=decision_id,
+                    evaluated_at=normalized_at,
+                    capability_context=capability_context,
+                    capability_validation=capability_validation,
                 )
                 PolicyDecisionRepository(self._store)._put_in_transaction(conn, decision)
                 if decision.decision is not PolicyDecisionValue.DENY:
@@ -588,7 +611,9 @@ class Dispatcher:
         current_request = _canonical_request(request)
         normalized_at, _ = self._now()
         try:
-            CapabilityRequestValidator(self._store).validate_or_quarantine(
+            capability_validation = CapabilityRequestValidator(
+                self._store
+            ).validate_or_quarantine(
                 current_request,
                 context=capability_context,
                 observed_at_utc=normalized_at,
@@ -599,13 +624,15 @@ class Dispatcher:
             raise DispatchAuthorityError(
                 "capability validation durable state failed closed"
             ) from exc
-        return self.dispatch(
+        return self._dispatch_internal(
             current_request,
             adapter=adapter,
             decision_id=decision_id,
             lease_id=lease_id,
             executor_id=executor_id,
             approval_id=approval_id,
+            capability_context=capability_context,
+            capability_validation=capability_validation,
         )
 
     def dispatch(
@@ -618,6 +645,33 @@ class Dispatcher:
         executor_id: str,
         approval_id: str | None = None,
     ) -> Any:
+        return self._dispatch_internal(
+            request,
+            adapter=adapter,
+            decision_id=decision_id,
+            lease_id=lease_id,
+            executor_id=executor_id,
+            approval_id=approval_id,
+            capability_context=None,
+            capability_validation=None,
+        )
+
+    def _dispatch_internal(
+        self,
+        request: EffectRequest,
+        *,
+        adapter: EffectAdapter,
+        decision_id: str,
+        lease_id: str,
+        executor_id: str,
+        approval_id: str | None,
+        capability_context: CapabilityRequestContext | None,
+        capability_validation: CapabilityValidation | None,
+    ) -> Any:
+        if (capability_context is None) != (capability_validation is None):
+            raise DispatchAuthorityError(
+                "capability dispatch requires validated context and metadata together"
+            )
         current_request = _canonical_request(request)
         # A terminal P002 capability denial is immutable authority state.
         try:
@@ -639,6 +693,11 @@ class Dispatcher:
                 + " pending_id="
                 + str(closure["pending_id"])
             )
+        if capability_validation is not None:
+            # P002 validation has already completed. Enforce the durable identity
+            # invariant before standing policy can grant any authority.
+            self._require_active_agent(current_request)
+
         decision_id = _required_text(decision_id, "decision_id")
         lease_id = _required_text(lease_id, "lease_id")
         executor_id = _required_text(executor_id, "executor_id")
@@ -685,6 +744,8 @@ class Dispatcher:
                     execution=existing,
                     decision_id=decision_id,
                     approval_id=approval_id,
+                    capability_context=capability_context,
+                    capability_validation=capability_validation,
                     normalized_at=normalized_at,
                     now_dt=now_dt,
                     request_expires_dt=request_expires_dt,
@@ -719,6 +780,8 @@ class Dispatcher:
                     current_request,
                     decision_id=decision_id,
                     evaluated_at=normalized_at,
+                    capability_context=capability_context,
+                    capability_validation=capability_validation,
                 )
                 PolicyDecisionRepository(self._store)._put_in_transaction(conn, decision)
                 if decision.decision is not PolicyDecisionValue.DENY:

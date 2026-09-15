@@ -79,6 +79,7 @@ class CapabilityValidation:
     capability_revision: int
     manifest_version: int
     security_hash: str
+    security_properties: tuple[str, ...]
     action: str
     resource_type: str
     resource: str
@@ -437,6 +438,7 @@ class CapabilityRequestValidator:
             capability_revision=context.capability_revision,
             manifest_version=context.manifest_version,
             security_hash=registration.security_hash,
+            security_properties=tuple(action["security_properties"]),
             action=request.action,
             resource_type=context.resource_type,
             resource=request.resource,
