@@ -1,9 +1,9 @@
-# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / A004 OWNER-UAT REVALIDATION
+# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / B001 GMAIL ADAPTER
 
-`SESSION_SEGMENT=LAC-A004-UAT`
-`MODE=OWNER_VALIDATION_CHECKPOINT`
+`SESSION_SEGMENT=LAC-B001`
+`MODE=IMPLEMENTATION_SEGMENT`
 
-Use the connected Web-File-Tool. Treat durable repository state and Git history as authority. This session owns **only** repeated owner hands-on validation of A004 after remediation of `A004-UAT-B001` and `A004-UAT-B002`. Do not begin Gmail, Calendar, Chief of Staff, or `LAC-B001` implementation.
+Use the connected Web-File-Tool. Treat durable repository state and Git history as authority. This session owns **only** `LAC-B001` Gmail adapter implementation. Do not begin Calendar (`LAC-B002`) or Chief of Staff E2E (`LAC-B003`) in this session.
 
 ## Mandatory first reads — exact order
 
@@ -15,56 +15,50 @@ Use the connected Web-File-Tool. Treat durable repository state and Git history 
 
 Then read:
 
-- `qualification/evidence/a004_owner_execution.json`
-- `qualification/evidence/a004_owner_uat_observation.json`
-- `qualification/evidence/a004_remediation_execution.json`
-- `docs/A004_OWNER_BASELINE_UAT.md`
-- only the A004 files/evidence needed to verify the remediation installation.
+- `docs/TECHNICAL_DESIGN_AND_IMPLEMENTATION_SPECIFICATION_v0.1.md` only as needed for Gmail / Phase 4 / binding invariants;
+- `qualification/evidence/a004_owner_uat_revalidation.json`;
+- `qualification/evidence/a004_uat_handoff_execution.json`;
+- only the existing authority/effect/credential interfaces and tests needed to implement B001.
 
 ## Handoff facts to verify; do not assume
 
-- `PREDECESSOR_ROLE=Lead Implementation Engineer / LAC-A004-REMEDIATION`
-- `PREDECESSOR_RESULT=REMEDIATION_PACKAGE_PASS`
-- `PREDECESSOR_START_GIT_COMMIT=44c20232361ca6d4b923d7e91c7736e91e3950f7`
+- `PREDECESSOR_ROLE=Owner Validation Checkpoint / LAC-A004-UAT`
+- `PREDECESSOR_RESULT=OWNER_UAT_PASS`
+- `PREDECESSOR_GIT_COMMIT=8aab0f39e84dcb627c394df4811d565fae054002`
+- `HANDOFF_START_GIT_COMMIT=eaf83cfa89753818bdb45a27de1d2c8ce1032127`
 - `ORIGINAL_A004_IMPLEMENTATION_GIT_COMMIT=94c7db928b3848069d2a7c432316db0d88477871`
+- `A004_REMEDIATION_GIT_COMMIT=c930cacbd1260f24477e8fb16056f463f9a3c306`
 - `REVIEWED_PHASE3_GIT_COMMIT=809bb01ec52e6f04d96f22c0195c47961b3efd7a`
-- `OWNER_EXECUTION_EVIDENCE=qualification/evidence/a004_owner_execution.json`
-- `OWNER_UAT_OBSERVATION=qualification/evidence/a004_owner_uat_observation.json`
-- `REMEDIATION_EXECUTION_EVIDENCE=qualification/evidence/a004_remediation_execution.json`
-- `REMEDIATED_BLOCKER_IDS=A004-UAT-B001,A004-UAT-B002`
-- `EXPECTED_PHASE=PHASE_3_5_BASELINE_USER_VALIDATION`
-- `EXPECTED_ACTIVE_TASK=LAC-A004-UAT`
-- `DEFERRED_TASK=LAC-B001`
+- `OWNER_UAT_PASS_EVIDENCE=qualification/evidence/a004_owner_uat_revalidation.json`
+- `OWNER_HANDOFF_EXECUTION_EVIDENCE=qualification/evidence/a004_uat_handoff_execution.json`
+- `BLOCKER_IDS=NONE`
+- `EXPECTED_PHASE=PHASE_4_CHIEF_OF_STAFF_PILOT`
+- `EXPECTED_ACTIVE_TASK=LAC-B001`
+- `EXPECTED_NEXT_TASK=LAC-B002`
 
-The accepted Phase 3 review remains preserved. A004 remains an additive owner-usability checkpoint over the accepted A003 path.
+The accepted Phase 3 independent review remains preserved. A004 was an additive usability checkpoint and has passed after remediation of `A004-UAT-B001` and `A004-UAT-B002`.
 
 ## Required lifecycle
 
-1. Perform bounded predecessor verification. Confirm the remediation evidence is PASS, durable state/task/prompt are mutually consistent, Git contains both the original A004 implementation and the remediation implementation, and `LAC-B001` remains deferred.
-2. Do **not** claim owner-UAT success from deterministic tests alone. The owner must perform the interactive validation.
-3. Have the owner run `scripts/lac-baseline` and complete `docs/A004_OWNER_BASELINE_UAT.md`.
-4. Explicitly re-test:
-   - ordinary left/right arrow-key line editing;
-   - safe rejection of any residual disallowed terminal control input without killing the session;
-   - the workspace-listing request using `/usr/bin/ls`, which must produce `executable=/usr/bin/ls`, `argv=[]`, `cwd=.`, empty environment, and the actual workspace listing.
-5. Also repeat the existing create/read/replace, boundary denial, executable denial, post-denial status, clean shutdown, restart, and governed-read checks.
-6. If and only if the owner's hands-on UAT passes, record durable PASS evidence and produce one owner-executable handoff package activating fresh `LAC-B001`.
-7. If the owner observes any concrete defect, record only those blocker(s), keep `LAC-B001` deferred, and produce one blocked-UAT handoff package for a fresh bounded remediation session.
-8. Stop at `OWNER_EXECUTION_REQUIRED` for the resulting workflow package. Do not implement the successor task in this session.
+1. Perform bounded predecessor verification. Confirm A004 owner-UAT PASS evidence and handoff execution evidence are valid, durable state/task/prompt are mutually consistent, the predecessor commit is in Git history, and the live HEAD delta after the predecessor commit is handoff-only.
+2. Implement `LAC-B001` completely as defined by `tasks/ACTIVE_TASK.md` and the controlling Gmail/Phase 4 specification.
+3. Preserve all binding LAC invariants: no implicit authority, model output never authorization, exact approval binding, pre-dispatch policy re-evaluation, deny precedence, idempotency/duplicate prevention, durable truth, fail-closed behavior, emergency pause, and credential isolation.
+4. Use deterministic local/synthetic fixtures for automated tests. Do not put real service credentials in model context, source, logs, test fixtures, receipts, or package artifacts. If live Gmail qualification is genuinely required and no authorized dedicated test account/credential path exists, stop only at the appropriate valid external-authority/dependency gate after completing all implementable local work.
+5. Run focused B001 tests and the applicable accepted regression gate; correct in-scope defects before handoff.
+6. Produce one owner-executable package that completes B001 and activates fresh `LAC-B002` on success. Stop at `OWNER_EXECUTION_REQUIRED`; do not implement B002 in this conversation.
 
 ## Scope discipline
 
-Do not add Gmail, Calendar, Chief of Staff, production credentials, host diagnostics, new tools, new executables, new authority semantics, web UI, voice UI, memory architecture, or unrelated UX work.
+Do not add Calendar, Chief of Staff E2E, OpenClaw, Omarchy Agent OS, unrelated UI, voice, memory architecture, generalized workflow features, new shell executables, or weaker authority semantics.
 
 ## Required final status fields
 
 - `WHERE_WE_ARE=`
-- `SESSION_SEGMENT=LAC-A004-UAT`
-- `PREDECESSOR_RESULT=REMEDIATION_PACKAGE_PASS`
-- `REMEDIATED_BLOCKER_IDS=A004-UAT-B001,A004-UAT-B002`
+- `SESSION_SEGMENT=LAC-B001`
+- `PREDECESSOR_RESULT=OWNER_UAT_PASS`
 - `WHAT_WAS_VERIFIED=`
 - `WHAT_WAS_COMPLETED=`
-- `WHAT_REMAINS_IN_CURRENT_CHECKPOINT=`
+- `WHAT_REMAINS_IN_CURRENT_PHASE=`
 - `TOTAL_PROJECT_POSITION=`
 - `BLOCKERS=`
 - `STOP_GATE=`
