@@ -1,9 +1,9 @@
-# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / FRESH PHASE 3 P3-B001 RE-REVIEW
+# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 4 B001 GMAIL ADAPTER
 
-`SESSION_SEGMENT=LAC-P3-REREVIEW-P3-B001`
-`MODE=PHASE_BOUNDARY_INDEPENDENT_REVIEW`
+`SESSION_SEGMENT=LAC-B001`
+`MODE=IMPLEMENTATION_SEGMENT`
 
-Use the connected Web-File-Tool. Treat durable repository state and Git history as authority. Act only as a **fresh independent Phase 3 reviewer** of the corrected candidate. Do not remediate findings, do not begin Phase 4, and do not trust the predecessor's PASS claims without verifying them.
+Use the connected Web-File-Tool. Treat durable repository state and Git history as authority. Act as the **Lead Implementation Engineer** for exactly `LAC-B001`. Do not repeat the accepted Phase 3 review merely because `HEAD` is newer through review/workflow handoff administration, and do not begin `LAC-B002` in this session.
 
 ## Mandatory first reads — exact order
 
@@ -13,104 +13,70 @@ Use the connected Web-File-Tool. Treat durable repository state and Git history 
 4. `tasks/ACTIVE_TASK.md`
 5. `docs/NEXT_SESSION_PROMPT_TEMPLATE.md`
 
-Then inspect at minimum:
-
-- `docs/TECHNICAL_DESIGN_AND_IMPLEMENTATION_SPECIFICATION_v0.1.md`, especially §§17, 19, 33, and permanent sandbox/credential acceptance tests;
-- `docs/CONTRACTS.md`;
-- `docs/THREAT_MODEL.md`;
-- `docs/MODEL_PROVIDER_CONTRACT.md`;
-- `docs/PHASE3_A003_QUALIFICATION.md`;
-- `decisions/ADR-004_SANDBOX_BACKEND.md`;
-- `packages/sandbox/`;
-- `packages/adapters/pi/adapter.py`;
-- `packages/adapters/pi/governed_pi.mjs`;
-- `scripts/a003_agent_sandbox.py`;
-- `scripts/a003_agent_worker.mjs`;
-- `scripts/a003_qualification.mjs`;
-- `scripts/a003_model_provider_stream.py`;
-- `scripts/a003_controller_bridge.py`;
-- `scripts/a003_verify_agent_sandbox.py`;
-- `scripts/a003_verify_evidence.py`;
-- `scripts/test-a003`;
-- `tests/integration/test_a003_agent_process_sandbox.py`;
-- relevant A001/A002 and Phase 1/H001-H004 tests/evidence;
-- `qualification/evidence/a003_agent_sandbox_evidence.json`;
-- `qualification/evidence/a003_owner_execution.json`;
-- `qualification/evidence/a003_owner_execution.log`;
-- `qualification/evidence/a003_runtime.json`;
-- `qualification/evidence/a003_evidence_summary.json`;
-- `qualification/evidence/a003_qualification.json`.
+Then inspect the controlling specification sections needed for B001, especially §§18, 22, 34, 38, and 49, plus `docs/CONTRACTS.md`, `docs/THREAT_MODEL.md`, existing Dispatcher/approval/receipt/idempotency code, and the tests needed to preserve the accepted authority boundary.
 
 ## Handoff facts to verify; do not assume
 
-- `PREDECESSOR_ROLE=Lead Implementation Engineer`
-- `PREDECESSOR_RESULT=REMEDIATION_OWNER_GATE_PASS`
-- `ORIGINAL_BLOCKER_IDS=P3-B001`
-- `ORIGINAL_A003_IMPLEMENTATION_GIT_COMMIT=949ac791c077600b2ab683b63131156439ce181e`
-- `ORIGINAL_REVIEW_LIVE_GIT_COMMIT=3bb011de6a626ff717cfcd04e4a4d1ff95fd0a16`
-- `REMEDIATION_START_GIT_COMMIT=71b6d26ba648444859721daace6775467af789cf`
-- `CORRECTED_IMPLEMENTATION_GIT_COMMIT=809bb01ec52e6f04d96f22c0195c47961b3efd7a`
+- `PREDECESSOR_ROLE=Fresh Independent Reviewer`
+- `PREDECESSOR_RESULT=PASS`
+- `REVIEWED_GIT_COMMIT=809bb01ec52e6f04d96f22c0195c47961b3efd7a`
+- `REVIEW_LIVE_GIT_COMMIT=76fe9a6ce33efad6a72592d00333d1dbe988ef09`
+- `BLOCKER_IDS=NONE`
 - `OWNER_EXECUTION_EVIDENCE=qualification/evidence/a003_owner_execution.json`
-- `PI_PIN=da840b6216578c2a571d0374ac6a2091a83f9d91`
-- `FREETOKEN_PIN=af71ba43206e124f5ff6419b47ee36c6e9981078`
-- `MODEL_REPO=openai/gpt-oss-20b`
-- `MODEL_REVISION=6cee5e81ee83917806bbde320786a8fb61efebee`
-- `EXPECTED_PHASE=PHASE_3_REAL_LOCAL_AGENT_MODEL`
-- `EXPECTED_ACTIVE_TASK=LAC-P3-REREVIEW-P3-B001`
+- `EXPECTED_PHASE=PHASE_4_CHIEF_OF_STAFF_PILOT`
+- `EXPECTED_ACTIVE_TASK=LAC-B001`
+- `EXPECTED_NEXT_TASK=LAC-B002`
 
-The owner package creates one workflow/evidence handoff commit newer than `CORRECTED_IMPLEMENTATION_GIT_COMMIT`. Inspect the complete corrected-implementation-to-live-HEAD delta and require it to contain only:
+The accepted Phase 3 corrected implementation substance is `809bb01ec52e6f04d96f22c0195c47961b3efd7a`. The Phase 3 reviewer inspected the subsequent evidence/workflow handoff and returned PASS. The owner review-handoff package creates one additional workflow commit. Before implementing B001, inspect the complete `809bb01ec52e6f04d96f22c0195c47961b3efd7a`-to-live-`HEAD` delta and require its path set to be exactly:
 
 - `PROJECT_STATE.json`;
 - `tasks/ACTIVE_TASK.md`;
 - `NEXT_SESSION_PROMPT.md`;
 - `qualification/evidence/a003_owner_execution.json`.
 
-Fail closed on unrelated implementation drift. The corrected candidate substance is the corrected implementation commit; the later delta is permitted only for owner-evidence finalization and review workflow handoff.
+Those paths are non-material Phase 3 evidence/workflow administration only. Any other implementation, tests, qualification, architecture, contracts, threat model, ADR, upstream pin/license, or acceptance-criteria drift invalidates review preservation and is a blocker. If the delta is exact, record `REVIEW_PRESERVED_ACROSS_NONMATERIAL_DELTA=true` and proceed directly into B001 after bounded predecessor verification.
 
-## Review question — original blocker P3-B001
+## B001 objective
 
-Determine independently whether the corrected candidate now satisfies the binding ambient-authority boundary for the **Pi agent process itself**, not merely its governed effect subprocesses.
+Implement the typed Gmail adapter required by `tasks/ACTIVE_TASK.md` without redesigning the authority core. The agent/model may propose Gmail operations; deterministic controller software remains responsible for authorization, exact approval binding, pre-dispatch re-evaluation, leases, idempotency, adapter invocation, receipts, audit, and credential isolation.
 
-At minimum verify deterministically that:
+The initial typed Gmail action surface is:
 
-1. the actual pinned Pi Agent process is launched through the selected, qualified H001 Bubblewrap `SandboxBackend` rather than in the host Node process;
-2. the Pi process has exactly four governed A001 tools and no stock/unrestricted tool surface;
-3. the Pi process has no ambient workspace/controller-database/host-home/service-credential visibility;
-4. inherited host service credentials are cleared at the OS process boundary;
-5. an arbitrary host executable/process cannot produce the synthetic prohibited host effect;
-6. host loopback and arbitrary network access are unavailable to the Pi process itself;
-7. the declared model/effect path uses only fixed inherited-stdio IPC to a host broker, with no generic command/executable/network capability;
-8. Pi inference still crosses the LAC-owned `ModelProvider` boundary to the exact pinned FreeToken runtime/model, and FreeToken remains inference-only;
-9. all consequential filesystem/shell effects still cross `PiAgentAdapter -> Dispatcher -> H002/H003 -> H001` and produce durable receipts;
-10. the synthetic SSH-key request is evaluated under policy `ALLOW`, fails at the filesystem/OS boundary, records a durable failed `filesystem:v1` receipt, and exposes no secret bytes;
-11. A002, A001, Phase 1, and H001-H004 regressions remain green;
-12. no Phase 4 implementation or unrelated architecture change was introduced.
+- `email.search`
+- `email.read`
+- `email.draft`
+- `email.send`
+- `email.archive`
+- `email.delete`
 
-A policy `DENY`, model refusal, prompt instruction, or source-level claim is not sufficient evidence for an operating-system containment property. Confirm the prohibited effect did not occur using the deterministic synthetic evidence/tests.
+Use the controlling policy semantics and acceptance tests in `tasks/ACTIVE_TASK.md`. In particular, `email.send` approval must bind account, to, cc, bcc, subject, body hash, and attachment hashes; any security-relevant mutation invalidates approval. Sending must be exactly-once under retry/duplicate conditions. Credentials remain controller/adapter-side references and must not enter the agent/model context or generic shell.
 
-## Review result discipline
+Use synthetic/local deterministic test doubles by default. Do not perform real production Gmail effects or ingest production credentials. A live external qualification requires a dedicated test account or separate explicit bounded owner authority.
 
-Return exactly one phase-boundary result:
+## Required implementation lifecycle
 
-- `PASS` — only if Phase 3 and the remediated P3-B001 boundary satisfy all binding acceptance criteria; or
-- `BLOCKED` — identify concrete blocker IDs tied to violated binding invariants/acceptance criteria.
+1. Perform bounded predecessor verification only. Do not redo the Phase 3 independent review when the handoff delta is exact.
+2. Implement `LAC-B001` completely.
+3. Run B001-specific deterministic tests and the full applicable regression gate.
+4. Correct in-scope defects and rerun affected/full gates.
+5. Produce one owner-executable package and exactly one self-contained Bash command.
+6. The successful package must advance durable state to `LAC-B002` and install a populated successor `NEXT_SESSION_PROMPT.md` before reporting PASS.
+7. Stop at `OWNER_EXECUTION_REQUIRED`. Do not implement B002 in this conversation.
 
-Optional improvements are `NONBLOCKING` and may not prevent progression.
+## Security validation framing
 
-Do not remediate in this review session.
-
-If `PASS`, prepare the required owner workflow handoff for the first Phase 4 implementation segment (`LAC-B001`, Gmail adapter) without implementing Phase 4 in the review session. If `BLOCKED`, prepare a fresh remediation handoff containing only the concrete blocker IDs. In either case preserve the project's one-package/one-command and fresh-session workflow.
+Use only user-owned repository state, synthetic fixtures, local fake/test services, deterministic databases, and bounded test accounts if separately authorized. Verify documented invariants and actual negative outcomes; do not use real credentials, production accounts, third-party targets, generalized security-control circumvention, or unrelated external effects.
 
 ## Required final status fields
 
 - `WHERE_WE_ARE=`
-- `SESSION_SEGMENT=LAC-P3-REREVIEW-P3-B001`
-- `PREDECESSOR_RESULT=REMEDIATION_OWNER_GATE_PASS`
-- `ORIGINAL_BLOCKER_IDS=P3-B001`
-- `REVIEW_RESULT=PASS|BLOCKED`
+- `SESSION_SEGMENT=LAC-B001`
+- `PREDECESSOR_RESULT=PASS`
+- `REVIEWED_GIT_COMMIT=809bb01ec52e6f04d96f22c0195c47961b3efd7a`
 - `WHAT_WAS_VERIFIED=`
+- `WHAT_WAS_COMPLETED=`
 - `WHAT_REMAINS_IN_CURRENT_PHASE=`
 - `TOTAL_PROJECT_POSITION=`
 - `BLOCKERS=`
-- `STOP_GATE=PHASE_BOUNDARY_REVIEW_REQUIRED`
+- `STOP_GATE=`
 - `EXACT_NEXT_SAFE_ACTION=`

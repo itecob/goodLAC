@@ -1,31 +1,65 @@
-# ACTIVE TASK — LAC-P3-REREVIEW-P3-B001
+# ACTIVE TASK — LAC-B001
 
-## Mode
+## Objective
 
-Fresh independent Phase 3 re-review. Review the corrected Phase 3 candidate after remediation of `P3-B001`. Do not remediate and do not begin Phase 4.
+Implement the first Phase 4 typed Gmail effect adapter without changing the Phase 1 authority core, Phase 2 sandbox boundary, or accepted Phase 3 Pi/FreeToken integration.
 
-## Review objective
+## In scope
 
-Independently determine whether Phase 3 now satisfies the binding Pi-process ambient-authority boundary and all Phase 3 acceptance criteria.
+- Typed Gmail operations defined by the controlling specification: `email.search`, `email.read`, `email.draft`, `email.send`, `email.archive`, and `email.delete`.
+- Preserve the initial policy semantics: search/read/draft `ALLOW`; send/archive `REQUIRE_APPROVAL`; delete `DENY`.
+- Bind `email.send` approval to the exact security-relevant operation, including account, to, cc, bcc, subject, body hash, and attachment hashes. Any security-relevant mutation invalidates approval.
+- Route consequential Gmail effects through the existing canonical `EffectRequest -> policy -> approval where required -> pre-dispatch recheck -> execution lease -> Dispatcher -> Gmail EffectAdapter -> durable receipt/audit` path.
+- Use credential references resolved controller-side. Gmail/OAuth/service credentials must not enter model/Pi context, generic shell environment, logs, receipts, or tool results.
+- Implement deterministic idempotency/duplicate prevention so an approved send cannot be duplicated by retry.
+- Add deterministic unit/contract/integration tests using synthetic fixtures or a bounded fake/local provider by default. A real Gmail mutation requires a dedicated test account or separate explicit user authority.
+- Preserve all existing Phase 1, H001-H004, A001-A003 regressions.
 
-## Original blocker
+## Out of scope
 
-`P3-B001 — Pi agent process lacked the required ambient-authority sandbox boundary.`
+- Calendar adapter (`LAC-B002`).
+- Chief of Staff end-to-end pilot (`LAC-B003`).
+- OpenClaw, Omarchy Agent OS, compatibility-gateway expansion, UI/productization, or unrelated architecture changes.
+- Production-account mutation or use of real credentials without explicit bounded authority.
 
-The corrected candidate claims that the actual pinned Pi process now runs through the selected H001 Bubblewrap boundary with `network=none`, a cleared environment, no ambient workspace/controller database/host home/service credentials, and only fixed inherited-stdio broker access to the LAC ModelProvider and governed effects.
+## Required inputs
 
-## Required review
+- `PROJECT_STATE.json`
+- `docs/ARCHITECTURE.md`
+- `docs/TECHNICAL_DESIGN_AND_IMPLEMENTATION_SPECIFICATION_v0.1.md`, especially §§18, 22, 34, 38, and 49
+- `docs/CONTRACTS.md`
+- `docs/THREAT_MODEL.md`
+- existing Dispatcher/effect receipt/idempotency/approval implementations and tests
+- accepted Phase 3 review facts in the live `NEXT_SESSION_PROMPT.md`
 
-- Verify the live corrected implementation commit and the permitted workflow/evidence-only handoff delta.
-- Inspect the actual sandbox launcher/worker and H001 integration.
-- Verify exact Pi/FreeToken/model pins remain unchanged.
-- Validate the deterministic Pi-process filesystem/environment/process/network negative conformance using synthetic fixtures and actual OS outcomes.
-- Validate the exact four-tool surface and fixed broker capability surface.
-- Validate positive A003 governed effects and durable receipts.
-- Validate the synthetic SSH-key scenario remains policy `ALLOW` plus OS/effect-boundary failure with a durable failed filesystem receipt and no secret bytes.
-- Validate A002, A001, Phase 1, and H001-H004 regressions.
-- Confirm no Phase 4 implementation or unrelated architecture change entered the candidate.
+## Required outputs
 
-## Result
+- Gmail typed effect contract/adapter in the established package structure.
+- Deterministic tests for read/search/draft/send/archive/delete semantics and credential isolation.
+- Send approval exact-binding and exactly-once evidence.
+- Full applicable regression gate.
+- One owner-executable package and one Bash command that install the completed B001 segment and hand off to `LAC-B002`.
 
-Return exactly `PASS` or `BLOCKED`. Only concrete violated binding invariants/acceptance criteria are blockers. Optional improvements are nonblocking. Do not remediate in the review session.
+## Acceptance tests
+
+At minimum prove deterministically:
+
+1. `email.search`, `email.read`, and `email.draft` succeed only through the typed governed path.
+2. `email.send` cannot execute without an exact qualifying approval.
+3. after approval, exact unchanged `email.send` succeeds exactly once and records a durable receipt.
+4. mutation of recipient, cc/bcc, subject, body, attachment, account, principal, agent, or other bound security material invalidates the approval before dispatch.
+5. duplicate/retry cannot send twice.
+6. `email.archive` follows its configured approval policy.
+7. `email.delete` is denied and cannot produce the external deletion effect.
+8. Gmail credentials are absent from agent/model context, generic shell environment, logs, receipts, and tool results.
+9. unknown Gmail action/resource/state fails closed.
+10. Phase 1, H001-H004, A001, A002, and A003 regressions remain green.
+11. no B002/B003 or unrelated Phase 4+ implementation is introduced.
+
+## Package required?
+
+Yes.
+
+## Next task on success
+
+`LAC-B002` — Calendar adapter, in a fresh implementation session.
