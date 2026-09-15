@@ -1,15 +1,15 @@
 {
   "schema": "lac.project-state/v1",
   "project_version": "0.1.0-dev",
-  "phase": "PHASE_3_5_BASELINE_USER_VALIDATION",
-  "phase_status": "OWNER_VALIDATION_REQUIRED",
-  "active_task": "LAC-A004-UAT",
+  "phase": "PHASE_4_CHIEF_OF_STAFF_PILOT",
+  "phase_status": "READY",
+  "active_task": "LAC-B001",
   "last_accepted_release": null,
   "blockers": [],
   "nonblocking_notes": [
     "Waggle remains concepts-only unless an authoritative license is resolved at the exact revision intended for reuse.",
-    "Phase 3 A003 remains independently accepted; A004 is an additive owner-usability checkpoint and does not reopen the accepted Phase 3 technical proof.",
-    "A004-UAT-B001 and A004-UAT-B002 have deterministic remediation evidence; owner hands-on revalidation is still required before LAC-B001."
+    "Phase 3 A003 remains independently accepted; A004 was an additive owner-usability checkpoint and passed owner revalidation after remediation.",
+    "A004-UAT-B001 and A004-UAT-B002 were remediated and owner-revalidated before Phase 4 activation."
   ],
-  "next_action": "Owner repeats A004 hands-on baseline UAT using docs/A004_OWNER_BASELINE_UAT.md, including arrow-key editing and canonical /usr/bin/ls argv=[] validation. Do not begin LAC-B001 until owner UAT explicitly passes."
+  "next_action": "Fresh implementation session implements LAC-B001 Gmail adapter only. Do not begin Calendar or Chief of Staff E2E in the same session."
 }
