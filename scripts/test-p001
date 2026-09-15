@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+export PYTHONDONTWRITEBYTECODE=1
+: "${LAC_P001_RUN_ROOT:?LAC_P001_RUN_ROOT is required}"
+mkdir -p "$LAC_P001_RUN_ROOT"
+
+echo "==> P001 capability manifest unit contract"
+python3 -m unittest tests.unit.test_capability_manifest -v
+
+echo "==> P001 durable registry integration"
+python3 -m unittest tests.integration.test_capability_registry -v
+
+echo "==> P001 zero-authority/runtime-boundary acceptance"
+python3 -m unittest tests.acceptance.test_p001_capability_registry -v
+
+echo "==> P001 syntax/static checks"
+PYTHONPYCACHEPREFIX="$LAC_P001_RUN_ROOT/pycache" python3 -m py_compile \
+  packages/capabilities/__init__.py \
+  packages/capabilities/manifest.py \
+  packages/capabilities/registry.py \
+  tests/unit/test_capability_manifest.py \
+  tests/integration/test_capability_registry.py \
+  tests/acceptance/test_p001_capability_registry.py
+bash -n scripts/test-p001
+
+echo "==> P001 accepted B001 + Phase 1-3/A004 regression gate"
+export LAC_B001_RUN_ROOT="$LAC_P001_RUN_ROOT/b001-regression"
+rm -rf "$LAC_B001_RUN_ROOT"
+scripts/test-b001
+
+git diff --check
+
+echo "LAC_P001_TEST=PASS"
