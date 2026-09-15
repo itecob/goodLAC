@@ -3,6 +3,13 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 from typing import Any, Callable, Protocol, runtime_checkable
 
+from packages.capabilities import (
+    CapabilityRequestContext,
+    CapabilityRequestDenied,
+    CapabilityRequestError,
+    CapabilityRequestValidator,
+    PendingPermissionRepository,
+)
 from packages.core import (
     Approval,
     EffectExecution,
@@ -43,6 +50,11 @@ class DispatchError(RuntimeError):
 
 class DispatchDenied(DispatchError):
     """Current policy denies the request."""
+
+
+class DispatchCapabilityDenied(DispatchDenied):
+    # P002 capability validation terminally closed this effect request.
+    pass
 
 
 class DispatchAgentRevoked(DispatchDenied):
@@ -562,6 +574,40 @@ class Dispatcher:
             ) from adapter_error
         return adapter_result
 
+    def dispatch_capability(
+        self,
+        request: EffectRequest,
+        *,
+        capability_context: CapabilityRequestContext,
+        adapter: EffectAdapter,
+        decision_id: str,
+        lease_id: str,
+        executor_id: str,
+        approval_id: str | None = None,
+    ) -> Any:
+        current_request = _canonical_request(request)
+        normalized_at, _ = self._now()
+        try:
+            CapabilityRequestValidator(self._store).validate_or_quarantine(
+                current_request,
+                context=capability_context,
+                observed_at_utc=normalized_at,
+            )
+        except CapabilityRequestDenied as exc:
+            raise DispatchCapabilityDenied(str(exc)) from exc
+        except CapabilityRequestError as exc:
+            raise DispatchAuthorityError(
+                "capability validation durable state failed closed"
+            ) from exc
+        return self.dispatch(
+            current_request,
+            adapter=adapter,
+            decision_id=decision_id,
+            lease_id=lease_id,
+            executor_id=executor_id,
+            approval_id=approval_id,
+        )
+
     def dispatch(
         self,
         request: EffectRequest,
@@ -573,6 +619,26 @@ class Dispatcher:
         approval_id: str | None = None,
     ) -> Any:
         current_request = _canonical_request(request)
+        # A terminal P002 capability denial is immutable authority state.
+        try:
+            closure = PendingPermissionRepository(self._store).get_closure(
+                current_request.request_id
+            )
+        except CapabilityRequestError as exc:
+            raise DispatchAuthorityError(
+                "capability-denial closure state failed closed"
+            ) from exc
+        if closure is not None:
+            if closure["canonical_request_hash"] != current_request.canonical_hash:
+                raise DispatchAuthorityError(
+                    "closed request_id is bound to a different canonical request"
+                )
+            raise DispatchCapabilityDenied(
+                "terminal P002 capability denial: "
+                + str(closure["reason"])
+                + " pending_id="
+                + str(closure["pending_id"])
+            )
         decision_id = _required_text(decision_id, "decision_id")
         lease_id = _required_text(lease_id, "lease_id")
         executor_id = _required_text(executor_id, "executor_id")

@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+export PYTHONDONTWRITEBYTECODE=1
+: "${LAC_P002_RUN_ROOT:?LAC_P002_RUN_ROOT is required}"
+mkdir -p "$LAC_P002_RUN_ROOT"
+
+echo "==> P002 unknown-request quarantine acceptance/security contract"
+python3 -m unittest tests.acceptance.test_p002_unknown_quarantine -v
+
+echo "==> P002 syntax/static checks"
+PYTHONPYCACHEPREFIX="$LAC_P002_RUN_ROOT/pycache" python3 -m py_compile \
+  packages/capabilities/quarantine.py \
+  packages/capabilities/__init__.py \
+  packages/dispatcher/dispatcher.py \
+  packages/dispatcher/__init__.py \
+  tests/acceptance/test_p002_unknown_quarantine.py
+bash -n scripts/test-p002
+
+echo "==> P002 accepted P001 + B001 + Phase 1-3/A004 regression gate"
+export LAC_P001_RUN_ROOT="$LAC_P002_RUN_ROOT/p001-regression"
+rm -rf "$LAC_P001_RUN_ROOT"
+scripts/test-p001
+
+git diff --check
+echo "LAC_P002_TEST=PASS"

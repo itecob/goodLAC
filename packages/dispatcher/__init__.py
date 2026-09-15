@@ -2,14 +2,14 @@
 
 from .dispatcher import (
     DispatchAdapterError, DispatchAgentRevoked, DispatchApprovalRequired, DispatchAuthorityError,
-    DispatchDenied, DispatchDuplicateEffect, DispatchError, DispatchPaused,
+    DispatchCapabilityDenied, DispatchDenied, DispatchDuplicateEffect, DispatchError, DispatchPaused,
     DispatchReconciliationRequired, DispatchRequestExpired, Dispatcher, EffectAdapter,
     ReconciliationEffectAdapter,
 )
 
 __all__ = [
     "DispatchAdapterError", "DispatchAgentRevoked", "DispatchApprovalRequired", "DispatchAuthorityError",
-    "DispatchDenied", "DispatchDuplicateEffect", "DispatchError", "DispatchPaused",
+    "DispatchCapabilityDenied", "DispatchDenied", "DispatchDuplicateEffect", "DispatchError", "DispatchPaused",
     "DispatchReconciliationRequired", "DispatchRequestExpired", "Dispatcher",
     "EffectAdapter", "ReconciliationEffectAdapter",
 ]
