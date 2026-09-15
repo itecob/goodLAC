@@ -1861,6 +1861,12 @@ And OS enforcement must make bypass unavailable.
 
 This is the **first usable local-agent-controller MVP**.
 
+### Owner baseline user-validation gate
+
+Before Phase 4 business adapters begin, complete `A004`: a thin interactive terminal harness and owner hands-on validation of the accepted Phase 3 stack. This gate is additive and does not reopen the accepted A003 technical proof. It must reuse the accepted Pi/FreeToken/LAC authority path, keep the same sandbox and governed tool surface, and must not add Gmail, Calendar, Chief of Staff behavior, new authority semantics, or weaker ambient host access.
+
+A004 must make the qualified local runtime reproducibly startable by the owner, including deterministic discovery/validation of required local runtime prerequisites such as the CUDA toolkit, and then expose enough tool/receipt visibility for the owner to understand baseline behavior. Phase 4 begins only after the owner completes this baseline validation.
+
 ---
 
 # 34. PHASE 4 — Chief of Staff pilot
@@ -2297,6 +2303,7 @@ H004  bypass suite
 A001  Pi adapter
 A002  FreeToken model configuration
 A003  full local-agent E2E
+A004  interactive baseline harness + owner validation gate
 
 B001  Gmail adapter
 B002  Calendar adapter
