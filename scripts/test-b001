@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+export PYTHONDONTWRITEBYTECODE=1
+: "${LAC_B001_RUN_ROOT:?LAC_B001_RUN_ROOT is required}"
+mkdir -p "$LAC_B001_RUN_ROOT"
+
+echo "==> B001 Gmail adapter unit contract"
+python3 -m unittest tests.unit.test_gmail_adapter -v
+python3 -m unittest tests.unit.test_gmail_google_api -v
+
+echo "==> B001 Gmail dispatcher/policy/approval/receipt integration"
+python3 -m unittest tests.integration.test_gmail_dispatch -v
+
+echo "==> B001 syntax/static checks"
+PYTHONPYCACHEPREFIX="$LAC_B001_RUN_ROOT/pycache" python3 -m py_compile \
+  packages/credentials/provider.py \
+  packages/effects/gmail/adapter.py \
+  packages/effects/gmail/google_api.py \
+  packages/effects/gmail/policy.py \
+  tests/unit/test_gmail_adapter.py \
+  tests/unit/test_gmail_google_api.py \
+  tests/integration/test_gmail_dispatch.py
+bash -n scripts/test-b001
+
+echo "==> B001 accepted Phase 1-3/A004 regression gate"
+export LAC_A004_RUN_ROOT="$LAC_B001_RUN_ROOT/a004-regression"
+rm -rf "$LAC_A004_RUN_ROOT"
+scripts/test-a004
+
+git diff --check
+
+echo "LAC_B001_TEST=PASS"
