@@ -1,4 +1,10 @@
 {
+  "agent_process_boundary": {
+    "backend": "bubblewrap",
+    "model_and_effect_transport": "inherited-stdio-rpc-to-fixed-host-broker",
+    "network_mode": "none",
+    "workspace_mounted_into_pi_process": false
+  },
   "freetoken": {
     "base_url": "http://127.0.0.1:19203",
     "checkout": "${HOME}/.cache/local-agent-controller/phase0/upstream/freetoken",
@@ -140,6 +146,7 @@
     "revision": "6cee5e81ee83917806bbde320786a8fb61efebee",
     "served_model_id": "lac-a003-gpt-oss-20b"
   },
+  "p3_b001_remediation_observed_at_utc": "2026-09-15T00:06:28.498283Z",
   "pi": {
     "checkout": "${HOME}/.cache/local-agent-controller/phase0/upstream/pi",
     "git_commit": "da840b6216578c2a571d0374ac6a2091a83f9d91"

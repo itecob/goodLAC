@@ -1,0 +1,40 @@
+{
+  "host_verification": {
+    "ambient_fixture_sha256": "4652f159fab1f847c48c8d5893852e4e5956644c117276c7cea735912a24edbe",
+    "arbitrary_host_process_effect_observed": false,
+    "backend": "bubblewrap",
+    "host_loopback_connection_observed": false,
+    "network_mode": "none",
+    "synthetic_credential_value_observed": false,
+    "transport": "inherited-stdio-rpc-to-fixed-host-broker",
+    "workspace_mounted_into_pi_process": false
+  },
+  "probes": {
+    "arbitrary_host_executable_launched": false,
+    "cwd": "/lac",
+    "environment_keys": [
+      "HOME",
+      "LC_ALL",
+      "PATH",
+      "PWD"
+    ],
+    "host_file_readable": false,
+    "loopback_connected": false,
+    "loopback_detail": "ECONNREFUSED",
+    "pid": 2,
+    "private_network_connected": false,
+    "private_network_detail": "ENETUNREACH",
+    "schema": "lac.a003-pi-process-ambient-conformance/v1",
+    "synthetic_service_credential_inherited": false,
+    "workspace_file_readable": false,
+    "workspace_write_effect": false
+  },
+  "result": "PASS",
+  "schema": "lac.a003-agent-sandbox-evidence/v1",
+  "tool_surface": [
+    "lac_fs_read",
+    "lac_fs_create",
+    "lac_fs_replace",
+    "lac_shell_exec"
+  ]
+}

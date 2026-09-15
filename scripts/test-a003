@@ -10,27 +10,40 @@ export PYTHONDONTWRITEBYTECODE=1
 : "${LAC_A003_FREETOKEN_URL:?LAC_A003_FREETOKEN_URL is required}"
 : "${LAC_A003_MODEL_ID:?LAC_A003_MODEL_ID is required}"
 : "${LAC_PI_CHECKOUT:?LAC_PI_CHECKOUT is required}"
+: "${LAC_A003_PYTHON:=python3}"
+export LAC_A003_PYTHON
 
 python3 scripts/verify_pi_pin.py
 python3 scripts/verify_freetoken_pin.py
 python3 tests/integration/test_a003_model_boundary.py
+python3 tests/integration/test_a003_agent_process_sandbox.py
 node tests/integration/test_a003_stream_bridge.mjs
 node --check packages/adapters/pi/model_stream_bridge.mjs
+node --check scripts/a003_agent_worker.mjs
 node --check scripts/a003_qualification.mjs
-PYTHONPYCACHEPREFIX="$LAC_A003_RUN_ROOT/pycache" python3 -m py_compile scripts/a003_model_provider_stream.py scripts/a003_controller_bridge.py scripts/a003_verify_evidence.py
+PYTHONPYCACHEPREFIX="$LAC_A003_RUN_ROOT/pycache" python3 -m py_compile \
+  scripts/a003_model_provider_stream.py \
+  scripts/a003_controller_bridge.py \
+  scripts/a003_verify_evidence.py \
+  scripts/a003_agent_sandbox.py \
+  scripts/a003_verify_agent_sandbox.py
 
-node scripts/a003_qualification.mjs
+python3 scripts/a003_agent_sandbox.py qualification --run-root "$LAC_A003_RUN_ROOT"
 python3 scripts/a003_verify_evidence.py \
   --run-root "$LAC_A003_RUN_ROOT" \
   --out "$LAC_A003_RUN_ROOT/evidence-summary.json"
+python3 scripts/a003_verify_agent_sandbox.py \
+  --run-root "$LAC_A003_RUN_ROOT" \
+  --out "$LAC_A003_RUN_ROOT/agent-sandbox-evidence.verified.json"
 
 # A002 regression and its provider contract.
 scripts/test-a002
-# A001 includes the Phase 1 and H001-H004 regression chain.
+# A001 includes the complete Phase 1 and H001-H004 regression chain.
 scripts/test-a001
 
 git diff --check
 
 echo "LAC_A003_MODEL_ID=$LAC_A003_MODEL_ID"
 echo "LAC_A003_FREETOKEN_URL=$LAC_A003_FREETOKEN_URL"
+echo "LAC_A003_PI_PROCESS_SANDBOX=PASS"
 echo "LAC_A003_TEST=PASS"
