@@ -2,13 +2,14 @@
   "schema": "lac.project-state/v1",
   "project_version": "0.1.0-dev",
   "phase": "PHASE_3_5_BASELINE_USER_VALIDATION",
-  "phase_status": "READY",
-  "active_task": "LAC-A004",
+  "phase_status": "OWNER_VALIDATION_REQUIRED",
+  "active_task": "LAC-A004-UAT",
   "last_accepted_release": null,
   "blockers": [],
   "nonblocking_notes": [
     "Waggle remains concepts-only unless an authoritative license is resolved at the exact revision intended for reuse.",
-    "Phase 3 A003 remains independently accepted; A004 is an additive owner-usability checkpoint and does not reopen the accepted Phase 3 technical proof."
+    "Phase 3 A003 remains independently accepted; A004 is an additive owner-usability checkpoint and does not reopen the accepted Phase 3 technical proof.",
+    "A004 deterministic implementation/package gate passed; hands-on owner usability validation remains required before LAC-B001."
   ],
-  "next_action": "Implement LAC-A004 interactive baseline harness for owner testing of the accepted Pi + FreeToken + LAC stack. Do not begin LAC-B001 until owner baseline validation is complete."
+  "next_action": "Owner performs LAC-A004-UAT using docs/A004_OWNER_BASELINE_UAT.md and scripts/lac-baseline. Do not begin LAC-B001 until owner validation is explicitly accepted and durably recorded."
 }

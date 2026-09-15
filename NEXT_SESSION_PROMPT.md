@@ -1,9 +1,9 @@
-# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / A004 INTERACTIVE BASELINE HARNESS
+# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / A004 OWNER BASELINE UAT
 
-`SESSION_SEGMENT=LAC-A004`
+`SESSION_SEGMENT=LAC-A004-UAT`
 `MODE=IMPLEMENTATION_SEGMENT`
 
-Use the connected Web-File-Tool. Treat durable repository state and Git history as authority. Act as the **Lead Implementation Engineer** for exactly `LAC-A004`. Do not begin Gmail, Calendar, or Chief of Staff implementation in this session.
+Use the connected Web-File-Tool. Treat durable repository state and Git history as authority. This session owns the **owner validation checkpoint only**. Do not begin Gmail, Calendar, or Chief of Staff implementation.
 
 ## Mandatory first reads — exact order
 
@@ -13,61 +13,50 @@ Use the connected Web-File-Tool. Treat durable repository state and Git history 
 4. `tasks/ACTIVE_TASK.md`
 5. `docs/NEXT_SESSION_PROMPT_TEMPLATE.md`
 
-Then inspect the controlling specification sections needed for A004, especially §§17, 19, 20, 33, 38, 49, 50, 54, and 59; `docs/PHASE3_A003_QUALIFICATION.md`; `docs/MODEL_PROVIDER_CONTRACT.md`; the accepted A003 sandbox/model/provider/controller bridge; and A003 runtime/owner evidence.
+Then read `qualification/evidence/a004_owner_execution.json`, `docs/A004_OWNER_BASELINE_UAT.md`, and only the installed A004 files needed to verify the handoff.
 
 ## Handoff facts to verify; do not assume
 
-- `PREDECESSOR_ROLE=Owner-approved sequence amendment after accepted Phase 3 review`
-- `PREDECESSOR_RESULT=PHASE3_ACCEPTED_A004_INSERTED_BEFORE_B001`
+- `PREDECESSOR_ROLE=Lead Implementation Engineer / LAC-A004`
+- `PREDECESSOR_RESULT=A004_IMPLEMENTED_OWNER_UAT_REQUIRED`
+- `PREDECESSOR_IMPLEMENTATION_GIT_COMMIT=94c7db928b3848069d2a7c432316db0d88477871`
+- `A004_START_GIT_COMMIT=cca4ef5478b90e270ec717e740b3041230176036`
 - `REVIEWED_PHASE3_GIT_COMMIT=809bb01ec52e6f04d96f22c0195c47961b3efd7a`
-- `PHASE3_TO_PHASE4_HANDOFF_GIT_COMMIT=39a0d5eefa71c7112dc7ae62225d32c1393b0c00`
+- `OWNER_EXECUTION_EVIDENCE=qualification/evidence/a004_owner_execution.json`
 - `BLOCKER_IDS=NONE`
-- `OWNER_EXECUTION_EVIDENCE=qualification/evidence/a003_owner_execution.json`
 - `EXPECTED_PHASE=PHASE_3_5_BASELINE_USER_VALIDATION`
-- `EXPECTED_ACTIVE_TASK=LAC-A004`
-- `EXPECTED_NEXT_TASK=LAC-A004-UAT`
-- `DEFERRED_TASK=LAC-B001`
+- `EXPECTED_ACTIVE_TASK=LAC-A004-UAT`
+- `EXPECTED_NEXT_TASK_ON_OWNER_PASS=LAC-B001`
 
-The accepted Phase 3 implementation/review is not reopened by this owner-requested usability checkpoint. Before implementing A004, inspect the complete `39a0d5eefa71c7112dc7ae62225d32c1393b0c00`-to-live-`HEAD` delta. It must contain only the sequence-amendment files installed by the owner package: `PROJECT_STATE.json`, `tasks/ACTIVE_TASK.md`, `NEXT_SESSION_PROMPT.md`, and `docs/TECHNICAL_DESIGN_AND_IMPLEMENTATION_SPECIFICATION_v0.1.md`. Any unrelated implementation drift is a blocker.
-
-## A004 objective
-
-Give the owner a practical terminal conversation with the baseline platform **before** adding Chief of Staff capabilities:
-
-`owner -> interactive terminal -> H001-sandboxed Pi -> LAC ModelProvider -> pinned FreeToken/gpt-oss-20b -> governed tool proposal -> LAC controller/Dispatcher -> H002/H003 -> H001 -> receipt`
-
-This is a thin usability/access layer over the accepted Phase 3 path, not a redesign.
-
-## Binding implementation requirements
-
-- Reuse the exact accepted Pi, FreeToken, model revision, Bubblewrap backend, PiAgentAdapter, Dispatcher, filesystem/shell adapters, receipts, policy, and sandbox boundary.
-- Expose exactly `lac_fs_read`, `lac_fs_create`, `lac_fs_replace`, and `lac_shell_exec` to Pi.
-- Provide multi-turn terminal interaction and concise observable governed-tool/receipt events without exposing hidden reasoning.
-- Use a dedicated bounded baseline-test workspace; do not mount the repository, home directory, controller state/database, or credentials into Pi.
-- Provide a reproducible FreeToken launcher. The owner's manual post-Phase-3 launch reached model initialization but failed during JIT build with `RuntimeError: Could not find CUDA installation. Please set CUDA_HOME environment variable.` A004 must discover the actual `nvcc` location, derive and validate the CUDA toolkit root when appropriate, establish only the environment required by the runtime, and fail closed with a useful diagnostic if qualification prerequisites are missing. Do not hard-code an unverified CUDA path.
-- Keep FreeToken loopback-only and inference-only.
-- Cleanly manage process lifecycle so startup failure or exit does not leave orphaned runtime/agent processes.
-- Add deterministic tests for all acceptance criteria in `tasks/ACTIVE_TASK.md` and preserve the full applicable regression gate.
-- Produce an owner user-testing guide with a short baseline script covering normal conversation, governed workspace operations, receipt visibility, boundary-denial behavior, and shutdown/restart.
+The accepted Phase 3 review remains preserved. A004 is an additive usability layer over the accepted A003 path.
 
 ## Required lifecycle
 
-1. Perform bounded predecessor verification only; do not redo the accepted Phase 3 review.
-2. Implement A004 completely.
-3. Run A004-specific tests and the full applicable regression gate.
-4. Correct in-scope defects and rerun affected/full gates.
-5. Produce one owner-executable package and exactly one self-contained Bash command.
-6. The successful package must advance durable state to `LAC-A004-UAT` and install a populated successor prompt for owner hands-on validation.
-7. Stop at `OWNER_EXECUTION_REQUIRED`. Do not begin B001.
+1. Perform bounded predecessor verification: confirm the A004 owner execution evidence is PASS, the installed Git/state/task/prompt are mutually consistent, and the A004 implementation commit exists in current history.
+2. Guide the owner through `docs/A004_OWNER_BASELINE_UAT.md`. The owner runs `scripts/lac-baseline`; do not infer usability acceptance from deterministic package tests alone.
+3. Evaluate actual owner observations against `tasks/ACTIVE_TASK.md`.
+4. If any concrete A004 defect is observed, classify it precisely, keep `LAC-B001` deferred, and prepare only an A004 remediation handoff/package as needed.
+5. If and only if the owner explicitly accepts A004 UAT, create one minimal owner-executable transition package that advances durable state to `LAC-B001`, installs a populated B001 successor prompt, and performs no B001 implementation.
+6. Stop after the transition package at `OWNER_EXECUTION_REQUIRED`. A fresh session owns B001 after that package succeeds.
+
+## UAT entrypoint
+
+From the project root the owner uses:
+
+```bash
+scripts/lac-baseline
+```
+
+Do not ask the owner to edit project source, manually set `CUDA_HOME`, manually launch FreeToken, or assemble infrastructure commands.
 
 ## Required final status fields
 
 - `WHERE_WE_ARE=`
-- `SESSION_SEGMENT=LAC-A004`
-- `PREDECESSOR_RESULT=PHASE3_ACCEPTED_A004_INSERTED_BEFORE_B001`
-- `REVIEWED_PHASE3_GIT_COMMIT=809bb01ec52e6f04d96f22c0195c47961b3efd7a`
+- `SESSION_SEGMENT=LAC-A004-UAT`
+- `PREDECESSOR_RESULT=A004_IMPLEMENTED_OWNER_UAT_REQUIRED`
+- `PREDECESSOR_IMPLEMENTATION_GIT_COMMIT=94c7db928b3848069d2a7c432316db0d88477871`
 - `WHAT_WAS_VERIFIED=`
-- `WHAT_WAS_COMPLETED=`
+- `OWNER_UAT_RESULT=`
 - `WHAT_REMAINS_IN_CURRENT_CHECKPOINT=`
 - `TOTAL_PROJECT_POSITION=`
 - `BLOCKERS=`
