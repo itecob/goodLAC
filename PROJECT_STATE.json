@@ -3,7 +3,7 @@
   "project_version": "0.1.0-dev",
   "phase": "PHASE_4_PERMISSION_MANAGEMENT",
   "phase_status": "READY",
-  "active_task": "LAC-P006-UAT",
+  "active_task": "LAC-B002",
   "last_accepted_release": null,
   "blockers": [],
   "nonblocking_notes": [
@@ -20,7 +20,8 @@
     "LAC-P006 permission-management end-to-end and negative-security qualification completed through owner-executed deterministic verification; integrated P001-P005 authority and isolation invariants passed.",
     "LAC-P006 corrected later-phase regression determinism: direct A003/A004 live gates remain available/default, while P006 and successors verify accepted live evidence and rerun current deterministic security/interface conformance instead of depending on unseedable model auto-tool-choice behavior.",
     "Owner inserted LAC-P006-UAT before B002 to make the built controller directly operable/testable and to add first-use discovery for a registered capability that lacks user-configured standing permission. Such a request must remain DENY/non-resumable while creating bounded owner-reviewable configuration work for future fresh requests.",
-    "Owner UAT now includes a deterministic adversarial stress matrix that deliberately attacks Model\u2192Pi, Pi sandbox, adapter/sandbox, and admin/permission boundaries without depending on model willingness to misbehave. A permissive-model behavioral stress run is supplemental; deterministic hostile requests remain the security gate."
+    "Owner UAT now includes a deterministic adversarial stress matrix that deliberately attacks Model\u2192Pi, Pi sandbox, adapter/sandbox, and admin/permission boundaries without depending on model willingness to misbehave. A permissive-model behavioral stress run is supplemental; deterministic hostile requests remain the security gate.",
+    "LAC-P006-UAT completed through owner-executed deterministic verification: known/registered requests with no applicable configured standing permission remain terminal DENY/non-resumable while creating bounded owner-reviewable NO_CONFIGURED_STANDING_PERMISSION work; explicit configured DENY creates no discovery noise; owner walkthrough, adversarial stress, and accepted regression PASS."
   ],
-  "next_action": "Continue LAC-P006-UAT: owner-visible adversarial stress plus first-use permission-discovery remediation; B002 remains deferred until both the clarified permission workflow and regression/UAT gates pass."
+  "next_action": "Implement and qualify LAC-B002 Calendar generic adapter against the accepted permission-management plane, including the mandatory first-use deny/discovery/fresh-request sequence."
 }
