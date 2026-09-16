@@ -1,0 +1,48 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import os
+import signal
+import sys
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from packages.admin import AdminService, UnixAdminServer
+from packages.state import SQLiteStateStore
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Local Agent Controller owner-only administration server")
+    parser.add_argument("--state", required=True, help="Path to the canonical LAC SQLite state database")
+    args = parser.parse_args()
+
+    if os.name != "posix" or not sys.platform.startswith("linux"):
+        parser.error("LAC v0.1 administrator transport requires Linux")
+
+    with SQLiteStateStore(args.state) as store:
+        service = AdminService(store, owner_uid=os.getuid())
+        server = UnixAdminServer(service)
+        stopping = False
+
+        def stop(_signum, _frame):
+            nonlocal stopping
+            stopping = True
+
+        signal.signal(signal.SIGTERM, stop)
+        signal.signal(signal.SIGINT, stop)
+        socket_path = server.start()
+        print(f"LAC_ADMIN_SOCKET={socket_path}", flush=True)
+        try:
+            while not stopping:
+                server.serve_once(timeout=0.5)
+        finally:
+            server.close()
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
