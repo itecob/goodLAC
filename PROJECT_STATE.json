@@ -3,7 +3,7 @@
   "project_version": "0.1.0-dev",
   "phase": "PHASE_4_PERMISSION_MANAGEMENT",
   "phase_status": "READY",
-  "active_task": "LAC-P005",
+  "active_task": "LAC-P006",
   "last_accepted_release": null,
   "blockers": [],
   "nonblocking_notes": [
@@ -15,7 +15,8 @@
     "The unexecuted LAC_B002_CALENDAR_ADAPTER_v0.1.0 owner package remains superseded and must not be executed.",
     "Chief of Staff is separate software and must consume LAC through the generic external-consumer/runtime contract.",
     "LAC-P003 deterministic scoped/conditional standing policy completed through owner-executed focused and accepted regression verification; conditions consume only P002-validated trusted metadata.",
-    "LAC-P004 isolated local administrator API and Linux owner-identity boundary completed through owner-executed deterministic focused and accepted regression verification; governed runtime consumers have no administration mutation surface."
+    "LAC-P004 isolated local administrator API and Linux owner-identity boundary completed through owner-executed deterministic focused and accepted regression verification; governed runtime consumers have no administration mutation surface.",
+    "LAC-P005 lacctl administration client completed through owner-executed deterministic focused and accepted regression verification; the CLI consumes only the P004 v1 admin protocol and has no direct canonical-state mutation path."
   ],
-  "next_action": "Fresh implementation session implements LAC-P005 lacctl administration client only."
+  "next_action": "Fresh implementation session performs LAC-P006 permission-management E2E/security qualification only."
 }
