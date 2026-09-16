@@ -85,6 +85,8 @@ Unknown/new action, resource scope, unsupported capability version, or material 
 
 Equivalent repeats aggregate with bounded first/last-seen/count metadata. Credential material is prohibited from pending-permission records.
 
+A registered/valid capability request that reaches standing policy but has neither a matching user-configured rule nor an applicable configured default is terminally `DENY` and creates/aggregates the same bounded owner-reviewable administrative work queue with reason `NO_CONFIGURED_STANDING_PERMISSION`. The exact denied request is durably closed and cannot resume after later administration. A matching configured `DENY` rule/default does not create this discovery record.
+
 ### Standing permission policy
 
 Standing policy may scope rules by principal, application/agent, skill, action, resource selector, and deterministic conditions. Final authority outcomes remain `ALLOW`, `REQUIRE_APPROVAL`, or `DENY`; UI label `ASK` maps to `REQUIRE_APPROVAL`.

@@ -123,6 +123,7 @@ TXT
   security)
     exec python3 -m unittest -v \
       tests.acceptance.test_p006_permission_management_e2e \
+      tests.acceptance.test_p006_first_use_permission_discovery \
       tests.acceptance.test_p006_regression_gate \
       tests.acceptance.test_p005_lacctl_boundary \
       tests.acceptance.test_p004_admin_boundary
@@ -172,10 +173,13 @@ TXT
       tests.adversarial.test_h004_phase2_bypass \
       tests.acceptance.test_p004_admin_boundary \
       tests.acceptance.test_p005_lacctl_boundary \
-      tests.acceptance.test_p006_permission_management_e2e
+      tests.acceptance.test_p006_permission_management_e2e \
+      tests.acceptance.test_p006_first_use_permission_discovery
     echo "LAC_OWNER_ADVERSARIAL_STRESS=PASS"
     ;;
   regression)
+    rm -rf "$UAT_ROOT/regression"
+    export LAC_P006_RUN_ROOT="$UAT_ROOT/regression"
     exec scripts/test-p006
     ;;
   help|-h|--help)

@@ -39,6 +39,7 @@ Capability registration, standing permission, and exact effect approval are dist
 - Standing policy returns only `ALLOW`, `REQUIRE_APPROVAL`, or `DENY`. User-facing `ASK` maps to `REQUIRE_APPROVAL`.
 - Exact approval binds one canonical operation when required.
 - Unknown/new capability, resource scope, or material argument shape is terminally denied and recorded in a bounded pending-permission queue. Resolving the queue item changes only future policy; the denied effect never resumes.
+- A valid registered capability/resource/material request with no applicable user-configured standing rule or default is also terminally `DENY`, with no lease or adapter effect, and creates/aggregates bounded owner-reviewable permission-configuration work. An explicit configured `DENY` rule/default is already an owner decision and does not create this discovery work. Configuration changes affect only a fresh request.
 
 Conditional “allow unless / ask when” behavior is implemented through deterministic rules over trusted capability/resource/request metadata, never through model judgment.
 
@@ -62,6 +63,7 @@ Conditional “allow unless / ask when” behavior is implemented through determ
 - INV-016 an unknown/new capability, resource scope, or material request shape is terminally denied; a pending-permission record is informational/admin work, not a resumable effect.
 - INV-017 policy/capability administration is unavailable through the agent runtime and requires the isolated administrator surface.
 - INV-018 later policy/registry changes never revive a previously denied, rejected, expired, or otherwise closed effect.
+- INV-019 a valid registered request with no applicable user-configured standing permission fails closed as `DENY` and creates bounded owner-reviewable configuration work; explicit configured `DENY` creates no recurring discovery noise.
 
 ## Required internal interfaces
 
@@ -77,6 +79,6 @@ Governed tools alone are insufficient. The agent process must have bounded ambie
 
 ## Current Phase 4 sequence
 
-`P001 -> P002 -> P003 -> P004 -> P005 -> P006 -> B002 -> B003 -> Phase 4 independent review`.
+`P001 -> P002 -> P003 -> P004 -> P005 -> P006 -> P006-UAT -> B002 -> B003 -> Phase 4 independent review`.
 
 B001 Gmail remains accepted as a generic adapter precursor. The prior unexecuted B002 owner package is superseded. Chief of Staff begins only afterward as separate software.

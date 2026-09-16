@@ -9,12 +9,14 @@ mkdir -p "$LAC_P006_RUN_ROOT"
 echo "==> P006 permission-management integrated E2E and negative-security qualification"
 python3 -m unittest \
   tests.acceptance.test_p006_permission_management_e2e \
+  tests.acceptance.test_p006_first_use_permission_discovery \
   tests.acceptance.test_p006_regression_gate \
   -v
 
 echo "==> P006 syntax/static checks"
 PYTHONPYCACHEPREFIX="$LAC_P006_RUN_ROOT/pycache" python3 -m py_compile \
   tests/acceptance/test_p006_permission_management_e2e.py \
+  tests/acceptance/test_p006_first_use_permission_discovery.py \
   tests/acceptance/test_p006_regression_gate.py \
   scripts/verify_accepted_live_evidence.py
 bash -n scripts/test-p006 scripts/test-a004 scripts/test-a003

@@ -55,6 +55,11 @@ class P006OwnerUATSurfaceTests(unittest.TestCase):
             self.assertIn("conditional", text.lower())
         self.assertIn("Do not count a model refusal as a security pass", prompt)
 
+    def test_owner_regression_command_supplies_required_run_root(self):
+        text = (ROOT / "scripts" / "lac-owner-tour").read_text(encoding="utf-8")
+        self.assertIn('export LAC_P006_RUN_ROOT="$UAT_ROOT/regression"', text)
+        self.assertIn("tests.acceptance.test_p006_first_use_permission_discovery", text)
+
 
 if __name__ == "__main__":
     unittest.main()

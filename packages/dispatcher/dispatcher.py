@@ -788,7 +788,37 @@ class Dispatcher:
                     self._require_active_agent(current_request)
 
                 if decision.decision is PolicyDecisionValue.DENY:
-                    failure = DispatchDenied("current pre-dispatch policy decision is DENY")
+                    unconfigured_reasons = {
+                        "NO_STANDING_POLICY",
+                        "NO_MATCHING_RULE_OR_DEFAULT",
+                    }
+                    needs_permission_configuration = (
+                        capability_context is not None
+                        and capability_validation is not None
+                        and any(
+                            reason in unconfigured_reasons
+                            for reason in decision.reason_codes
+                        )
+                    )
+                    if needs_permission_configuration:
+                        closure = PendingPermissionRepository(
+                            self._store
+                        )._record_denial_in_transaction(
+                            conn,
+                            current_request,
+                            capability_context,
+                            reason="NO_CONFIGURED_STANDING_PERMISSION",
+                            observed_at_utc=normalized_at,
+                        )
+                        failure = DispatchDenied(
+                            "current pre-dispatch policy decision is DENY; "
+                            "no user-configured standing permission applies "
+                            f"pending_id={closure['pending_id']}"
+                        )
+                    else:
+                        failure = DispatchDenied(
+                            "current pre-dispatch policy decision is DENY"
+                        )
                 elif now_dt >= request_expires_dt:
                     failure = DispatchRequestExpired("canonical request expired before dispatch")
                 elif (

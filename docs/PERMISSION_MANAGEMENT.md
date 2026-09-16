@@ -78,6 +78,26 @@ Resolving the pending permission record may create or change future standing pol
 
 Equivalent repeated unknown requests should aggregate rather than create an unbounded queue. Preserve at least first-seen time, last-seen time, count, requester identity, skill/version, action/resource, reason, and bounded/redacted schema metadata. Never persist raw credentials in pending-permission records.
 
+## Known capability with no configured standing permission
+
+A request may be completely valid against the registered capability manifest yet still have no applicable user-configured standing rule/default. Registration remains zero authority, so this case fails closed as `DENY`.
+
+Required behavior:
+
+```text
+registered/known request validates
+→ no matching user-configured standing rule/default
+→ terminal DENY
+→ no execution lease / no adapter mutation
+→ create or aggregate bounded owner-reviewable permission-configuration work
+→ exact original request remains permanently closed
+→ owner configures future standing permission through the isolated admin plane
+→ consumer issues a fresh request
+→ fresh request is evaluated against current policy
+```
+
+This administrative item is not an approval and does not add a runtime decision state. It uses only trusted registered/request metadata and bounded redacted argument-shape material. An explicit configured `DENY`, including a matching configured default, is already an owner decision and must not create recurring permission-discovery noise.
+
 ## Standing policy model
 
 Policy may be scoped by:
@@ -191,6 +211,7 @@ P003 scoped/conditional policy model
 P004 secure admin API + OS identity boundary
 P005 lacctl permissions/skills/pending/approvals CLI
 P006 permission-management E2E/security qualification
+P006-UAT owner acceptance + first-use permission-discovery gate
 B002 Calendar adapter reintroduced against the permission system
 B003 generic external-consumer/LAC integration proof
 Phase 4 independent review

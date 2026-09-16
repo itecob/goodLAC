@@ -226,6 +226,17 @@ class Demo:
             print(f"ENFORCEMENT=DENY ({type(exc).__name__}: {exc})")
         pending_now = json.loads(self.lacctl("--json", "pending", "list"))["pending"]
         known_gap = len(pending_now) == 0
+        known_pending = [
+            item
+            for item in pending_now
+            if item.get("action") == "document.read"
+            and item.get("reason") == "NO_CONFIGURED_STANDING_PERMISSION"
+        ]
+        if not known_gap and len(known_pending) != 1:
+            raise RuntimeError(
+                "known valid unconfigured request did not create exactly one scoped review item"
+            )
+        known_pending_id = None if known_gap else known_pending[0]["pending_id"]
         print(f"KNOWN_UNCONFIGURED_PENDING_COUNT={len(pending_now)}")
         print("CLARIFIED_OWNER_REQUIREMENT=known+unconfigured must DENY and create/aggregate owner-reviewable configuration work")
         print(f"KNOWN_UNCONFIGURED_DISCOVERY_REQUIREMENT={'GAP_CONFIRMED' if known_gap else 'SATISFIED'}")
@@ -312,6 +323,23 @@ class Demo:
             decision="DENY",
         )
         self.set_policy([broad_deny, conditional_allow])
+        if known_pending_id is not None:
+            self.lacctl(
+                "pending",
+                "resolve",
+                known_pending_id,
+                "POLICY_UPDATED",
+            )
+            try:
+                self.dispatch(known, ctx2, "known-read-after-config")
+                raise RuntimeError(
+                    "original known+unconfigured denied request revived after policy configuration"
+                )
+            except DispatchCapabilityDenied as exc:
+                print(
+                    "KNOWN_UNCONFIGURED_ORIGINAL_NON_RESUMPTION=PASS "
+                    f"({type(exc).__name__}: {exc})"
+                )
         before_conditional = self.adapter.invoke_calls
         conditional_ok = request("conditional-allowed", "document.read")
         conditional_result = self.dispatch(conditional_ok, ctx2, "conditional-allow")
@@ -383,6 +411,10 @@ class Demo:
         print("EXACT_APPROVAL_NO_IMPLICIT_EXECUTION=PASS")
         print("EXACT_APPROVAL_AND_DUPLICATE_PREVENTION=PASS")
         print(f"KNOWN_UNCONFIGURED_PERMISSION_DISCOVERY={'GAP_CONFIRMED' if known_gap else 'PASS'}")
+        print(
+            "KNOWN_UNCONFIGURED_ORIGINAL_NON_RESUMPTION="
+            + ("SKIPPED_GAP" if known_gap else "PASS")
+        )
         print("NO_EXTERNAL_EFFECTS=PASS")
         print("LAC_P006_OWNER_PERMISSION_WALKTHROUGH=PASS_WITH_KNOWN_GAP" if known_gap else "LAC_P006_OWNER_PERMISSION_WALKTHROUGH=PASS")
         return 0

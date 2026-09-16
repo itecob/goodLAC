@@ -23,7 +23,8 @@ The following rules are binding:
 6. runtime applications cannot mutate capability registration or standing policy;
 7. v0.1 administration uses a separate owner-only Linux Unix-domain admin socket with peer-UID verification and no exposure inside governed sandboxes;
 8. `lacctl` is the first authoritative administration client; TUI/web surfaces, if added later, consume the same admin API and are not canonical state writers;
-9. policy/registry changes are atomic, revisioned, audited, and cannot revive previously closed effects.
+9. policy/registry changes are atomic, revisioned, audited, and cannot revive previously closed effects;
+10. a valid registered request with no applicable user-configured standing permission/default is terminally `DENY` and creates bounded owner-reviewable permission-configuration work for future requests, while an explicit configured `DENY` is treated as an owner decision and creates no recurring discovery item.
 
 ## Consequences
 

@@ -252,14 +252,19 @@ class PendingPermissionRepository:
             raise CapabilityRequestIntegrityError("capability-denial closure is invalid")
         return dict(raw)
 
-    def record_denial(
+    def _record_denial_in_transaction(
         self,
+        conn,
         request: EffectRequest,
         context: CapabilityRequestContext,
         *,
         reason: str,
         observed_at_utc: str,
     ) -> dict[str, Any]:
+        if not self._store._conn.in_transaction:
+            raise CapabilityRequestError(
+                "pending-permission denial requires an active state-store transaction"
+            )
         existing_closure = self.get_closure(request.request_id)
         if existing_closure is not None:
             if existing_closure["canonical_request_hash"] != request.canonical_hash:
@@ -322,26 +327,48 @@ class PendingPermissionRepository:
             "closed_at_utc": observed_at_utc,
         }
         try:
+            conn.execute(
+                "INSERT INTO system_state(key, value_json, updated_at_utc) VALUES (?, ?, ?) "
+                "ON CONFLICT(key) DO UPDATE SET value_json = excluded.value_json, "
+                "updated_at_utc = excluded.updated_at_utc",
+                (_QUEUE_KEY, _json(queue), observed_at_utc),
+            )
+            conn.execute(
+                "INSERT INTO system_state(key, value_json, updated_at_utc) VALUES (?, ?, ?)",
+                (_closure_key(request.request_id), _json(closure), observed_at_utc),
+            )
+        except Exception as exc:
+            if isinstance(exc, StateStoreError):
+                raise
+            raise CapabilityRequestError(
+                "pending-permission denial persistence failed atomically"
+            ) from exc
+        return closure
+
+    def record_denial(
+        self,
+        request: EffectRequest,
+        context: CapabilityRequestContext,
+        *,
+        reason: str,
+        observed_at_utc: str,
+    ) -> dict[str, Any]:
+        try:
             with self._store.transaction() as conn:
-                conn.execute(
-                    """
-                    INSERT INTO system_state(key, value_json, updated_at_utc)
-                    VALUES (?, ?, ?)
-                    ON CONFLICT(key) DO UPDATE SET
-                        value_json = excluded.value_json,
-                        updated_at_utc = excluded.updated_at_utc
-                    """,
-                    (_QUEUE_KEY, _json(queue), observed_at_utc),
-                )
-                conn.execute(
-                    "INSERT INTO system_state(key, value_json, updated_at_utc) VALUES (?, ?, ?)",
-                    (_closure_key(request.request_id), _json(closure), observed_at_utc),
+                return self._record_denial_in_transaction(
+                    conn,
+                    request,
+                    context,
+                    reason=reason,
+                    observed_at_utc=observed_at_utc,
                 )
         except Exception as exc:
             if isinstance(exc, StateStoreError):
                 raise
-            raise CapabilityRequestError("pending-permission denial persistence failed atomically") from exc
-        return closure
+            raise CapabilityRequestError(
+                "pending-permission denial persistence failed atomically"
+            ) from exc
+
 
 
 class CapabilityRequestValidator:

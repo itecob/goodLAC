@@ -72,7 +72,7 @@ The tour pauses between stages. It uses the actual P004 admin server transport a
 - dispatch re-evaluates current policy;
 - approved effect executes once and cannot be repeated.
 
-The tour also reports whether the clarified **known + unconfigured permission → owner-reviewable item** requirement is currently satisfied. At the time this UAT gate was inserted, the accepted implementation was expected to report that as a gap; B002 is intentionally gated until it is remediated.
+The tour also verifies the clarified **known + unconfigured permission → owner-reviewable item** requirement, proves the original denied request cannot resume after the owner configures policy, and then demonstrates that only a fresh request can benefit from current policy. B002 remains gated unless this path reports PASS.
 
 The walkthrough also demonstrates the policy modes the owner asked to see directly: an explicit configured `DENY`, a more-specific conditional `ALLOW` (an "allow if" rule), `REQUIRE_APPROVAL`, and `ALLOW`. Adapter invocation counts are checked so a denied or merely approved request cannot be mistaken for execution.
 

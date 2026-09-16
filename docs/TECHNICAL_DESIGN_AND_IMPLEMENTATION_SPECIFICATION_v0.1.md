@@ -1135,6 +1135,8 @@ Evaluation order is:
 
 Unknown/new capability/resource/scope/material argument shape is not a waiting approval. The effect is terminally denied, and a bounded pending-permission record is created for human administration. Resolving that record never resumes the old effect; only a fresh request is eligible under new policy.
 
+A valid registered request that has no applicable user-configured standing rule/default is likewise terminally `DENY` and creates/aggregates bounded owner-reviewable permission-configuration work. This is administrative discovery, not `REQUIRE_APPROVAL` and not a fourth runtime outcome. An explicit configured `DENY`, including a matching configured default, creates no discovery noise. Later configuration never revives the denied request; a fresh request is required.
+
 Capability registration, standing permission, and exact effect approval are distinct. Registration grants zero authority.
 
 The first authoritative administration interface is local `lacctl`, backed by a separate administrator API. On Linux v0.1, administration uses an owner-only Unix-domain socket with controller-side peer-UID verification and no exposure inside governed agent sandboxes. Runtime consumers cannot mutate capability registration or standing policy.
@@ -1894,6 +1896,7 @@ P003 scoped/conditional policy model
 P004 secure admin API + OS identity boundary
 P005 lacctl permissions/skills/pending/approvals CLI
 P006 permission-management E2E/security qualification
+P006-UAT owner acceptance + first-use permission-discovery gate
 B002 Calendar adapter reintroduced against the permission system
 B003 generic external-consumer/LAC integration proof
 ```
@@ -1904,6 +1907,7 @@ No Chief of Staff workflow/business logic is implemented in this repository.
 
 - registration grants zero authority;
 - unknown/new capability/resource scope/material shape is terminally `DENY` and may create a bounded pending-permission record;
+- a registered/valid request with no applicable user-configured standing rule/default is terminally `DENY`, creates/aggregates bounded owner-reviewable configuration work, and gains no lease/effect; explicit configured `DENY` creates no such discovery work;
 - pending permission records never resume the denied effect;
 - policy supports granular application/agent/skill/action/resource/condition rules and deterministic `ALLOW`, `REQUIRE_APPROVAL`, `DENY` results;
 - conditional “allow unless / ask when” behavior uses trusted metadata, never model judgment;
@@ -1918,6 +1922,8 @@ Permission administration:
 
 ```text
 registration alone grants no authority
+known registered request with no configured standing permission is denied and queued for owner configuration
+explicit configured DENY rule/default is denied without recurring permission-discovery noise
 unknown action is denied and queued
 unknown resource scope is denied and queued
 repeated equivalent unknown request is bounded/aggregated
@@ -1933,7 +1939,7 @@ policy revision is durable and audited
 policy change affects fresh request only
 ```
 
-Generic external effects retain B001 Gmail coverage and add the Calendar B002 contract only after P001-P006 are complete.
+Generic external effects retain B001 Gmail coverage and add the Calendar B002 contract only after P001-P006 plus the P006-UAT first-use permission-discovery gate are complete.
 
 ### Release
 
@@ -2014,6 +2020,8 @@ expired approval cannot act
 
 ```text
 capability registration grants zero authority
+known registered request with no configured standing permission is terminally denied and queued for owner configuration
+explicit configured DENY rule/default creates no permission-discovery item
 unknown capability is terminally denied and queued
 unknown resource scope is terminally denied and queued
 pending permission is not a resumable effect
@@ -2359,6 +2367,7 @@ P003  scoped/conditional policy model
 P004  secure admin API + OS identity boundary
 P005  lacctl administration CLI
 P006  permission-management E2E/security qualification
+P006-UAT owner acceptance + first-use permission-discovery gate
 
 B002  Calendar generic adapter against permission system
 B003  generic external-consumer/LAC integration proof
