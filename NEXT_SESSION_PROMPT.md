@@ -68,10 +68,12 @@ The review item must be bounded, deterministic, deduplicated/aggregated, credent
 4. If the current implementation lacks the newly binding owner-review item, implement the smallest deterministic remediation consistent with existing authority invariants. Update binding docs/contracts/tests as required.
 5. Preserve: P001 registration zero authority; P002 closed-effect non-resumption; P003 deterministic precedence and explicit DENY; P004/P005 isolation; exact approval binding; pre-dispatch re-evaluation; durable truth; idempotency; fail closed; no credentials in agent context; no admin surface in governed runtime.
 6. Run focused tests and the accepted deterministic regression through P006 and prior phases.
-7. Ensure the owner walkthrough remains usable after remediation and clearly demonstrates the corrected first-use behavior.
-8. Produce one owner-executable package completing `LAC-P006-UAT` and activating fresh `LAC-B002` only on PASS.
-9. The B002 handoff must explicitly require this Calendar sequence: first-use request is denied and surfaced for owner permission scoping; owner configures scope; original request is proven non-resumable; a fresh Calendar request is issued; only then does current policy yield `ALLOW`, `REQUIRE_APPROVAL`, or `DENY` and reach the adapter where authorized.
-10. Stop at `OWNER_EXECUTION_REQUIRED`. Do not implement B002 in this session.
+7. Ensure the owner walkthrough remains usable after remediation and clearly demonstrates configured `DENY`, conditional `ALLOW` (allow-if), `REQUIRE_APPROVAL`, and `ALLOW` as distinct observable paths.
+8. Run the owner-visible deterministic adversarial stress matrix across Model→Pi, Pi process sandbox, adapters/sandbox, and P004-P006 admin/permission boundaries. Do not count a model refusal as a security pass; hostile requests must be constructed mechanically.
+9. A permissive/less-refusal local model may be qualified as a supplemental behavioral stress run if it can be integrated without weakening pins/boundaries, but deterministic adversarial tests remain the gate and the accepted A003/A004 baseline must remain intact.
+10. Produce one owner-executable package completing `LAC-P006-UAT` and activating fresh `LAC-B002` only on PASS.
+11. The B002 handoff must explicitly require this Calendar sequence: first-use request is denied and surfaced for owner permission scoping; owner configures scope; original request is proven non-resumable; a fresh Calendar request is issued; only then does current policy yield `ALLOW`, `REQUIRE_APPROVAL`, or `DENY` and reach the adapter where authorized.
+12. Stop at `OWNER_EXECUTION_REQUIRED`. Do not implement B002 in this session.
 
 ## Scope discipline
 

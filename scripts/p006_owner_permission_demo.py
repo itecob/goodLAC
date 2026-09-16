@@ -25,8 +25,8 @@ from packages.dispatcher import (
     DispatchDuplicateEffect,
     Dispatcher,
 )
-from packages.policy import StandingPolicyDecisionProvider, StandingPolicyRule
-from packages.state import AgentIdentityRepository, EmergencyPauseRepository, SQLiteStateStore
+from packages.policy import StandingPolicyCondition, StandingPolicyDecisionProvider, StandingPolicyRule
+from packages.state import AgentIdentityRepository, EffectRequestRepository, EmergencyPauseRepository, SQLiteStateStore
 
 LACCTL = REPO_ROOT / "scripts" / "lacctl"
 
@@ -181,6 +181,10 @@ class Demo:
         )
 
     def dispatch(self, effect: EffectRequest, context: CapabilityRequestContext, name: str, approval_id: str | None = None):
+        # Dispatcher requires the canonical request to be durable before any authority decision.
+        # Re-putting the same canonical request is intentionally idempotent so later stages can
+        # prove that an earlier terminally denied request remains closed.
+        EffectRequestRepository(self.store).put(effect)
         kwargs = {}
         if approval_id is not None:
             kwargs["approval_id"] = approval_id
@@ -237,9 +241,10 @@ class Demo:
         except DispatchCapabilityDenied as exc:
             print(f"ENFORCEMENT=TERMINAL_DENY ({type(exc).__name__}: {exc})")
         pending = json.loads(self.lacctl("--json", "pending", "list"))["pending"]
-        if not pending:
-            raise RuntimeError("P002 did not create pending permission record")
-        pending_id = pending[0]["pending_id"]
+        delete_pending = [item for item in pending if item.get("action") == "document.delete"]
+        if len(delete_pending) != 1:
+            raise RuntimeError("P002 did not create exactly one pending permission record for document.delete")
+        pending_id = delete_pending[0]["pending_id"]
         self.lacctl("pending", "show", pending_id)
 
         self.pause(
@@ -282,7 +287,48 @@ class Demo:
             raise RuntimeError("fresh allowed request did not execute exactly once")
 
         self.pause(
-            "6. Exact approval path",
+            "6. Conditional standing policy — explicit DENY plus ALLOW-IF",
+            "We configure a broad explicit DENY for document.read and a more-specific conditional ALLOW when document_id equals conditional-allowed. The matching fresh request may execute; the non-matching fresh request must remain denied without invoking the adapter.",
+        )
+        conditional_allow = StandingPolicyRule.create(
+            rule_id="owner-uat-read-allow-if",
+            application_id="owner-uat-app",
+            skill_id="documents",
+            action="document.read",
+            decision="ALLOW",
+            conditions=(
+                StandingPolicyCondition.create(
+                    source="REQUEST",
+                    key="arguments:/document_id",
+                    equals="conditional-allowed",
+                ),
+            ),
+        )
+        broad_deny = StandingPolicyRule.create(
+            rule_id="owner-uat-read-deny",
+            application_id="owner-uat-app",
+            skill_id="documents",
+            action="document.read",
+            decision="DENY",
+        )
+        self.set_policy([broad_deny, conditional_allow])
+        before_conditional = self.adapter.invoke_calls
+        conditional_ok = request("conditional-allowed", "document.read")
+        conditional_result = self.dispatch(conditional_ok, ctx2, "conditional-allow")
+        print("ALLOW_IF_MATCH_RESULT=" + json.dumps(conditional_result, sort_keys=True))
+        if self.adapter.invoke_calls != before_conditional + 1:
+            raise RuntimeError("conditional ALLOW did not invoke adapter exactly once")
+        conditional_denied = request("conditional-denied", "document.read")
+        try:
+            self.dispatch(conditional_denied, ctx2, "conditional-deny")
+            raise RuntimeError("non-matching conditional request unexpectedly executed")
+        except DispatchDenied as exc:
+            print(f"EXPLICIT_DENY_NONMATCH=PASS ({type(exc).__name__}: {exc})")
+        if self.adapter.invoke_calls != before_conditional + 1:
+            raise RuntimeError("explicit DENY invoked adapter")
+
+        self.pause(
+            "7. Exact approval path",
             "We configure document.write as REQUIRE_APPROVAL. The request stops before execution, lacctl exposes the exact approval candidate, and owner approval itself still does not execute the effect.",
         )
         ask_rule = StandingPolicyRule.create(
@@ -301,13 +347,16 @@ class Demo:
         except DispatchApprovalRequired as exc:
             print(f"REQUIRE_APPROVAL=PASS ({type(exc).__name__}: {exc})")
         self.lacctl("approvals", "list")
+        calls_before_approval = self.adapter.invoke_calls
         approved = json.loads(self.lacctl("--json", "approvals", "approve", decision_id))
         approval_id = approved["approval"]["approval_id"]
         print(f"APPROVAL_ID={approval_id}")
         print(f"ADAPTER_INVOKE_COUNT_AFTER_APPROVAL={self.adapter.invoke_calls} (approval is not execution)")
+        if self.adapter.invoke_calls != calls_before_approval:
+            raise RuntimeError("owner approval itself executed an effect")
 
         self.pause(
-            "7. Dispatch with exact approval and prove one-time effect",
+            "8. Dispatch with exact approval and prove one-time effect",
             "The fresh dispatch re-evaluates current policy and uses the exact approval. The synthetic effect executes once; a repeat is blocked as a duplicate.",
         )
         result = self.dispatch(write, ctx2, "write-after-approval", approval_id=approval_id)
@@ -328,6 +377,8 @@ class Demo:
         print("P002_UNKNOWN_TERMINAL_DENY_AND_PENDING=PASS")
         print("P002_ORIGINAL_NON_RESUMPTION=PASS")
         print("P003_STANDING_POLICY_FRESH_REQUEST=PASS")
+        print("P003_CONFIGURED_DENY=PASS")
+        print("P003_CONDITIONAL_ALLOW_IF=PASS")
         print("P004_P005_OWNER_ADMIN_AND_LACCTL=PASS")
         print("EXACT_APPROVAL_NO_IMPLICIT_EXECUTION=PASS")
         print("EXACT_APPROVAL_AND_DUPLICATE_PREVENTION=PASS")

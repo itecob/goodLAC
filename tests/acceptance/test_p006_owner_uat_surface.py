@@ -7,21 +7,36 @@ ROOT = Path(__file__).resolve().parents[2]
 class P006OwnerUATSurfaceTests(unittest.TestCase):
     def test_owner_tour_exposes_required_operator_commands(self):
         text = (ROOT / "scripts" / "lac-owner-tour").read_text(encoding="utf-8")
-        for command in ("overview", "evidence", "agent", "agent-results", "permissions", "security", "regression"):
+        for command in (
+            "overview",
+            "evidence",
+            "agent",
+            "agent-results",
+            "permissions",
+            "security",
+            "stress",
+            "regression",
+        ):
             self.assertIn(command, text)
         self.assertIn("a004_terminal.py", text)
         self.assertIn("p006_owner_permission_demo.py", text)
-        self.assertNotIn("calendar", text.lower())
+        self.assertIn("tests.adversarial.test_h004_phase2_bypass", text)
+        self.assertIn("tests.integration.test_a003_agent_process_sandbox", text)
+        self.assertNotIn("calendar.google", text.lower())
         self.assertNotIn("gmail.google", text.lower())
 
-    def test_permission_demo_is_synthetic_and_tests_clarified_gap(self):
+    def test_permission_demo_is_synthetic_persists_requests_and_exercises_policy_modes(self):
         text = (ROOT / "scripts" / "p006_owner_permission_demo.py").read_text(encoding="utf-8")
         for token in (
             "SafeAdapter",
+            "EffectRequestRepository(self.store).put(effect)",
             "DispatchCapabilityDenied",
             "DispatchApprovalRequired",
             "DispatchDuplicateEffect",
+            "StandingPolicyCondition",
             "KNOWN_UNCONFIGURED_DISCOVERY_REQUIREMENT",
+            "P003_CONFIGURED_DENY=PASS",
+            "P003_CONDITIONAL_ALLOW_IF=PASS",
             "pending",
             "permissions",
             "approvals",
@@ -29,6 +44,16 @@ class P006OwnerUATSurfaceTests(unittest.TestCase):
             self.assertIn(token, text)
         for forbidden in ("googleapis", "calendar.google", "gmail.googleapis", "requests.", "urllib.request"):
             self.assertNotIn(forbidden, text.lower())
+
+    def test_uat_task_requires_deterministic_adversarial_gate_not_model_refusal(self):
+        task = (ROOT / "tasks" / "ACTIVE_TASK.md").read_text(encoding="utf-8")
+        prompt = (ROOT / "NEXT_SESSION_PROMPT.md").read_text(encoding="utf-8")
+        for text in (task, prompt):
+            self.assertIn("deterministic adversarial", text.lower())
+            self.assertIn("model", text.lower())
+            self.assertIn("deny", text.lower())
+            self.assertIn("conditional", text.lower())
+        self.assertIn("Do not count a model refusal as a security pass", prompt)
 
 
 if __name__ == "__main__":

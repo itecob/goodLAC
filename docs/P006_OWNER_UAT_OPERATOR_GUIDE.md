@@ -74,6 +74,8 @@ The tour pauses between stages. It uses the actual P004 admin server transport a
 
 The tour also reports whether the clarified **known + unconfigured permission → owner-reviewable item** requirement is currently satisfied. At the time this UAT gate was inserted, the accepted implementation was expected to report that as a gap; B002 is intentionally gated until it is remediated.
 
+The walkthrough also demonstrates the policy modes the owner asked to see directly: an explicit configured `DENY`, a more-specific conditional `ALLOW` (an "allow if" rule), `REQUIRE_APPROVAL`, and `ALLOW`. Adapter invocation counts are checked so a denied or merely approved request cannot be mistaken for execution.
+
 For non-interactive output:
 
 ```bash
@@ -88,7 +90,17 @@ For non-interactive output:
 
 Runs the P006 permission-management, P005 CLI boundary, and P004 admin-isolation acceptance tests.
 
-### 6. Full accepted deterministic regression
+### 6. Owner-visible adversarial stress
+
+```bash
+./scripts/lac-owner-tour stress
+```
+
+This intentionally constructs hostile requests rather than waiting for the language model to volunteer them. It attacks the Model→Pi tool boundary, the sandboxed Pi process, filesystem/shell adapter boundaries, sandbox containment, and the P004-P006 admin/permission plane. The matrix includes unknown tools, authority smuggling, malformed arguments, host-file/network/credential/process attempts, traversal/symlink escape, unauthorized executables/interpreters/launchers, child-process containment, explicit denial, wrong-UID admin requests, and admin-socket isolation.
+
+A refusal from a language model is not counted as security evidence. A separate permissive-model run can be added as behavioral stress, but the deterministic hostile-request matrix is the security gate.
+
+### 7. Full accepted deterministic regression
 
 ```bash
 ./scripts/lac-owner-tour regression

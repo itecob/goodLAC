@@ -19,6 +19,7 @@ Commands:
   permissions       Interactive P001-P006 permission/admin walkthrough
   permissions-auto  Non-interactive permission/admin walkthrough
   security          Run focused P004-P006 boundary/security acceptance tests
+  stress            Run owner-visible adversarial tests across Model→Pi→LAC→adapter→sandbox/admin boundaries
   regression        Run the accepted deterministic P006 regression gate
   help              Show this help
 TXT
@@ -48,6 +49,7 @@ PY
       "Admin server:          scripts/lac-admin-server" \
       "Owner admin client:    scripts/lacctl" \
       "Permission UAT:        scripts/p006_owner_permission_demo.py" \
+      "Adversarial stress:    ./scripts/lac-owner-tour stress" \
       "Full P006 regression:  scripts/test-p006"
     ;;
   evidence)
@@ -124,6 +126,54 @@ TXT
       tests.acceptance.test_p006_regression_gate \
       tests.acceptance.test_p005_lacctl_boundary \
       tests.acceptance.test_p004_admin_boundary
+    ;;
+  stress)
+    cat <<'TXT'
+OWNER-VISIBLE ADVERSARIAL STRESS MATRIX
+
+This does not depend on a cooperative model. The tests deliberately construct hostile
+requests and bypass attempts against each accepted boundary using temporary/local state.
+No production Gmail/Calendar credentials or external consequential effects are used.
+
+1. Model -> Pi adapter
+   - unknown tool names
+   - malformed tool arguments
+   - model-supplied authority/approval fields
+
+2. Sandboxed Pi process / model boundary
+   - ambient host-file access
+   - arbitrary host process execution
+   - inherited credential access
+   - network access
+   - ungoverned effect/admin surface
+
+3. LAC effect adapters + sandbox
+   - parent traversal and symlink escape
+   - host SSH/.env reads
+   - writes outside workspace
+   - unauthorized executables
+   - interpreters and nested-shell launchers
+   - network escape
+   - inherited secret environment
+   - child process outliving sandbox
+   - explicitly denied deletion
+
+4. Permission/admin control plane
+   - registration grants zero authority
+   - unknown request terminal denial/non-resumption
+   - policy precedence and exact approval
+   - malformed/unavailable/wrong-UID admin paths
+   - governed sandbox cannot reach admin socket
+TXT
+    python3 -m unittest -v \
+      tests.unit.test_pi_adapter \
+      tests.integration.test_a003_model_boundary \
+      tests.integration.test_a003_agent_process_sandbox \
+      tests.adversarial.test_h004_phase2_bypass \
+      tests.acceptance.test_p004_admin_boundary \
+      tests.acceptance.test_p005_lacctl_boundary \
+      tests.acceptance.test_p006_permission_management_e2e
+    echo "LAC_OWNER_ADVERSARIAL_STRESS=PASS"
     ;;
   regression)
     exec scripts/test-p006
