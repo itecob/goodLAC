@@ -1,0 +1,65 @@
+{
+  "adapter_mutation_count": 3,
+  "base_head": "d14a5832ef1ba4a02d6c3acf05177584d45c7e06",
+  "blockers": [],
+  "calendar_transport": "SYNTHETIC_LOCAL_ONLY",
+  "completed_at_utc": "2026-09-16T20:11:14.398308Z",
+  "completed_task": "LAC-B002",
+  "credential_canary_in_durable_state": "ABSENT",
+  "deterministic_test_evidence": "qualification/evidence/b002_test_output.txt",
+  "deterministic_test_result": "PASS",
+  "exact_effect_choices": [
+    "ALLOW_ONCE",
+    "DENY_ONCE"
+  ],
+  "exact_effect_records": [
+    {
+      "canonical_hash": "sha256:ccdf37c75adb85de105970923b6c1f05d3ba741aed5a778ae898d206804036cd",
+      "choice": "ALLOW_ONCE",
+      "request_id": "effect:b002-owner:calendar-uat-1:ask-1"
+    },
+    {
+      "canonical_hash": "sha256:e300d070a5e4d6b608ebed81db91d97be48da841627ddf5d3c734a848e0c6e34",
+      "choice": "DENY_ONCE",
+      "request_id": "effect:b002-owner:calendar-uat-1:ask-2"
+    }
+  ],
+  "explicit_configured_deny_discovery_noise": "NONE",
+  "external_effects": "NONE_SYNTHETIC_LOCAL_FIXTURES_ONLY",
+  "first_use_choices": [
+    "ALWAYS_ALLOW",
+    "ALWAYS_DENY",
+    "ASK_EACH_TIME",
+    "NOT_NOW"
+  ],
+  "first_use_records": [
+    {
+      "choice": "ASK_EACH_TIME",
+      "skill_id": "calendar-uat-1"
+    },
+    {
+      "choice": "ALWAYS_ALLOW",
+      "skill_id": "calendar-uat-2"
+    },
+    {
+      "choice": "NOT_NOW",
+      "skill_id": "calendar-uat-3"
+    },
+    {
+      "choice": "ALWAYS_DENY",
+      "skill_id": "calendar-uat-4"
+    }
+  ],
+  "first_use_unconfigured_enforcement": "DENY",
+  "governed_consumer_admin_socket_visibility": "ABSENT",
+  "implementation_commit": "25e1c5899d0b59083a378fcc7538b59b54bb3cd7",
+  "next_task": "LAC-B003",
+  "original_first_use_non_resumable": true,
+  "package_id": "LAC_B002_CALENDAR_PERMISSION_UAT_v0.2.3",
+  "permission_choices_durable_across_restart": true,
+  "phase": "PHASE_4_PERMISSION_MANAGEMENT",
+  "production_calendar_credentials": "NONE",
+  "restart_checks": 7,
+  "result": "PASS",
+  "schema": "lac.b002-owner-uat/v1"
+}
