@@ -1,0 +1,762 @@
+==> P006 permission-management integrated E2E and negative-security qualification
+test_closed_unknown_effect_never_revives_after_admin_changes_and_restart (tests.acceptance.test_p006_permission_management_e2e.P006PermissionManagementE2ETests.test_closed_unknown_effect_never_revives_after_admin_changes_and_restart) ... ok
+test_exact_approval_is_admin_only_durable_rechecked_and_single_use (tests.acceptance.test_p006_permission_management_e2e.P006PermissionManagementE2ETests.test_exact_approval_is_admin_only_durable_rechecked_and_single_use) ... ok
+test_governed_runtime_and_sandbox_cannot_reach_admin_surface (tests.acceptance.test_p006_permission_management_e2e.P006PermissionManagementE2ETests.test_governed_runtime_and_sandbox_cannot_reach_admin_surface) ... ok
+test_registration_zero_authority_and_deterministic_policy_precedence (tests.acceptance.test_p006_permission_management_e2e.P006PermissionManagementE2ETests.test_registration_zero_authority_and_deterministic_policy_precedence) ... ok
+test_rejected_unavailable_and_malformed_admin_paths_do_not_mutate_state (tests.acceptance.test_p006_permission_management_e2e.P006PermissionManagementE2ETests.test_rejected_unavailable_and_malformed_admin_paths_do_not_mutate_state) ... ok
+test_current_accepted_a003_a004_live_evidence_is_valid (tests.acceptance.test_p006_regression_gate.P006RegressionGateDeterminismTests.test_current_accepted_a003_a004_live_evidence_is_valid) ... ok
+test_direct_a003_a004_gates_preserve_live_as_default (tests.acceptance.test_p006_regression_gate.P006RegressionGateDeterminismTests.test_direct_a003_a004_gates_preserve_live_as_default) ... ok
+test_p006_selects_deterministic_prior_live_evidence_regression_mode (tests.acceptance.test_p006_regression_gate.P006RegressionGateDeterminismTests.test_p006_selects_deterministic_prior_live_evidence_regression_mode) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.722s
+
+OK
+==> P006 syntax/static checks
+==> P006 accepted deterministic regression through P005/P004/P003/P002/P001/B001 and prior accepted phases
+==> P005 lacctl client protocol/boundary unit contract
+test_admin_error_is_preserved_as_rejected_not_success (tests.unit.test_lacctl_client.LacctlClientUnitTests.test_admin_error_is_preserved_as_rejected_not_success) ... ok
+test_request_is_versioned_canonical_and_deterministic (tests.unit.test_lacctl_client.LacctlClientUnitTests.test_request_is_versioned_canonical_and_deterministic) ... ok
+test_response_rejects_duplicate_unknown_version_and_wrong_request_id (tests.unit.test_lacctl_client.LacctlClientUnitTests.test_response_rejects_duplicate_unknown_version_and_wrong_request_id) ... ok
+test_socket_path_requires_owner_private_runtime_and_0600_socket (tests.unit.test_lacctl_client.LacctlClientUnitTests.test_socket_path_requires_owner_private_runtime_and_0600_socket) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.002s
+
+OK
+==> P005 lacctl -> P004 administrator API integration
+test_approvals_list_show_approve_and_reject_wrap_exact_approval_repository (tests.integration.test_lacctl_admin_api.LacctlAdminApiIntegrationTests.test_approvals_list_show_approve_and_reject_wrap_exact_approval_repository) ... ok
+test_pending_list_show_resolve_and_dismiss_are_administration_only (tests.integration.test_lacctl_admin_api.LacctlAdminApiIntegrationTests.test_pending_list_show_resolve_and_dismiss_are_administration_only) ... ok
+test_permissions_set_list_show_and_revoke_round_trip (tests.integration.test_lacctl_admin_api.LacctlAdminApiIntegrationTests.test_permissions_set_list_show_and_revoke_round_trip) ... ok
+test_skills_list_and_show_use_p004_only (tests.integration.test_lacctl_admin_api.LacctlAdminApiIntegrationTests.test_skills_list_and_show_use_p004_only) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.546s
+
+OK
+==> P005 lacctl negative-security acceptance
+test_ambiguous_or_unsupported_cli_arguments_fail_before_endpoint (tests.acceptance.test_p005_lacctl_boundary.P005LacctlBoundaryAcceptanceTests.test_ambiguous_or_unsupported_cli_arguments_fail_before_endpoint) ... ok
+test_client_source_has_no_direct_canonical_state_or_admin_service_import (tests.acceptance.test_p005_lacctl_boundary.P005LacctlBoundaryAcceptanceTests.test_client_source_has_no_direct_canonical_state_or_admin_service_import) ... ok
+test_malformed_or_unsupported_response_fails_closed (tests.acceptance.test_p005_lacctl_boundary.P005LacctlBoundaryAcceptanceTests.test_malformed_or_unsupported_response_fails_closed) ... ok
+test_p004_rejection_is_nonzero_and_machine_readable (tests.acceptance.test_p005_lacctl_boundary.P005LacctlBoundaryAcceptanceTests.test_p004_rejection_is_nonzero_and_machine_readable) ... ok
+test_unavailable_admin_endpoint_fails_closed (tests.acceptance.test_p005_lacctl_boundary.P005LacctlBoundaryAcceptanceTests.test_unavailable_admin_endpoint_fails_closed) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.191s
+
+OK
+==> P005 syntax/static checks
+==> P005 accepted P004 -> P003 -> P002 -> P001 -> B001 -> A004/Phase 1-3 regression gate
+==> P004 administrator protocol contract
+test_duplicate_keys_unknown_fields_and_unknown_operations_fail_closed (tests.unit.test_admin_protocol.AdminProtocolTests.test_duplicate_keys_unknown_fields_and_unknown_operations_fail_closed) ... ok
+test_oversized_and_non_json_material_fail_closed (tests.unit.test_admin_protocol.AdminProtocolTests.test_oversized_and_non_json_material_fail_closed) ... ok
+test_response_is_versioned_canonical_and_bounded (tests.unit.test_admin_protocol.AdminProtocolTests.test_response_is_versioned_canonical_and_bounded) ... ok
+test_valid_versioned_request_round_trips (tests.unit.test_admin_protocol.AdminProtocolTests.test_valid_versioned_request_round_trips) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.000s
+
+OK
+==> P004 administrator service/transport integration
+test_exact_approval_admin_wraps_existing_binding_and_is_immutable (tests.integration.test_admin_service.AdminServiceIntegrationTests.test_exact_approval_admin_wraps_existing_binding_and_is_immutable) ... ok
+test_pending_resolution_never_reopens_p002_closed_effect_even_after_registry_and_policy_change (tests.integration.test_admin_service.AdminServiceIntegrationTests.test_pending_resolution_never_reopens_p002_closed_effect_even_after_registry_and_policy_change) ... ok
+test_policy_replace_and_revoke_are_revisioned_wrappers_over_p003 (tests.integration.test_admin_service.AdminServiceIntegrationTests.test_policy_replace_and_revoke_are_revisioned_wrappers_over_p003) ... ok
+test_wrong_uid_is_rejected_before_mutation_and_registration_grants_zero_authority (tests.integration.test_admin_service.AdminServiceIntegrationTests.test_wrong_uid_is_rejected_before_mutation_and_registration_grants_zero_authority) ... ok
+test_insecure_runtime_directory_fails_closed (tests.integration.test_admin_transport.AdminTransportIntegrationTests.test_insecure_runtime_directory_fails_closed) ... ok
+test_owner_socket_is_0600_and_authorized_peer_can_call_api (tests.integration.test_admin_transport.AdminTransportIntegrationTests.test_owner_socket_is_0600_and_authorized_peer_can_call_api) ... ok
+test_wrong_peer_uid_is_closed_before_dangerous_request_can_mutate (tests.integration.test_admin_transport.AdminTransportIntegrationTests.test_wrong_peer_uid_is_closed_before_dangerous_request_can_mutate) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.012s
+
+OK
+==> P004 runtime/admin negative-security acceptance
+test_runtime_namespaces_expose_no_admin_mutation_surface (tests.acceptance.test_p004_admin_boundary.P004AdminBoundaryAcceptanceTests.test_runtime_namespaces_expose_no_admin_mutation_surface) ... ok
+test_synthetic_owner_admin_socket_is_not_visible_inside_selected_governed_sandbox (tests.acceptance.test_p004_admin_boundary.P004AdminBoundaryAcceptanceTests.test_synthetic_owner_admin_socket_is_not_visible_inside_selected_governed_sandbox) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.011s
+
+OK
+==> P004 syntax/static checks
+==> P004 accepted P003 -> P002 -> P001 -> B001 -> A004/Phase 1-3 regression gate
+==> P003 standing-policy unit contract
+test_absence_of_matching_rule_or_default_denies (tests.unit.test_standing_policy.StandingPolicyTests.test_absence_of_matching_rule_or_default_denies) ... ok
+test_capability_condition_uses_manifest_security_metadata (tests.unit.test_standing_policy.StandingPolicyTests.test_capability_condition_uses_manifest_security_metadata) ... ok
+test_corrupted_durable_snapshot_fails_closed (tests.unit.test_standing_policy.StandingPolicyTests.test_corrupted_durable_snapshot_fails_closed) ... ok
+test_equal_specificity_deny_precedence_is_deterministic (tests.unit.test_standing_policy.StandingPolicyTests.test_equal_specificity_deny_precedence_is_deterministic) ... ok
+test_generic_evaluation_without_p002_context_denies (tests.unit.test_standing_policy.StandingPolicyTests.test_generic_evaluation_without_p002_context_denies) ... ok
+test_more_specific_rule_wins_over_broad_rule (tests.unit.test_standing_policy.StandingPolicyTests.test_more_specific_rule_wins_over_broad_rule) ... ok
+test_request_argument_condition_is_exact_and_deterministic (tests.unit.test_standing_policy.StandingPolicyTests.test_request_argument_condition_is_exact_and_deterministic) ... ok
+test_resource_metadata_condition_matches_validated_type (tests.unit.test_standing_policy.StandingPolicyTests.test_resource_metadata_condition_matches_validated_type) ... ok
+test_semantically_identical_replacement_is_idempotent_and_sorted (tests.unit.test_standing_policy.StandingPolicyTests.test_semantically_identical_replacement_is_idempotent_and_sorted) ... ok
+test_skill_default_is_more_specific_than_application_default (tests.unit.test_standing_policy.StandingPolicyTests.test_skill_default_is_more_specific_than_application_default) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.022s
+
+OK
+==> P003 dispatcher/policy negative-security acceptance
+test_allow_path_executes_only_after_p002_validation_and_standing_policy (tests.acceptance.test_p003_standing_policy.P003StandingPolicyAcceptanceTests.test_allow_path_executes_only_after_p002_validation_and_standing_policy) ... ok
+test_conditional_ask_never_invokes_adapter_without_exact_approval (tests.acceptance.test_p003_standing_policy.P003StandingPolicyAcceptanceTests.test_conditional_ask_never_invokes_adapter_without_exact_approval) ... ok
+test_direct_dispatch_cannot_bypass_validated_capability_context (tests.acceptance.test_p003_standing_policy.P003StandingPolicyAcceptanceTests.test_direct_dispatch_cannot_bypass_validated_capability_context) ... ok
+test_p002_material_shape_denial_occurs_before_standing_policy (tests.acceptance.test_p003_standing_policy.P003StandingPolicyAcceptanceTests.test_p002_material_shape_denial_occurs_before_standing_policy) ... ok
+test_policy_and_registry_changes_never_revive_p002_closed_effect (tests.acceptance.test_p003_standing_policy.P003StandingPolicyAcceptanceTests.test_policy_and_registry_changes_never_revive_p002_closed_effect) ... ok
+test_runtime_surface_exposes_no_standing_policy_mutation (tests.acceptance.test_p003_standing_policy.P003StandingPolicyAcceptanceTests.test_runtime_surface_exposes_no_standing_policy_mutation) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.016s
+
+OK
+==> P003 syntax/static checks
+==> P003 accepted P002 -> P001 -> B001 -> A004/Phase 1-3 regression gate
+==> P002 unknown-request quarantine acceptance/security contract
+test_equivalent_repeats_aggregate_deterministically (tests.acceptance.test_p002_unknown_quarantine.P002UnknownQuarantineTests.test_equivalent_repeats_aggregate_deterministically) ... ok
+test_known_request_validates_without_granting_authority (tests.acceptance.test_p002_unknown_quarantine.P002UnknownQuarantineTests.test_known_request_validates_without_granting_authority) ... ok
+test_pending_is_not_authority_or_resumable_state (tests.acceptance.test_p002_unknown_quarantine.P002UnknownQuarantineTests.test_pending_is_not_authority_or_resumable_state) ... ok
+test_pending_metadata_contains_no_raw_credential_value (tests.acceptance.test_p002_unknown_quarantine.P002UnknownQuarantineTests.test_pending_metadata_contains_no_raw_credential_value) ... ok
+test_queue_has_hard_distinct_record_bound (tests.acceptance.test_p002_unknown_quarantine.P002UnknownQuarantineTests.test_queue_has_hard_distinct_record_bound) ... ok
+test_registry_change_never_revives_closed_effect_even_via_base_dispatch (tests.acceptance.test_p002_unknown_quarantine.P002UnknownQuarantineTests.test_registry_change_never_revives_closed_effect_even_via_base_dispatch) ... ok
+test_runtime_namespaces_expose_no_registry_or_pending_mutation (tests.acceptance.test_p002_unknown_quarantine.P002UnknownQuarantineTests.test_runtime_namespaces_expose_no_registry_or_pending_mutation) ... ok
+test_unknown_action_is_terminal_before_policy_lease_or_adapter (tests.acceptance.test_p002_unknown_quarantine.P002UnknownQuarantineTests.test_unknown_action_is_terminal_before_policy_lease_or_adapter) ... ok
+test_unknown_resource_type_and_scope_are_terminal (tests.acceptance.test_p002_unknown_quarantine.P002UnknownQuarantineTests.test_unknown_resource_type_and_scope_are_terminal) ... ok
+test_unsupported_revision_version_and_material_shape_fail_closed (tests.acceptance.test_p002_unknown_quarantine.P002UnknownQuarantineTests.test_unsupported_revision_version_and_material_shape_fail_closed) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.125s
+
+OK
+==> P002 syntax/static checks
+==> P002 accepted P001 + B001 + Phase 1-3/A004 regression gate
+==> P001 capability manifest unit contract
+test_boolean_manifest_version_is_not_version_one (tests.unit.test_capability_manifest.CapabilityManifestTests.test_boolean_manifest_version_is_not_version_one) ... ok
+test_canonical_manifest_normalizes_set_like_ordering (tests.unit.test_capability_manifest.CapabilityManifestTests.test_canonical_manifest_normalizes_set_like_ordering) ... ok
+test_display_metadata_does_not_change_security_hash (tests.unit.test_capability_manifest.CapabilityManifestTests.test_display_metadata_does_not_change_security_hash) ... ok
+test_duplicate_action_identity_fails_closed (tests.unit.test_capability_manifest.CapabilityManifestTests.test_duplicate_action_identity_fails_closed) ... ok
+test_duplicate_raw_json_identity_key_fails_closed (tests.unit.test_capability_manifest.CapabilityManifestTests.test_duplicate_raw_json_identity_key_fails_closed) ... ok
+test_duplicate_selector_fails_closed (tests.unit.test_capability_manifest.CapabilityManifestTests.test_duplicate_selector_fails_closed) ... ok
+test_non_string_required_entry_fails_closed (tests.unit.test_capability_manifest.CapabilityManifestTests.test_non_string_required_entry_fails_closed) ... ok
+test_non_string_security_property_fails_closed (tests.unit.test_capability_manifest.CapabilityManifestTests.test_non_string_security_property_fails_closed) ... ok
+test_object_arguments_must_reject_additional_properties (tests.unit.test_capability_manifest.CapabilityManifestTests.test_object_arguments_must_reject_additional_properties) ... ok
+test_persisted_json_must_be_exactly_canonical (tests.unit.test_capability_manifest.CapabilityManifestTests.test_persisted_json_must_be_exactly_canonical) ... ok
+test_unbounded_string_schema_fails_closed (tests.unit.test_capability_manifest.CapabilityManifestTests.test_unbounded_string_schema_fails_closed) ... ok
+test_unknown_argument_schema_keyword_fails_closed (tests.unit.test_capability_manifest.CapabilityManifestTests.test_unknown_argument_schema_keyword_fails_closed) ... ok
+test_unknown_top_level_field_fails_closed (tests.unit.test_capability_manifest.CapabilityManifestTests.test_unknown_top_level_field_fails_closed) ... ok
+test_unsupported_security_property_fails_closed (tests.unit.test_capability_manifest.CapabilityManifestTests.test_unsupported_security_property_fails_closed) ... ok
+test_unsupported_version_fails_closed (tests.unit.test_capability_manifest.CapabilityManifestTests.test_unsupported_version_fails_closed) ... ok
+test_wildcard_selector_is_ambiguous_and_fails_closed (tests.unit.test_capability_manifest.CapabilityManifestTests.test_wildcard_selector_is_ambiguous_and_fails_closed) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.001s
+
+OK
+==> P001 durable registry integration
+test_audit_hash_tamper_fails_closed (tests.integration.test_capability_registry.CapabilityRegistryIntegrationTests.test_audit_hash_tamper_fails_closed) ... ok
+test_display_only_change_is_revisioned_but_not_security_change (tests.integration.test_capability_registry.CapabilityRegistryIntegrationTests.test_display_only_change_is_revisioned_but_not_security_change) ... ok
+test_identical_registration_is_idempotent (tests.integration.test_capability_registry.CapabilityRegistryIntegrationTests.test_identical_registration_is_idempotent) ... ok
+test_list_latest_returns_stable_identity_pairs (tests.integration.test_capability_registry.CapabilityRegistryIntegrationTests.test_list_latest_returns_stable_identity_pairs) ... ok
+test_manifest_hash_tamper_fails_closed (tests.integration.test_capability_registry.CapabilityRegistryIntegrationTests.test_manifest_hash_tamper_fails_closed) ... ok
+test_noncanonical_persisted_revision_fails_closed (tests.integration.test_capability_registry.CapabilityRegistryIntegrationTests.test_noncanonical_persisted_revision_fails_closed) ... ok
+test_registration_survives_controller_restart (tests.integration.test_capability_registry.CapabilityRegistryIntegrationTests.test_registration_survives_controller_restart) ... ok
+test_security_change_is_append_only_distinct_revision (tests.integration.test_capability_registry.CapabilityRegistryIntegrationTests.test_security_change_is_append_only_distinct_revision) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.015s
+
+OK
+==> P001 zero-authority/runtime-boundary acceptance
+test_registration_grants_zero_authority_or_effect_state (tests.acceptance.test_p001_capability_registry.P001AcceptanceTests.test_registration_grants_zero_authority_or_effect_state) ... ok
+test_rejected_secret_value_is_never_persisted (tests.acceptance.test_p001_capability_registry.P001AcceptanceTests.test_rejected_secret_value_is_never_persisted) ... ok
+test_runtime_adapter_namespace_has_no_registry_mutation_surface (tests.acceptance.test_p001_capability_registry.P001AcceptanceTests.test_runtime_adapter_namespace_has_no_registry_mutation_surface) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.004s
+
+OK
+==> P001 syntax/static checks
+==> P001 accepted B001 + Phase 1-3/A004 regression gate
+==> B001 Gmail adapter unit contract
+test_account_resource_is_part_of_exact_supported_operation (tests.unit.test_gmail_adapter.GmailAdapterUnitTests.test_account_resource_is_part_of_exact_supported_operation) ... ok
+test_delete_has_no_adapter_mutation_implementation_and_never_resolves_secret (tests.unit.test_gmail_adapter.GmailAdapterUnitTests.test_delete_has_no_adapter_mutation_implementation_and_never_resolves_secret) ... ok
+test_mutation_reconciliation_is_read_only_and_does_not_repeat_send (tests.unit.test_gmail_adapter.GmailAdapterUnitTests.test_mutation_reconciliation_is_read_only_and_does_not_repeat_send) ... ok
+test_provider_credential_shaped_result_is_rejected_before_receipt_boundary (tests.unit.test_gmail_adapter.GmailAdapterUnitTests.test_provider_credential_shaped_result_is_rejected_before_receipt_boundary) ... ok
+test_security_relevant_send_fields_all_change_canonical_request_hash (tests.unit.test_gmail_adapter.GmailAdapterUnitTests.test_security_relevant_send_fields_all_change_canonical_request_hash) ... ok
+test_send_result_exposes_no_credential_reference_or_secret_material (tests.unit.test_gmail_adapter.GmailAdapterUnitTests.test_send_result_exposes_no_credential_reference_or_secret_material) ... ok
+test_supports_exact_bounded_action_shapes_without_resolving_credentials (tests.unit.test_gmail_adapter.GmailAdapterUnitTests.test_supports_exact_bounded_action_shapes_without_resolving_credentials) ... ok
+test_unknown_or_malformed_actions_fail_closed (tests.unit.test_gmail_adapter.GmailAdapterUnitTests.test_unknown_or_malformed_actions_fail_closed) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.002s
+
+OK
+test_archive_and_reconciliation_verify_inbox_label_absence (tests.unit.test_gmail_google_api.GoogleGmailTransportUnitTests.test_archive_and_reconciliation_verify_inbox_label_absence) ... ok
+test_factory_rejects_missing_bearer_capability_without_echoing_secret_material (tests.unit.test_gmail_google_api.GoogleGmailTransportUnitTests.test_factory_rejects_missing_bearer_capability_without_echoing_secret_material) ... ok
+test_read_decodes_plain_text_message_without_exposing_http_credential (tests.unit.test_gmail_google_api.GoogleGmailTransportUnitTests.test_read_decodes_plain_text_message_without_exposing_http_credential) ... ok
+test_search_uses_bounded_gmail_messages_endpoint_and_bearer_only_in_http_header (tests.unit.test_gmail_google_api.GoogleGmailTransportUnitTests.test_search_uses_bounded_gmail_messages_endpoint_and_bearer_only_in_http_header) ... ok
+test_send_builds_rfc822_message_with_deterministic_request_identity (tests.unit.test_gmail_google_api.GoogleGmailTransportUnitTests.test_send_builds_rfc822_message_with_deterministic_request_identity) ... ok
+test_send_rejects_nonempty_attachment_hashes_without_payload_bytes (tests.unit.test_gmail_google_api.GoogleGmailTransportUnitTests.test_send_rejects_nonempty_attachment_hashes_without_payload_bytes) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.001s
+
+OK
+==> B001 Gmail dispatcher/policy/approval/receipt integration
+test_all_send_security_fields_are_canonically_bound (tests.integration.test_gmail_dispatch.GmailDispatchIntegrationTests.test_all_send_security_fields_are_canonically_bound) ... ok
+test_archive_requires_approval_and_delete_is_denied (tests.integration.test_gmail_dispatch.GmailDispatchIntegrationTests.test_archive_requires_approval_and_delete_is_denied) ... ok
+test_credential_canary_never_enters_request_receipt_or_audit (tests.integration.test_gmail_dispatch.GmailDispatchIntegrationTests.test_credential_canary_never_enters_request_receipt_or_audit) ... ok
+test_exact_approval_is_invalidated_by_each_security_relevant_send_mutation (tests.integration.test_gmail_dispatch.GmailDispatchIntegrationTests.test_exact_approval_is_invalidated_by_each_security_relevant_send_mutation) ... ok
+test_search_read_and_draft_succeed_through_typed_allow_path (tests.integration.test_gmail_dispatch.GmailDispatchIntegrationTests.test_search_read_and_draft_succeed_through_typed_allow_path) ... ok
+test_send_after_exact_approval_executes_once_and_has_durable_receipt (tests.integration.test_gmail_dispatch.GmailDispatchIntegrationTests.test_send_after_exact_approval_executes_once_and_has_durable_receipt) ... ok
+test_send_without_exact_approval_cannot_reach_external_effect (tests.integration.test_gmail_dispatch.GmailDispatchIntegrationTests.test_send_without_exact_approval_cannot_reach_external_effect) ... ok
+test_unknown_action_and_wrong_account_fail_closed_before_credentials (tests.integration.test_gmail_dispatch.GmailDispatchIntegrationTests.test_unknown_action_and_wrong_account_fail_closed_before_credentials) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.028s
+
+OK
+==> B001 syntax/static checks
+==> B001 accepted Phase 1-3/A004 regression gate
+==> A004 exact upstream/runtime pins
+LAC_A001_PI_PIN=da840b6216578c2a571d0374ac6a2091a83f9d91
+LAC_A001_PI_AGENT_CORE_VERSION=0.85.1
+LAC_A001_PI_PIN_VERIFY=PASS
+LAC_A002_FREETOKEN_PIN=af71ba43206e124f5ff6419b47ee36c6e9981078
+LAC_A002_FREETOKEN_VERSION=0.1.2
+LAC_A002_FREETOKEN_LICENSE=Apache-2.0
+LAC_A002_FREETOKEN_SEED_CAPABILITY=UNSUPPORTED_FAIL_CLOSED
+LAC_A002_FREETOKEN_STRUCTURED_OUTPUT=UNSUPPORTED_FAIL_CLOSED
+LAC_A002_FREETOKEN_PIN_VERIFY=PASS
+==> A004 deterministic CUDA discovery
+test_discovers_cuda_home_from_nvcc_when_cuda_home_unset (tests.unit.test_a004_freetoken_launcher.A004CudaDiscoveryTests.test_discovers_cuda_home_from_nvcc_when_cuda_home_unset) ... ok
+test_rejects_non_cuda13_toolkit (tests.unit.test_a004_freetoken_launcher.A004CudaDiscoveryTests.test_rejects_non_cuda13_toolkit) ... ok
+test_runtime_environment_includes_accepted_venv_ninja_when_shell_path_does_not (tests.unit.test_a004_freetoken_launcher.A004CudaDiscoveryTests.test_runtime_environment_includes_accepted_venv_ninja_when_shell_path_does_not) ... ok
+test_startup_failure_fails_closed_and_cleans_owned_process_state (tests.unit.test_a004_freetoken_launcher.A004CudaDiscoveryTests.test_startup_failure_fails_closed_and_cleans_owned_process_state) ... ok
+test_stop_terminates_owned_runtime_process_group (tests.unit.test_a004_freetoken_launcher.A004CudaDiscoveryTests.test_stop_terminates_owned_runtime_process_group) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.006s
+
+OK
+==> A004 terminal input and line-editing remediation
+test_left_arrow_edits_line_instead_of_submitting_escape_sequence (tests.unit.test_a004_terminal_input.A004TerminalInputTests.test_left_arrow_edits_line_instead_of_submitting_escape_sequence) ... ok
+test_residual_control_characters_are_rejected_before_model_path (tests.unit.test_a004_terminal_input.A004TerminalInputTests.test_residual_control_characters_are_rejected_before_model_path) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.057s
+
+OK
+==> A004 deterministic controller/receipt/boundary conformance
+test_baseline_ls_empty_argv_lists_workspace (tests.integration.test_a004_controller_observability.A004ControllerObservabilityTests.test_baseline_ls_empty_argv_lists_workspace) ... ok
+test_exact_tools_dispatch_through_existing_bridge_and_receipts (tests.integration.test_a004_controller_observability.A004ControllerObservabilityTests.test_exact_tools_dispatch_through_existing_bridge_and_receipts) ... ok
+test_symlink_escape_fails_without_reading_host_fixture_and_records_failed_receipt (tests.integration.test_a004_controller_observability.A004ControllerObservabilityTests.test_symlink_escape_fails_without_reading_host_fixture_and_records_failed_receipt) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.647s
+
+OK
+test_new_surface_is_thin_and_has_no_phase4_capabilities (tests.integration.test_a004_source_contract.A004SourceContractTests.test_new_surface_is_thin_and_has_no_phase4_capabilities) ... ok
+test_shell_model_contract_excludes_argv0_and_pins_baseline_ls_shape (tests.integration.test_a004_source_contract.A004SourceContractTests.test_shell_model_contract_excludes_argv0_and_pins_baseline_ls_shape) ... ok
+test_worker_does_not_emit_reasoning_in_turn_result (tests.integration.test_a004_source_contract.A004SourceContractTests.test_worker_does_not_emit_reasoning_in_turn_result) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.000s
+
+OK
+==> A004 syntax/static checks
+==> A004 deterministic regression: preserve accepted live/UAT proof and rerun current A003 security conformance
+LAC_A004_ACCEPTED_LIVE_EVIDENCE=PASS
+LAC_ACCEPTED_LIVE_EVIDENCE_VERIFY=PASS
+LAC_A001_PI_PIN=da840b6216578c2a571d0374ac6a2091a83f9d91
+LAC_A001_PI_AGENT_CORE_VERSION=0.85.1
+LAC_A001_PI_PIN_VERIFY=PASS
+LAC_A002_FREETOKEN_PIN=af71ba43206e124f5ff6419b47ee36c6e9981078
+LAC_A002_FREETOKEN_VERSION=0.1.2
+LAC_A002_FREETOKEN_LICENSE=Apache-2.0
+LAC_A002_FREETOKEN_SEED_CAPABILITY=UNSUPPORTED_FAIL_CLOSED
+LAC_A002_FREETOKEN_STRUCTURED_OUTPUT=UNSUPPORTED_FAIL_CLOSED
+LAC_A002_FREETOKEN_PIN_VERIFY=PASS
+.......
+----------------------------------------------------------------------
+Ran 7 tests in 0.001s
+
+OK
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.449s
+
+OK
+LAC_A003_STREAM_BRIDGE_TEST=PASS
+==> A003 deterministic regression: verify independently accepted live evidence
+LAC_A003_ACCEPTED_LIVE_EVIDENCE=PASS
+LAC_ACCEPTED_LIVE_EVIDENCE_VERIFY=PASS
+==> A002 exact FreeToken pin/interface
+LAC_A002_FREETOKEN_PIN=af71ba43206e124f5ff6419b47ee36c6e9981078
+LAC_A002_FREETOKEN_VERSION=0.1.2
+LAC_A002_FREETOKEN_LICENSE=Apache-2.0
+LAC_A002_FREETOKEN_SEED_CAPABILITY=UNSUPPORTED_FAIL_CLOSED
+LAC_A002_FREETOKEN_STRUCTURED_OUTPUT=UNSUPPORTED_FAIL_CLOSED
+LAC_A002_FREETOKEN_PIN_VERIFY=PASS
+==> A002 Python syntax
+==> A002 ModelProvider / FreeToken deterministic integration tests
+test_freetoken_adapter_has_no_authority_module_imports (test_freetoken_provider.FreeTokenProviderTests.test_freetoken_adapter_has_no_authority_module_imports) ... ok
+test_generate_normalizes_response_and_usage (test_freetoken_provider.FreeTokenProviderTests.test_generate_normalizes_response_and_usage) ... ok
+test_loopback_only_and_no_url_credentials (test_freetoken_provider.FreeTokenProviderTests.test_loopback_only_and_no_url_credentials) ... ok
+test_malformed_response_fails_closed (test_freetoken_provider.FreeTokenProviderTests.test_malformed_response_fails_closed) ... ok
+test_model_request_has_no_authority_or_credential_fields (test_freetoken_provider.FreeTokenProviderTests.test_model_request_has_no_authority_or_credential_fields) ... ok
+test_models_endpoint_is_normalized (test_freetoken_provider.FreeTokenProviderTests.test_models_endpoint_is_normalized) ... ok
+test_precancel_fails_without_contacting_runtime (test_freetoken_provider.FreeTokenProviderTests.test_precancel_fails_without_contacting_runtime) ... ok
+test_request_translation_is_deterministic_and_propagates_supported_settings (test_freetoken_provider.FreeTokenProviderTests.test_request_translation_is_deterministic_and_propagates_supported_settings) ... ok
+test_stream_cancellation_closes_on_next_chunk (test_freetoken_provider.FreeTokenProviderTests.test_stream_cancellation_closes_on_next_chunk) ... ok
+test_stream_normalizes_reasoning_text_finish_usage_and_done (test_freetoken_provider.FreeTokenProviderTests.test_stream_normalizes_reasoning_text_finish_usage_and_done) ... ok
+test_timeout_is_bounded_and_fails_closed (test_freetoken_provider.FreeTokenProviderTests.test_timeout_is_bounded_and_fails_closed) ... ok
+test_unavailable_runtime_fails_closed (test_freetoken_provider.FreeTokenProviderTests.test_unavailable_runtime_fails_closed) ... ok
+test_unsupported_seed_and_structured_output_fail_closed (test_freetoken_provider.FreeTokenProviderTests.test_unsupported_seed_and_structured_output_fail_closed) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 3.016s
+
+OK
+LAC_A002_TEST_RESULT=PASS
+==> A001 pinned Pi source contract
+LAC_A001_PI_PIN=da840b6216578c2a571d0374ac6a2091a83f9d91
+LAC_A001_PI_AGENT_CORE_VERSION=0.85.1
+LAC_A001_PI_PIN_VERIFY=PASS
+==> A001 governed Pi Agent Core constructor
+LAC_A001_PI_HARNESS_TEST=PASS
+==> A001 + full Phase 1 unit/integration/acceptance regression
+test_discovers_cuda_home_from_nvcc_when_cuda_home_unset (test_a004_freetoken_launcher.A004CudaDiscoveryTests.test_discovers_cuda_home_from_nvcc_when_cuda_home_unset) ... ok
+test_rejects_non_cuda13_toolkit (test_a004_freetoken_launcher.A004CudaDiscoveryTests.test_rejects_non_cuda13_toolkit) ... ok
+test_runtime_environment_includes_accepted_venv_ninja_when_shell_path_does_not (test_a004_freetoken_launcher.A004CudaDiscoveryTests.test_runtime_environment_includes_accepted_venv_ninja_when_shell_path_does_not) ... ok
+test_startup_failure_fails_closed_and_cleans_owned_process_state (test_a004_freetoken_launcher.A004CudaDiscoveryTests.test_startup_failure_fails_closed_and_cleans_owned_process_state) ... ok
+test_stop_terminates_owned_runtime_process_group (test_a004_freetoken_launcher.A004CudaDiscoveryTests.test_stop_terminates_owned_runtime_process_group) ... ok
+test_left_arrow_edits_line_instead_of_submitting_escape_sequence (test_a004_terminal_input.A004TerminalInputTests.test_left_arrow_edits_line_instead_of_submitting_escape_sequence) ... ok
+test_residual_control_characters_are_rejected_before_model_path (test_a004_terminal_input.A004TerminalInputTests.test_residual_control_characters_are_rejected_before_model_path) ... ok
+test_duplicate_keys_unknown_fields_and_unknown_operations_fail_closed (test_admin_protocol.AdminProtocolTests.test_duplicate_keys_unknown_fields_and_unknown_operations_fail_closed) ... ok
+test_oversized_and_non_json_material_fail_closed (test_admin_protocol.AdminProtocolTests.test_oversized_and_non_json_material_fail_closed) ... ok
+test_response_is_versioned_canonical_and_bounded (test_admin_protocol.AdminProtocolTests.test_response_is_versioned_canonical_and_bounded) ... ok
+test_valid_versioned_request_round_trips (test_admin_protocol.AdminProtocolTests.test_valid_versioned_request_round_trips) ... ok
+test_active_identity_and_revocation_are_durable_without_schema_migration (test_agent_identity.AgentIdentityRepositoryTests.test_active_identity_and_revocation_are_durable_without_schema_migration) ... ok
+test_registration_is_idempotent_but_cannot_rebind_or_silently_reactivate (test_agent_identity.AgentIdentityRepositoryTests.test_registration_is_idempotent_but_cannot_rebind_or_silently_reactivate) ... ok
+test_unknown_and_corrupted_identity_fail_closed (test_agent_identity.AgentIdentityRepositoryTests.test_unknown_and_corrupted_identity_fail_closed) ... ok
+test_approval_binds_request_hash_policy_decision_and_approver (test_approval.ApprovalTests.test_approval_binds_request_hash_policy_decision_and_approver) ... ok
+test_approval_cannot_predate_supporting_policy_decision (test_approval.ApprovalTests.test_approval_cannot_predate_supporting_policy_decision) ... ok
+test_approval_record_has_no_dispatch_or_execution_surface (test_approval.ApprovalTests.test_approval_record_has_no_dispatch_or_execution_surface) ... ok
+test_approval_requires_durable_policy_decision (test_approval.ApprovalTests.test_approval_requires_durable_policy_decision) ... ok
+test_approval_requires_durable_request (test_approval.ApprovalTests.test_approval_requires_durable_request) ... ok
+test_approve_and_reject_records_survive_restart (test_approval.ApprovalTests.test_approve_and_reject_records_survive_restart) ... ok
+test_consumed_at_is_passive_durable_timestamp_state (test_approval.ApprovalTests.test_consumed_at_is_passive_durable_timestamp_state) ... ok
+test_corrupted_persisted_approval_fails_closed (test_approval.ApprovalTests.test_corrupted_persisted_approval_fails_closed) ... ok
+test_corrupted_supporting_policy_decision_cannot_support_new_approval (test_approval.ApprovalTests.test_corrupted_supporting_policy_decision_cannot_support_new_approval) ... ok
+test_corrupted_supporting_policy_decision_fails_closed_on_reload (test_approval.ApprovalTests.test_corrupted_supporting_policy_decision_fails_closed_on_reload) ... ok
+test_duplicate_identity_is_idempotent_but_cannot_overwrite_material (test_approval.ApprovalTests.test_duplicate_identity_is_idempotent_but_cannot_overwrite_material) ... ok
+test_expiry_is_normalized_and_boundary_is_expired (test_approval.ApprovalTests.test_expiry_is_normalized_and_boundary_is_expired) ... ok
+test_invalid_expiry_fails_closed (test_approval.ApprovalTests.test_invalid_expiry_fails_closed) ... ok
+test_only_require_approval_policy_decision_qualifies (test_approval.ApprovalTests.test_only_require_approval_policy_decision_qualifies) ... ok
+test_policy_decision_must_bind_same_request_and_hash (test_approval.ApprovalTests.test_policy_decision_must_bind_same_request_and_hash) ... ok
+test_schema_decision_and_scope_are_strictly_versioned (test_approval.ApprovalTests.test_schema_decision_and_scope_are_strictly_versioned) ... ok
+test_schema_v3_database_migrates_forward_without_losing_predecessor_state (test_approval.ApprovalTests.test_schema_v3_database_migrates_forward_without_losing_predecessor_state) ... ok
+test_wrong_canonical_hash_fails_binding (test_approval.ApprovalTests.test_wrong_canonical_hash_fails_binding) ... ok
+test_all_security_relevant_request_mutations_invalidate_prior_approval (test_approval_binding.ApprovalBindingValidatorTests.test_all_security_relevant_request_mutations_invalidate_prior_approval) ... ok
+test_exact_unchanged_request_qualifies_without_state_mutation (test_approval_binding.ApprovalBindingValidatorTests.test_exact_unchanged_request_qualifies_without_state_mutation) ... ok
+test_lost_require_approval_policy_binding_fails_closed (test_approval_binding.ApprovalBindingValidatorTests.test_lost_require_approval_policy_binding_fails_closed) ... ok
+test_noncanonical_current_request_and_invalid_validation_time_fail_closed (test_approval_binding.ApprovalBindingValidatorTests.test_noncanonical_current_request_and_invalid_validation_time_fail_closed) ... ok
+test_reject_expired_consumed_and_unknown_approval_fail_closed (test_approval_binding.ApprovalBindingValidatorTests.test_reject_expired_consumed_and_unknown_approval_fail_closed) ... ok
+test_validator_has_no_consumption_lease_dispatch_or_execution_surface (test_approval_binding.ApprovalBindingValidatorTests.test_validator_has_no_consumption_lease_dispatch_or_execution_surface) ... ok
+test_wrong_approval_hash_and_malformed_approval_fail_closed (test_approval_binding.ApprovalBindingValidatorTests.test_wrong_approval_hash_and_malformed_approval_fail_closed) ... ok
+test_boolean_manifest_version_is_not_version_one (test_capability_manifest.CapabilityManifestTests.test_boolean_manifest_version_is_not_version_one) ... ok
+test_canonical_manifest_normalizes_set_like_ordering (test_capability_manifest.CapabilityManifestTests.test_canonical_manifest_normalizes_set_like_ordering) ... ok
+test_display_metadata_does_not_change_security_hash (test_capability_manifest.CapabilityManifestTests.test_display_metadata_does_not_change_security_hash) ... ok
+test_duplicate_action_identity_fails_closed (test_capability_manifest.CapabilityManifestTests.test_duplicate_action_identity_fails_closed) ... ok
+test_duplicate_raw_json_identity_key_fails_closed (test_capability_manifest.CapabilityManifestTests.test_duplicate_raw_json_identity_key_fails_closed) ... ok
+test_duplicate_selector_fails_closed (test_capability_manifest.CapabilityManifestTests.test_duplicate_selector_fails_closed) ... ok
+test_non_string_required_entry_fails_closed (test_capability_manifest.CapabilityManifestTests.test_non_string_required_entry_fails_closed) ... ok
+test_non_string_security_property_fails_closed (test_capability_manifest.CapabilityManifestTests.test_non_string_security_property_fails_closed) ... ok
+test_object_arguments_must_reject_additional_properties (test_capability_manifest.CapabilityManifestTests.test_object_arguments_must_reject_additional_properties) ... ok
+test_persisted_json_must_be_exactly_canonical (test_capability_manifest.CapabilityManifestTests.test_persisted_json_must_be_exactly_canonical) ... ok
+test_unbounded_string_schema_fails_closed (test_capability_manifest.CapabilityManifestTests.test_unbounded_string_schema_fails_closed) ... ok
+test_unknown_argument_schema_keyword_fails_closed (test_capability_manifest.CapabilityManifestTests.test_unknown_argument_schema_keyword_fails_closed) ... ok
+test_unknown_top_level_field_fails_closed (test_capability_manifest.CapabilityManifestTests.test_unknown_top_level_field_fails_closed) ... ok
+test_unsupported_security_property_fails_closed (test_capability_manifest.CapabilityManifestTests.test_unsupported_security_property_fails_closed) ... ok
+test_unsupported_version_fails_closed (test_capability_manifest.CapabilityManifestTests.test_unsupported_version_fails_closed) ... ok
+test_wildcard_selector_is_ambiguous_and_fails_closed (test_capability_manifest.CapabilityManifestTests.test_wildcard_selector_is_ambiguous_and_fails_closed) ... ok
+test_adapter_failure_occurs_only_after_durable_lease_and_remains_fail_closed (test_dispatcher.DispatcherTests.test_adapter_failure_occurs_only_after_durable_lease_and_remains_fail_closed) ... ok
+test_allow_rechecks_current_policy_persists_decision_leases_then_invokes (test_dispatcher.DispatcherTests.test_allow_rechecks_current_policy_persists_decision_leases_then_invokes) ... ok
+test_competing_lease_blocks_adapter_and_rolls_back_approval_consumption (test_dispatcher.DispatcherTests.test_competing_lease_blocks_adapter_and_rolls_back_approval_consumption) ... ok
+test_current_deny_never_reaches_adapter_and_is_durable (test_dispatcher.DispatcherTests.test_current_deny_never_reaches_adapter_and_is_durable) ... ok
+test_exact_approval_is_consumed_once_before_adapter_and_cannot_be_reused (test_dispatcher.DispatcherTests.test_exact_approval_is_consumed_once_before_adapter_and_cannot_be_reused) ... ok
+test_expired_approval_fails_closed_without_consumption_or_lease (test_dispatcher.DispatcherTests.test_expired_approval_fails_closed_without_consumption_or_lease) ... ok
+test_forged_current_request_hash_fails_closed (test_dispatcher.DispatcherTests.test_forged_current_request_hash_fails_closed) ... ok
+test_invalid_trusted_clock_and_lease_configuration_fail_closed (test_dispatcher.DispatcherTests.test_invalid_trusted_clock_and_lease_configuration_fail_closed) ... ok
+test_lease_is_clamped_to_request_expiry (test_dispatcher.DispatcherTests.test_lease_is_clamped_to_request_expiry) ... ok
+test_malformed_policy_output_fails_closed (test_dispatcher.DispatcherTests.test_malformed_policy_output_fails_closed) ... ok
+test_mutated_current_request_fails_closed_before_policy_or_adapter (test_dispatcher.DispatcherTests.test_mutated_current_request_fails_closed_before_policy_or_adapter) ... ok
+test_no_schema_migration_or_concrete_adapter_is_introduced (test_dispatcher.DispatcherTests.test_no_schema_migration_or_concrete_adapter_is_introduced) ... ok
+test_request_expiry_uses_trusted_clock_and_fails_closed (test_dispatcher.DispatcherTests.test_request_expiry_uses_trusted_clock_and_fails_closed) ... ok
+test_require_approval_without_exact_approval_never_leases_or_invokes (test_dispatcher.DispatcherTests.test_require_approval_without_exact_approval_never_leases_or_invokes) ... ok
+test_unknown_or_unsupported_adapter_fails_closed (test_dispatcher.DispatcherTests.test_unknown_or_unsupported_adapter_fails_closed) ... ok
+test_execution_receipt_and_audit_survive_restart_and_audit_has_no_authority_api (test_effect_receipts.EffectReceiptStateTests.test_execution_receipt_and_audit_survive_restart_and_audit_has_no_authority_api) ... ok
+test_failed_v6_migration_rolls_back_user_version_and_ledger (test_effect_receipts.EffectReceiptStateTests.test_failed_v6_migration_rolls_back_user_version_and_ledger) ... ok
+test_malformed_execution_state_fails_closed (test_effect_receipts.EffectReceiptStateTests.test_malformed_execution_state_fails_closed) ... ok
+test_schema_v5_migrates_atomically_to_v6_and_preserves_predecessor_state (test_effect_receipts.EffectReceiptStateTests.test_schema_v5_migrates_atomically_to_v6_and_preserves_predecessor_state) ... ok
+test_unknown_effect_execution_and_receipt_schemas_fail_closed (test_effect_receipts.EffectReceiptStateTests.test_unknown_effect_execution_and_receipt_schemas_fail_closed) ... ok
+test_all_security_relevant_fields_participate_in_hash (test_effect_request.EffectRequestTests.test_all_security_relevant_fields_participate_in_hash) ... ok
+test_arguments_are_not_mutable_through_returned_property (test_effect_request.EffectRequestTests.test_arguments_are_not_mutable_through_returned_property) ... ok
+test_duplicate_request_id_cannot_overwrite_different_request (test_effect_request.EffectRequestTests.test_duplicate_request_id_cannot_overwrite_different_request) ... ok
+test_identical_duplicate_request_id_is_idempotent (test_effect_request.EffectRequestTests.test_identical_duplicate_request_id_is_idempotent) ... ok
+test_non_canonical_json_values_are_rejected (test_effect_request.EffectRequestTests.test_non_canonical_json_values_are_rejected) ... ok
+test_persisted_hash_corruption_fails_closed (test_effect_request.EffectRequestTests.test_persisted_hash_corruption_fails_closed) ... ok
+test_persisted_request_survives_restart (test_effect_request.EffectRequestTests.test_persisted_request_survives_restart) ... ok
+test_required_text_and_timestamp_validation_fail_closed (test_effect_request.EffectRequestTests.test_required_text_and_timestamp_validation_fail_closed) ... ok
+test_schema_is_versioned_and_unknown_schema_fails_closed (test_effect_request.EffectRequestTests.test_schema_is_versioned_and_unknown_schema_fails_closed) ... ok
+test_semantically_identical_arguments_hash_identically (test_effect_request.EffectRequestTests.test_semantically_identical_arguments_hash_identically) ... ok
+test_malformed_authority_cannot_be_read_or_silently_repaired (test_emergency_pause.EmergencyPauseTests.test_malformed_authority_cannot_be_read_or_silently_repaired) ... ok
+test_missing_authority_fails_closed_until_explicit_transition (test_emergency_pause.EmergencyPauseTests.test_missing_authority_fails_closed_until_explicit_transition) ... ok
+test_pause_resume_are_durable_across_restart (test_emergency_pause.EmergencyPauseTests.test_pause_resume_are_durable_across_restart) ... ok
+test_pause_state_uses_existing_system_state_without_schema_migration (test_emergency_pause.EmergencyPauseTests.test_pause_state_uses_existing_system_state_without_schema_migration) ... ok
+test_transitions_are_idempotent_and_api_cannot_authorize_effects (test_emergency_pause.EmergencyPauseTests.test_transitions_are_idempotent_and_api_cannot_authorize_effects) ... ok
+test_acquisition_is_not_authorization_dispatch_or_execution (test_execution_lease.ExecutionLeaseTests.test_acquisition_is_not_authorization_dispatch_or_execution) ... ok
+test_competing_unexpired_executor_is_rejected (test_execution_lease.ExecutionLeaseTests.test_competing_unexpired_executor_is_rejected) ... ok
+test_durable_request_acquires_one_lease_and_survives_restart (test_execution_lease.ExecutionLeaseTests.test_durable_request_acquires_one_lease_and_survives_restart) ... ok
+test_exact_expiry_permits_new_bounded_lease (test_execution_lease.ExecutionLeaseTests.test_exact_expiry_permits_new_bounded_lease) ... ok
+test_expiry_boundary_is_deterministic (test_execution_lease.ExecutionLeaseTests.test_expiry_boundary_is_deterministic) ... ok
+test_identity_retry_is_idempotent_but_material_change_conflicts (test_execution_lease.ExecutionLeaseTests.test_identity_retry_is_idempotent_but_material_change_conflicts) ... ok
+test_malformed_persisted_lease_state_fails_closed (test_execution_lease.ExecutionLeaseTests.test_malformed_persisted_lease_state_fails_closed) ... ok
+test_noncanonical_lease_object_fails_closed (test_execution_lease.ExecutionLeaseTests.test_noncanonical_lease_object_fails_closed) ... ok
+test_overlapping_persisted_lease_state_fails_closed (test_execution_lease.ExecutionLeaseTests.test_overlapping_persisted_lease_state_fails_closed) ... ok
+test_schema_identity_timestamps_and_short_lived_bound_are_strict (test_execution_lease.ExecutionLeaseTests.test_schema_identity_timestamps_and_short_lived_bound_are_strict) ... ok
+test_schema_v4_database_migrates_to_v5_without_losing_c005_state (test_execution_lease.ExecutionLeaseTests.test_schema_v4_database_migrates_to_v5_without_losing_c005_state) ... ok
+test_two_connections_observe_single_current_owner (test_execution_lease.ExecutionLeaseTests.test_two_connections_observe_single_current_owner) ... ok
+test_unknown_or_corrupted_request_fails_closed (test_execution_lease.ExecutionLeaseTests.test_unknown_or_corrupted_request_fails_closed) ... ok
+test_adapter_implements_protocol_and_recognizes_only_typed_contract (test_filesystem_adapter.FilesystemAdapterUnitTests.test_adapter_implements_protocol_and_recognizes_only_typed_contract) ... ok
+test_delete_has_no_direct_mutation_implementation (test_filesystem_adapter.FilesystemAdapterUnitTests.test_delete_has_no_direct_mutation_implementation) ... ok
+test_working_root_must_be_canonical_existing_real_directory (test_filesystem_adapter.FilesystemAdapterUnitTests.test_working_root_must_be_canonical_existing_real_directory) ... ok
+test_account_resource_is_part_of_exact_supported_operation (test_gmail_adapter.GmailAdapterUnitTests.test_account_resource_is_part_of_exact_supported_operation) ... ok
+test_delete_has_no_adapter_mutation_implementation_and_never_resolves_secret (test_gmail_adapter.GmailAdapterUnitTests.test_delete_has_no_adapter_mutation_implementation_and_never_resolves_secret) ... ok
+test_mutation_reconciliation_is_read_only_and_does_not_repeat_send (test_gmail_adapter.GmailAdapterUnitTests.test_mutation_reconciliation_is_read_only_and_does_not_repeat_send) ... ok
+test_provider_credential_shaped_result_is_rejected_before_receipt_boundary (test_gmail_adapter.GmailAdapterUnitTests.test_provider_credential_shaped_result_is_rejected_before_receipt_boundary) ... ok
+test_security_relevant_send_fields_all_change_canonical_request_hash (test_gmail_adapter.GmailAdapterUnitTests.test_security_relevant_send_fields_all_change_canonical_request_hash) ... ok
+test_send_result_exposes_no_credential_reference_or_secret_material (test_gmail_adapter.GmailAdapterUnitTests.test_send_result_exposes_no_credential_reference_or_secret_material) ... ok
+test_supports_exact_bounded_action_shapes_without_resolving_credentials (test_gmail_adapter.GmailAdapterUnitTests.test_supports_exact_bounded_action_shapes_without_resolving_credentials) ... ok
+test_unknown_or_malformed_actions_fail_closed (test_gmail_adapter.GmailAdapterUnitTests.test_unknown_or_malformed_actions_fail_closed) ... ok
+test_archive_and_reconciliation_verify_inbox_label_absence (test_gmail_google_api.GoogleGmailTransportUnitTests.test_archive_and_reconciliation_verify_inbox_label_absence) ... ok
+test_factory_rejects_missing_bearer_capability_without_echoing_secret_material (test_gmail_google_api.GoogleGmailTransportUnitTests.test_factory_rejects_missing_bearer_capability_without_echoing_secret_material) ... ok
+test_read_decodes_plain_text_message_without_exposing_http_credential (test_gmail_google_api.GoogleGmailTransportUnitTests.test_read_decodes_plain_text_message_without_exposing_http_credential) ... ok
+test_search_uses_bounded_gmail_messages_endpoint_and_bearer_only_in_http_header (test_gmail_google_api.GoogleGmailTransportUnitTests.test_search_uses_bounded_gmail_messages_endpoint_and_bearer_only_in_http_header) ... ok
+test_send_builds_rfc822_message_with_deterministic_request_identity (test_gmail_google_api.GoogleGmailTransportUnitTests.test_send_builds_rfc822_message_with_deterministic_request_identity) ... ok
+test_send_rejects_nonempty_attachment_hashes_without_payload_bytes (test_gmail_google_api.GoogleGmailTransportUnitTests.test_send_rejects_nonempty_attachment_hashes_without_payload_bytes) ... ok
+test_minimal_runtime_root_precreates_read_only_bind_targets (test_h001_qualification_builder.H001QualificationBuilderTests.test_minimal_runtime_root_precreates_read_only_bind_targets) ... ok
+test_admin_error_is_preserved_as_rejected_not_success (test_lacctl_client.LacctlClientUnitTests.test_admin_error_is_preserved_as_rejected_not_success) ... ok
+test_request_is_versioned_canonical_and_deterministic (test_lacctl_client.LacctlClientUnitTests.test_request_is_versioned_canonical_and_deterministic) ... ok
+test_response_rejects_duplicate_unknown_version_and_wrong_request_id (test_lacctl_client.LacctlClientUnitTests.test_response_rejects_duplicate_unknown_version_and_wrong_request_id) ... ok
+test_socket_path_requires_owner_private_runtime_and_0600_socket (test_lacctl_client.LacctlClientUnitTests.test_socket_path_requires_owner_private_runtime_and_0600_socket) ... ok
+test_exact_translation_to_canonical_effect_requests (test_pi_adapter.PiAgentAdapterUnitTests.test_exact_translation_to_canonical_effect_requests) ... ok
+test_exposes_only_governed_lac_tool_names (test_pi_adapter.PiAgentAdapterUnitTests.test_exposes_only_governed_lac_tool_names) ... ok
+test_request_and_idempotency_identity_bind_tool_call_not_model_authority_fields (test_pi_adapter.PiAgentAdapterUnitTests.test_request_and_idempotency_identity_bind_tool_call_not_model_authority_fields) ... ok
+test_unknown_malformed_and_authority_shaped_tool_arguments_fail_closed (test_pi_adapter.PiAgentAdapterUnitTests.test_unknown_malformed_and_authority_shaped_tool_arguments_fail_closed) ... ok
+test_approval_required_wins_over_allow (test_policy.PolicyDecisionTests.test_approval_required_wins_over_allow) ... ok
+test_corrupted_persisted_reason_codes_fail_closed (test_policy.PolicyDecisionTests.test_corrupted_persisted_reason_codes_fail_closed) ... ok
+test_decision_binds_request_id_and_canonical_hash (test_policy.PolicyDecisionTests.test_decision_binds_request_id_and_canonical_hash) ... ok
+test_decision_cannot_bind_wrong_request_hash (test_policy.PolicyDecisionTests.test_decision_cannot_bind_wrong_request_hash) ... ok
+test_decision_cannot_persist_without_durable_request (test_policy.PolicyDecisionTests.test_decision_cannot_persist_without_durable_request) ... ok
+test_duplicate_decision_id_cannot_overwrite_different_decision (test_policy.PolicyDecisionTests.test_duplicate_decision_id_cannot_overwrite_different_decision) ... ok
+test_explicit_deny_wins_over_approval_and_allow (test_policy.PolicyDecisionTests.test_explicit_deny_wins_over_approval_and_allow) ... ok
+test_malformed_policy_configuration_fails_closed (test_policy.PolicyDecisionTests.test_malformed_policy_configuration_fails_closed) ... ok
+test_no_matching_rule_fails_closed (test_policy.PolicyDecisionTests.test_no_matching_rule_fails_closed) ... ok
+test_persisted_policy_decision_survives_restart (test_policy.PolicyDecisionTests.test_persisted_policy_decision_survives_restart) ... ok
+test_policy_decision_domain_rejects_bad_hash_and_reasons (test_policy.PolicyDecisionTests.test_policy_decision_domain_rejects_bad_hash_and_reasons) ... ok
+test_rule_order_does_not_change_decision_or_reasons (test_policy.PolicyDecisionTests.test_rule_order_does_not_change_decision_or_reasons) ... ok
+test_unknown_authority_dimensions_fail_closed (test_policy.PolicyDecisionTests.test_unknown_authority_dimensions_fail_closed) ... ok
+test_bubblewrap_command_encodes_hard_boundary_and_no_host_env_inheritance (test_sandbox_backend.SandboxBackendUnitTests.test_bubblewrap_command_encodes_hard_boundary_and_no_host_env_inheritance) ... ok
+test_evidence_selection_requires_all_controls_and_known_backend (test_sandbox_backend.SandboxBackendUnitTests.test_evidence_selection_requires_all_controls_and_known_backend) ... ok
+test_missing_backend_binary_fails_closed_before_execution (test_sandbox_backend.SandboxBackendUnitTests.test_missing_backend_binary_fails_closed_before_execution) ... ok
+test_missing_or_symlinked_mount_target_fails_closed_before_backend_execution (test_sandbox_backend.SandboxBackendUnitTests.test_missing_or_symlinked_mount_target_fails_closed_before_backend_execution) ... ok
+test_podman_command_is_rootless_read_only_networkless_and_capability_stripped (test_sandbox_backend.SandboxBackendUnitTests.test_podman_command_is_rootless_read_only_networkless_and_capability_stripped) ... ok
+test_relative_executable_and_missing_host_inputs_fail_closed (test_sandbox_backend.SandboxBackendUnitTests.test_relative_executable_and_missing_host_inputs_fail_closed) ... ok
+test_unknown_network_and_unsafe_mount_shapes_fail_closed (test_sandbox_backend.SandboxBackendUnitTests.test_unknown_network_and_unsafe_mount_shapes_fail_closed) ... ok
+test_adapter_implements_protocol_and_recognizes_only_exact_typed_contract (test_shell_adapter.ShellEffectAdapterUnitTests.test_adapter_implements_protocol_and_recognizes_only_exact_typed_contract) ... ok
+test_argv_is_an_array_not_a_shell_string_and_malformed_vectors_fail_closed (test_shell_adapter.ShellEffectAdapterUnitTests.test_argv_is_an_array_not_a_shell_string_and_malformed_vectors_fail_closed) ... ok
+test_cwd_must_be_canonical_existing_workspace_directory (test_shell_adapter.ShellEffectAdapterUnitTests.test_cwd_must_be_canonical_existing_workspace_directory) ... ok
+test_environment_is_explicit_allowlisted_and_credential_shaped_names_fail_closed (test_shell_adapter.ShellEffectAdapterUnitTests.test_environment_is_explicit_allowlisted_and_credential_shaped_names_fail_closed) ... ok
+test_executable_is_exact_allowlisted_absolute_binary_and_interpreters_fail_closed (test_shell_adapter.ShellEffectAdapterUnitTests.test_executable_is_exact_allowlisted_absolute_binary_and_interpreters_fail_closed) ... ok
+test_working_root_and_allowed_executable_must_be_canonical_real_paths (test_shell_adapter.ShellEffectAdapterUnitTests.test_working_root_and_allowed_executable_must_be_canonical_real_paths) ... ok
+test_absence_of_matching_rule_or_default_denies (test_standing_policy.StandingPolicyTests.test_absence_of_matching_rule_or_default_denies) ... ok
+test_capability_condition_uses_manifest_security_metadata (test_standing_policy.StandingPolicyTests.test_capability_condition_uses_manifest_security_metadata) ... ok
+test_corrupted_durable_snapshot_fails_closed (test_standing_policy.StandingPolicyTests.test_corrupted_durable_snapshot_fails_closed) ... ok
+test_equal_specificity_deny_precedence_is_deterministic (test_standing_policy.StandingPolicyTests.test_equal_specificity_deny_precedence_is_deterministic) ... ok
+test_generic_evaluation_without_p002_context_denies (test_standing_policy.StandingPolicyTests.test_generic_evaluation_without_p002_context_denies) ... ok
+test_more_specific_rule_wins_over_broad_rule (test_standing_policy.StandingPolicyTests.test_more_specific_rule_wins_over_broad_rule) ... ok
+test_request_argument_condition_is_exact_and_deterministic (test_standing_policy.StandingPolicyTests.test_request_argument_condition_is_exact_and_deterministic) ... ok
+test_resource_metadata_condition_matches_validated_type (test_standing_policy.StandingPolicyTests.test_resource_metadata_condition_matches_validated_type) ... ok
+test_semantically_identical_replacement_is_idempotent_and_sorted (test_standing_policy.StandingPolicyTests.test_semantically_identical_replacement_is_idempotent_and_sorted) ... ok
+test_skill_default_is_more_specific_than_application_default (test_standing_policy.StandingPolicyTests.test_skill_default_is_more_specific_than_application_default) ... ok
+test_database_file_is_owner_only (test_state_store.SQLiteStateStoreTests.test_database_file_is_owner_only) ... ok
+test_failed_transaction_rolls_back (test_state_store.SQLiteStateStoreTests.test_failed_transaction_rolls_back) ... ok
+test_future_schema_version_fails_closed (test_state_store.SQLiteStateStoreTests.test_future_schema_version_fails_closed) ... ok
+test_in_memory_database_is_rejected (test_state_store.SQLiteStateStoreTests.test_in_memory_database_is_rejected) ... ok
+test_migration_checksum_mismatch_fails_closed (test_state_store.SQLiteStateStoreTests.test_migration_checksum_mismatch_fails_closed) ... ok
+test_nested_transaction_fails_closed (test_state_store.SQLiteStateStoreTests.test_nested_transaction_fails_closed) ... ok
+test_new_database_uses_required_sqlite_configuration (test_state_store.SQLiteStateStoreTests.test_new_database_uses_required_sqlite_configuration) ... ok
+test_non_json_value_is_rejected_without_partial_write (test_state_store.SQLiteStateStoreTests.test_non_json_value_is_rejected_without_partial_write) ... ok
+test_system_state_survives_close_and_reopen (test_state_store.SQLiteStateStoreTests.test_system_state_survives_close_and_reopen) ... ok
+
+----------------------------------------------------------------------
+Ran 174 tests in 0.233s
+
+OK
+test_actual_pi_process_has_no_ambient_host_authority (test_a003_agent_process_sandbox.A003PiProcessSandboxIntegrationTests.test_actual_pi_process_has_no_ambient_host_authority) ... ok
+test_a003_does_not_add_phase4_surface (test_a003_model_boundary.A003ModelBoundaryStaticTests.test_a003_does_not_add_phase4_surface) ... ok
+test_effect_bridge_uses_existing_governed_components (test_a003_model_boundary.A003ModelBoundaryStaticTests.test_effect_bridge_uses_existing_governed_components) ... ok
+test_host_broker_scrubs_provider_credentials_and_exposes_no_generic_command_rpc (test_a003_model_boundary.A003ModelBoundaryStaticTests.test_host_broker_scrubs_provider_credentials_and_exposes_no_generic_command_rpc) ... ok
+test_model_provider_bridge_has_no_authority_or_effect_imports (test_a003_model_boundary.A003ModelBoundaryStaticTests.test_model_provider_bridge_has_no_authority_or_effect_imports) ... ok
+test_pi_process_is_launched_through_h001_not_host_node (test_a003_model_boundary.A003ModelBoundaryStaticTests.test_pi_process_is_launched_through_h001_not_host_node) ... ok
+test_python_entrypoints_bootstrap_repo_root_before_lac_imports (test_a003_model_boundary.A003ModelBoundaryStaticTests.test_python_entrypoints_bootstrap_repo_root_before_lac_imports) ... ok
+test_sandboxed_worker_has_only_fixed_model_and_effect_ipc (test_a003_model_boundary.A003ModelBoundaryStaticTests.test_sandboxed_worker_has_only_fixed_model_and_effect_ipc) ... ok
+test_baseline_ls_empty_argv_lists_workspace (test_a004_controller_observability.A004ControllerObservabilityTests.test_baseline_ls_empty_argv_lists_workspace) ... ok
+test_exact_tools_dispatch_through_existing_bridge_and_receipts (test_a004_controller_observability.A004ControllerObservabilityTests.test_exact_tools_dispatch_through_existing_bridge_and_receipts) ... ok
+test_symlink_escape_fails_without_reading_host_fixture_and_records_failed_receipt (test_a004_controller_observability.A004ControllerObservabilityTests.test_symlink_escape_fails_without_reading_host_fixture_and_records_failed_receipt) ... ok
+test_new_surface_is_thin_and_has_no_phase4_capabilities (test_a004_source_contract.A004SourceContractTests.test_new_surface_is_thin_and_has_no_phase4_capabilities) ... ok
+test_shell_model_contract_excludes_argv0_and_pins_baseline_ls_shape (test_a004_source_contract.A004SourceContractTests.test_shell_model_contract_excludes_argv0_and_pins_baseline_ls_shape) ... ok
+test_worker_does_not_emit_reasoning_in_turn_result (test_a004_source_contract.A004SourceContractTests.test_worker_does_not_emit_reasoning_in_turn_result) ... ok
+test_exact_approval_admin_wraps_existing_binding_and_is_immutable (test_admin_service.AdminServiceIntegrationTests.test_exact_approval_admin_wraps_existing_binding_and_is_immutable) ... ok
+test_pending_resolution_never_reopens_p002_closed_effect_even_after_registry_and_policy_change (test_admin_service.AdminServiceIntegrationTests.test_pending_resolution_never_reopens_p002_closed_effect_even_after_registry_and_policy_change) ... ok
+test_policy_replace_and_revoke_are_revisioned_wrappers_over_p003 (test_admin_service.AdminServiceIntegrationTests.test_policy_replace_and_revoke_are_revisioned_wrappers_over_p003) ... ok
+test_wrong_uid_is_rejected_before_mutation_and_registration_grants_zero_authority (test_admin_service.AdminServiceIntegrationTests.test_wrong_uid_is_rejected_before_mutation_and_registration_grants_zero_authority) ... ok
+test_insecure_runtime_directory_fails_closed (test_admin_transport.AdminTransportIntegrationTests.test_insecure_runtime_directory_fails_closed) ... ok
+test_owner_socket_is_0600_and_authorized_peer_can_call_api (test_admin_transport.AdminTransportIntegrationTests.test_owner_socket_is_0600_and_authorized_peer_can_call_api) ... ok
+test_wrong_peer_uid_is_closed_before_dangerous_request_can_mutate (test_admin_transport.AdminTransportIntegrationTests.test_wrong_peer_uid_is_closed_before_dangerous_request_can_mutate) ... ok
+test_lease_expiry_after_lease_transition_cannot_reach_adapter_or_revive_on_retry (test_authority_freshness.AuthorityFreshnessTests.test_lease_expiry_after_lease_transition_cannot_reach_adapter_or_revive_on_retry) ... ok
+test_leased_recovery_rechecks_fresh_time_before_new_invocation (test_authority_freshness.AuthorityFreshnessTests.test_leased_recovery_rechecks_fresh_time_before_new_invocation) ... ok
+test_nonexpired_dispatch_succeeds_and_terminal_timestamp_is_fresh (test_authority_freshness.AuthorityFreshnessTests.test_nonexpired_dispatch_succeeds_and_terminal_timestamp_is_fresh) ... ok
+test_request_expiry_after_lease_transition_cannot_reach_adapter (test_authority_freshness.AuthorityFreshnessTests.test_request_expiry_after_lease_transition_cannot_reach_adapter) ... ok
+test_revocation_after_authority_commit_still_blocks_final_invocation (test_authority_freshness.AuthorityFreshnessTests.test_revocation_after_authority_commit_still_blocks_final_invocation) ... ok
+test_audit_hash_tamper_fails_closed (test_capability_registry.CapabilityRegistryIntegrationTests.test_audit_hash_tamper_fails_closed) ... ok
+test_display_only_change_is_revisioned_but_not_security_change (test_capability_registry.CapabilityRegistryIntegrationTests.test_display_only_change_is_revisioned_but_not_security_change) ... ok
+test_identical_registration_is_idempotent (test_capability_registry.CapabilityRegistryIntegrationTests.test_identical_registration_is_idempotent) ... ok
+test_list_latest_returns_stable_identity_pairs (test_capability_registry.CapabilityRegistryIntegrationTests.test_list_latest_returns_stable_identity_pairs) ... ok
+test_manifest_hash_tamper_fails_closed (test_capability_registry.CapabilityRegistryIntegrationTests.test_manifest_hash_tamper_fails_closed) ... ok
+test_noncanonical_persisted_revision_fails_closed (test_capability_registry.CapabilityRegistryIntegrationTests.test_noncanonical_persisted_revision_fails_closed) ... ok
+test_registration_survives_controller_restart (test_capability_registry.CapabilityRegistryIntegrationTests.test_registration_survives_controller_restart) ... ok
+test_security_change_is_append_only_distinct_revision (test_capability_registry.CapabilityRegistryIntegrationTests.test_security_change_is_append_only_distinct_revision) ... ok
+test_deny_and_missing_approval_ordering_remain_authoritative (test_emergency_pause_dispatch.EmergencyPauseDispatchTests.test_deny_and_missing_approval_ordering_remain_authoritative) ... ok
+test_missing_and_malformed_pause_authority_fail_closed (test_emergency_pause_dispatch.EmergencyPauseDispatchTests.test_missing_and_malformed_pause_authority_fail_closed) ... ok
+test_pause_committed_after_lease_commit_blocks_final_invocation (test_emergency_pause_dispatch.EmergencyPauseDispatchTests.test_pause_committed_after_lease_commit_blocks_final_invocation) ... ok
+test_pause_survives_restart_and_preserves_read_only_inspection_state (test_emergency_pause_dispatch.EmergencyPauseDispatchTests.test_pause_survives_restart_and_preserves_read_only_inspection_state) ... ok
+test_paused_blocks_allow_before_lease_and_adapter_invocation (test_emergency_pause_dispatch.EmergencyPauseDispatchTests.test_paused_blocks_allow_before_lease_and_adapter_invocation) ... ok
+test_paused_blocks_qualifying_approval_without_consuming_it (test_emergency_pause_dispatch.EmergencyPauseDispatchTests.test_paused_blocks_qualifying_approval_without_consuming_it) ... ok
+test_resume_never_executes_and_expired_request_remains_blocked (test_emergency_pause_dispatch.EmergencyPauseDispatchTests.test_resume_never_executes_and_expired_request_remains_blocked) ... ok
+test_allowed_create_is_exactly_once_at_dispatch_boundary (test_filesystem_dispatch.FilesystemDispatchIntegrationTests.test_allowed_create_is_exactly_once_at_dispatch_boundary) ... ok
+test_allowed_read_returns_content_and_durable_receipt (test_filesystem_dispatch.FilesystemDispatchIntegrationTests.test_allowed_read_returns_content_and_durable_receipt) ... ok
+test_delete_policy_deny_never_mutates_host_file (test_filesystem_dispatch.FilesystemDispatchIntegrationTests.test_delete_policy_deny_never_mutates_host_file) ... ok
+test_replace_requires_exact_approval_before_mutation (test_filesystem_dispatch.FilesystemDispatchIntegrationTests.test_replace_requires_exact_approval_before_mutation) ... ok
+test_freetoken_adapter_has_no_authority_module_imports (test_freetoken_provider.FreeTokenProviderTests.test_freetoken_adapter_has_no_authority_module_imports) ... ok
+test_generate_normalizes_response_and_usage (test_freetoken_provider.FreeTokenProviderTests.test_generate_normalizes_response_and_usage) ... ok
+test_loopback_only_and_no_url_credentials (test_freetoken_provider.FreeTokenProviderTests.test_loopback_only_and_no_url_credentials) ... ok
+test_malformed_response_fails_closed (test_freetoken_provider.FreeTokenProviderTests.test_malformed_response_fails_closed) ... ok
+test_model_request_has_no_authority_or_credential_fields (test_freetoken_provider.FreeTokenProviderTests.test_model_request_has_no_authority_or_credential_fields) ... ok
+test_models_endpoint_is_normalized (test_freetoken_provider.FreeTokenProviderTests.test_models_endpoint_is_normalized) ... ok
+test_precancel_fails_without_contacting_runtime (test_freetoken_provider.FreeTokenProviderTests.test_precancel_fails_without_contacting_runtime) ... ok
+test_request_translation_is_deterministic_and_propagates_supported_settings (test_freetoken_provider.FreeTokenProviderTests.test_request_translation_is_deterministic_and_propagates_supported_settings) ... ok
+test_stream_cancellation_closes_on_next_chunk (test_freetoken_provider.FreeTokenProviderTests.test_stream_cancellation_closes_on_next_chunk) ... ok
+test_stream_normalizes_reasoning_text_finish_usage_and_done (test_freetoken_provider.FreeTokenProviderTests.test_stream_normalizes_reasoning_text_finish_usage_and_done) ... ok
+test_timeout_is_bounded_and_fails_closed (test_freetoken_provider.FreeTokenProviderTests.test_timeout_is_bounded_and_fails_closed) ... ok
+test_unavailable_runtime_fails_closed (test_freetoken_provider.FreeTokenProviderTests.test_unavailable_runtime_fails_closed) ... ok
+test_unsupported_seed_and_structured_output_fail_closed (test_freetoken_provider.FreeTokenProviderTests.test_unsupported_seed_and_structured_output_fail_closed) ... ok
+test_all_send_security_fields_are_canonically_bound (test_gmail_dispatch.GmailDispatchIntegrationTests.test_all_send_security_fields_are_canonically_bound) ... ok
+test_archive_requires_approval_and_delete_is_denied (test_gmail_dispatch.GmailDispatchIntegrationTests.test_archive_requires_approval_and_delete_is_denied) ... ok
+test_credential_canary_never_enters_request_receipt_or_audit (test_gmail_dispatch.GmailDispatchIntegrationTests.test_credential_canary_never_enters_request_receipt_or_audit) ... ok
+test_exact_approval_is_invalidated_by_each_security_relevant_send_mutation (test_gmail_dispatch.GmailDispatchIntegrationTests.test_exact_approval_is_invalidated_by_each_security_relevant_send_mutation) ... ok
+test_search_read_and_draft_succeed_through_typed_allow_path (test_gmail_dispatch.GmailDispatchIntegrationTests.test_search_read_and_draft_succeed_through_typed_allow_path) ... ok
+test_send_after_exact_approval_executes_once_and_has_durable_receipt (test_gmail_dispatch.GmailDispatchIntegrationTests.test_send_after_exact_approval_executes_once_and_has_durable_receipt) ... ok
+test_send_without_exact_approval_cannot_reach_external_effect (test_gmail_dispatch.GmailDispatchIntegrationTests.test_send_without_exact_approval_cannot_reach_external_effect) ... ok
+test_unknown_action_and_wrong_account_fail_closed_before_credentials (test_gmail_dispatch.GmailDispatchIntegrationTests.test_unknown_action_and_wrong_account_fail_closed_before_credentials) ... ok
+test_installed_qualification_evidence_selects_live_backend (test_h001_sandbox_evidence.H001SandboxEvidenceIntegrationTests.test_installed_qualification_evidence_selects_live_backend) ... ok
+test_approvals_list_show_approve_and_reject_wrap_exact_approval_repository (test_lacctl_admin_api.LacctlAdminApiIntegrationTests.test_approvals_list_show_approve_and_reject_wrap_exact_approval_repository) ... ok
+test_pending_list_show_resolve_and_dismiss_are_administration_only (test_lacctl_admin_api.LacctlAdminApiIntegrationTests.test_pending_list_show_resolve_and_dismiss_are_administration_only) ... ok
+test_permissions_set_list_show_and_revoke_round_trip (test_lacctl_admin_api.LacctlAdminApiIntegrationTests.test_permissions_set_list_show_and_revoke_round_trip) ... ok
+test_skills_list_and_show_use_p004_only (test_lacctl_admin_api.LacctlAdminApiIntegrationTests.test_skills_list_and_show_use_p004_only) ... ok
+test_existing_approval_binding_remains_controller_side (test_pi_dispatch.PiDispatcherIntegrationTests.test_existing_approval_binding_remains_controller_side) ... ok
+test_existing_idempotency_and_emergency_pause_remain_authoritative (test_pi_dispatch.PiDispatcherIntegrationTests.test_existing_idempotency_and_emergency_pause_remain_authoritative) ... ok
+test_filesystem_and_shell_enter_existing_dispatcher_and_receipt_path (test_pi_dispatch.PiDispatcherIntegrationTests.test_filesystem_and_shell_enter_existing_dispatcher_and_receipt_path) ... ok
+test_model_cannot_name_an_ungoverned_tool_or_smuggle_authority (test_pi_dispatch.PiDispatcherIntegrationTests.test_model_cannot_name_an_ungoverned_tool_or_smuggle_authority) ... ok
+test_adapter_failure_has_durable_failure_receipt_and_cannot_retry_effect (test_receipts_reconciliation.C010ReceiptReconciliationTests.test_adapter_failure_has_durable_failure_receipt_and_cannot_retry_effect) ... ok
+test_approval_dispatch_receipt_binds_exact_consumed_approval (test_receipts_reconciliation.C010ReceiptReconciliationTests.test_approval_dispatch_receipt_binds_exact_consumed_approval) ... ok
+test_corrupted_reconciliation_state_fails_closed (test_receipts_reconciliation.C010ReceiptReconciliationTests.test_corrupted_reconciliation_state_fails_closed) ... ok
+test_crash_after_lease_is_distinguishable_has_no_false_success_and_recovers (test_receipts_reconciliation.C010ReceiptReconciliationTests.test_crash_after_lease_is_distinguishable_has_no_false_success_and_recovers) ... ok
+test_crash_after_lease_with_consumed_approval_recovers_only_reserved_exact_approval (test_receipts_reconciliation.C010ReceiptReconciliationTests.test_crash_after_lease_with_consumed_approval_recovers_only_reserved_exact_approval) ... ok
+test_crash_during_invocation_leaves_prepared_and_reconciles_without_second_invoke (test_receipts_reconciliation.C010ReceiptReconciliationTests.test_crash_during_invocation_leaves_prepared_and_reconciles_without_second_invoke) ... ok
+test_emergency_pause_after_authority_commit_leaves_leased_not_receipt (test_receipts_reconciliation.C010ReceiptReconciliationTests.test_emergency_pause_after_authority_commit_leaves_leased_not_receipt) ... ok
+test_success_receipt_audit_restart_and_terminal_duplicate_are_exactly_once (test_receipts_reconciliation.C010ReceiptReconciliationTests.test_success_receipt_audit_restart_and_terminal_duplicate_are_exactly_once) ... ok
+test_allowed_exact_argv_and_cwd_execute_through_dispatcher_with_receipt (test_shell_dispatch.ShellDispatchIntegrationTests.test_allowed_exact_argv_and_cwd_execute_through_dispatcher_with_receipt) ... ok
+test_security_relevant_shell_material_participates_in_canonical_request_hash (test_shell_dispatch.ShellDispatchIntegrationTests.test_security_relevant_shell_material_participates_in_canonical_request_hash) ... ok
+test_workspace_mutation_requires_exact_approval_and_duplicate_does_not_repeat (test_shell_dispatch.ShellDispatchIntegrationTests.test_workspace_mutation_requires_exact_approval_and_duplicate_does_not_repeat) ... ok
+test_adapter_implements_protocol_and_exact_support_contract (test_simulated_adapter.SimulatedAdapterTests.test_adapter_implements_protocol_and_exact_support_contract) ... ok
+test_allow_reaches_concrete_adapter_only_after_policy_and_lease (test_simulated_adapter.SimulatedAdapterTests.test_allow_reaches_concrete_adapter_only_after_policy_and_lease) ... ok
+test_c008_introduces_no_schema_migration (test_simulated_adapter.SimulatedAdapterTests.test_c008_introduces_no_schema_migration) ... ok
+test_deny_never_invokes_concrete_adapter (test_simulated_adapter.SimulatedAdapterTests.test_deny_never_invokes_concrete_adapter) ... ok
+test_direct_invoke_is_stateless_deterministic_and_lease_bound (test_simulated_adapter.SimulatedAdapterTests.test_direct_invoke_is_stateless_deterministic_and_lease_bound) ... ok
+test_exact_one_time_approval_is_consumed_and_leased_before_invoke (test_simulated_adapter.SimulatedAdapterTests.test_exact_one_time_approval_is_consumed_and_leased_before_invoke) ... ok
+test_invalid_authority_and_unsupported_shape_never_invoke (test_simulated_adapter.SimulatedAdapterTests.test_invalid_authority_and_unsupported_shape_never_invoke) ... ok
+test_require_approval_without_exact_approval_never_invokes (test_simulated_adapter.SimulatedAdapterTests.test_require_approval_without_exact_approval_never_invokes) ... ok
+
+----------------------------------------------------------------------
+Ran 94 tests in 4.987s
+
+OK
+test_registration_grants_zero_authority_or_effect_state (test_p001_capability_registry.P001AcceptanceTests.test_registration_grants_zero_authority_or_effect_state) ... ok
+test_rejected_secret_value_is_never_persisted (test_p001_capability_registry.P001AcceptanceTests.test_rejected_secret_value_is_never_persisted) ... ok
+test_runtime_adapter_namespace_has_no_registry_mutation_surface (test_p001_capability_registry.P001AcceptanceTests.test_runtime_adapter_namespace_has_no_registry_mutation_surface) ... ok
+test_equivalent_repeats_aggregate_deterministically (test_p002_unknown_quarantine.P002UnknownQuarantineTests.test_equivalent_repeats_aggregate_deterministically) ... ok
+test_known_request_validates_without_granting_authority (test_p002_unknown_quarantine.P002UnknownQuarantineTests.test_known_request_validates_without_granting_authority) ... ok
+test_pending_is_not_authority_or_resumable_state (test_p002_unknown_quarantine.P002UnknownQuarantineTests.test_pending_is_not_authority_or_resumable_state) ... ok
+test_pending_metadata_contains_no_raw_credential_value (test_p002_unknown_quarantine.P002UnknownQuarantineTests.test_pending_metadata_contains_no_raw_credential_value) ... ok
+test_queue_has_hard_distinct_record_bound (test_p002_unknown_quarantine.P002UnknownQuarantineTests.test_queue_has_hard_distinct_record_bound) ... ok
+test_registry_change_never_revives_closed_effect_even_via_base_dispatch (test_p002_unknown_quarantine.P002UnknownQuarantineTests.test_registry_change_never_revives_closed_effect_even_via_base_dispatch) ... ok
+test_runtime_namespaces_expose_no_registry_or_pending_mutation (test_p002_unknown_quarantine.P002UnknownQuarantineTests.test_runtime_namespaces_expose_no_registry_or_pending_mutation) ... ok
+test_unknown_action_is_terminal_before_policy_lease_or_adapter (test_p002_unknown_quarantine.P002UnknownQuarantineTests.test_unknown_action_is_terminal_before_policy_lease_or_adapter) ... ok
+test_unknown_resource_type_and_scope_are_terminal (test_p002_unknown_quarantine.P002UnknownQuarantineTests.test_unknown_resource_type_and_scope_are_terminal) ... ok
+test_unsupported_revision_version_and_material_shape_fail_closed (test_p002_unknown_quarantine.P002UnknownQuarantineTests.test_unsupported_revision_version_and_material_shape_fail_closed) ... ok
+test_allow_path_executes_only_after_p002_validation_and_standing_policy (test_p003_standing_policy.P003StandingPolicyAcceptanceTests.test_allow_path_executes_only_after_p002_validation_and_standing_policy) ... ok
+test_conditional_ask_never_invokes_adapter_without_exact_approval (test_p003_standing_policy.P003StandingPolicyAcceptanceTests.test_conditional_ask_never_invokes_adapter_without_exact_approval) ... ok
+test_direct_dispatch_cannot_bypass_validated_capability_context (test_p003_standing_policy.P003StandingPolicyAcceptanceTests.test_direct_dispatch_cannot_bypass_validated_capability_context) ... ok
+test_p002_material_shape_denial_occurs_before_standing_policy (test_p003_standing_policy.P003StandingPolicyAcceptanceTests.test_p002_material_shape_denial_occurs_before_standing_policy) ... ok
+test_policy_and_registry_changes_never_revive_p002_closed_effect (test_p003_standing_policy.P003StandingPolicyAcceptanceTests.test_policy_and_registry_changes_never_revive_p002_closed_effect) ... ok
+test_runtime_surface_exposes_no_standing_policy_mutation (test_p003_standing_policy.P003StandingPolicyAcceptanceTests.test_runtime_surface_exposes_no_standing_policy_mutation) ... ok
+test_runtime_namespaces_expose_no_admin_mutation_surface (test_p004_admin_boundary.P004AdminBoundaryAcceptanceTests.test_runtime_namespaces_expose_no_admin_mutation_surface) ... ok
+test_synthetic_owner_admin_socket_is_not_visible_inside_selected_governed_sandbox (test_p004_admin_boundary.P004AdminBoundaryAcceptanceTests.test_synthetic_owner_admin_socket_is_not_visible_inside_selected_governed_sandbox) ... ok
+test_ambiguous_or_unsupported_cli_arguments_fail_before_endpoint (test_p005_lacctl_boundary.P005LacctlBoundaryAcceptanceTests.test_ambiguous_or_unsupported_cli_arguments_fail_before_endpoint) ... ok
+test_client_source_has_no_direct_canonical_state_or_admin_service_import (test_p005_lacctl_boundary.P005LacctlBoundaryAcceptanceTests.test_client_source_has_no_direct_canonical_state_or_admin_service_import) ... ok
+test_malformed_or_unsupported_response_fails_closed (test_p005_lacctl_boundary.P005LacctlBoundaryAcceptanceTests.test_malformed_or_unsupported_response_fails_closed) ... ok
+test_p004_rejection_is_nonzero_and_machine_readable (test_p005_lacctl_boundary.P005LacctlBoundaryAcceptanceTests.test_p004_rejection_is_nonzero_and_machine_readable) ... ok
+test_unavailable_admin_endpoint_fails_closed (test_p005_lacctl_boundary.P005LacctlBoundaryAcceptanceTests.test_unavailable_admin_endpoint_fails_closed) ... ok
+test_closed_unknown_effect_never_revives_after_admin_changes_and_restart (test_p006_permission_management_e2e.P006PermissionManagementE2ETests.test_closed_unknown_effect_never_revives_after_admin_changes_and_restart) ... ok
+test_exact_approval_is_admin_only_durable_rechecked_and_single_use (test_p006_permission_management_e2e.P006PermissionManagementE2ETests.test_exact_approval_is_admin_only_durable_rechecked_and_single_use) ... ok
+test_governed_runtime_and_sandbox_cannot_reach_admin_surface (test_p006_permission_management_e2e.P006PermissionManagementE2ETests.test_governed_runtime_and_sandbox_cannot_reach_admin_surface) ... ok
+test_registration_zero_authority_and_deterministic_policy_precedence (test_p006_permission_management_e2e.P006PermissionManagementE2ETests.test_registration_zero_authority_and_deterministic_policy_precedence) ... ok
+test_rejected_unavailable_and_malformed_admin_paths_do_not_mutate_state (test_p006_permission_management_e2e.P006PermissionManagementE2ETests.test_rejected_unavailable_and_malformed_admin_paths_do_not_mutate_state) ... ok
+test_current_accepted_a003_a004_live_evidence_is_valid (test_p006_regression_gate.P006RegressionGateDeterminismTests.test_current_accepted_a003_a004_live_evidence_is_valid) ... ok
+test_direct_a003_a004_gates_preserve_live_as_default (test_p006_regression_gate.P006RegressionGateDeterminismTests.test_direct_a003_a004_gates_preserve_live_as_default) ... ok
+test_p006_selects_deterministic_prior_live_evidence_regression_mode (test_p006_regression_gate.P006RegressionGateDeterminismTests.test_p006_selects_deterministic_prior_live_evidence_regression_mode) ... ok
+test_revoked_agent_cannot_act (test_phase1_authorization.Phase1AuthorizationAcceptanceTests.test_revoked_agent_cannot_act) ... ok
+test_unknown_agent_preserves_policy_deny_behavior (test_phase1_authorization.Phase1AuthorizationAcceptanceTests.test_unknown_agent_preserves_policy_deny_behavior) ... ok
+
+----------------------------------------------------------------------
+Ran 36 tests in 1.070s
+
+OK
+==> Phase 2 sandbox and bypass regression
+test_bubblewrap_command_encodes_hard_boundary_and_no_host_env_inheritance (test_sandbox_backend.SandboxBackendUnitTests.test_bubblewrap_command_encodes_hard_boundary_and_no_host_env_inheritance) ... ok
+test_evidence_selection_requires_all_controls_and_known_backend (test_sandbox_backend.SandboxBackendUnitTests.test_evidence_selection_requires_all_controls_and_known_backend) ... ok
+test_missing_backend_binary_fails_closed_before_execution (test_sandbox_backend.SandboxBackendUnitTests.test_missing_backend_binary_fails_closed_before_execution) ... ok
+test_missing_or_symlinked_mount_target_fails_closed_before_backend_execution (test_sandbox_backend.SandboxBackendUnitTests.test_missing_or_symlinked_mount_target_fails_closed_before_backend_execution) ... ok
+test_podman_command_is_rootless_read_only_networkless_and_capability_stripped (test_sandbox_backend.SandboxBackendUnitTests.test_podman_command_is_rootless_read_only_networkless_and_capability_stripped) ... ok
+test_relative_executable_and_missing_host_inputs_fail_closed (test_sandbox_backend.SandboxBackendUnitTests.test_relative_executable_and_missing_host_inputs_fail_closed) ... ok
+test_unknown_network_and_unsafe_mount_shapes_fail_closed (test_sandbox_backend.SandboxBackendUnitTests.test_unknown_network_and_unsafe_mount_shapes_fail_closed) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.003s
+
+OK
+test_minimal_runtime_root_precreates_read_only_bind_targets (test_h001_qualification_builder.H001QualificationBuilderTests.test_minimal_runtime_root_precreates_read_only_bind_targets) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.021s
+
+OK
+test_installed_qualification_evidence_selects_live_backend (test_h001_sandbox_evidence.H001SandboxEvidenceIntegrationTests.test_installed_qualification_evidence_selects_live_backend) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+OK
+test_adapter_implements_protocol_and_recognizes_only_typed_contract (test_filesystem_adapter.FilesystemAdapterUnitTests.test_adapter_implements_protocol_and_recognizes_only_typed_contract) ... ok
+test_delete_has_no_direct_mutation_implementation (test_filesystem_adapter.FilesystemAdapterUnitTests.test_delete_has_no_direct_mutation_implementation) ... ok
+test_working_root_must_be_canonical_existing_real_directory (test_filesystem_adapter.FilesystemAdapterUnitTests.test_working_root_must_be_canonical_existing_real_directory) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.002s
+
+OK
+test_allowed_create_is_exactly_once_at_dispatch_boundary (test_filesystem_dispatch.FilesystemDispatchIntegrationTests.test_allowed_create_is_exactly_once_at_dispatch_boundary) ... ok
+test_allowed_read_returns_content_and_durable_receipt (test_filesystem_dispatch.FilesystemDispatchIntegrationTests.test_allowed_read_returns_content_and_durable_receipt) ... ok
+test_delete_policy_deny_never_mutates_host_file (test_filesystem_dispatch.FilesystemDispatchIntegrationTests.test_delete_policy_deny_never_mutates_host_file) ... ok
+test_replace_requires_exact_approval_before_mutation (test_filesystem_dispatch.FilesystemDispatchIntegrationTests.test_replace_requires_exact_approval_before_mutation) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.063s
+
+OK
+test_absolute_and_parent_traversal_are_rejected_before_host_effect (test_h002_filesystem_boundary.H002FilesystemBoundaryAdversarialTests.test_absolute_and_parent_traversal_are_rejected_before_host_effect) ... ok
+test_sandbox_still_blocks_symlink_escape_if_host_precheck_is_bypassed (test_h002_filesystem_boundary.H002FilesystemBoundaryAdversarialTests.test_sandbox_still_blocks_symlink_escape_if_host_precheck_is_bypassed) ... ok
+test_symlink_directory_write_escape_cannot_create_outside_file (test_h002_filesystem_boundary.H002FilesystemBoundaryAdversarialTests.test_symlink_directory_write_escape_cannot_create_outside_file) ... ok
+test_symlink_read_escape_fails_as_actual_sandbox_effect (test_h002_filesystem_boundary.H002FilesystemBoundaryAdversarialTests.test_symlink_read_escape_fails_as_actual_sandbox_effect) ... ok
+test_workspace_read_mount_is_not_writable (test_h002_filesystem_boundary.H002FilesystemBoundaryAdversarialTests.test_workspace_read_mount_is_not_writable) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.047s
+
+OK
+test_adapter_implements_protocol_and_recognizes_only_exact_typed_contract (test_shell_adapter.ShellEffectAdapterUnitTests.test_adapter_implements_protocol_and_recognizes_only_exact_typed_contract) ... ok
+test_argv_is_an_array_not_a_shell_string_and_malformed_vectors_fail_closed (test_shell_adapter.ShellEffectAdapterUnitTests.test_argv_is_an_array_not_a_shell_string_and_malformed_vectors_fail_closed) ... ok
+test_cwd_must_be_canonical_existing_workspace_directory (test_shell_adapter.ShellEffectAdapterUnitTests.test_cwd_must_be_canonical_existing_workspace_directory) ... ok
+test_environment_is_explicit_allowlisted_and_credential_shaped_names_fail_closed (test_shell_adapter.ShellEffectAdapterUnitTests.test_environment_is_explicit_allowlisted_and_credential_shaped_names_fail_closed) ... ok
+test_executable_is_exact_allowlisted_absolute_binary_and_interpreters_fail_closed (test_shell_adapter.ShellEffectAdapterUnitTests.test_executable_is_exact_allowlisted_absolute_binary_and_interpreters_fail_closed) ... ok
+test_working_root_and_allowed_executable_must_be_canonical_real_paths (test_shell_adapter.ShellEffectAdapterUnitTests.test_working_root_and_allowed_executable_must_be_canonical_real_paths) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.004s
+
+OK
+test_allowed_exact_argv_and_cwd_execute_through_dispatcher_with_receipt (test_shell_dispatch.ShellDispatchIntegrationTests.test_allowed_exact_argv_and_cwd_execute_through_dispatcher_with_receipt) ... ok
+test_security_relevant_shell_material_participates_in_canonical_request_hash (test_shell_dispatch.ShellDispatchIntegrationTests.test_security_relevant_shell_material_participates_in_canonical_request_hash) ... ok
+test_workspace_mutation_requires_exact_approval_and_duplicate_does_not_repeat (test_shell_dispatch.ShellDispatchIntegrationTests.test_workspace_mutation_requires_exact_approval_and_duplicate_does_not_repeat) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.030s
+
+OK
+test_arbitrary_host_cwd_and_symlink_cwd_cannot_write_outside_workspace (test_h003_shell_boundary.H003ShellBoundaryAdversarialTests.test_arbitrary_host_cwd_and_symlink_cwd_cannot_write_outside_workspace) ... ok
+test_explicit_allowed_environment_is_constructed_not_inherited (test_h003_shell_boundary.H003ShellBoundaryAdversarialTests.test_explicit_allowed_environment_is_constructed_not_inherited) ... ok
+test_inherited_service_secret_is_absent_from_actual_process_environment (test_h003_shell_boundary.H003ShellBoundaryAdversarialTests.test_inherited_service_secret_is_absent_from_actual_process_environment) ... ok
+test_selected_sandbox_network_none_blocks_actual_host_loopback_connection (test_h003_shell_boundary.H003ShellBoundaryAdversarialTests.test_selected_sandbox_network_none_blocks_actual_host_loopback_connection) ... ok
+test_shell_expansion_and_command_separator_shapes_remain_literal_argv (test_h003_shell_boundary.H003ShellBoundaryAdversarialTests.test_shell_expansion_and_command_separator_shapes_remain_literal_argv) ... ok
+test_sudo_shell_and_unsupported_executable_shapes_fail_before_host_effect (test_h003_shell_boundary.H003ShellBoundaryAdversarialTests.test_sudo_shell_and_unsupported_executable_shapes_fail_before_host_effect) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 1.048s
+
+OK
+test_allowed_bounded_workspace_effects_remain_functional (test_h004_phase2_bypass.H004Phase2BypassTests.test_allowed_bounded_workspace_effects_remain_functional) ... ok
+test_child_process_cannot_outlive_sandbox (test_h004_phase2_bypass.H004Phase2BypassTests.test_child_process_cannot_outlive_sandbox) ... ok
+test_command_launcher_cannot_spawn_nested_shell (test_h004_phase2_bypass.H004Phase2BypassTests.test_command_launcher_cannot_spawn_nested_shell) ... ok
+test_denied_file_deletion_cannot_delete_actual_file (test_h004_phase2_bypass.H004Phase2BypassTests.test_denied_file_deletion_cannot_delete_actual_file) ... ok
+test_inherited_secret_environment_is_absent_from_actual_process (test_h004_phase2_bypass.H004Phase2BypassTests.test_inherited_secret_environment_is_absent_from_actual_process) ... ok
+test_interpreter_escape_cannot_create_workspace_effect (test_h004_phase2_bypass.H004Phase2BypassTests.test_interpreter_escape_cannot_create_workspace_effect) ... ok
+test_parent_traversal_cannot_create_outside_workspace (test_h004_phase2_bypass.H004Phase2BypassTests.test_parent_traversal_cannot_create_outside_workspace) ... ok
+test_runtime_configuration_cannot_admit_gnu_sort_external_program_launcher (test_h004_phase2_bypass.H004Phase2BypassTests.test_runtime_configuration_cannot_admit_gnu_sort_external_program_launcher) ... ok
+test_shell_cannot_read_ssh_or_outside_dotenv (test_h004_phase2_bypass.H004Phase2BypassTests.test_shell_cannot_read_ssh_or_outside_dotenv) ... ok
+test_shell_cannot_write_outside_workspace (test_h004_phase2_bypass.H004Phase2BypassTests.test_shell_cannot_write_outside_workspace) ... ok
+test_subprocess_network_access_is_actually_unavailable (test_h004_phase2_bypass.H004Phase2BypassTests.test_subprocess_network_access_is_actually_unavailable) ... ok
+test_symlink_escape_cannot_read_or_write_outside_workspace (test_h004_phase2_bypass.H004Phase2BypassTests.test_symlink_escape_cannot_read_or_write_outside_workspace) ... ok
+test_unauthorized_binary_cannot_execute (test_h004_phase2_bypass.H004Phase2BypassTests.test_unauthorized_binary_cannot_execute) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 2.617s
+
+OK
+LAC_A001_TEST_RESULT=PASS
+LAC_A003_REGRESSION_MODE=accepted-evidence
+LAC_A003_MODEL_ID=lac-a003-gpt-oss-20b
+LAC_A003_FREETOKEN_URL=http://127.0.0.1:19203
+LAC_A003_PI_PROCESS_SANDBOX=PASS
+LAC_A003_TEST=PASS
+LAC_A004_REGRESSION_MODE=accepted-evidence
+LAC_A004_TEST=PASS
+LAC_B001_TEST=PASS
+LAC_P001_TEST=PASS
+LAC_P002_TEST=PASS
+LAC_P003_TEST=PASS
+LAC_P004_TEST=PASS
+LAC_P005_TEST=PASS
+LAC_P006_REGRESSION_MODE=DETERMINISTIC_ACCEPTED_LIVE_EVIDENCE
+LAC_P006_TEST=PASS
+P006_STRICT_DETERMINISTIC_GATE_RC=0
