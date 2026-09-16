@@ -1,39 +1,50 @@
-# ACTIVE TASK — LAC-P004
+# ACTIVE TASK — LAC-P005
 
 ## Task ID
 
-`LAC-P004`
+`LAC-P005`
 
 ## Objective
 
-Implement the isolated local administrator API and Linux owner-identity boundary for capability/permission administration, wrapping the already-internal P001–P003 mutation surfaces without exposing them to governed runtime consumers.
+Implement the first authoritative local `lacctl` administration client as a thin consumer of the accepted P004 owner-only administrator API. The CLI must not write canonical controller state directly and must not create an alternate administration authority path.
 
 ## In scope
 
-- Define a versioned local administration request/response contract for capability registration, standing-policy replacement/revocation, pending-permission inspection/administrative resolution semantics, and exact-approval administration needed by the later CLI.
-- Implement a separate owner-only Unix-domain administration socket beneath the owning user's runtime directory.
-- Enforce owner-only filesystem permissions and controller-observed Linux peer UID before any administrative operation is accepted.
-- Keep the admin endpoint unavailable inside governed agent sandboxes and logically separate from the runtime effect-submission surface.
-- Wrap existing internal P001 registry, P002 pending-permission, and P003 standing-policy mutation/read surfaces; do not duplicate canonical state.
-- Ensure every administrative mutation remains atomic, revisioned/auditable where applicable, and incapable of reviving any closed effect.
-- Add deterministic local/synthetic unit, integration, and negative-security tests plus the accepted regression gate through P003/P002/P001/B001.
+- Implement a local `lacctl` command-line client that connects only to the P004 owner-only Unix-domain administrator socket.
+- Support deterministic human-readable output plus machine-readable JSON for operations equivalent to:
+  - `lacctl skills list`
+  - `lacctl skills show <skill>`
+  - `lacctl permissions list`
+  - `lacctl permissions show ...`
+  - `lacctl permissions set ...`
+  - `lacctl permissions revoke ...`
+  - `lacctl pending list`
+  - `lacctl pending show <id>`
+  - `lacctl pending resolve <id> ...`
+  - `lacctl pending dismiss <id>`
+  - `lacctl approvals list`
+  - `lacctl approvals show <id>`
+  - `lacctl approvals approve <id>`
+  - `lacctl approvals reject <id>`
+- Use only the versioned P004 admin protocol; no SQLite/system-state direct writes and no imports of internal mutation repositories from the CLI.
+- Fail closed on malformed responses, socket/identity boundary failures, unsupported protocol versions, ambiguous command arguments, or unavailable administrator endpoint.
+- Add deterministic local/synthetic unit/integration tests and the accepted regression gate through P004/P003/P002/P001/B001.
 
 ## Out of scope
 
-- `lacctl` command-line client (`LAC-P005`).
 - Permission-management E2E/security qualification (`LAC-P006`).
-- Calendar (`LAC-B002`), generic external-consumer proof (`LAC-B003`), Chief of Staff, OpenClaw, Omarchy Agent OS, web UI/TUI, enterprise RBAC, remote administration, or multi-user policy.
-- Weakening P001 zero-authority registration, P002 terminal quarantine/non-resumability, P003 deterministic standing-policy semantics, exact approval binding, credential isolation, emergency pause, or any other LAC invariant.
+- Calendar (`LAC-B002`), generic external-consumer proof (`LAC-B003`), Chief of Staff, OpenClaw, Omarchy Agent OS, web UI/TUI, remote administration, enterprise RBAC, or multi-user policy.
+- Direct mutation of the LAC database or bypass of the P004 administrator transport.
+- Weakening any LAC invariant or P001–P004 contract.
 
 ## Required outputs
 
-- Versioned isolated administration protocol/domain.
-- Owner-only Unix-domain admin transport with deterministic peer-UID enforcement.
-- Administrative handlers wrapping canonical registry/pending/policy/approval state without runtime exposure.
-- Tests proving unauthorized/wrong-UID/runtime access cannot mutate administration state and closed effects remain closed.
+- `lacctl` local administration client consuming P004 admin API only.
+- Machine-readable JSON output mode and deterministic bounded human-readable output.
+- Tests proving the CLI has no direct canonical-state mutation path and fails closed when the P004 admin boundary rejects/unavailable/malformed conditions.
 - Applicable accepted regression evidence.
-- One owner-executable package completing P004 and activating fresh `LAC-P005` on success.
+- One owner-executable package completing P005 and activating fresh `LAC-P006` on success.
 
 ## Next task on success
 
-`LAC-P005` in a fresh implementation session.
+`LAC-P006` in a fresh implementation session.
