@@ -1,9 +1,9 @@
-# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / B002 CALENDAR GENERIC ADAPTER AGAINST PERMISSION MANAGEMENT
+# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / P006 OWNER UAT + FIRST-USE PERMISSION DISCOVERY REMEDIATION
 
-`SESSION_SEGMENT=LAC-B002`
-`MODE=IMPLEMENTATION_SEGMENT`
+`SESSION_SEGMENT=LAC-P006-UAT`
+`MODE=IMPLEMENTATION_AND_OWNER_UAT_REMEDIATION`
 
-Use the connected Web-File-Tool. Treat durable repository state and Git history as authority. This session owns **only** `LAC-B002`: the generic Calendar typed-effect adapter integrated with the completed P001-P006 permission-management plane. Do not begin B003, Chief of Staff, web/TUI, remote administration, OpenClaw, Omarchy Agent OS, or enterprise RBAC in this session.
+Use the connected Web-File-Tool. Treat durable repository state and Git history as authority. This session owns **only** the owner-UAT/remediation gate inserted after accepted P006 and before B002. Do not begin the Calendar adapter until this gate completes.
 
 ## Mandatory first reads — exact order
 
@@ -17,47 +17,71 @@ Then read:
 
 - `docs/PERMISSION_MANAGEMENT.md`;
 - `decisions/ADR-007_PERMISSION_ADMINISTRATION_AND_CAPABILITY_GOVERNANCE.md`;
-- Calendar and Phase 4 sections of `docs/TECHNICAL_DESIGN_AND_IMPLEMENTATION_SPECIFICATION_v0.1.md`;
-- `docs/CONTRACTS.md` capability/permission/effect sections;
+- permission-management sections of `docs/TECHNICAL_DESIGN_AND_IMPLEMENTATION_SPECIFICATION_v0.1.md`;
+- capability/permission/effect sections of `docs/CONTRACTS.md`;
 - `docs/P006_PERMISSION_MANAGEMENT_QUALIFICATION.md`;
+- `docs/P006_OWNER_UAT_OPERATOR_GUIDE.md`;
 - `qualification/evidence/p006_owner_execution.json` and `qualification/evidence/p006_test_output.txt`;
-- the accepted B001 Gmail adapter/tests as the generic external-service adapter pattern;
-- P001-P006 interfaces needed to route Calendar requests through capability validation, standing policy, exact approval, dispatch, credentials, receipts, and reconciliation.
+- `scripts/lac-owner-tour` and `scripts/p006_owner_permission_demo.py`;
+- P001-P006 implementation/tests needed to trace capability validation, pending records, standing-policy fallback, admin mutation, exact approval, dispatch, receipts, and non-resumption.
 
 ## Handoff facts to verify; do not assume
 
-- `PREDECESSOR_ROLE=Lead Implementation Engineer`
-- `PREDECESSOR_RESULT=OWNER_EXECUTION_PASS`
-- `PREDECESSOR_GIT_COMMIT=ba39bbf1d73434b1b2071497f4ea6aab090681c6`
-- `HANDOFF_BASE_GIT_COMMIT=2272fc81bb88f97892630eff1076676802c599cf`
+- `PREDECESSOR_RESULT=P006_OWNER_EXECUTION_PASS`
+- `P006_IMPLEMENTATION_COMMIT=ba39bbf1d73434b1b2071497f4ea6aab090681c6`
+- `P006_HANDOFF_COMMIT=abd3ebf8a7e676f4a81f51b3566dae3394247aeb`
 - `OWNER_EXECUTION_EVIDENCE=qualification/evidence/p006_owner_execution.json`
-- `BLOCKER_IDS=NONE`
 - `EXPECTED_PHASE=PHASE_4_PERMISSION_MANAGEMENT`
-- `EXPECTED_ACTIVE_TASK=LAC-B002`
-- `EXPECTED_NEXT_TASK=LAC-B003`
+- `EXPECTED_ACTIVE_TASK=LAC-P006-UAT`
+- `EXPECTED_NEXT_TASK=LAC-B002`
 
-P001 registration remains zero-authority. P002 unknown/new material remains terminal `DENY` and non-resumable. P003 standing policy remains deterministic with `DENY > REQUIRE_APPROVAL > ALLOW`; only P002-validated trusted metadata is policy-addressable. P004/P005 remain the isolated owner administration boundary/client and are not runtime authority. P006 qualification must remain passing. Its nested prior-phase regression is deterministic: accepted A003/A004 live evidence is verified while current deterministic security/interface conformance is rerun; direct A003/A004 test scripts still default to live mode. B001 Gmail remains accepted. The old unexecuted Calendar package remains superseded. Chief of Staff remains separate software.
+Confirm the sequence-amendment delta after `abd3ebf8a7e676f4a81f51b3566dae3394247aeb` is limited to this owner-UAT gate, operator tooling/docs, and handoff state.
+
+## Newly binding owner requirement
+
+The previous binding permission design guarantees pending-permission records for unknown/new capability/resource/material. The owner has now clarified an additional first-use requirement that must hold before B002:
+
+```text
+fresh request for registered/known capability
+→ capability/resource/material validates
+→ no applicable user-configured standing permission/default exists
+→ terminal DENY for this effect
+→ no lease / no adapter effect
+→ create or aggregate a bounded owner-reviewable permission-configuration item
+→ original request remains permanently closed
+→ owner configures future standing permission through P004/P005
+→ consumer issues a fresh request
+→ fresh request is evaluated against current policy
+```
+
+This is **not** `REQUIRE_APPROVAL`, not a waiting effect, and not a fourth runtime outcome. The enforcement result remains `DENY`. The administrative record exists only to make an unconfigured permission discoverable and actionable by the owner.
+
+An explicit configured `DENY`, including a matching configured default, is already an owner decision and must not be converted into recurring permission-review noise.
+
+The review item must be bounded, deterministic, deduplicated/aggregated, credential-safe, and based only on trusted registered capability/resource/request metadata. It must expose enough scope for an informed owner decision. It must not give the runtime consumer access to P004/P005 administration.
 
 ## Required lifecycle
 
-1. Perform bounded predecessor verification. Confirm P006 owner evidence is valid, the P006 implementation commit is in Git history, durable state/task/prompt are mutually consistent, focused tests/regression passed, and the live HEAD delta after the P006 implementation commit is handoff-only.
-2. Execute `LAC-B002` completely as defined by `tasks/ACTIVE_TASK.md`.
-3. Implement Calendar as generic typed effects reusable by any authorized consumer. Route permission-aware Calendar requests through the completed capability/standing-policy/exact-approval dispatcher path; do not create a Calendar-specific authority bypass.
-4. Use deterministic synthetic/local transport fixtures only. Do not use production Google credentials/accounts/calendars or external consequential effects.
-5. Bind calendar, title, start, end, timezone, attendees, location, recurrence, and conference settings into canonical mutation authority. Demonstrate that security-relevant mutation invalidates approval.
-6. Preserve credential isolation and fail closed on malformed/unknown actions, unsupported resources/accounts, credential-shaped provider output, and ambiguous mutation reconciliation. `calendar.delete` remains denied/no mutation implementation unless an existing binding contract requires otherwise.
-7. Run focused B002 tests and the applicable accepted regression gate through P006/P005/P004/P003/P002/P001/B001 and prior accepted phases. Correct only concrete in-scope defects required by existing binding contracts, then rerun affected gates.
-8. Produce one owner-executable package that completes B002 and activates fresh `LAC-B003` on success. Stop at `OWNER_EXECUTION_REQUIRED`; do not implement B003 in this conversation.
+1. Verify accepted P006 state/evidence and the sequence-amendment delta.
+2. Use the owner-tour tooling and any owner-provided terminal output to establish what the user can currently see and operate.
+3. Reproduce the known-capability/no-configured-policy behavior mechanically. Do not infer it only from docs.
+4. If the current implementation lacks the newly binding owner-review item, implement the smallest deterministic remediation consistent with existing authority invariants. Update binding docs/contracts/tests as required.
+5. Preserve: P001 registration zero authority; P002 closed-effect non-resumption; P003 deterministic precedence and explicit DENY; P004/P005 isolation; exact approval binding; pre-dispatch re-evaluation; durable truth; idempotency; fail closed; no credentials in agent context; no admin surface in governed runtime.
+6. Run focused tests and the accepted deterministic regression through P006 and prior phases.
+7. Ensure the owner walkthrough remains usable after remediation and clearly demonstrates the corrected first-use behavior.
+8. Produce one owner-executable package completing `LAC-P006-UAT` and activating fresh `LAC-B002` only on PASS.
+9. The B002 handoff must explicitly require this Calendar sequence: first-use request is denied and surfaced for owner permission scoping; owner configures scope; original request is proven non-resumable; a fresh Calendar request is issued; only then does current policy yield `ALLOW`, `REQUIRE_APPROVAL`, or `DENY` and reach the adapter where authorized.
+10. Stop at `OWNER_EXECUTION_REQUIRED`. Do not implement B002 in this session.
 
 ## Scope discipline
 
-Do not add Chief of Staff workflow/business logic, B003 early, OpenClaw, Omarchy Agent OS, web UI/TUI, remote administration, enterprise RBAC, or new permission features not required by an existing binding contract.
+No Calendar implementation, Chief of Staff business logic, B003, OpenClaw, Omarchy Agent OS, web/TUI, remote administration, enterprise RBAC, production external credentials, or consequential external effects.
 
 ## Required final status fields
 
 - `WHERE_WE_ARE=`
-- `SESSION_SEGMENT=LAC-B002`
-- `PREDECESSOR_RESULT=OWNER_EXECUTION_PASS`
+- `SESSION_SEGMENT=LAC-P006-UAT`
+- `PREDECESSOR_RESULT=P006_OWNER_EXECUTION_PASS`
 - `WHAT_WAS_VERIFIED=`
 - `WHAT_WAS_COMPLETED=`
 - `WHAT_REMAINS_IN_CURRENT_PHASE=`

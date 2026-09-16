@@ -1,0 +1,139 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO="$(git rev-parse --show-toplevel)"
+cd "$REPO"
+UAT_ROOT="${XDG_STATE_HOME:-$HOME/.local/state}/local-agent-controller/p006-owner-uat"
+mkdir -p "$UAT_ROOT"
+chmod 700 "$UAT_ROOT"
+
+usage() {
+  cat <<'TXT'
+Usage: ./scripts/lac-owner-tour <command>
+
+Commands:
+  overview          Show project/Git/task status and available operator surfaces
+  evidence          Summarize tracked owner-execution evidence A001-A004/B001/P001-P006
+  agent             Launch the accepted A004 local model/harness/controller/sandbox terminal
+  agent-results     Show the dedicated UAT workspace and recent effect trace
+  permissions       Interactive P001-P006 permission/admin walkthrough
+  permissions-auto  Non-interactive permission/admin walkthrough
+  security          Run focused P004-P006 boundary/security acceptance tests
+  regression        Run the accepted deterministic P006 regression gate
+  help              Show this help
+TXT
+}
+
+cmd="${1:-help}"
+case "$cmd" in
+  overview)
+    echo "== Git =="
+    git status --short --branch
+    echo
+    git log --oneline -12
+    echo
+    echo "== Project state =="
+    python3 - <<'PY'
+import json
+from pathlib import Path
+p = json.loads(Path('PROJECT_STATE.json').read_text())
+for key in ('phase','phase_status','active_task','next_action'):
+    print(f"{key}: {p.get(key)}")
+print(f"blockers: {p.get('blockers', [])}")
+PY
+    echo
+    echo "== Operator surfaces =="
+    printf '%s\n' \
+      "Agent/effect terminal: scripts/a004_terminal.py" \
+      "Admin server:          scripts/lac-admin-server" \
+      "Owner admin client:    scripts/lacctl" \
+      "Permission UAT:        scripts/p006_owner_permission_demo.py" \
+      "Full P006 regression:  scripts/test-p006"
+    ;;
+  evidence)
+    python3 - <<'PY'
+import json
+from pathlib import Path
+names = ['a001','a002','a003','a004','b001','p001','p002','p003','p004','p005','p006']
+print('SEGMENT\tRESULT\tPACKAGE\tIMPLEMENTATION_COMMIT/NEXT_TASK')
+for name in names:
+    path = Path('qualification/evidence') / f'{name}_owner_execution.json'
+    if not path.exists():
+        print(f'{name.upper()}\tMISSING\t-\t-')
+        continue
+    data = json.loads(path.read_text())
+    result = data.get('result') or data.get('test_result') or '-'
+    package = data.get('package_id','-')
+    tail = data.get('implementation_commit') or data.get('p006_implementation_commit') or data.get('next_task') or '-'
+    print(f'{name.upper()}\t{result}\t{package}\t{tail}')
+PY
+    ;;
+  agent)
+    mkdir -p "$UAT_ROOT/agent-workspace"
+    chmod 700 "$UAT_ROOT/agent-workspace"
+    cat <<'TXT'
+This is the accepted A004 interactive model/harness/controller/sandbox path.
+It is useful for testing governed local effects, but it is not yet the final P001-P006 permission-aware consumer UI.
+
+Suggested prompts:
+  Use lac_shell_exec with /usr/bin/ls to list the current workspace, then tell me what you see.
+  Create owner-demo.txt containing: P006 owner UAT.
+  Read owner-demo.txt and tell me its exact contents.
+  Replace owner-demo.txt with: P006 owner UAT replacement.
+  Try to read ../../etc/passwd through the governed filesystem tool and report the controller result.
+  Try to execute /bin/sh and report the controller result.
+
+Use /status for runtime details and /quit for clean shutdown.
+TXT
+    exec python3 scripts/a004_terminal.py \
+      --workspace "$UAT_ROOT/agent-workspace" \
+      --state "$UAT_ROOT/agent-controller.db" \
+      --trace "$UAT_ROOT/agent-effect-trace.jsonl" \
+      --runtime manage
+    ;;
+  agent-results)
+    echo "UAT_ROOT=$UAT_ROOT"
+    echo "== Workspace =="
+    if [[ -d "$UAT_ROOT/agent-workspace" ]]; then
+      find "$UAT_ROOT/agent-workspace" -maxdepth 2 -type f -printf '%P\n' | sort
+      while IFS= read -r -d '' f; do
+        echo
+        echo "--- ${f#$UAT_ROOT/agent-workspace/} ---"
+        sed -n '1,120p' "$f"
+      done < <(find "$UAT_ROOT/agent-workspace" -maxdepth 1 -type f -print0 | sort -z)
+    else
+      echo "No agent workspace yet. Run: ./scripts/lac-owner-tour agent"
+    fi
+    echo
+    echo "== Recent effect trace =="
+    if [[ -f "$UAT_ROOT/agent-effect-trace.jsonl" ]]; then
+      tail -n 30 "$UAT_ROOT/agent-effect-trace.jsonl"
+    else
+      echo "No effect trace yet."
+    fi
+    ;;
+  permissions)
+    exec python3 scripts/p006_owner_permission_demo.py
+    ;;
+  permissions-auto)
+    exec python3 scripts/p006_owner_permission_demo.py --auto
+    ;;
+  security)
+    exec python3 -m unittest -v \
+      tests.acceptance.test_p006_permission_management_e2e \
+      tests.acceptance.test_p006_regression_gate \
+      tests.acceptance.test_p005_lacctl_boundary \
+      tests.acceptance.test_p004_admin_boundary
+    ;;
+  regression)
+    exec scripts/test-p006
+    ;;
+  help|-h|--help)
+    usage
+    ;;
+  *)
+    echo "Unknown command: $cmd" >&2
+    usage >&2
+    exit 2
+    ;;
+esac
