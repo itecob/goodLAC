@@ -105,6 +105,13 @@ The final B002 owner package may advance durable state to B003 only after both:
 
 A scripted policy fixture, a model-generated answer, or an automatically chosen `lacctl` response does **not** satisfy this owner UAT.
 
+
+## Inherited P006 deterministic adversarial regression gate
+
+The accepted **deterministic adversarial** security gate remains binding during B002. Exercise hostile requests against controller/runtime/admin boundaries directly; do not rely on cooperative **model** behavior. Preserve explicit `DENY` coverage and **conditional** standing-policy coverage in the accepted regression.
+
+**Do not count a model refusal as a security pass.**
+
 ## Scope discipline
 
 No Chief of Staff business logic, B003 implementation, OpenClaw, Omarchy Agent OS, product web/TUI administration, remote administration, enterprise RBAC, production Calendar credentials, or consequential production external effects.

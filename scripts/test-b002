@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+export PYTHONDONTWRITEBYTECODE=1
+: "${LAC_B002_RUN_ROOT:?LAC_B002_RUN_ROOT is required}"
+mkdir -p "$LAC_B002_RUN_ROOT"
+
+echo "==> B002 Calendar adapter unit/transport/permission tests"
+python3 -m unittest \
+  tests.unit.test_calendar_adapter \
+  tests.unit.test_calendar_google_api \
+  tests.acceptance.test_b002_calendar_permission_management \
+  tests.acceptance.test_b002_interactive_uat_surface \
+  -v
+
+echo "==> B002 static/syntax checks"
+PYTHONPYCACHEPREFIX="$LAC_B002_RUN_ROOT/pycache" python3 -m py_compile \
+  packages/effects/calendar/__init__.py \
+  packages/effects/calendar/adapter.py \
+  packages/effects/calendar/capability.py \
+  packages/effects/calendar/google_api.py \
+  scripts/b002_owner_permission_uat.py \
+  tests/unit/test_calendar_adapter.py \
+  tests/unit/test_calendar_google_api.py \
+  tests/acceptance/test_b002_calendar_permission_management.py \
+  tests/acceptance/test_b002_interactive_uat_surface.py
+bash -n scripts/test-b002
+
+echo "==> Accepted deterministic regression through P006-UAT/P006 and prior phases"
+export LAC_P006_RUN_ROOT="$LAC_B002_RUN_ROOT/p006-regression"
+rm -rf "$LAC_P006_RUN_ROOT"
+scripts/test-p006
+
+git diff --check
+echo "LAC_B002_EXTERNAL_EFFECTS=NONE_SYNTHETIC_LOCAL_FIXTURES_ONLY"
+echo "LAC_B002_TEST=PASS"

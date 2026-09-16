@@ -32,6 +32,13 @@ Implement and qualify the generic Google Calendar typed-effect adapter against t
 - The B002 completion package must stop and wait for actual owner input for the permission choices. It must not auto-answer those prompts in order to obtain PASS.
 - Produce one owner-executable B002 completion/UAT package on PASS of deterministic implementation tests; that owner package advances to B003 only after the interactive owner UAT itself passes.
 
+
+## Inherited P006 deterministic adversarial regression contract
+
+- The accepted **deterministic adversarial** security gate remains mandatory during B002; do not substitute cooperative **model** behavior for boundary testing.
+- Regression must retain explicit `DENY` cases and **conditional** standing-policy cases alongside allow/approval paths.
+- A model refusal is not evidence that controller, sandbox, adapter, or administration boundaries resisted a hostile request; deterministic hostile requests remain the security gate.
+
 ## Out of scope
 
 - Chief of Staff workflow, memory, prioritization, briefing, meeting-preparation, or follow-up logic.
