@@ -4,7 +4,18 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 export PYTHONDONTWRITEBYTECODE=1
 : "${LAC_A004_RUN_ROOT:?LAC_A004_RUN_ROOT is required}"
+: "${LAC_A004_REGRESSION_MODE:=live}"
+: "${LAC_PI_CHECKOUT:=$HOME/.cache/local-agent-controller/phase0/upstream/pi}"
+export LAC_A004_REGRESSION_MODE LAC_PI_CHECKOUT
 mkdir -p "$LAC_A004_RUN_ROOT"
+
+case "$LAC_A004_REGRESSION_MODE" in
+  live|accepted-evidence) ;;
+  *)
+    echo "FAIL: unsupported LAC_A004_REGRESSION_MODE=$LAC_A004_REGRESSION_MODE" >&2
+    exit 1
+    ;;
+esac
 
 echo "==> A004 exact upstream/runtime pins"
 python3 scripts/verify_pi_pin.py
@@ -24,12 +35,22 @@ echo "==> A004 syntax/static checks"
 node --check scripts/a004_agent_worker.mjs
 PYTHONPYCACHEPREFIX="$LAC_A004_RUN_ROOT/pycache" python3 -m py_compile \
   scripts/a004_freetoken_launcher.py \
-  scripts/a004_terminal.py
-bash -n scripts/lac-baseline scripts/a004-live-gate scripts/test-a004
+  scripts/a004_terminal.py \
+  scripts/verify_accepted_live_evidence.py
+bash -n scripts/lac-baseline scripts/a004-live-gate scripts/test-a004 scripts/test-a003
 
-echo "==> A004 real runtime + multi-turn Pi + full A003/A002/A001/H001-H004 regression"
-env -u CUDA_HOME -u CUDA_PATH python3 scripts/a004_freetoken_launcher.py run -- scripts/a004-live-gate
+if [[ "$LAC_A004_REGRESSION_MODE" == "live" ]]; then
+  echo "==> A004 real runtime + multi-turn Pi + full A003/A002/A001/H001-H004 regression"
+  env -u CUDA_HOME -u CUDA_PATH python3 scripts/a004_freetoken_launcher.py run -- scripts/a004-live-gate
+else
+  echo "==> A004 deterministic regression: preserve accepted live/UAT proof and rerun current A003 security conformance"
+  python3 scripts/verify_accepted_live_evidence.py --scope a004
+  export LAC_A003_REGRESSION_MODE=accepted-evidence
+  export LAC_A003_RUN_ROOT="$LAC_A004_RUN_ROOT/a003-regression"
+  rm -rf "$LAC_A003_RUN_ROOT"
+  scripts/test-a003
+fi
 
 git diff --check
-
+echo "LAC_A004_REGRESSION_MODE=$LAC_A004_REGRESSION_MODE"
 echo "LAC_A004_TEST=PASS"

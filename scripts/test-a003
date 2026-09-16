@@ -7,11 +7,20 @@ cd "$ROOT"
 export PYTHONDONTWRITEBYTECODE=1
 
 : "${LAC_A003_RUN_ROOT:?LAC_A003_RUN_ROOT is required}"
-: "${LAC_A003_FREETOKEN_URL:?LAC_A003_FREETOKEN_URL is required}"
-: "${LAC_A003_MODEL_ID:?LAC_A003_MODEL_ID is required}"
-: "${LAC_PI_CHECKOUT:?LAC_PI_CHECKOUT is required}"
+: "${LAC_PI_CHECKOUT:=$HOME/.cache/local-agent-controller/phase0/upstream/pi}"
 : "${LAC_A003_PYTHON:=python3}"
-export LAC_A003_PYTHON
+: "${LAC_A003_FREETOKEN_URL:=http://127.0.0.1:19203}"
+: "${LAC_A003_MODEL_ID:=lac-a003-gpt-oss-20b}"
+: "${LAC_A003_REGRESSION_MODE:=live}"
+export LAC_PI_CHECKOUT LAC_A003_PYTHON LAC_A003_FREETOKEN_URL LAC_A003_MODEL_ID LAC_A003_REGRESSION_MODE
+
+case "$LAC_A003_REGRESSION_MODE" in
+  live|accepted-evidence) ;;
+  *)
+    echo "FAIL: unsupported LAC_A003_REGRESSION_MODE=$LAC_A003_REGRESSION_MODE" >&2
+    exit 1
+    ;;
+esac
 
 python3 scripts/verify_pi_pin.py
 python3 scripts/verify_freetoken_pin.py
@@ -26,15 +35,21 @@ PYTHONPYCACHEPREFIX="$LAC_A003_RUN_ROOT/pycache" python3 -m py_compile \
   scripts/a003_controller_bridge.py \
   scripts/a003_verify_evidence.py \
   scripts/a003_agent_sandbox.py \
-  scripts/a003_verify_agent_sandbox.py
+  scripts/a003_verify_agent_sandbox.py \
+  scripts/verify_accepted_live_evidence.py
 
-python3 scripts/a003_agent_sandbox.py qualification --run-root "$LAC_A003_RUN_ROOT"
-python3 scripts/a003_verify_evidence.py \
-  --run-root "$LAC_A003_RUN_ROOT" \
-  --out "$LAC_A003_RUN_ROOT/evidence-summary.json"
-python3 scripts/a003_verify_agent_sandbox.py \
-  --run-root "$LAC_A003_RUN_ROOT" \
-  --out "$LAC_A003_RUN_ROOT/agent-sandbox-evidence.verified.json"
+if [[ "$LAC_A003_REGRESSION_MODE" == "live" ]]; then
+  python3 scripts/a003_agent_sandbox.py qualification --run-root "$LAC_A003_RUN_ROOT"
+  python3 scripts/a003_verify_evidence.py \
+    --run-root "$LAC_A003_RUN_ROOT" \
+    --out "$LAC_A003_RUN_ROOT/evidence-summary.json"
+  python3 scripts/a003_verify_agent_sandbox.py \
+    --run-root "$LAC_A003_RUN_ROOT" \
+    --out "$LAC_A003_RUN_ROOT/agent-sandbox-evidence.verified.json"
+else
+  echo "==> A003 deterministic regression: verify independently accepted live evidence"
+  python3 scripts/verify_accepted_live_evidence.py --scope a003
+fi
 
 # A002 regression and its provider contract.
 scripts/test-a002
@@ -43,6 +58,7 @@ scripts/test-a001
 
 git diff --check
 
+echo "LAC_A003_REGRESSION_MODE=$LAC_A003_REGRESSION_MODE"
 echo "LAC_A003_MODEL_ID=$LAC_A003_MODEL_ID"
 echo "LAC_A003_FREETOKEN_URL=$LAC_A003_FREETOKEN_URL"
 echo "LAC_A003_PI_PROCESS_SANDBOX=PASS"
