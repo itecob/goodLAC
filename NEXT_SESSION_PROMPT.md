@@ -60,9 +60,56 @@ An explicit configured `DENY`, including a matching default, must not generate r
 
 Do not treat the review item as `REQUIRE_APPROVAL`, do not add a fourth runtime state, and do not expose P004/P005 administration to the governed consumer.
 
+## Binding interactive owner-permission UAT
+
+Deterministic tests remain necessary but are not sufficient for B002 acceptance. The owner must experience the permission flow and personally choose the permission outcomes through an owner-only administration process that is separate from the governed Calendar consumer.
+
+The B002 owner completion package must provide an interactive local UAT harness. It may use a terminal prompt/TUI-like presentation for the owner, but that process is an administrator client over P004/P005 — **not** the agent/runtime process. The governed consumer must remain unable to see or invoke the admin socket.
+
+The package must not auto-select the owner's permission choices. It must present enough trusted scope information for an informed choice and exercise these semantics:
+
+```text
+FIRST-USE POLICY PROMPT
+  Always allow
+    -> persist matching standing ALLOW
+    -> original request remains terminally closed
+    -> fresh matching request is required
+    -> later matching requests may ALLOW without another permission prompt
+
+  Ask me each time
+    -> persist matching standing REQUIRE_APPROVAL
+    -> original request remains terminally closed
+    -> fresh matching request is required
+    -> exact effect prompt is shown for that fresh request
+       Allow once -> exact one-time approval for that request only
+       Deny once  -> reject/withhold exact approval for that request only
+    -> another fresh request asks again
+
+  Not now
+    -> make no standing-policy grant
+    -> original request remains terminally closed
+    -> future unconfigured fresh request is DENY and reviewable again
+
+  Always deny
+    -> persist matching standing DENY
+    -> original request remains terminally closed
+    -> later matching requests are DENY
+    -> no recurring permission-discovery noise
+```
+
+The owner UAT must mechanically verify that these decisions are durable across reopening/restarting the local controller/admin state and that no production Calendar credential or consequential external effect is required. Use synthetic/local Calendar transport for this acceptance run.
+
+The final B002 owner package may advance durable state to B003 only after both:
+1. automated deterministic B002 + regression gates PASS; and
+2. the owner has actually completed the interactive choices above and the harness has verified their resulting durable behavior.
+
+A scripted policy fixture, a model-generated answer, or an automatically chosen `lacctl` response does **not** satisfy this owner UAT.
+
 ## Scope discipline
 
-No Chief of Staff business logic, B003 implementation, OpenClaw, Omarchy Agent OS, web/TUI, remote administration, enterprise RBAC, production Calendar credentials, or consequential production external effects.
+No Chief of Staff business logic, B003 implementation, OpenClaw, Omarchy Agent OS, product web/TUI administration, remote administration, enterprise RBAC, production Calendar credentials, or consequential production external effects.
+
+A minimal owner-only interactive permission prompt used solely as the B002 acceptance harness is in scope; it must consume the accepted P004/P005 admin API and must not become a second authority/state writer.
 
 The superseded pre-permission `LAC_B002_CALENDAR_ADAPTER_v0.1.0` owner package must not be executed or treated as current implementation authority.
 
