@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+export PYTHONDONTWRITEBYTECODE=1
+: "${LAC_B003_RUN_ROOT:?LAC_B003_RUN_ROOT is required}"
+mkdir -p "$LAC_B003_RUN_ROOT"
+
+echo "==> B003 generic external-consumer integration and negative-security tests"
+python3 -m unittest tests.acceptance.test_b003_external_consumer -v
+
+echo "==> B003 syntax/static checks"
+PYTHONPYCACHEPREFIX="$LAC_B003_RUN_ROOT/pycache" python3 -m py_compile \
+  packages/runtime/__init__.py \
+  packages/runtime/external_consumer.py \
+  tests/acceptance/test_b003_external_consumer.py \
+  tests/fixtures/b003_external_consumer_app.py
+bash -n scripts/test-b003
+
+echo "==> Accepted deterministic regression through B002/P006-UAT/P006 and prior phases"
+export LAC_B002_RUN_ROOT="$LAC_B003_RUN_ROOT/b002-regression"
+rm -rf "$LAC_B002_RUN_ROOT"
+scripts/test-b002
+
+git diff --check
+echo "LAC_B003_EXTERNAL_EFFECTS=NONE_SYNTHETIC_LOCAL_FIXTURES_ONLY"
+echo "LAC_B003_TEST=PASS"

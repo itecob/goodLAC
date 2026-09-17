@@ -102,3 +102,11 @@ Every registry/policy mutation is atomic, revisioned, and audited. A policy muta
 ### External consumer contract
 
 Chief of Staff and other products are external consumers. They may register/declare capabilities through the generic controller contract and submit runtime requests, but they do not own canonical policy, approval, credentials, leases, receipts, or administration state.
+
+### B003 concrete external-consumer runtime protocol
+
+The v1 external-consumer request schema is `lac.external-consumer-request/v1`. The consumer provides only request/run identity, typed action/resource/arguments, and an idempotency key. LAC binds principal/agent/application/skill identity, resolves the canonical registered capability revision and trusted resource type, owns policy-decision/lease/executor identifiers, and discovers owner-created exact approvals from canonical state. Consumer-supplied authority, approval, administration, capability-revision, controller-identity, lease/executor, or credential-reference fields are not accepted by the runtime protocol.
+
+A consumer capability declaration is descriptive and grants zero authority. Canonical registration and standing-policy mutation remain administrator-only. Unregistered capability use fails closed through the pending-permission path. A declaration mismatch with the current owner-registered manifest fails closed. An exact owner rejection or prior terminal capability denial cannot be revived by later consumer retry or administration.
+
+Successful runtime responses contain the typed adapter result and a bounded public receipt projection. Duplicate identical requests replay canonical terminal result/receipt state without a second adapter invocation. The external-consumer boundary imports no administrator transport and exposes no policy/registry/approval mutation operation.
