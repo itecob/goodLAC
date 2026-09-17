@@ -1,3 +1,4 @@
+import json
 import unittest
 from pathlib import Path
 
@@ -45,15 +46,22 @@ class P006OwnerUATSurfaceTests(unittest.TestCase):
         for forbidden in ("googleapis", "calendar.google", "gmail.googleapis", "requests.", "urllib.request"):
             self.assertNotIn(forbidden, text.lower())
 
-    def test_uat_task_requires_deterministic_adversarial_gate_not_model_refusal(self):
-        task = (ROOT / "tasks" / "ACTIVE_TASK.md").read_text(encoding="utf-8")
-        prompt = (ROOT / "NEXT_SESSION_PROMPT.md").read_text(encoding="utf-8")
-        for text in (task, prompt):
-            self.assertIn("deterministic adversarial", text.lower())
-            self.assertIn("model", text.lower())
-            self.assertIn("deny", text.lower())
-            self.assertIn("conditional", text.lower())
-        self.assertIn("Do not count a model refusal as a security pass", prompt)
+    def test_completed_uat_retains_deterministic_adversarial_gate_not_model_refusal(self):
+        guide = (ROOT / "docs" / "P006_OWNER_UAT_OPERATOR_GUIDE.md").read_text(encoding="utf-8")
+        evidence = json.loads(
+            (ROOT / "qualification" / "evidence" / "p006_uat_owner_execution.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        lowered = guide.lower()
+        self.assertIn("deterministic hostile-request matrix", lowered)
+        self.assertIn("a refusal from a language model is not counted as security evidence", lowered)
+        self.assertIn("explicit denial", lowered)
+        self.assertIn("conditional", lowered)
+        self.assertEqual(evidence["completed_task"], "LAC-P006-UAT")
+        self.assertEqual(evidence["owner_visible_adversarial_stress"], "PASS")
+        self.assertEqual(evidence["accepted_deterministic_regression"], "PASS")
+        self.assertEqual(evidence["result"], "PASS")
 
     def test_owner_regression_command_supplies_required_run_root(self):
         text = (ROOT / "scripts" / "lac-owner-tour").read_text(encoding="utf-8")

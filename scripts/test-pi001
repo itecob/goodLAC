@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+export PYTHONDONTWRITEBYTECODE=1
+: "${LAC_PI001_RUN_ROOT:?LAC_PI001_RUN_ROOT is required}"
+mkdir -p "$LAC_PI001_RUN_ROOT"
+echo "==> PI001 permission-aware runtime"
+python3 -m unittest tests.acceptance.test_pi_v1_permission_runtime tests.integration.test_pi_v1_source_boundary -v
+echo "==> PI001 real pinned Pi production-profile probe"
+python3 -m unittest tests.integration.test_pi_v1_profile -v
+echo "==> Retained Pi/A004 security regression"
+python3 -m unittest tests.unit.test_pi_adapter tests.integration.test_pi_dispatch tests.integration.test_a004_source_contract tests.integration.test_a003_agent_process_sandbox -v
+echo "==> PI001 syntax/static"
+PYTHONPYCACHEPREFIX="$LAC_PI001_RUN_ROOT/pycache" python3 -m py_compile \
+  packages/adapters/pi/production.py scripts/pi_v1_controller_bridge.py scripts/pi_v1_admin_server.py \
+  scripts/pi_v1_terminal.py tests/acceptance/test_pi_v1_permission_runtime.py \
+  tests/integration/test_pi_v1_profile.py tests/integration/test_pi_v1_source_boundary.py
+bash -n scripts/lac-pi scripts/test-pi001
+echo "==> Accepted deterministic regression through Phase 4"
+export LAC_B003_RUN_ROOT="$LAC_PI001_RUN_ROOT/b003-regression"
+rm -rf "$LAC_B003_RUN_ROOT"
+scripts/test-b003
+git diff --check
+echo "LAC_PI001_EXTERNAL_EFFECTS=NONE_LOCAL_SYNTHETIC_FIXTURES_ONLY"
+echo "LAC_PI001_TEST=PASS"

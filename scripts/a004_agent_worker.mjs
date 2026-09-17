@@ -381,6 +381,23 @@ async function main() {
       protocolOut({ type: "shutdown_complete" });
       return;
     }
+    if (command.type === "tool_probe") {
+      if (
+        typeof command.id !== "string" ||
+        typeof command.toolCallId !== "string" ||
+        typeof command.toolName !== "string" ||
+        !command.arguments ||
+        typeof command.arguments !== "object" ||
+        Array.isArray(command.arguments)
+      ) {
+        throw new Error("host-only tool_probe command is malformed");
+      }
+      const tool = agent.state.tools.find((candidate) => candidate?.name === command.toolName);
+      if (!tool) throw new Error(`tool_probe requested unknown governed tool: ${command.toolName}`);
+      const result = await tool.execute(command.toolCallId, command.arguments, undefined);
+      protocolOut({ type: "tool_probe_result", id: command.id, details: result?.details });
+      continue;
+    }
     if (command.type !== "prompt" || typeof command.id !== "string" || typeof command.text !== "string") {
       throw new Error("host control message must be prompt or shutdown");
     }
