@@ -35,6 +35,8 @@ from packages.state import (
 
 EXTERNAL_CONSUMER_REQUEST_SCHEMA = "lac.external-consumer-request/v1"
 EXTERNAL_CONSUMER_RESPONSE_SCHEMA = "lac.external-consumer-response/v1"
+EXTERNAL_CONSUMER_BINDING_SCHEMA = "lac.external-consumer-request-binding/v1"
+_EXTERNAL_CONSUMER_BINDING_KEY_PREFIX = "external-consumer/request-binding/v1/"
 
 _ALLOWED_REQUEST_FIELDS = {
     "schema",
@@ -282,23 +284,163 @@ class ExternalConsumerRuntime:
         ).hexdigest()
         return f"{kind}:external-consumer:{digest}"
 
+    def _request_binding_key(self, request_id: str) -> str:
+        digest = hashlib.sha256(request_id.encode("utf-8")).hexdigest()
+        return _EXTERNAL_CONSUMER_BINDING_KEY_PREFIX + digest
+
+    def _expected_request_binding(self, request_id: str) -> dict[str, str]:
+        return {
+            "schema": EXTERNAL_CONSUMER_BINDING_SCHEMA,
+            "request_id": request_id,
+            "principal_id": self._principal_id,
+            "agent_id": self._agent_id,
+            "application_id": self._application_id,
+            "skill_id": self._skill_id,
+        }
+
+    def _decode_request_binding(self, raw: Any, *, request_id: str) -> dict[str, str]:
+        if not isinstance(raw, str):
+            raise ExternalConsumerRuntimeError("external-consumer request binding is malformed")
+        try:
+            observed = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            raise ExternalConsumerRuntimeError(
+                "external-consumer request binding is malformed"
+            ) from exc
+        required = {
+            "schema",
+            "request_id",
+            "principal_id",
+            "agent_id",
+            "application_id",
+            "skill_id",
+        }
+        if not isinstance(observed, dict) or set(observed) != required:
+            raise ExternalConsumerRuntimeError(
+                "external-consumer request binding fields are malformed"
+            )
+        if observed.get("schema") != EXTERNAL_CONSUMER_BINDING_SCHEMA:
+            raise ExternalConsumerRuntimeError(
+                "external-consumer request binding schema is unsupported"
+            )
+        try:
+            if canonical_json(observed) != raw:
+                raise ExternalConsumerRuntimeError(
+                    "external-consumer request binding is not canonical"
+                )
+        except EffectRequestError as exc:
+            raise ExternalConsumerRuntimeError(
+                "external-consumer request binding is outside canonical JSON"
+            ) from exc
+        for field in (
+            "request_id",
+            "principal_id",
+            "agent_id",
+            "application_id",
+            "skill_id",
+        ):
+            value = observed.get(field)
+            if not isinstance(value, str) or not value or value != value.strip():
+                raise ExternalConsumerRuntimeError(
+                    f"external-consumer request binding {field} is malformed"
+                )
+        if observed["request_id"] != request_id:
+            raise ExternalConsumerRuntimeError(
+                "external-consumer request binding key does not bind request_id"
+            )
+        return observed
+
+    def _read_request_binding(self, request_id: str) -> dict[str, str] | None:
+        key = self._request_binding_key(request_id)
+        try:
+            row = self._store._conn.execute(
+                "SELECT value_json FROM system_state WHERE key = ?",
+                (key,),
+            ).fetchone()
+        except Exception as exc:
+            raise ExternalConsumerRuntimeError(
+                "external-consumer request binding lookup failed closed"
+            ) from exc
+        if row is None:
+            return None
+        return self._decode_request_binding(row["value_json"], request_id=request_id)
+
+    def _require_request_binding(self, request_id: str) -> None:
+        observed = self._read_request_binding(request_id)
+        if observed is None:
+            raise ExternalConsumerRuntimeError(
+                "durable request lacks four-dimensional external-consumer binding"
+            )
+        if observed != self._expected_request_binding(request_id):
+            raise ExternalConsumerProtocolError(
+                "request_id is outside this consumer binding"
+            )
+
+    def _claim_new_request_binding(self, request_id: str) -> None:
+        key = self._request_binding_key(request_id)
+        expected = self._expected_request_binding(request_id)
+        encoded = canonical_json(expected)
+        try:
+            with self._store.transaction() as conn:
+                row = conn.execute(
+                    "SELECT value_json FROM system_state WHERE key = ?",
+                    (key,),
+                ).fetchone()
+                if row is None:
+                    conn.execute(
+                        "INSERT INTO system_state(key, value_json, updated_at_utc) VALUES (?, ?, ?)",
+                        (key, encoded, self._store._utc_now()),
+                    )
+                    return
+                observed = self._decode_request_binding(
+                    row["value_json"],
+                    request_id=request_id,
+                )
+                if observed != expected:
+                    raise ExternalConsumerProtocolError(
+                        "request_id is outside this consumer binding"
+                    )
+        except ExternalConsumerError:
+            raise
+        except Exception as exc:
+            raise ExternalConsumerRuntimeError(
+                "external-consumer request binding persistence failed closed"
+            ) from exc
+
+    def _assert_existing_request_material(
+        self,
+        existing: EffectRequest,
+        incoming: ExternalConsumerRequest,
+    ) -> None:
+        if (
+            existing.principal_id != self._principal_id
+            or existing.agent_id != self._agent_id
+            or existing.run_id != incoming.run_id
+            or existing.action != incoming.action
+            or existing.resource != incoming.resource
+            or existing.arguments != incoming.arguments
+            or existing.idempotency_key != incoming.idempotency_key
+        ):
+            raise ExternalConsumerProtocolError(
+                "request_id is already bound to different canonical controller-owned material"
+            )
+
     def _load_or_create_request(self, incoming: ExternalConsumerRequest) -> EffectRequest:
         repository = EffectRequestRepository(self._store)
         existing = repository.get(incoming.request_id)
         if existing is not None:
-            if (
-                existing.principal_id != self._principal_id
-                or existing.agent_id != self._agent_id
-                or existing.run_id != incoming.run_id
-                or existing.action != incoming.action
-                or existing.resource != incoming.resource
-                or existing.arguments != incoming.arguments
-                or existing.idempotency_key != incoming.idempotency_key
-            ):
-                raise ExternalConsumerProtocolError(
-                    "request_id is already bound to different canonical controller-owned material"
-                )
+            self._require_request_binding(existing.request_id)
+            self._assert_existing_request_material(existing, incoming)
             return existing
+
+        self._claim_new_request_binding(incoming.request_id)
+
+        existing = repository.get(incoming.request_id)
+        if existing is not None:
+            self._require_request_binding(existing.request_id)
+            self._assert_existing_request_material(existing, incoming)
+            return existing
+
         try:
             now = self._clock()
             created_at = _rfc3339(now)
@@ -524,6 +666,7 @@ class ExternalConsumerRuntime:
             raise ExternalConsumerProtocolError("request_id is unknown")
         if request.principal_id != self._principal_id or request.agent_id != self._agent_id:
             raise ExternalConsumerProtocolError("request_id is outside this consumer binding")
+        self._require_request_binding(request.request_id)
         receipt_response = self._terminal_receipt_response(request, replayed=True)
         if receipt_response is not None:
             return receipt_response

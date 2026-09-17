@@ -1,7 +1,7 @@
 # B003 Generic External-Consumer Integration
 
 **Task:** `LAC-B003`
-**Status:** corrected Phase 4 candidate; P4-B001 controller-owned identity binding pending fresh independent re-review after owner verification
+**Status:** corrected Phase 4 candidate; P4-B002 durable four-dimensional request ownership pending fresh independent re-review after owner verification
 
 ## Boundary proved
 
@@ -27,7 +27,7 @@ Registration alone still grants zero authority. A valid registered request with 
 
 ## Runtime authority sequence
 
-`ExternalConsumerRuntime` is controller-side code. It constructs/reuses the canonical `EffectRequest` using controller-bound principal/agent identity, resolves the current registered capability revision, derives trusted resource type from the canonical manifest, and invokes the existing capability-aware `Dispatcher`.
+`ExternalConsumerRuntime` is controller-side code. For every B003 request ID it first establishes or verifies a controller-created canonical durable external-consumer binding over principal, agent, application, and skill. Only a matching binding may construct/reuse the canonical `EffectRequest`, discover exact approvals, obtain status, or observe terminal receipts. Legacy requests without this binding fail closed rather than being claimable after upgrade. The global `EffectRequest` schema remains unchanged. The runtime then resolves the current registered capability revision, derives trusted resource type from the canonical manifest, and invokes the existing capability-aware `Dispatcher`.
 
 The external consumer receives only the three authority outcomes:
 
@@ -43,7 +43,7 @@ An owner `REJECT` is treated as terminal for that exact request at this runtime 
 
 A successful effect returns the typed adapter result plus a public receipt projection containing controller binding/hashes and outcome metadata. Raw `result_json` is not duplicated into the public receipt projection. Credential-shaped result keys fail closed at this boundary; effect adapters remain responsible for never returning credentials under innocuous fields.
 
-A duplicate identical request returns the existing terminal result/receipt and does not invoke the adapter a second time.
+A duplicate identical request returns the existing terminal result/receipt and does not invoke the adapter a second time only after the complete four-dimensional durable request binding is verified. A differently bound application/skill sharing the same principal/agent cannot reuse the request, discover or consume its exact approval, obtain its status, or replay its successful/failed terminal receipt.
 
 ## Separate consumer fixture
 

@@ -9,11 +9,15 @@ mkdir -p "$LAC_B003_RUN_ROOT"
 echo "==> B003 generic external-consumer integration and negative-security tests"
 python3 -m unittest tests.acceptance.test_b003_external_consumer -v
 
+echo "==> P4-B002 durable external-consumer request ownership tests"
+python3 -m unittest tests.acceptance.test_p4_b002_external_consumer_binding -v
+
 echo "==> B003 syntax/static checks"
 PYTHONPYCACHEPREFIX="$LAC_B003_RUN_ROOT/pycache" python3 -m py_compile \
   packages/runtime/__init__.py \
   packages/runtime/external_consumer.py \
   tests/acceptance/test_b003_external_consumer.py \
+  tests/acceptance/test_p4_b002_external_consumer_binding.py \
   tests/fixtures/b003_external_consumer_app.py
 bash -n scripts/test-b003
 
