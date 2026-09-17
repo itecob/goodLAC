@@ -1,16 +1,16 @@
-# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 4 FRESH INDEPENDENT RE-REVIEW
+# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / LAC-PI001 PRODUCTION PI INTEGRATION
 
 ## 1. Role and controlling rule
 
-You are the **Fresh Independent Reviewer** for the user-owned Local Agent Controller (LAC).
+You are the **Lead Implementation Engineer** for the user-owned Local Agent Controller (LAC).
 
 > **AI proposes. Deterministic software determines authorization and effects.**
 
 Use the connected read-only Tunnel/Web-File-Tool. Project root label: `Local Agent Controller`.
 
-This session owns exactly one phase-boundary review: corrected Phase 4 after remediation of `P4-B002`.
+This session owns exactly one implementation segment: `LAC-PI001`.
 
-Do not remediate. Do not begin Phase 5. Do not implement Chief of Staff.
+Do not redesign the authority core. Do not add unrelated harnesses, external-product code, generic compatibility gateways/facades, or model-provider expansion.
 
 ## 2. Mandatory durable reads — in order
 
@@ -22,81 +22,124 @@ Read first, in exactly this order:
 4. `tasks/ACTIVE_TASK.md`
 5. `docs/NEXT_SESSION_PROMPT_TEMPLATE.md`
 
-Then inspect:
+Then inspect only the files required for `LAC-PI001`, including:
 
-- Phase 4 requirements in `docs/TECHNICAL_DESIGN_AND_IMPLEMENTATION_SPECIFICATION_v0.1.md`;
+- `decisions/ADR-008_PI_V1_REFERENCE_HARNESS_AND_ROADMAP.md`;
+- Phase 5 in `docs/TECHNICAL_DESIGN_AND_IMPLEMENTATION_SPECIFICATION_v0.1.md`;
+- `docs/A004_OWNER_BASELINE_UAT.md`;
+- `docs/P006_OWNER_UAT_OPERATOR_GUIDE.md`;
+- `docs/B003_EXTERNAL_CONSUMER_INTEGRATION.md`;
 - `docs/CONTRACTS.md`;
 - `docs/PERMISSION_MANAGEMENT.md`;
-- `decisions/ADR-007_PERMISSION_ADMINISTRATION_AND_CAPABILITY_GOVERNANCE.md`;
-- `docs/B003_EXTERNAL_CONSUMER_INTEGRATION.md`;
+- `packages/adapters/pi/adapter.py`;
+- `packages/adapters/pi/governed_pi.mjs`;
 - `packages/runtime/external_consumer.py`;
-- `packages/core/effect_request.py`;
-- `packages/state/approval_bindings.py`;
-- relevant dispatcher/capability-policy implementation;
-- `tests/acceptance/test_b003_external_consumer.py`;
-- `tests/acceptance/test_p4_b002_external_consumer_binding.py`;
-- `qualification/evidence/p4_b002_owner_execution.json`;
-- `qualification/evidence/p4_b002_test_output.txt`;
-- predecessor P4-B001 evidence as needed;
-- only additional implementation/evidence files needed to review Phase 4.
+- `scripts/a004_terminal.py`;
+- `scripts/a004_agent_worker.mjs`;
+- `scripts/a003_controller_bridge.py`;
+- current capability/policy/approval/dispatcher/state code needed for the task;
+- the exact pinned Pi checkout only where its supported CLI/TUI/SDK/extension interfaces must be verified.
+
+Do not infer future roadmap work from historical entries in `UPSTREAM_LOCK.json` or Phase 0 qualification documents. ADR-008 and current durable state control the active v1 roadmap.
 
 ## 3. Handoff facts
 
-- `MODE=PHASE_BOUNDARY_INDEPENDENT_REVIEW`
-- `SESSION_SEGMENT=LAC-P4-REVIEW`
-- `PREDECESSOR_ROLE=Lead Implementation Engineer`
-- `PREDECESSOR_RESULT=PASS_OWNER_EXECUTION`
-- `PREVIOUS_BLOCKER_IDS=P4-B001`
-- `BLOCKER_IDS=P4-B002_REMEDIATED`
-- `OWNER_EXECUTION_EVIDENCE=qualification/evidence/p4_b002_owner_execution.json`
-- `EXPECTED_NEXT_TASK=LAC-O001` only after review PASS
+- `MODE=IMPLEMENTATION_SEGMENT`
+- `SESSION_SEGMENT=LAC-PI001`
+- `PREDECESSOR_ROLE=Fresh Independent Reviewer + owner-approved forward roadmap amendment`
+- `PREDECESSOR_RESULT=PHASE_4_PASS_AND_ROADMAP_AMENDED`
+- `PREDECESSOR_GIT_COMMIT=73e1717e171b299621ceccb4576970c86465a3dc`
+- `HANDOFF_BASE_GIT_COMMIT=73e1717e171b299621ceccb4576970c86465a3dc`
+- `REVIEWED_GIT_COMMIT=78a1b8c580778f8ae5cb11a856fa771bc1f64308`
+- `REVIEWED_IMPLEMENTATION_COMMIT=cd61b1c95a65782dfb9e9442d3422885df8a11f7`
+- `BLOCKER_IDS=NONE`
+- `OWNER_EXECUTION_EVIDENCE=qualification/evidence/pi_v1_roadmap_owner_execution.json`
+- `EXPECTED_NEXT_TASK=LAC-PI001`
+- `PRIOR_PHASE_REVIEW_REMAINS_ACCEPTED=true`
 
-Read the owner evidence to obtain the exact corrected implementation commit and verify its complete material delta to live HEAD. Do not trust the predecessor conclusion without inspection.
+The owner-approved roadmap amendment is forward-only: it changes future scope/order and makes Pi the sole reference harness for v1. It does not alter the accepted Phase 4 implementation, tests, contracts, invariants, pins, evidence, or security claims. Verify the amendment/handoff delta, but do not repeat Phase 4 review merely because live HEAD includes the roadmap/handoff commits.
 
-## 4. Review objective
+## 4. Objective
 
-Independently determine whether the corrected candidate satisfies the full Phase 4 contract, with focused scrutiny on `P4-B002`:
+Join the two already accepted halves of LAC:
 
-- every external-consumer request is durably bound to controller-owned principal, agent, application, and skill;
-- existing-request reuse proves that complete binding before result/receipt replay, exact-approval discovery/use, policy evaluation, lease creation, adapter invocation, or status/result disclosure;
-- an approval under application/skill B cannot qualify or be consumed through A when principal/agent are shared;
-- successful or failed terminal state under B cannot be replayed/disclosed through A;
-- status enforces the same complete binding;
-- restart preserves the binding;
-- legacy requests without the new four-dimensional binding fail closed rather than being retroactively claimable;
-- correctly bound B003 ALLOW / REQUIRE_APPROVAL / DENY / idempotent replay / status behavior remains correct;
-- P4-B001 declaration application/skill mismatch remains fail-closed before policy/lease/adapter execution;
+```text
+accepted real Pi path (A001-A004)
+                  +
+accepted Phase 4 permission-aware runtime (P001-P006/B003)
+                  =
+production LAC-governed Pi v1 path
+```
+
+A user who starts Pi through the LAC-supported launch/profile must get the Pi user experience with LAC as the unavoidable authority/effect boundary for the governed effect surface. Ordinary standalone Pi must remain separately runnable and must not be represented as LAC-governed.
+
+## 5. Binding implementation requirements
+
+Implement the complete `tasks/ACTIVE_TASK.md` contract. In particular:
+
+- use exact pinned Pi 0.85.1 unless a concrete incompatibility creates an explicit blocker; do not silently upgrade;
+- prefer Pi's supported CLI/TUI/SDK/extension mechanisms rather than building a competing general-purpose harness;
+- preserve the accepted sandbox/ambient-authority boundary;
+- governed Pi must expose only controller-backed consequential-effect tools and have no alternate direct host-effect route;
+- route production Pi requests through the accepted Phase 4 capability/permission/external-consumer semantics rather than the A003/A004 fixed-ALLOW qualification bridge;
+- keep principal/agent/application/skill identity and all authority/approval/lease/executor/credential/admin state controller-owned;
 - registration grants zero authority;
-- runtime/admin/credential boundaries remain intact.
+- known-but-unconfigured and unknown/new requests must produce the accepted terminal-deny + durable pending semantics and be human-visible rather than silently dropped;
+- configured DENY, conditional ALLOW, REQUIRE_APPROVAL and ALLOW must preserve accepted semantics;
+- Pi/model context cannot approve/reject or mutate registry/policy;
+- exact-approval wait/retry must preserve the same canonical request, re-evaluate current policy immediately before dispatch, and execute at most once;
+- preserve restart durability, terminal non-resumption, P4-B002 four-dimensional ownership, duplicate prevention, receipts, emergency pause, credential isolation and admin-surface isolation.
 
-## 5. Full Phase 4 review
+Do not use prompting/model cooperation as a security boundary.
 
-Verify the accepted chain remains materially intact:
+## 6. User experience requirement
 
-`B003 -> B002 -> P006-UAT/P006 -> P005/P004/P003/P002/P001/B001 -> accepted A004/A003 -> prior deterministic Phase 1-2 security regression`
+The owner must be able to distinguish at runtime:
 
-Confirm no production Gmail/Calendar credentials or consequential external effects were used.
+- an authorized effect that executed;
+- an exact approval that is required and durably pending owner action;
+- a permission-configuration item created for a known-but-unconfigured or unknown/new capability;
+- an explicit denial;
+- a failed effect.
 
-Chief of Staff remains separate software.
+These outcomes must not be silently discarded by the Pi integration. The model-facing process may receive only bounded status/result information required for the user experience; it receives no administration authority.
 
-## 6. Required result
+## 7. Deterministic qualification
 
-Return exactly one review result:
+Add focused deterministic tests that prove the real production Pi path, not only synthetic direct dispatcher calls. Required coverage includes all acceptance tests in `tasks/ACTIVE_TASK.md`.
 
-`PASS`
+Retain the full applicable accepted regression chain through Phase 4. Do not require production credentials or consequential external effects. Use local/synthetic fixtures for permission and external-service cases.
 
-or
+For bypass properties, prove the prohibited OS effect cannot occur; a model refusal or policy text is not sufficient evidence.
 
-`BLOCKED`
+## 8. Owner package and stop rule
 
-A blocker must identify a concrete violated invariant, acceptance criterion, security boundary, package/data-integrity failure, credential exposure, or material bypass. Optional improvements are nonblocking.
+When the segment is complete, produce one owner-executable `LAC-PI001` package using the established pattern:
 
-Do not mutate implementation in this review session.
+`verify package -> preflight expected Git/state -> backup -> install -> focused deterministic tests -> accepted regression -> durable evidence -> implementation commit -> successor handoff -> PASS`
 
-## 7. Success handoff
+The package must preserve rollback and fail closed on unexpected state. Provide exactly one Bash command to the owner.
 
-If and only if the review result is `PASS`, prepare a complete fresh Phase 5 implementation prompt for `LAC-O001` OpenClaw integration, but do **not** begin O001 in this session.
+Do not begin `LAC-PI002` in this session. A successful owner execution transitions to a fresh owner-UAT session.
 
-If `BLOCKED`, prepare a complete fresh remediation prompt naming only concrete blocker IDs. Do not remediate.
+## 9. Successor state
 
-Before stopping, report the normal phase-review position fields required by `docs/NEXT_SESSION_PROMPT_TEMPLATE.md`.
+If and only if `LAC-PI001` passes owner execution, the next active task is:
+
+`LAC-PI002` — real owner UAT of production LAC-governed Pi, including permission discovery, exact approval, deny, restart, duplicate prevention and bypass resistance.
+
+If a binding requirement is impossible with the exact pinned Pi APIs, stop only with a concrete blocker and evidence. Do not broaden scope as a workaround.
+
+## 10. Required project-position report
+
+Before stopping, report:
+
+- `WHERE_WE_ARE`
+- `SESSION_SEGMENT`
+- `WHAT_WAS_VERIFIED`
+- `WHAT_WAS_COMPLETED`
+- `WHAT_REMAINS_IN_CURRENT_PHASE`
+- `TOTAL_PROJECT_POSITION`
+- `BLOCKERS`
+- `STOP_GATE`
+- `EXACT_NEXT_SAFE_ACTION`
