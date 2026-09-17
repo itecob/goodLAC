@@ -1,13 +1,13 @@
 # B003 Generic External-Consumer Integration
 
 **Task:** `LAC-B003`
-**Status before owner execution:** candidate implementation package
+**Status:** corrected Phase 4 candidate; P4-B001 controller-owned identity binding pending fresh independent re-review after owner verification
 
 ## Boundary proved
 
 A separate application may provide a canonical capability declaration and submit strict JSON typed-effect request material. The declaration is descriptive only. It does not register itself, set policy, create approvals, choose controller identities, create execution leases, or gain a credential capability.
 
-The controller binds the external application to one configured `principal_id`, `agent_id`, `application_id`, and `skill_id`. The external request schema accepts only:
+The controller binds the external application to one configured `principal_id`, `agent_id`, `application_id`, and `skill_id`. These four values are controller-owned runtime configuration, not declaration-derived authority. The declaration's `application_id` and `skill_id` are compatibility/schema claims that must exactly match the controller-owned application/skill binding before capability lookup or standing-policy evaluation. The external request schema accepts only:
 
 - `schema`
 - `request_id`
@@ -21,7 +21,7 @@ Any consumer-supplied identity, authority decision, capability revision, approva
 
 ## Capability declaration and registration
 
-`ExternalConsumerDeclaration` validates the ordinary `lac.capability-manifest/v1` declaration without mutating canonical registry state. Canonical registration remains owner/admin-only through the accepted P004/P005 administration surface. An unregistered declaration enters the existing P002 unknown-capability fail-closed path. A declaration that does not match the current owner-registered manifest revision cannot execute.
+`ExternalConsumerDeclaration` validates the ordinary `lac.capability-manifest/v1` declaration without mutating canonical registry state. Its application/skill identity is non-authoritative declaration material. `ExternalConsumerRuntime` first validates those claims against the controller-owned `application_id`/`skill_id` binding; mismatch fails closed before standing policy, lease creation, or adapter invocation. Canonical registration remains owner/admin-only through the accepted P004/P005 administration surface. An identity-matched but unregistered declaration enters the existing P002 unknown-capability fail-closed path. A declaration that does not match the current owner-registered manifest revision cannot execute.
 
 Registration alone still grants zero authority. A valid registered request with no applicable owner-configured standing permission remains terminally denied and creates bounded permission-configuration work for a fresh future request.
 

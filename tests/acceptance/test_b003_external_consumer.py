@@ -12,6 +12,7 @@ from packages.core import ApprovalDecision
 from packages.policy import StandingPolicyCondition, StandingPolicyRule
 from packages.runtime import (
     EXTERNAL_CONSUMER_REQUEST_SCHEMA,
+    ExternalConsumerConfigurationError,
     ExternalConsumerDeclaration,
     ExternalConsumerProtocolError,
     ExternalConsumerRuntime,
@@ -103,12 +104,20 @@ class Harness:
             {"rules": [rule.to_material() for rule in rules], "defaults": []},
         )
 
-    def runtime(self):
+    def runtime(
+        self,
+        *,
+        declaration=None,
+        application_id="b003-external-app",
+        skill_id="notes",
+    ):
         return ExternalConsumerRuntime(
             store=self.store,
-            declaration=self.declaration,
+            declaration=declaration or self.declaration,
             principal_id="principal:owner",
             agent_id="agent:b003",
+            application_id=application_id,
+            skill_id=skill_id,
             adapter=self.adapter,
         )
 
@@ -144,6 +153,52 @@ class B003ExternalConsumerTests(unittest.TestCase):
         self.assertEqual(self.h.adapter.invoke_calls, 0)
         pending = PendingPermissionRepository(self.h.store).list_pending()
         self.assertTrue(any(item["reason"] == "NO_CONFIGURED_STANDING_PERMISSION" for item in pending))
+
+    def test_controller_owned_application_skill_binding_rejects_borrowed_registered_identity_before_policy_or_lease(self):
+        self.h.register()
+        borrowed_manifest = json.loads(json.dumps(self.h.manifest))
+        borrowed_manifest["application_id"] = "b003-borrowed-app"
+        borrowed_manifest["skill_id"] = "borrowed-notes"
+        self.h.register(borrowed_manifest)
+        self.h.set_rules([
+            StandingPolicyRule.create(
+                rule_id="allow-borrowed-identity",
+                application_id="b003-borrowed-app",
+                skill_id="borrowed-notes",
+                decision="ALLOW",
+            )
+        ])
+
+        before = {
+            table: self.h.store._conn.execute(
+                f"SELECT COUNT(*) AS count FROM {table}"
+            ).fetchone()["count"]
+            for table in ("effect_requests", "policy_decisions", "execution_leases")
+        }
+        with self.assertRaisesRegex(
+            ExternalConsumerConfigurationError,
+            "controller-owned binding",
+        ):
+            self.h.runtime(
+                declaration=ExternalConsumerDeclaration.create(borrowed_manifest),
+                application_id="b003-external-app",
+                skill_id="notes",
+            )
+        after = {
+            table: self.h.store._conn.execute(
+                f"SELECT COUNT(*) AS count FROM {table}"
+            ).fetchone()["count"]
+            for table in ("effect_requests", "policy_decisions", "execution_leases")
+        }
+        self.assertEqual(after, before)
+        self.assertEqual(self.h.adapter.invoke_calls, 0)
+
+        correctly_bound = self.h.runtime()
+        self.assertEqual(correctly_bound.application_id, "b003-external-app")
+        self.assertEqual(correctly_bound.skill_id, "notes")
+        denied = correctly_bound.submit(self.h.request("borrowed-rule-does-not-apply"))
+        self.assertEqual(denied["authority_outcome"], "DENY")
+        self.assertEqual(self.h.adapter.invoke_calls, 0)
 
     def test_allow_returns_typed_result_receipt_and_duplicate_replays_without_second_effect(self):
         self.h.register()
@@ -283,6 +338,8 @@ class B003ExternalConsumerTests(unittest.TestCase):
             declaration=ExternalConsumerDeclaration.create(expanded),
             principal_id="principal:owner",
             agent_id="agent:b003",
+            application_id="b003-external-app",
+            skill_id="notes",
             adapter=self.h.adapter,
         )
         still_closed = expanded_runtime.submit(unknown)

@@ -224,6 +224,8 @@ class ExternalConsumerRuntime:
         declaration: ExternalConsumerDeclaration,
         principal_id: str,
         agent_id: str,
+        application_id: str,
+        skill_id: str,
         adapter: EffectAdapter,
         clock: Callable[[], datetime] | None = None,
         request_ttl_seconds: int = 900,
@@ -242,6 +244,16 @@ class ExternalConsumerRuntime:
         self._declaration = declaration
         self._principal_id = _required_text(principal_id, "principal_id")
         self._agent_id = _required_text(agent_id, "agent_id")
+        self._application_id = _required_text(application_id, "application_id")
+        self._skill_id = _required_text(skill_id, "skill_id")
+        if (
+            declaration.application_id != self._application_id
+            or declaration.skill_id != self._skill_id
+        ):
+            raise ExternalConsumerConfigurationError(
+                "consumer declaration application/skill identity does not match "
+                "controller-owned binding"
+            )
         self._adapter = adapter
         self._clock = clock or (lambda: datetime.now(timezone.utc))
         self._request_ttl_seconds = request_ttl_seconds
@@ -253,11 +265,11 @@ class ExternalConsumerRuntime:
 
     @property
     def application_id(self) -> str:
-        return self._declaration.application_id
+        return self._application_id
 
     @property
     def skill_id(self) -> str:
-        return self._declaration.skill_id
+        return self._skill_id
 
     @property
     def declared_manifest_hash(self) -> str:
