@@ -19,6 +19,7 @@ from packages.policy.standing import (
 from packages.state.approvals import ApprovalRepository
 from packages.state.effect_requests import EffectRequestRepository
 from packages.state.policy_decisions import PolicyDecisionRepository
+from packages.state.emergency_pause import EmergencyPauseRepository, EmergencyPauseStateError
 from packages.state.store import SQLiteStateStore, StateStoreError
 
 from .pending import PendingAdminError, PendingAdminRepository
@@ -157,6 +158,7 @@ class AdminService:
         self._approvals = ApprovalRepository(store)
         self._policy_decisions = PolicyDecisionRepository(store)
         self._effect_requests = EffectRequestRepository(store)
+        self._emergency = EmergencyPauseRepository(store)
 
         self._operations: dict[str, Callable[[dict[str, Any]], Any]] = {
             "skills.list": self._skills_list,
@@ -170,6 +172,9 @@ class AdminService:
             "pending.show": self._pending_show,
             "pending.resolve": self._pending_resolve,
             "pending.dismiss": self._pending_dismiss,
+            "emergency.status": self._emergency_status,
+            "emergency.pause": self._emergency_pause,
+            "emergency.resume": self._emergency_resume,
             "approvals.list": self._approvals_list,
             "approvals.show": self._approvals_show,
             "approvals.approve": self._approvals_approve,
@@ -322,6 +327,27 @@ class AdminService:
             resolved_at_utc=_utc_now(),
         )
         return {"pending_id": pending_id, "resolution": record.to_material()}
+
+    def _emergency_status(self, arguments: dict[str, Any]) -> Any:
+        _exact_arguments(arguments, required=set())
+        try:
+            return self._emergency.get().to_record()
+        except EmergencyPauseStateError as exc:
+            raise AdminConflict(str(exc)) from exc
+
+    def _emergency_pause(self, arguments: dict[str, Any]) -> Any:
+        _exact_arguments(arguments, required=set())
+        try:
+            return self._emergency.pause().to_record()
+        except EmergencyPauseStateError as exc:
+            raise AdminConflict(str(exc)) from exc
+
+    def _emergency_resume(self, arguments: dict[str, Any]) -> Any:
+        _exact_arguments(arguments, required=set())
+        try:
+            return self._emergency.resume().to_record()
+        except EmergencyPauseStateError as exc:
+            raise AdminConflict(str(exc)) from exc
 
     @staticmethod
     def _admin_approval_id(decision_id: str) -> str:

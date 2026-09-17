@@ -87,6 +87,12 @@ def _parser() -> argparse.ArgumentParser:
     pending_dismiss = pending_cmd.add_parser("dismiss", allow_abbrev=False)
     pending_dismiss.add_argument("pending_id")
 
+    emergency = groups.add_parser("emergency", allow_abbrev=False)
+    emergency_cmd = emergency.add_subparsers(dest="command", required=True)
+    emergency_cmd.add_parser("status", allow_abbrev=False)
+    emergency_cmd.add_parser("pause", allow_abbrev=False)
+    emergency_cmd.add_parser("resume", allow_abbrev=False)
+
     approvals = groups.add_parser("approvals", allow_abbrev=False)
     approvals_cmd = approvals.add_subparsers(dest="command", required=True)
     approvals_cmd.add_parser("list", allow_abbrev=False)
@@ -183,6 +189,14 @@ def _operation(args: argparse.Namespace) -> tuple[str, dict[str, Any]]:
             }
         if args.command == "dismiss":
             return "pending.dismiss", {"pending_id": args.pending_id}
+
+    if args.group == "emergency":
+        if args.command == "status":
+            return "emergency.status", {}
+        if args.command == "pause":
+            return "emergency.pause", {}
+        if args.command == "resume":
+            return "emergency.resume", {}
 
     if args.group == "approvals":
         if args.command == "list":

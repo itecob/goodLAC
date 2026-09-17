@@ -44,6 +44,10 @@ lacctl pending show <pending_id>
 lacctl pending resolve <pending_id> <POLICY_UPDATED|CAPABILITY_UPDATED|POLICY_AND_CAPABILITY_UPDATED|NO_CHANGE>
 lacctl pending dismiss <pending_id>
 
+lacctl emergency status
+lacctl emergency pause
+lacctl emergency resume
+
 lacctl approvals list
 lacctl approvals show <decision_id>
 lacctl approvals approve <decision_id>
@@ -64,4 +68,5 @@ Rule/default objects must be canonical P003 `lac.standing-policy-rule/v1` and `l
 - Pending permission administration never resumes the P002-denied effect. A fresh effect request is required after any future policy/capability change.
 - Standing permission mutation remains P003 deterministic policy with `DENY > REQUIRE_APPROVAL > ALLOW` at equal specificity.
 - Exact approval commands create only the existing immutable one-request approval decision. They do not dispatch or execute an effect; current policy is still re-evaluated before dispatch.
+- Emergency pause/status/resume uses the same owner-authenticated P004 admin socket and wraps the existing canonical durable emergency-pause state; it does not grant dispatch authority.
 - Runtime consumers gain no administration mutation surface from `lacctl`.

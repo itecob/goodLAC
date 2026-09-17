@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+export PYTHONDONTWRITEBYTECODE=1
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+python3 -m unittest -v \
+  tests.unit.test_admin_protocol \
+  tests.integration.test_admin_service \
+  tests.integration.test_lacctl_admin_api \
+  tests.integration.test_pi002_emergency_admin \
+  tests.integration.test_emergency_pause_dispatch
+printf '%s\n' 'LAC_PI002_EMERGENCY_ADMIN_REMEDIATION=PASS'
