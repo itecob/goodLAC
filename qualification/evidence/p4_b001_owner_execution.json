@@ -1,0 +1,32 @@
+{
+  "base_head": "984a47a7b117154fb39e1d08e28285d703a15978",
+  "blocker_id": "P4-B001",
+  "borrowed_registered_identity_authority": "REJECTED_BEFORE_POLICY_LEASE_ADAPTER",
+  "completed_at_utc": "2026-09-17T04:28:55.209397Z",
+  "completed_task": "LAC-P4-REMEDIATION",
+  "consumer_supplied_identity_authority_approval_admin_lease_credential_material": "REJECTED",
+  "controller_owned_identity_dimensions": [
+    "principal",
+    "agent",
+    "application",
+    "skill"
+  ],
+  "credential_isolation": "PRESERVED",
+  "declaration_application_skill_authoritative": false,
+  "deterministic_test_evidence": "qualification/evidence/p4_b001_test_output.txt",
+  "deterministic_test_result": "PASS",
+  "duplicate_effect_execution": "PREVENTED",
+  "exact_approval_semantics": "PRESERVED_OWNER_ONLY_EXACT_ONE_USE_EXPIRY_REEVALUATED",
+  "external_effects": "NONE_SYNTHETIC_LOCAL_FIXTURES_ONLY",
+  "implementation_commit": "d86a5adf2da490e797b84cb7fd9b8f7165b839b0",
+  "next_task": "LAC-P4-REVIEW",
+  "package_id": "LAC_P4_B001_EXTERNAL_CONSUMER_IDENTITY_BINDING_v0.1.2",
+  "phase": "PHASE_4_PERMISSION_MANAGEMENT",
+  "prior_blocked_implementation_commit": "5f6e8811bd5e8d180d7d9c712ca90115a4437f18",
+  "production_credentials": "NONE",
+  "registration_grants_authority": false,
+  "regression_chain": "B003 -> B002 -> P006-UAT/P006 -> prior deterministic accepted regression",
+  "result": "PASS",
+  "schema": "lac.p4-b001-owner-execution/v1",
+  "terminal_effect_resumption": "PROHIBITED"
+}
