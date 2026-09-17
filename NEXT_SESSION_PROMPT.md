@@ -1,4 +1,4 @@
-# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 4 INDEPENDENT RE-REVIEW AFTER P4-B001
+# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 4 FRESH INDEPENDENT RE-REVIEW
 
 ## 1. Role and controlling rule
 
@@ -8,11 +8,13 @@ You are the **Fresh Independent Reviewer** for the user-owned Local Agent Contro
 
 Use the connected read-only Tunnel/Web-File-Tool. Project root label: `Local Agent Controller`.
 
-This session owns exactly one fresh **Phase 4 independent re-review** of the corrected candidate after blocker `P4-B001` remediation. Do not remediate, do not implement Chief of Staff, and do not begin Phase 5 OpenClaw integration in this review session.
+This session owns exactly one phase-boundary review: corrected Phase 4 after remediation of `P4-B002`.
+
+Do not remediate. Do not begin Phase 5. Do not implement Chief of Staff.
 
 ## 2. Mandatory durable reads — in order
 
-Read these first, in exactly this order:
+Read first, in exactly this order:
 
 1. `PROJECT_STATE.json`
 2. `docs/ARCHITECTURE.md`
@@ -20,95 +22,81 @@ Read these first, in exactly this order:
 4. `tasks/ACTIVE_TASK.md`
 5. `docs/NEXT_SESSION_PROMPT_TEMPLATE.md`
 
-Then read:
+Then inspect:
 
-- the Phase 4 requirements in `docs/TECHNICAL_DESIGN_AND_IMPLEMENTATION_SPECIFICATION_v0.1.md`;
+- Phase 4 requirements in `docs/TECHNICAL_DESIGN_AND_IMPLEMENTATION_SPECIFICATION_v0.1.md`;
 - `docs/CONTRACTS.md`;
 - `docs/PERMISSION_MANAGEMENT.md`;
 - `decisions/ADR-007_PERMISSION_ADMINISTRATION_AND_CAPABILITY_GOVERNANCE.md`;
 - `docs/B003_EXTERNAL_CONSUMER_INTEGRATION.md`;
 - `packages/runtime/external_consumer.py`;
+- `packages/core/effect_request.py`;
+- `packages/state/approval_bindings.py`;
+- relevant dispatcher/capability-policy implementation;
 - `tests/acceptance/test_b003_external_consumer.py`;
-- `tests/fixtures/b003_external_consumer_app.py`;
-- `qualification/evidence/p4_b001_owner_execution.json`;
-- `qualification/evidence/p4_b001_test_output.txt`;
-- the prior B003 evidence as needed;
-- and only additional implementation/evidence files needed to review the corrected candidate.
+- `tests/acceptance/test_p4_b002_external_consumer_binding.py`;
+- `qualification/evidence/p4_b002_owner_execution.json`;
+- `qualification/evidence/p4_b002_test_output.txt`;
+- predecessor P4-B001 evidence as needed;
+- only additional implementation/evidence files needed to review Phase 4.
 
 ## 3. Handoff facts
 
 - `MODE=PHASE_BOUNDARY_INDEPENDENT_REVIEW`
 - `SESSION_SEGMENT=LAC-P4-REVIEW`
-- `PREDECESSOR_ROLE=Lead Implementation Engineer + owner package execution`
-- `PREDECESSOR_RESULT=P4-B001_REMEDIATION_OWNER_EXECUTION_PASS`
-- `PREDECESSOR_GIT_COMMIT=d86a5adf2da490e797b84cb7fd9b8f7165b839b0`
-- `HANDOFF_BASE_GIT_COMMIT=d86a5adf2da490e797b84cb7fd9b8f7165b839b0`
-- `REVIEWED_GIT_COMMIT=NONE`
-- `PRIOR_BLOCKED_REVIEWED_GIT_COMMIT=5f6e8811bd5e8d180d7d9c712ca90115a4437f18`
+- `PREDECESSOR_ROLE=Lead Implementation Engineer`
+- `PREDECESSOR_RESULT=PASS_OWNER_EXECUTION`
 - `PREVIOUS_BLOCKER_IDS=P4-B001`
-- `BLOCKER_IDS=NONE_CLAIMED_PENDING_REVIEW`
-- `OWNER_EXECUTION_EVIDENCE=qualification/evidence/p4_b001_owner_execution.json`
-- `EXPECTED_NEXT_TASK=LAC-P4-REVIEW`
-- `REMEDIATION_BASE_GIT_COMMIT=984a47a7b117154fb39e1d08e28285d703a15978`
+- `BLOCKER_IDS=P4-B002_REMEDIATED`
+- `OWNER_EXECUTION_EVIDENCE=qualification/evidence/p4_b002_owner_execution.json`
+- `EXPECTED_NEXT_TASK=LAC-O001` only after review PASS
 
-The corrected implementation commit is `d86a5adf2da490e797b84cb7fd9b8f7165b839b0`. Live HEAD is expected to be one later handoff-only commit containing remediation evidence, state/task transition, and this re-review prompt. Inspect the complete material delta from the previously blocked implementation commit `5f6e8811bd5e8d180d7d9c712ca90115a4437f18` through `d86a5adf2da490e797b84cb7fd9b8f7165b839b0`, then inspect the complete `d86a5adf2da490e797b84cb7fd9b8f7165b839b0` to live-HEAD delta. Do not treat a demonstrably handoff-only successor commit as a reason to review the wrong candidate.
+Read the owner evidence to obtain the exact corrected implementation commit and verify its complete material delta to live HEAD. Do not trust the predecessor conclusion without inspection.
 
-## 4. Binding blocker to re-review
+## 4. Review objective
 
-### P4-B001 — external-consumer application/skill identity must be controller-bound
+Independently determine whether the corrected candidate satisfies the full Phase 4 contract, with focused scrutiny on `P4-B002`:
 
-Verify that the corrected runtime receives controller-owned authoritative identity for all four dimensions:
+- every external-consumer request is durably bound to controller-owned principal, agent, application, and skill;
+- existing-request reuse proves that complete binding before result/receipt replay, exact-approval discovery/use, policy evaluation, lease creation, adapter invocation, or status/result disclosure;
+- an approval under application/skill B cannot qualify or be consumed through A when principal/agent are shared;
+- successful or failed terminal state under B cannot be replayed/disclosed through A;
+- status enforces the same complete binding;
+- restart preserves the binding;
+- legacy requests without the new four-dimensional binding fail closed rather than being retroactively claimable;
+- correctly bound B003 ALLOW / REQUIRE_APPROVAL / DENY / idempotent replay / status behavior remains correct;
+- P4-B001 declaration application/skill mismatch remains fail-closed before policy/lease/adapter execution;
+- registration grants zero authority;
+- runtime/admin/credential boundaries remain intact.
 
-- principal;
-- agent;
-- application;
-- skill.
+## 5. Full Phase 4 review
 
-The consumer capability declaration may still contain `application_id` and `skill_id`, but those values must be treated only as declaration claims and must exactly match the controller-owned application/skill binding before capability lookup or standing-policy evaluation.
+Verify the accepted chain remains materially intact:
 
-Verify specifically that a consumer bound to application/skill A cannot obtain authority scoped to registered application/skill B merely by presenting B's valid canonical declaration. A mismatch must fail closed before policy can grant authority, before an execution lease is created, and before adapter invocation.
+`B003 -> B002 -> P006-UAT/P006 -> P005/P004/P003/P002/P001/B001 -> accepted A004/A003 -> prior deterministic Phase 1-2 security regression`
 
-The manifest must remain descriptive metadata, not a credential or authentication token. Do not require or reward a new general authentication/RBAC architecture.
+Confirm no production Gmail/Calendar credentials or consequential external effects were used.
 
-## 5. Full Phase 4 re-review requirements
+Chief of Staff remains separate software.
 
-Confirm the remediation did not regress the accepted Phase 4 contract:
+## 6. Required result
 
-- registration/declaration grants zero authority;
-- unknown or unconfigured requests fail closed and terminally closed effects never revive;
-- explicit configured DENY creates no recurring discovery noise;
-- standing-policy specificity, conditional rules, defaults, and equal-specificity deny precedence remain deterministic;
-- exact approval remains owner-created, exact, one-use, expiry-bound, and subject to immediate pre-dispatch policy re-evaluation;
-- runtime consumers cannot supply/override principal, agent, application, skill, capability revision, authority decision, approval, lease/executor, admin operation, or credential material;
-- runtime consumers cannot mutate registry/policy/approvals or reach the owner admin surface;
-- duplicate successful requests cannot execute twice;
-- credentials remain outside consumer/model/public durable surfaces;
-- B003 -> accepted B002 -> P006-UAT/P006 -> prior deterministic regression remains PASS;
-- all consequential test effects remain synthetic/local and use no production credentials/accounts;
-- Chief of Staff remains separate software.
+Return exactly one review result:
 
-Use deterministic adversarial conformance evidence of actual controller behavior, including DENY and conditional-policy enforcement. Do not count a model refusal as a security pass. Do not weaken any existing security gate to obtain PASS.
+`PASS`
 
-## 6. Reviewer behavior
+or
 
-Return exactly one result: `PASS` or `BLOCKED`.
+`BLOCKED`
 
-- If `PASS`: do not remediate. Prepare the complete fresh successor implementation prompt for Phase 5 `LAC-O001` OpenClaw integration, but do not begin that implementation in this review session.
-- If `BLOCKED`: identify only concrete blocker IDs tied to binding requirements and prepare a complete fresh remediation prompt. Do not remediate in the review session.
+A blocker must identify a concrete violated invariant, acceptance criterion, security boundary, package/data-integrity failure, credential exposure, or material bypass. Optional improvements are nonblocking.
 
-Nonblocking cleanup remains nonblocking.
+Do not mutate implementation in this review session.
 
-## 7. Required final fields
+## 7. Success handoff
 
-Before stopping, report:
+If and only if the review result is `PASS`, prepare a complete fresh Phase 5 implementation prompt for `LAC-O001` OpenClaw integration, but do **not** begin O001 in this session.
 
-- `WHERE_WE_ARE`
-- `SESSION_SEGMENT`
-- `REVIEW_RESULT`
-- `REVIEWED_GIT_COMMIT`
-- `WHAT_WAS_VERIFIED`
-- `BLOCKERS`
-- `NONBLOCKING_FINDINGS`
-- `TOTAL_PROJECT_POSITION`
-- `STOP_GATE`
-- `EXACT_NEXT_SAFE_ACTION`
+If `BLOCKED`, prepare a complete fresh remediation prompt naming only concrete blocker IDs. Do not remediate.
+
+Before stopping, report the normal phase-review position fields required by `docs/NEXT_SESSION_PROMPT_TEMPLATE.md`.
