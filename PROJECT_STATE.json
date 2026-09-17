@@ -2,8 +2,8 @@
   "schema": "lac.project-state/v1",
   "project_version": "0.1.0-dev",
   "phase": "PHASE_4_PERMISSION_MANAGEMENT",
-  "phase_status": "READY",
-  "active_task": "LAC-B003",
+  "phase_status": "CANDIDATE_FOR_INDEPENDENT_REVIEW",
+  "active_task": "LAC-P4-REVIEW",
   "last_accepted_release": null,
   "blockers": [],
   "nonblocking_notes": [
@@ -23,7 +23,8 @@
     "Owner UAT now includes a deterministic adversarial stress matrix that deliberately attacks Model\u2192Pi, Pi sandbox, adapter/sandbox, and admin/permission boundaries without depending on model willingness to misbehave. A permissive-model behavioral stress run is supplemental; deterministic hostile requests remain the security gate.",
     "LAC-P006-UAT completed through owner-executed deterministic verification: known/registered requests with no applicable configured standing permission remain terminal DENY/non-resumable while creating bounded owner-reviewable NO_CONFIGURED_STANDING_PERMISSION work; explicit configured DENY creates no discovery noise; owner walkthrough, adversarial stress, and accepted regression PASS.",
     "Owner requires B002 acceptance to include a real interactive owner-permission UAT, not only scripted policy changes: the owner-side admin process must present Always allow / Ask me each time / Not now / Always deny, with exact Allow once / Deny once prompts under REQUIRE_APPROVAL; governed consumers remain isolated from the admin socket and the original first-use request remains non-resumable.",
-    "LAC-B002 generic Google Calendar typed-effect adapter completed through deterministic qualification and owner-executed interactive permission UAT: first-use Always allow / Ask me each time / Not now / Always deny and exact Allow once / Deny once were personally exercised; original first-use requests remained non-resumable; configured DENY produced no recurring discovery noise; permission decisions survived restart; governed consumer admin-socket visibility remained absent; no production Calendar credential or external effect was used."
+    "LAC-B002 generic Google Calendar typed-effect adapter completed through deterministic qualification and owner-executed interactive permission UAT: first-use Always allow / Ask me each time / Not now / Always deny and exact Allow once / Deny once were personally exercised; original first-use requests remained non-resumable; configured DENY produced no recurring discovery noise; permission decisions survived restart; governed consumer admin-socket visibility remained absent; no production Calendar credential or external effect was used.",
+    "LAC-B003 generic external-consumer integration completed through owner-executed deterministic qualification: a separate stdlib-only consumer fixture declares capabilities and submits strict runtime requests; controller-bound identity/capability context, owner-only exact approval, pre-dispatch re-evaluation, terminal closure, idempotent receipt replay, admin isolation, and credential exclusion passed with accepted B002/P006 regression."
   ],
-  "next_action": "Execute LAC-B003 generic external-consumer/LAC integration proof, then prepare the completed Phase 4 candidate for one fresh independent phase-boundary review."
+  "next_action": "Run one fresh independent Phase 4 boundary review of the completed candidate at implementation commit 5f6e8811bd5e8d180d7d9c712ca90115a4437f18. Do not remediate or begin later phases in the review session."
 }

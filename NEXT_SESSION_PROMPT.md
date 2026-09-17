@@ -1,14 +1,14 @@
-# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / LAC-B003 GENERIC EXTERNAL-CONSUMER INTEGRATION
+# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 4 INDEPENDENT BOUNDARY REVIEW
 
 ## 1. Role and controlling rule
 
-You are the **Lead Implementation Engineer** for the user-owned Local Agent Controller (LAC).
+You are the **Fresh Independent Reviewer** for the user-owned Local Agent Controller (LAC).
 
 > **AI proposes. Deterministic software determines authorization and effects.**
 
 Use the connected read-only Tunnel/Web-File-Tool. Project root label: `Local Agent Controller`.
 
-This session owns exactly `LAC-B003`. Do not begin Chief of Staff, OpenClaw, Omarchy Agent OS, or later work.
+This session owns exactly the completed **Phase 4 independent boundary review**. Do not remediate, do not implement Chief of Staff, and do not begin OpenClaw/Omarchy/later work in this review session.
 
 ## 2. Mandatory durable reads — in order
 
@@ -18,61 +18,66 @@ This session owns exactly `LAC-B003`. Do not begin Chief of Staff, OpenClaw, Oma
 4. `tasks/ACTIVE_TASK.md`
 5. `docs/NEXT_SESSION_PROMPT_TEMPLATE.md`
 
-Then read only the additional files needed for B003, especially `docs/CONTRACTS.md`, `docs/PERMISSION_MANAGEMENT.md`, ADR-007, B001/B002 adapter contracts and evidence, and the controlling specification’s Phase 4 external-consumer requirements.
+Then read the controlling specification Phase 4 requirements, `docs/CONTRACTS.md`, `docs/PERMISSION_MANAGEMENT.md`, ADR-007, `docs/B003_EXTERNAL_CONSUMER_INTEGRATION.md`, `qualification/evidence/b003_owner_execution.json`, `qualification/evidence/b003_test_output.txt`, and only the additional implementation/evidence files needed to review the candidate.
 
 ## 3. Handoff facts
 
-- `MODE=IMPLEMENTATION_SEGMENT`
-- `SESSION_SEGMENT=LAC-B003`
-- `PREDECESSOR_ROLE=Lead Implementation Engineer + owner interactive acceptance`
-- `PREDECESSOR_RESULT=B002_OWNER_INTERACTIVE_UAT_PASS`
-- `PREDECESSOR_GIT_COMMIT=25e1c5899d0b59083a378fcc7538b59b54bb3cd7`
-- `HANDOFF_BASE_GIT_COMMIT=25e1c5899d0b59083a378fcc7538b59b54bb3cd7`
+- `MODE=PHASE_BOUNDARY_INDEPENDENT_REVIEW`
+- `SESSION_SEGMENT=LAC-P4-REVIEW`
+- `PREDECESSOR_ROLE=Lead Implementation Engineer + owner package execution`
+- `PREDECESSOR_RESULT=B003_OWNER_EXECUTION_PASS`
+- `PREDECESSOR_GIT_COMMIT=5f6e8811bd5e8d180d7d9c712ca90115a4437f18`
+- `HANDOFF_BASE_GIT_COMMIT=5f6e8811bd5e8d180d7d9c712ca90115a4437f18`
 - `REVIEWED_GIT_COMMIT=NONE`
 - `BLOCKER_IDS=NONE`
-- `OWNER_EXECUTION_EVIDENCE=qualification/evidence/b002_owner_execution.json`
-- `EXPECTED_NEXT_TASK=LAC-B003`
+- `OWNER_EXECUTION_EVIDENCE=qualification/evidence/b003_owner_execution.json`
+- `EXPECTED_NEXT_TASK=LAC-P4-REVIEW`
+- `PHASE4_IMPLEMENTATION_BASE=6582ed37dd2e33a49291607f0a36bd204f2fcf44`
 
-The live HEAD is expected to be a later handoff-only commit containing the B002 owner evidence, state/task transition, and this successor prompt. Inspect the complete delta from `25e1c5899d0b59083a378fcc7538b59b54bb3cd7` to live HEAD. Do not repeat B002 implementation or owner UAT merely because HEAD is newer when that delta is handoff-only.
+The live HEAD is expected to be one later handoff-only commit containing B003 owner evidence, state/task transition, and this review prompt. Inspect the complete material implementation delta from `6582ed37dd2e33a49291607f0a36bd204f2fcf44` through `5f6e8811bd5e8d180d7d9c712ca90115a4437f18`, then inspect the complete `5f6e8811bd5e8d180d7d9c712ca90115a4437f18` to live-HEAD delta. Do not treat a demonstrably handoff-only successor commit as a reason to review the wrong candidate.
 
-## 4. Bounded predecessor verification
+## 4. Review scope and standard
 
-Verify:
+Review the completed Phase 4 candidate through P001-P006, P006-UAT, B002, and B003 against the binding specification, architecture, permission-management amendment, ADR-007, permanent invariants, and task acceptance criteria.
 
-- B002 owner evidence reports PASS and personally exercised Always allow / Ask me each time / Not now / Always deny plus Allow once / Deny once;
-- B002 deterministic gate and accepted P006 regression passed;
-- B002 used synthetic/local Calendar effects only and no production credential;
-- original first-use requests remained non-resumable;
-- explicit configured DENY created no recurring discovery noise;
-- policy choices survived restart/reopen;
-- governed consumer could not see the owner admin socket;
-- Git/state/task/prompt are mutually consistent.
+Verify especially:
 
-Treat discrepancies as BLOCKER only when they violate a binding invariant/acceptance criterion.
+- registration/declaration grants zero authority;
+- unknown or unconfigured requests fail closed and terminally closed effects never revive;
+- explicit configured DENY creates no recurring discovery noise;
+- standing-policy specificity, conditional rules, and equal-specificity deny precedence are deterministic;
+- owner exact approval remains exact, one-use, expiry-bound and subject to immediate pre-dispatch policy re-evaluation;
+- runtime consumers cannot mutate registry/policy/approvals or reach the owner admin surface;
+- B003 consumer-supplied identity/authority/approval/admin/capability-revision/lease/credential material is rejected as non-authoritative;
+- successful external-consumer requests return bounded typed results/receipt projections and duplicate requests cannot execute twice;
+- credentials remain outside consumer/model/public durable surfaces;
+- deterministic adversarial security gates remain evidence of boundaries, not model refusals;
+- B002/P006-UAT/P006 and prior deterministic regression remain PASS/accepted;
+- all consequential B003/B002 test effects are synthetic/local and no production credential is used;
+- Chief of Staff remains separate software and no Chief of Staff workflow/business logic entered LAC.
 
-## 5. Implement B003 completely
+Use bounded deterministic conformance tests only when existing evidence is insufficient. Do not use production accounts, credentials, external targets, or consequential effects.
 
-Implement exactly `tasks/ACTIVE_TASK.md`.
+## 5. Reviewer behavior
 
-The LAC-side milestone is a generic external application that can declare capabilities and submit governed runtime requests but cannot grant itself authority, administer policy, access credentials, bypass exact approvals, or revive terminally closed effects.
+Return exactly one result: `PASS` or `BLOCKED`.
 
-Keep Chief of Staff as separate software. Do not add its workflow/business logic.
+- If `PASS`: do not remediate. Prepare a complete fresh implementation-session successor prompt for the next LAC segment from the controlling specification. The current specification identifies Phase 5 `LAC-O001` OpenClaw integration. Chief of Staff may only begin as separate software after this Phase 4 acceptance; it is not an LAC implementation task.
+- If `BLOCKED`: identify only concrete blocker IDs tied to a binding invariant/acceptance criterion and prepare a complete fresh remediation prompt. Do not remediate in the review session.
 
-Use synthetic/local fixtures for consequential external mutations. No production credentials or external effects.
+Nonblocking cleanup or optional improvements do not block acceptance.
 
-Run focused B003 tests plus the full applicable accepted deterministic regression. Correct in-scope failures before handoff.
+## 6. Required final fields
 
+Before stopping, report:
 
-## 5A. Inherited P006 deterministic adversarial regression contract
-
-The accepted **deterministic adversarial** security gate remains binding during B003. Exercise hostile requests against controller/runtime/admin boundaries directly; do not rely on cooperative **model** behavior. Preserve explicit `DENY` coverage and **conditional** standing-policy coverage in the applicable regression.
-
-**Do not count a model refusal as a security pass.**
-
-The external-consumer proof must therefore demonstrate that authorization remains controller-owned even when consumer/model input attempts to inject authority, approval, administration, or otherwise bypass the accepted boundaries.
-
-## 6. Completion and stop rule
-
-B003 completes Phase 4 implementation. On PASS, create one owner-executable package that installs the Phase 4 candidate and stages a **fresh independent phase-boundary review** prompt. Stop at `OWNER_EXECUTION_REQUIRED`; do not perform the independent review in this implementation session.
-
-Before stopping, report the standard WHERE_WE_ARE / SESSION_SEGMENT / WHAT_WAS_VERIFIED / WHAT_WAS_COMPLETED / WHAT_REMAINS_IN_CURRENT_PHASE / TOTAL_PROJECT_POSITION / BLOCKERS / STOP_GATE / EXACT_NEXT_SAFE_ACTION fields.
+- `WHERE_WE_ARE`
+- `SESSION_SEGMENT`
+- `REVIEW_RESULT`
+- `REVIEWED_GIT_COMMIT`
+- `WHAT_WAS_VERIFIED`
+- `BLOCKERS`
+- `NONBLOCKING_FINDINGS`
+- `TOTAL_PROJECT_POSITION`
+- `STOP_GATE`
+- `EXACT_NEXT_SAFE_ACTION`

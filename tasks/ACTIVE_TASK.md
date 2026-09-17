@@ -1,72 +1,60 @@
-# ACTIVE TASK — LAC-B003
+# ACTIVE TASK — LAC-P4-REVIEW
 
 ## Task ID
 
-`LAC-B003`
+`LAC-P4-REVIEW`
 
 ## Objective
 
-Prove the generic external-consumer/LAC integration contract after the accepted permission plane and generic Gmail/Calendar adapters. The proof must demonstrate that separate application software can declare capabilities and submit governed requests while remaining unable to administer its own authority or bypass exact approvals.
+Perform one fresh independent phase-boundary review of the completed Phase 4 permission-managed external-effects candidate through LAC-B003. The reviewer verifies the candidate; it does not remediate it.
 
 ## In scope
 
-- Implement the smallest generic external-consumer integration boundary required by the controlling specification.
-- Use the accepted P001-P006 runtime/admin separation, B001 Gmail precedent, and accepted B002 Calendar permission-managed adapter.
-- Prove a separate consumer can identify application/skill context, submit capability-governed typed requests, receive deterministic ALLOW / REQUIRE_APPROVAL / DENY outcomes, and consume successful typed results/receipts.
-- Prove registration alone grants zero authority and that authority configuration remains owner/admin-only.
-- Prove the consumer cannot access the P004 admin socket/API, mutate standing policy/registry, inject authority/approval fields, or revive closed requests.
-- Preserve exact approval binding, pre-dispatch policy re-evaluation, deny precedence, idempotency, durable truth, credential isolation, and fail-closed behavior.
-- Use synthetic/local fixtures for consequential external-service mutations. Do not require production Gmail/Calendar credentials.
-- Run B003-focused tests plus the accepted regression through B002/P006-UAT and prior phases.
-- Produce the Phase 4 candidate and hand it to one fresh independent phase-boundary review.
-
-
-## Inherited P006 deterministic adversarial regression contract
-
-- The accepted **deterministic adversarial** security gate remains mandatory throughout B003 and the Phase 4 candidate; do not substitute cooperative **model** behavior for boundary testing.
-- Regression must retain explicit `DENY` cases and **conditional** standing-policy cases alongside allow/approval paths.
-- A model refusal is not evidence that controller, sandbox, adapter, or administration boundaries resisted a hostile request; deterministic hostile requests remain the security gate.
-- B003-focused work must not weaken or remove the accepted P006 owner-UAT/stress surface while integrating an external consumer.
+- Verify candidate Git identity and the complete material delta for Phase 4 completion through B003.
+- Verify the binding Phase 4 permission-management requirements and LAC invariants remain satisfied.
+- Inspect deterministic qualification evidence, including B003 focused tests and accepted B002/P006-UAT/P006 regression.
+- Verify the B003 generic external-consumer contract keeps authority, policy, approvals, credentials, leases, receipts, and administration controller-owned.
+- Return exactly `PASS` or `BLOCKED` with concrete blocker IDs only for binding failures.
 
 ## Out of scope
 
-- Chief of Staff workflow, memory, prioritization, briefings, meeting preparation, follow-up, or product UI.
-- Production external-service credentials or consequential live effects.
-- OpenClaw, Omarchy Agent OS, remote administration, web/TUI administration, enterprise RBAC.
-- New authority semantics or weakening any LAC invariant.
+- Remediation or implementation changes.
+- Chief of Staff workflow/business logic.
+- OpenClaw, Omarchy Agent OS, or later-phase implementation.
+- New scope or optional refactors.
 
 ## Required inputs
 
-- Accepted B002 owner execution evidence at `qualification/evidence/b002_owner_execution.json`.
-- `docs/CONTRACTS.md`, `docs/PERMISSION_MANAGEMENT.md`, ADR-007.
-- Accepted P004/P005 runtime/admin boundary.
-- Accepted B001 Gmail and B002 Calendar generic adapter contracts.
+- `qualification/evidence/b003_owner_execution.json`
+- `qualification/evidence/b003_test_output.txt`
+- B003 implementation and tests.
+- Phase 4 P001-P006/P006-UAT/B002 evidence and contracts.
+- Binding specification Phase 4 acceptance requirements and permanent invariants.
 
 ## Required outputs
 
-- Generic external-consumer integration implementation/fixture.
-- Deterministic integration and negative-security tests.
-- Regression evidence through accepted B002/P006-UAT and prior phases.
-- Phase 4 candidate with durable state/prompt for a fresh independent phase-boundary review.
+- Independent review result: exactly `PASS` or `BLOCKED`.
+- If `PASS`, a complete fresh successor implementation prompt for the next LAC task from the controlling specification; do not implement it in the review session.
+- If `BLOCKED`, a complete fresh remediation prompt naming only concrete blocker IDs; do not remediate in the review session.
 
 ## Acceptance tests
 
-- external consumer can submit a known registered typed request through the runtime path;
-- registration alone grants zero authority;
-- owner-configured standing policy governs fresh requests deterministically;
-- REQUIRE_APPROVAL cannot execute without an owner exact approval;
-- runtime consumer cannot mutate registry/policy or reach the admin socket/API;
-- consumer-supplied authority/approval/admin material is rejected or ignored as non-authoritative;
-- closed denied requests cannot resume after administration;
-- pre-dispatch re-evaluation and deny precedence remain effective;
+- candidate Git/state/task/prompt/evidence are mutually consistent;
+- registration grants zero authority;
+- unknown/unconfigured requests fail closed and terminal requests do not revive;
+- standing policy, conditional rules, deny precedence and exact approval semantics remain deterministic;
+- runtime consumers cannot administer registry/policy or reach the owner admin surface;
+- external consumer cannot inject identity/authority/approval/admin material;
+- pre-dispatch policy re-evaluation remains effective;
 - duplicate/idempotent effects cannot execute twice;
-- credentials remain outside consumer/model context and durable public surfaces;
-- accepted B002/P006-UAT and prior deterministic regression remain PASS.
+- credentials remain outside consumer/model/public durable surfaces;
+- B002/P006-UAT/P006 and prior deterministic regression remain accepted/pass;
+- B003 contains no Chief of Staff business logic and uses no production external effects.
 
 ## Package required?
 
-Yes.
+No.
 
 ## Next task on success
 
-Fresh `PHASE_BOUNDARY_INDEPENDENT_REVIEW` for the completed Phase 4 candidate.
+Resolve the next LAC implementation segment from the controlling specification after Phase 4 acceptance. The current specification identifies Phase 5 `LAC-O001` OpenClaw integration; Chief of Staff is separate software and is not implemented in this repository.
