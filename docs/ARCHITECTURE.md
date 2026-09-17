@@ -1,6 +1,6 @@
 # Architecture — Controlling Baseline v0.1
 
-This file is the concise operating architecture derived from the controlling Technical Design and Implementation Specification v0.1 and the accepted Phase 4 permission-management amendment. It does not broaden the product into an assistant or workflow engine.
+This file is the concise operating architecture derived from the controlling Technical Design and Implementation Specification v0.1, the accepted Phase 4 permission-management amendment, and ADR-008. It does not broaden the product into an assistant, workflow engine, or general-purpose harness.
 
 ## Central rule
 
@@ -8,9 +8,11 @@ The AI proposes. Deterministic software authorizes and permits effects.
 
 ## Product separation
 
-Local Agent Controller is an independent reusable authority/effect-control product. Chief of Staff, Omarchy Agent OS, Pi/OpenClaw agents, and future applications are consumers of LAC rather than components that own its authority semantics.
+Local Agent Controller is an independent reusable authority/effect-control product. Pi is the sole reference harness for the active LAC v1 roadmap, but Pi does not own LAC authority semantics.
 
-LAC may contain generic service effect adapters. It must not contain Chief of Staff workflow, memory, prioritization, briefing, meeting-preparation, follow-up, or other application business logic.
+LAC may contain generic service effect adapters and the native local consumer/runtime contract needed by governed clients. It must not absorb application workflow, memory, prioritization, briefing, or unrelated product logic.
+
+Ordinary standalone Pi may still be run independently. A Pi process is represented as **LAC-governed** only when it is started through the qualified LAC launch/profile that removes alternate consequential-effect paths and binds the process to the controller-owned runtime boundary.
 
 ## Local-first contract
 
@@ -18,18 +20,20 @@ Canonical controller state, capability registry, pending-permission records, pol
 
 ## Two lanes
 
-**Lane A — compatibility governance:** existing MCP/tool calls may pass through Airlock with allow/ask/deny. This is lower assurance.
+**Lane A — compatibility governance:** raw compatibility/tool calls may pass through a lower-assurance compatibility gateway where explicitly configured.
 
 **Lane B — typed governed effects:** consequential operations enter the LAC Authority Core as versioned typed effect requests, are canonicalized, authenticated, capability-validated, policy-evaluated, approval-bound when required, re-evaluated immediately before dispatch, leased, and executed by bounded effect adapters.
+
+The v1 Pi reference path uses the strongest available typed governed-effect path for consequential effects. Merely making LAC callable from a process does not make that process governed; bypass resistance is a separate requirement.
 
 ## Runtime versus administration surfaces
 
 LAC exposes logically separate control surfaces:
 
-- **Runtime surface:** external applications submit governed requests and inspect permitted request/result state. Runtime consumers cannot mutate capability registration, standing policy, administrator identity, or controller invariants.
+- **Runtime surface:** governed consumers submit effect requests and inspect permitted request/result state. Runtime consumers cannot mutate capability registration, standing policy, administrator identity, or controller invariants.
 - **Administration surface:** the human owner manages capability registration, pending permission requests, standing policy, revocation, and exact approvals. v0.1 uses a separate owner-only Linux Unix-domain admin socket with peer-UID verification and no exposure inside governed agent sandboxes.
 
-The first authoritative administration client is `lacctl`. Future TUI/web clients must consume the same admin API and never become canonical state writers.
+The first authoritative administration client is `lacctl`. Future user interfaces must consume the same admin API and never become canonical state writers.
 
 ## Permission-management contract
 
@@ -42,6 +46,25 @@ Capability registration, standing permission, and exact effect approval are dist
 - A valid registered capability/resource/material request with no applicable user-configured standing rule or default is also terminally `DENY`, with no lease or adapter effect, and creates/aggregates bounded owner-reviewable permission-configuration work. An explicit configured `DENY` rule/default is already an owner decision and does not create this discovery work. Configuration changes affect only a fresh request.
 
 Conditional “allow unless / ask when” behavior is implemented through deterministic rules over trusted capability/resource/request metadata, never through model judgment.
+
+## Pi v1 reference-harness contract
+
+The production Pi integration must join the accepted real Pi path to the accepted Phase 4 permission-aware runtime.
+
+A governed Pi launch/profile must satisfy all of the following:
+
+- use the exact qualified Pi revision unless a later task explicitly re-qualifies an upgrade;
+- prefer Pi's supported CLI/TUI/SDK/extension mechanisms rather than creating a competing LAC harness;
+- expose only controller-backed consequential-effect tools;
+- preserve the qualified process sandbox and ambient filesystem/process/network/environment restrictions;
+- keep principal, agent, application and skill identity controller-owned;
+- route capability validation, standing policy, pending permission discovery, exact approval, dispatch, leases, receipts and emergency pause through canonical LAC state;
+- make `ALLOW`, `REQUIRE_APPROVAL`, `DENY` and permission-configuration outcomes human-visible without giving the model-facing process administration authority;
+- preserve canonical request identity across an exact-approval wait/retry so the approved effect is re-evaluated and can execute at most once;
+- retain durable restart and non-resumption semantics;
+- never describe ordinary standalone Pi as LAC-governed.
+
+Pi-specific integration code is an edge adapter. It must not become a second policy/approval/state authority.
 
 ## Binding invariants
 
@@ -67,7 +90,7 @@ Conditional “allow unless / ask when” behavior is implemented through determ
 
 ## Required internal interfaces
 
-`AgentAdapter`, `ModelProvider`, `PolicyDecisionProvider`, `ApprovalSurface`, `EffectAdapter`, `SandboxBackend`, `SecretProvider`, `AuditSink`, `StateStore`, plus the Phase 4 `CapabilityRegistry` and isolated administration surface.
+`AgentAdapter`, `ModelProvider`, `PolicyDecisionProvider`, `ApprovalSurface`, `EffectAdapter`, `SandboxBackend`, `SecretProvider`, `AuditSink`, `StateStore`, `CapabilityRegistry`, and the isolated administration surface.
 
 ## State and execution
 
@@ -77,8 +100,14 @@ SQLite WAL remains the single-machine durable store. An approval never transitio
 
 Governed tools alone are insufficient. The agent process must have bounded ambient filesystem/process/network/environment authority using an established Linux sandbox. Agents receive credential references, not credentials. Governed agent sandboxes must not expose the administration socket.
 
-## Current Phase 4 sequence
+## Accepted foundation and active v1 sequence
 
-`P001 -> P002 -> P003 -> P004 -> P005 -> P006 -> P006-UAT -> B002 -> B003 -> Phase 4 independent review`.
+Accepted foundation:
 
-B001 Gmail remains accepted as a generic adapter precursor. The prior unexecuted B002 owner package is superseded. Chief of Staff begins only afterward as separate software.
+`Phase 1 authority core -> Phase 2 local enforcement -> Phase 3 real Pi/local model -> Phase 4 permission management + generic consumer contract -> Phase 4 fresh independent review PASS`.
+
+Active v1 sequence:
+
+`LAC-PI001 -> LAC-PI002 -> LAC-PI003 -> phase-boundary independent review -> LAC-V001 productization`.
+
+No additional harness integration, external-product implementation, generic compatibility-protocol facade, or additional model-provider expansion is part of the active v1 roadmap unless the owner explicitly amends it.

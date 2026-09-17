@@ -10,7 +10,7 @@
 **Primary target:** Linux / Omarchy, with architecture portable to other operating systems
 **Primary model runtime for first end-to-end qualification:** FreeToken
 **Primary agent harness for first end-to-end qualification:** Pi
-**Secondary harness integration:** OpenClaw
+**Reference harness for v1:** Pi
 **Project owner:** User
 **Implementation model:** GPT-5.6 Sol, High reasoning effort for authority/security/runtime work
 **Independent implementation reviewer:** separate GPT-5.6 Sol, High reasoning effort
@@ -33,13 +33,9 @@ The project will:
    * agent harness;
    * cloud provider;
    * application domain;
-4. become a reusable dependency of:
+4. become a reusable local authority/effect dependency for Pi-based agents and future external applications through stable controller-owned interfaces.
 
-   * the Chief of Staff project;
-   * Omarchy Agent OS;
-   * Pi-based agents;
-   * OpenClaw-based agents;
-   * future local agent applications.
+Pi is the sole reference harness for the active v1 roadmap. Other application and harness roadmaps are outside this project unless the owner explicitly adds them later.
 
 The project will not attempt to create another inference engine, model gateway, general agent framework, cognition framework, memory system, workflow orchestrator, or AI operating system.
 
@@ -381,11 +377,11 @@ Its architectural ideas may be independently implemented.
 
 ---
 
-# 4.6 OpenClaw — INTEGRATION TARGET + SECURITY REFERENCE
+# 4.6 OpenClaw — HISTORICAL SECURITY REFERENCE
 
 **Repository:** `openclaw/openclaw`
 **License:** MIT
-**Disposition:** **INTEGRATE; SELECTIVELY REUSE SECURITY PATTERNS**
+**Disposition:** **REFERENCE ONLY; NOT IN ACTIVE v1 ROADMAP**
 
 OpenClaw now implements much stronger local execution governance than earlier versions.
 
@@ -410,7 +406,7 @@ Study and selectively reuse or independently implement:
 
 Do not make OpenClaw the universal authority controller.
 
-It remains one harness/platform integration.
+It is not an active v1 integration target. Historical qualification remains available only as security-reference evidence.
 
 ---
 
@@ -794,7 +790,7 @@ git.push
 deployment.release
 ```
 
-The Chief of Staff and Omarchy Agent OS should preferentially use **Lane B**.
+External applications requiring strong governance should preferentially use **Lane B**.
 
 ---
 
@@ -1307,18 +1303,22 @@ That prevents authority-control availability from becoming coupled to model serv
 
 ---
 
-# 21. OpenClaw integration
+# 21. Pi v1 production integration
 
-OpenClaw is Phase 5, not part of the first walking skeleton.
+Pi is the sole reference harness for the active LAC v1 roadmap. The accepted A001-A004 path already proves that real Pi Agent Core can run inside the qualified sandbox with only LAC-backed tools, but the owner-facing A004 bridge predates the Phase 4 permission-management runtime.
 
-The OpenClaw governed profile must:
+The production Pi profile must therefore join those accepted halves:
 
-* use LAC tools/effects;
-* disable or restrict alternate direct host effects;
-* retain OpenClaw's own sandbox and approval controls as defense in depth;
-* never treat OpenClaw's internal state as controller canonical truth.
+* use Pi's supported CLI/TUI/SDK/extension mechanisms where practical rather than creating a competing LAC harness;
+* expose only LAC-backed consequential-effect tools in governed mode;
+* preserve the qualified Pi process sandbox and ambient-authority restrictions;
+* route capability validation, pending-permission discovery, standing policy, exact approvals, leases, receipts and emergency pause through canonical LAC state;
+* keep principal, agent, application and skill identity controller-owned;
+* make permission outcomes visible to the human user without exposing administration authority to Pi/model context;
+* preserve one canonical request across exact-approval wait/retry and execute at most once after current-policy re-evaluation;
+* leave ordinary standalone Pi separately runnable and explicitly outside LAC governance.
 
-The integration should use OpenClaw's native exact-execution-binding patterns where useful.
+Pi-specific integration remains an edge adapter. It must not create a second authority model.
 
 ---
 
@@ -1404,32 +1404,11 @@ Approval must bind:
 
 ---
 
-# 23. Omarchy Agent OS integration
+# 23. External application boundary
 
-Omarchy Agent OS must become a **consumer** of LAC.
+External applications are outside the active LAC v1 implementation roadmap. LAC owns only the reusable authority/effect controller, its local runtime/admin contracts, generic effect adapters, and the Pi reference integration required to prove those contracts in real use.
 
-It must not create a second canonical controller.
-
-Target ownership:
-
-```text
-LAC
- ├── authority
- ├── effects
- ├── policy
- ├── approval
- └── audit
-
-Omarchy Agent OS
- ├── desktop integration
- ├── intent interaction
- ├── OS UX
- ├── voice
- ├── display
- └── controller adapter
-```
-
-The current Omarchy controller work should later be reconciled against this project rather than duplicated.
+Future applications may consume the stable LAC contract from their own repositories. No application-specific workflow, memory, prioritization, user-experience or operating-environment logic is implemented as part of the current LAC roadmap.
 
 ---
 
@@ -1499,9 +1478,7 @@ local-agent-controller/
 │   │   └── calendar/
 │   │
 │   ├── adapters/
-│   │   ├── pi/
-│   │   ├── openclaw/
-│   │   └── mcp/
+│   │   └── pi/
 │   │
 │   └── sandbox/
 │
@@ -1883,7 +1860,7 @@ A004 must make the qualified local runtime reproducibly startable by the owner, 
 
 # 34. PHASE 4 — Permission-managed external effects
 
-Phase 4 must make LAC directly operable by its human owner as a reusable permission controller before an external application such as Chief of Staff relies on it.
+Phase 4 must make LAC directly operable by its human owner as a reusable permission controller before the production Pi reference path relies on it.
 
 B001 Gmail is preserved as an accepted generic external-service adapter precursor. The prior unexecuted B002 Calendar owner package is superseded.
 
@@ -1901,7 +1878,7 @@ B002 Calendar adapter reintroduced against the permission system
 B003 generic external-consumer/LAC integration proof
 ```
 
-No Chief of Staff workflow/business logic is implemented in this repository.
+No external-application workflow/business logic is implemented in this repository.
 
 ### Permission-management requirements
 
@@ -1945,59 +1922,58 @@ Generic external effects retain B001 Gmail coverage and add the Calendar B002 co
 
 `v0.2.0-alpha.1`
 
-After the Phase 4 independent review passes, external products may integrate against the generic LAC runtime/admin contract. Chief of Staff then begins as separate software.
+After the Phase 4 independent review passes, the next LAC milestone is the Pi v1 production integration that joins the real Pi path to the accepted permission-aware runtime/admin contract.
 
 ---
 
-# 35. PHASE 5 — OpenClaw integration
+# 35. PHASE 5 — Pi v1 production integration
 
-Create an OpenClaw adapter/profile.
+Pi is the sole reference harness for the active v1 roadmap. Phase 5 joins the accepted real Pi/sandbox path to the accepted Phase 4 permission-aware runtime and then stabilizes the native local consumer contract from real use.
 
-Test:
+Required sequence:
 
-* OpenClaw native sandbox remains enabled;
-* OpenClaw direct bypass tools are removed/denied;
-* controller effect requests work;
-* duplicate authority state is avoided;
-* exact approvals remain controller-owned.
+```text
+PI001  production LAC-governed Pi launch/profile and permission-aware runtime integration
+PI002  real owner UAT of ALLOW / permission discovery / REQUIRE_APPROVAL / DENY / restart / duplicate prevention / bypass resistance
+PI003  stabilize native local consumer contract and deterministic conformance surface proven by Pi
+```
+
+Binding requirements:
+
+* governed mode uses the exact qualified Pi revision unless a later explicit task re-qualifies an upgrade;
+* prefer Pi's supported CLI/TUI/SDK/extension surfaces instead of creating a competing harness;
+* Pi has no alternate consequential-effect path around LAC in governed mode;
+* the qualified sandbox and credential/admin isolation remain mandatory;
+* all Phase 4 capability, pending-permission, policy, exact-approval, identity, lease, receipt, emergency and non-resumption semantics remain canonical;
+* permission outcomes are visible to the human user and are never silently dropped;
+* owner approval remains isolated from model/runtime administration authority;
+* ordinary standalone Pi remains separately runnable and is not represented as LAC-governed;
+* Pi-specific code remains an edge adapter over the same controller-owned consumer contract.
+
+No additional harness integration, external-product implementation, generic compatibility-protocol facade, or additional model-provider expansion is part of this phase.
+
+### Release
+
+`v0.3.0-alpha.1` after Phase 5 deterministic qualification and independent review.
 
 ---
 
-# 36. PHASE 6 — Omarchy Agent OS integration
+# 36. PHASE 6 — v1 productization
 
-Replace planned duplicate controller work in Omarchy Agent OS with an adapter to this product.
-
-Expose:
-
-* status;
-* pending approvals;
-* active jobs/effects;
-* emergency pause;
-* policy profile;
-* attention indicators
-
-to the Omarchy desktop interface.
-
-Do not move canonical controller state into Omarchy UI.
-
----
-
-# 37. PHASE 7 — productization
-
-Only after core behavior is proven:
+Only after the Pi production path, owner UAT, consumer-contract stabilization and Phase 5 independent review pass:
 
 * installer;
-* configuration wizard;
-* graphical policy editor;
-* desktop approval UI;
-* service auto-start;
+* governed Pi launcher/profile;
+* configuration workflow;
+* owner permission/approval UX over the accepted admin API;
+* service auto-start where appropriate;
 * upgrades;
 * migrations;
 * rollback;
-* portable distributions;
-* additional OS support.
+* portable Linux distribution;
+* operating documentation and recovery.
 
-Do not productize before Phase 3 works.
+Productization must not move canonical authority into the Pi process or UI.
 
 ---
 
@@ -2371,13 +2347,16 @@ P006-UAT owner acceptance + first-use permission-discovery gate
 
 B002  Calendar generic adapter against permission system
 B003  generic external-consumer/LAC integration proof
+Phase 4 independent review — accepted
 
-O001  OpenClaw adapter
+PI001  production LAC-governed Pi permission-aware integration
+PI002  real owner UAT of the production Pi path
+PI003  stabilize native local consumer contract + conformance
 
-OS001 Omarchy Agent OS adapter
+V001   v1 Pi-reference packaging/productization
 ```
 
-Chief of Staff is not an LAC implementation task. It begins as separate software after the generic LAC external-consumer contract and Phase 4 independent review are accepted.
+No additional harness integration or external-application implementation is part of the active LAC v1 roadmap.
 
 Tasks may be combined where implementation naturally belongs in one change, but may not be reordered in a way that makes higher layers authoritative before the core exists.
 
@@ -2397,23 +2376,21 @@ That is the technical proof.
 
 ---
 
-# 51. External-consumer / Chief of Staff milestone definition
+# 51. Pi v1 production milestone definition
 
-The LAC-side proof is:
+The proof is:
 
-> A separate external application can register/declare capabilities, receive only user-configured standing authority, submit governed typed requests, and remain technically unable to grant itself new authority or bypass exact approvals.
+> A user starts Pi through the supported LAC governed launch/profile, uses the normal Pi agent experience, and every consequential effect available to that governed process is mediated by the completed LAC capability/policy/approval/dispatcher path with no alternate host-effect route.
 
-After this generic contract passes LAC review, the Chief of Staff project may consume it as separate software. A subsequent Chief of Staff product milestone may demonstrate autonomous reading/preparation with consequential communication/calendar mutations controlled by LAC; that workflow logic does not move into the LAC repository.
+The owner must personally observe permission discovery, exact approval, denial, successful execution, durable receipts, restart behavior and duplicate prevention in that real Pi path. Ordinary standalone Pi remains separately runnable outside governed mode.
 
 ---
 
-# 52. Omarchy milestone definition
+# 52. Native consumer-contract milestone definition
 
-The OS proof is:
+The contract is stable for v1 when the Pi edge integration is thin, controller identity and authority remain canonical, harness-specific mechanics do not leak into the Authority Core, and deterministic conformance tests prove that a governed consumer cannot self-authorize or bypass LAC.
 
-> An AI can act as the primary intent interface to the local operating environment without itself possessing unrestricted operating-system authority.
-
-This means the user can interact naturally while deterministic components remain responsible for real effects.
+This milestone stabilizes the LAC-owned local consumer surface from a real reference implementation; it does not add unrelated compatibility or application integrations.
 
 ---
 
@@ -2474,14 +2451,7 @@ without writing security-policy code. `ASK` maps deterministically to the intern
 
 ### Portability
 
-Changing:
-
-```text
-FreeToken → llama.cpp
-Pi → OpenClaw
-```
-
-does not require redesigning the authority core.
+The Authority Core remains isolated behind explicit model-provider and harness-adapter interfaces. Pi is the sole reference harness for v1; a Pi upgrade requires explicit re-qualification but must not require redesigning canonical policy, approval, identity, state or effect semantics. Future model-provider work likewise remains behind `ModelProvider` and is not part of the active roadmap.
 
 ### Locality
 
@@ -2607,7 +2577,7 @@ The first target integration is:
 FreeToken → Pi → Local Agent Controller → governed local effects
 ```
 
-The controller must eventually be reusable by the Chief of Staff and Omarchy Agent OS.
+The controller must remain reusable by external applications through controller-owned interfaces without absorbing their product logic.
 
 ### Core invariant
 
@@ -2798,7 +2768,7 @@ If a genuine architecture blocker is discovered, document the blocker precisely 
 
 Do not broaden the project.
 
-Do not begin unrelated Omarchy Agent OS or Chief of Staff work.
+Do not begin unrelated external-product or additional-harness work.
 
 ---
 

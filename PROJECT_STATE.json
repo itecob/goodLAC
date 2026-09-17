@@ -1,32 +1,17 @@
 {
   "schema": "lac.project-state/v1",
   "project_version": "0.1.0-dev",
-  "phase": "PHASE_4_PERMISSION_MANAGEMENT",
-  "phase_status": "CANDIDATE_FOR_INDEPENDENT_REVIEW",
-  "active_task": "LAC-P4-REVIEW",
+  "phase": "PHASE_5_PI_V1_PRODUCTION_INTEGRATION",
+  "phase_status": "READY_FOR_IMPLEMENTATION",
+  "active_task": "LAC-PI001",
   "last_accepted_release": null,
   "blockers": [],
   "nonblocking_notes": [
-    "Waggle remains concepts-only unless an authoritative license is resolved at the exact revision intended for reuse.",
-    "Phase 3 A003 remains independently accepted; A004 passed owner revalidation after remediation.",
-    "LAC-B001 Gmail typed effects remain accepted as a generic external-service adapter precursor.",
-    "LAC-P001 capability/skill registry and canonical manifest contract completed through owner-executed deterministic verification; registration remains descriptive and grants zero authority.",
-    "LAC-P002 unknown-request quarantine and bounded pending-permission queue completed through owner-executed deterministic verification; P002-closed effects are permanently non-resumable.",
-    "The unexecuted LAC_B002_CALENDAR_ADAPTER_v0.1.0 owner package remains superseded and must not be executed.",
-    "Chief of Staff is separate software and must consume LAC through the generic external-consumer/runtime contract.",
-    "LAC-P003 deterministic scoped/conditional standing policy completed through owner-executed focused and accepted regression verification; conditions consume only P002-validated trusted metadata.",
-    "LAC-P004 isolated local administrator API and Linux owner-identity boundary completed through owner-executed deterministic focused and accepted regression verification; governed runtime consumers have no administration mutation surface.",
-    "LAC-P005 lacctl administration client completed through owner-executed deterministic focused and accepted regression verification; the CLI consumes only the P004 v1 admin protocol and has no direct canonical-state mutation path.",
-    "LAC-P006 permission-management end-to-end and negative-security qualification completed through owner-executed deterministic verification; integrated P001-P005 authority and isolation invariants passed.",
-    "LAC-P006 corrected later-phase regression determinism: direct A003/A004 live gates remain available/default, while P006 and successors verify accepted live evidence and rerun current deterministic security/interface conformance instead of depending on unseedable model auto-tool-choice behavior.",
-    "Owner inserted LAC-P006-UAT before B002 to make the built controller directly operable/testable and to add first-use discovery for a registered capability that lacks user-configured standing permission. Such a request must remain DENY/non-resumable while creating bounded owner-reviewable configuration work for future fresh requests.",
-    "Owner UAT now includes a deterministic adversarial stress matrix that deliberately attacks Model\u2192Pi, Pi sandbox, adapter/sandbox, and admin/permission boundaries without depending on model willingness to misbehave. A permissive-model behavioral stress run is supplemental; deterministic hostile requests remain the security gate.",
-    "LAC-P006-UAT completed through owner-executed deterministic verification: known/registered requests with no applicable configured standing permission remain terminal DENY/non-resumable while creating bounded owner-reviewable NO_CONFIGURED_STANDING_PERMISSION work; explicit configured DENY creates no discovery noise; owner walkthrough, adversarial stress, and accepted regression PASS.",
-    "Owner requires B002 acceptance to include a real interactive owner-permission UAT, not only scripted policy changes: the owner-side admin process must present Always allow / Ask me each time / Not now / Always deny, with exact Allow once / Deny once prompts under REQUIRE_APPROVAL; governed consumers remain isolated from the admin socket and the original first-use request remains non-resumable.",
-    "LAC-B002 generic Google Calendar typed-effect adapter completed through deterministic qualification and owner-executed interactive permission UAT: first-use Always allow / Ask me each time / Not now / Always deny and exact Allow once / Deny once were personally exercised; original first-use requests remained non-resumable; configured DENY produced no recurring discovery noise; permission decisions survived restart; governed consumer admin-socket visibility remained absent; no production Calendar credential or external effect was used.",
-    "LAC-B003 generic external-consumer integration completed through owner-executed deterministic qualification: a separate stdlib-only consumer fixture declares capabilities and submits strict runtime requests; controller-bound identity/capability context, owner-only exact approval, pre-dispatch re-evaluation, terminal closure, idempotent receipt replay, admin isolation, and credential exclusion passed with accepted B002/P006 regression.",
-    "Phase 4 blocker P4-B001 remediated through owner-executed deterministic verification: ExternalConsumerRuntime now receives controller-owned principal/agent/application/skill identity; declaration application_id/skill_id are non-authoritative claims that must match the trusted binding before policy evaluation, lease creation, or adapter invocation; borrowed registered identity authority is rejected; B003 -> accepted B002 -> P006-UAT/P006 -> prior deterministic regression PASS.",
-    "Phase 4 blocker P4-B002 remediated through owner-executed deterministic verification: B003 request ownership now has a controller-created canonical durable binding across principal/agent/application/skill before existing-request reuse, exact-approval discovery/use, policy/lease/adapter execution, terminal receipt replay, or status disclosure; cross-binding reuse/approval/replay/status and restart persistence fail closed; legacy unbound B003 requests are not retroactively claimable; P4-B001 remains preserved; full accepted regression PASS."
+    "Fresh independent Phase 4 re-review passed at live reviewed HEAD 78a1b8c580778f8ae5cb11a856fa771bc1f64308; reviewed P4-B002 implementation commit cd61b1c95a65782dfb9e9442d3422885df8a11f7; no Phase 4 blockers remain.",
+    "The accepted A004 owner terminal launches real pinned Pi Agent Core 0.85.1 inside the qualified sandbox with only LAC-governed tools, but that path still uses the earlier fixed-ALLOW qualification policy rather than the completed Phase 4 permission-management runtime.",
+    "The accepted P001-P006/B002/B003 path provides the completed capability registry, pending permission discovery, standing policy, exact approvals, owner-only administration, external-consumer identity binding, idempotency and durable receipts.",
+    "Pi is the sole reference harness for the active LAC v1 roadmap. LAC-governed Pi is an explicit launch/profile; ordinary standalone Pi remains outside LAC governance and may still be run separately by the user.",
+    "The active LAC v1 roadmap contains no additional harness integration, external-product implementation, generic compatibility-protocol facade, or additional model-provider expansion. Such work requires a future explicit owner roadmap decision."
   ],
-  "next_action": "Run one fresh independent Phase 4 re-review of the corrected candidate at implementation commit cd61b1c95a65782dfb9e9442d3422885df8a11f7. Verify P4-B002 remediation plus the full Phase 4 contract. Do not remediate or begin Phase 5 in the review session."
+  "next_action": "In a fresh implementation session execute LAC-PI001: join the real Pi user path to the accepted Phase 4 permission-aware LAC runtime without creating a Pi-specific authority fork or weakening the existing sandbox/bypass boundary."
 }
