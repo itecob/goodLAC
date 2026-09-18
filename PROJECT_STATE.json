@@ -1,18 +1,20 @@
 {
-  "active_task": "LAC-PI002",
+  "active_task": "LAC-PI002-D001",
   "blockers": [],
   "last_accepted_release": null,
-  "next_action": "Execute LAC-PI002 real owner UAT of scripts/lac-pi; do not begin LAC-PI003 until UAT PASS.",
+  "next_action": "Implement LAC-PI002-D001 permission-gated workflow continuation; do not begin LAC-PI003 until D001 PASS.",
   "nonblocking_notes": [
     "Fresh independent Phase 4 re-review passed at live reviewed HEAD 78a1b8c580778f8ae5cb11a856fa771bc1f64308; reviewed P4-B002 implementation commit cd61b1c95a65782dfb9e9442d3422885df8a11f7; no Phase 4 blockers remain.",
     "The accepted A004 owner terminal launches real pinned Pi Agent Core 0.85.1 inside the qualified sandbox with only LAC-governed tools, but that path still uses the earlier fixed-ALLOW qualification policy rather than the completed Phase 4 permission-management runtime.",
     "The accepted P001-P006/B002/B003 path provides the completed capability registry, pending permission discovery, standing policy, exact approvals, owner-only administration, external-consumer identity binding, idempotency and durable receipts.",
     "Pi is the sole reference harness for the active LAC v1 roadmap. LAC-governed Pi is an explicit launch/profile; ordinary standalone Pi remains outside LAC governance and may still be run separately by the user.",
     "The active LAC v1 roadmap contains no additional harness integration, external-product implementation, generic compatibility-protocol facade, or additional model-provider expansion. Such work requires a future explicit owner roadmap decision.",
-    "LAC-PI001 production governed Pi integration completed at implementation commit 2999f1000b2b3aa3baf24eaf82203de901769eec; scripts/lac-pi composes the accepted pinned Pi sandbox with the accepted Phase 4 permission-aware runtime. LAC-PI002 owner UAT is required."
+    "LAC-PI001 production governed Pi integration completed at implementation commit 2999f1000b2b3aa3baf24eaf82203de901769eec; scripts/lac-pi composes the accepted pinned Pi sandbox with the accepted Phase 4 permission-aware runtime.",
+    "LAC-PI002 real owner UAT passed on 2026-09-17 against Pi Agent Core 0.85.1 and Bubblewrap/network-none after bounded emergency-admin remediation commit fbbaddd1b9cf5e5f1d8c0d81a3350309848f4583.",
+    "Owner approved a forward Phase 5 correction before PI003: terminal permission-configuration denials remain closed, while governed consumers gain a separate non-authoritative workflow-continuation mechanism that can resume only by submitting a fresh request after owner policy configuration."
   ],
   "phase": "PHASE_5_PI_V1_PRODUCTION_INTEGRATION",
-  "phase_status": "OWNER_UAT_REQUIRED",
+  "phase_status": "IMPLEMENTATION_REQUIRED",
   "project_version": "0.1.0-dev",
   "schema": "lac.project-state/v1"
 }

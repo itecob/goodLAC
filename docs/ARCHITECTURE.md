@@ -47,6 +47,18 @@ Capability registration, standing permission, and exact effect approval are dist
 
 Conditional “allow unless / ask when” behavior is implemented through deterministic rules over trusted capability/resource/request metadata, never through model judgment.
 
+### Permission-gated workflow continuation
+
+ADR-009 adds a Phase 5 consumer-workflow rule without changing Phase 4 authority semantics.
+A terminal permission-configuration denial may cause the governed host to suspend the user
+workflow, but the denied effect itself remains permanently closed.
+
+A continuation is non-authoritative. After owner policy configuration it may submit at most one
+fresh canonical request derived from immutable captured intent. That fresh request has new
+request/idempotency identity and must pass complete current capability, policy, approval,
+emergency, dispatch and sandbox evaluation. Mutation is a new proposal, not continuation.
+Restart may recover blocked workflow state but never auto-dispatch an effect.
+
 ## Pi v1 reference-harness contract
 
 The production Pi integration must join the accepted real Pi path to the accepted Phase 4 permission-aware runtime.
@@ -62,6 +74,7 @@ A governed Pi launch/profile must satisfy all of the following:
 - make `ALLOW`, `REQUIRE_APPROVAL`, `DENY` and permission-configuration outcomes human-visible without giving the model-facing process administration authority;
 - preserve canonical request identity across an exact-approval wait/retry so the approved effect is re-evaluated and can execute at most once;
 - retain durable restart and non-resumption semantics;
+- for permission-configuration denial, suspend the governed workflow before the model can continue, then use only a one-shot fresh-request continuation after owner resolution; never revive the denied request;
 - never describe ordinary standalone Pi as LAC-governed.
 
 Pi-specific integration code is an edge adapter. It must not become a second policy/approval/state authority.
@@ -87,6 +100,7 @@ Pi-specific integration code is an edge adapter. It must not become a second pol
 - INV-017 policy/capability administration is unavailable through the agent runtime and requires the isolated administrator surface.
 - INV-018 later policy/registry changes never revive a previously denied, rejected, expired, or otherwise closed effect.
 - INV-019 a valid registered request with no applicable user-configured standing permission fails closed as `DENY` and creates bounded owner-reviewable configuration work; explicit configured `DENY` creates no recurring discovery noise.
+- INV-020 workflow continuation after permission configuration is non-authoritative: the original denied effect remains closed, and any continuation uses exactly one fresh request that receives complete current authority evaluation before any effect.
 
 ## Required internal interfaces
 
@@ -95,6 +109,10 @@ Pi-specific integration code is an edge adapter. It must not become a second pol
 ## State and execution
 
 SQLite WAL remains the single-machine durable store. An approval never transitions directly to execution; it must pass pre-dispatch policy re-evaluation and then a short-lived transactional execution lease. Permission/registry mutations are atomic, revisioned, auditable controller state and cannot mutate terminal effects.
+
+Non-authoritative consumer continuation state, when present, is not authority truth and cannot
+grant permission, approval, lease, or dispatch. It exists only to recover a blocked user workflow
+and construct a fresh proposal/request after trusted owner resolution.
 
 ## Sandbox and credentials
 
@@ -108,6 +126,6 @@ Accepted foundation:
 
 Active v1 sequence:
 
-`LAC-PI001 -> LAC-PI002 -> LAC-PI003 -> phase-boundary independent review -> LAC-V001 productization`.
+`LAC-PI001 -> LAC-PI002 -> LAC-PI002-D001 -> LAC-PI003 -> phase-boundary independent review -> LAC-V001 productization`.
 
 No additional harness integration, external-product implementation, generic compatibility-protocol facade, or additional model-provider expansion is part of the active v1 roadmap unless the owner explicitly amends it.
