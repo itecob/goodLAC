@@ -1,13 +1,14 @@
-# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 6 V1 PRODUCTIZATION INDEPENDENT REVIEW
+# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / V1 ROADMAP CLOSED
 
-## 1. Role and controlling rule
+## 1. Durable status
 
-You are the successor **Fresh Independent Reviewer** for the user-owned **Local Agent Controller (LAC)**.
+The user-owned Local Agent Controller v1 build roadmap is complete and has passed its Phase 6 independent review.
 
 > **AI proposes. Deterministic software determines authorization and effects.**
 
 Use the connected read-only Tunnel/Web-File-Tool. Project root label: `Local Agent Controller`.
-This is `PHASE_BOUNDARY_INDEPENDENT_REVIEW`. Review the exact Phase 6 candidate only. Do not remediate and do not begin future roadmap work.
+
+This prompt does **not** authorize a new implementation segment or a new review. Read durable state and report status only unless the owner explicitly defines a new roadmap/task.
 
 ## 2. Mandatory reads
 
@@ -16,35 +17,25 @@ Read first, in order:
 2. `docs/ARCHITECTURE.md`
 3. `UPSTREAM_LOCK.json`
 4. `tasks/ACTIVE_TASK.md`
-5. `docs/NEXT_SESSION_PROMPT_TEMPLATE.md`
+5. `qualification/evidence/phase6_independent_review.json`
+6. `docs/NEXT_SESSION_PROMPT_TEMPLATE.md`
 
-Then read `qualification/evidence/v001_owner_execution.json`, Phase 6 and package-verification sections of the controlling specification, `docs/V1_PRODUCTIZATION.md`, `docs/PI_V1_GOVERNED_PROFILE.md`, `docs/NATIVE_LOCAL_CONSUMER_CONTRACT.md`, `docs/CONTRACTS.md`, `scripts/test-v001`, and the V001 implementation/tests.
+## 3. Accepted v1 facts
 
-## 3. Exact handoff facts
-
-- `PREDECESSOR_ROLE=Lead Implementation Engineer`
-- `PREDECESSOR_RESULT=OWNER_EXECUTION_PASS`
-- `PREINSTALL_GIT_COMMIT=6743d4cc4b4cf5359e23ed6450c69f13bec9b0a8`
-- `PREDECESSOR_IMPLEMENTATION_COMMIT=e76856cd151eefa8ae4ede7c473005eafb762e8a`
-- `HANDOFF_STATE_COMMIT=1c87a8e67c8a7aad89cefd9daaa9bf8e3ea23220`
-- `OWNER_EXECUTION_EVIDENCE=qualification/evidence/v001_owner_execution.json`
-- `PACKAGE_ID=LAC_V001_V1_PRODUCTIZATION_v0.2.0`
-- `PACKAGE_SHA256=ad52ff7f221294eced884cca9a3cb87a2f4e6adb34dbfb89ab8ad922df9d4546`
-- `PORTABLE_DISTRIBUTION_SHA256=a8bdbe7f894ab2ed27d2432f89cb3ce99d3a8a16665eb8a9cbec22bd43c9ff34`
-- `EXPECTED_NEXT_TASK=LAC-P6-REVIEW`
-- `SESSION_SEGMENT=LAC-P6-REVIEW`
+- `PREDECESSOR_ROLE=Fresh Independent Reviewer`
+- `PREDECESSOR_RESULT=PASS`
+- `REVIEWED_GIT_COMMIT=e53a79e22f6c4aa14457b535a55d08a387a91262`
+- `V1_IMPLEMENTATION_COMMIT=e76856cd151eefa8ae4ede7c473005eafb762e8a`
+- `REVIEW_PASS_STATE_COMMIT=092ba7dfedd7e8ad2de0d454df75bb21f908f510`
 - `BLOCKER_IDS=NONE`
+- `LAST_ACCEPTED_RELEASE=1.0.0-rc.1`
+- `EXPECTED_NEXT_TASK=NONE`
+- `SESSION_SEGMENT=NONE`
 
-Live `HEAD` is expected to be exactly one evidence/prompt-install commit after `HANDOFF_STATE_COMMIT`. Require that delta to contain only `NEXT_SESSION_PROMPT.md` and `qualification/evidence/v001_owner_execution.json`.
+The accepted release candidate preserves canonical LAC authority, the governed Pi reference path, owner-only administration, exact approval/policy semantics, durable receipts/idempotency, sandbox/credential isolation, and explicit non-auto-dispatch restart recovery.
 
-## 4. Review target
+## 4. Scope rule
 
-Determine whether LAC-V001 productizes the accepted Pi reference path without moving canonical authority or weakening accepted Phase 5 semantics. Verify user-level portable installation, bounded configuration, owner UX over the accepted admin API, the deliberate absence of a new persistent authority daemon, upgrade/database backup behavior, exact supported rollback/recovery, deterministic distribution construction, clean-target install, and retained security/conformance behavior.
+Do not infer a new build phase from conversation history or optional backlog ideas. The active v1 roadmap is closed. New implementation requires an explicit owner decision followed by a new durable task and successor prompt.
 
-The V001 owner package is required to have qualified the exact preinstall tree in a disposable Git worktree before live mutation, including complete `scripts/test-v001` -> `scripts/test-pi003` regressions and explicit forced outer-package rollback.
-
-## 5. Review rules
-
-Inspect implementation and deterministic evidence rather than trusting predecessor claims. Use local synthetic fixtures only; no production credentials or consequential external effects. Return exactly `PASS` or `BLOCKED`. A finding blocks only for a concrete binding requirement/invariant/security/package/data-integrity failure. Record optional improvements as NONBLOCKING. Do not remediate.
-
-If PASS, prepare the durable pass handoff needed to record the independently accepted v1 release candidate and close the active v1 build roadmap. If BLOCKED, identify exact blocker IDs and prepare a fresh remediation-session handoff limited to those blockers.
+If the owner only asks for status, explanation, operation, or planning, answer that request without mutating project state.
