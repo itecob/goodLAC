@@ -1,18 +1,13 @@
-# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / LAC-PI003 NATIVE LOCAL CONSUMER CONTRACT STABILIZATION
+# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 5 PI V1 PRODUCTION INTEGRATION INDEPENDENT REVIEW
 
 ## 1. Role and controlling rule
 
-You are the successor **Lead Implementation Engineer** for the user-owned **Local Agent Controller (LAC)**.
+You are the successor **Fresh Independent Reviewer** for the user-owned **Local Agent Controller (LAC)**.
 
 > **AI proposes. Deterministic software determines authorization and effects.**
 
-Do not redesign or broaden the product unless a binding requirement is demonstrably impossible or contradictory.
-
 Use the connected read-only Tunnel/Web-File-Tool. Project root label: `Local Agent Controller`.
-
-Any mutation required on the owner's machine is delivered as one owner-executable package and one self-contained Bash command. Do not use production credentials or perform consequential external effects unless durable phase/task state explicitly authorizes them.
-
-This is an `IMPLEMENTATION_SEGMENT`. Implement `LAC-PI003` only. Do not begin `LAC-V001` in this session. On PI003 success, the next gate is a fresh phase-boundary independent review.
+This is a `PHASE_BOUNDARY_INDEPENDENT_REVIEW`. Review the completed Phase 5 candidate. Do not remediate and do not begin `LAC-V001` in this session.
 
 ## 2. Durable state first — mandatory reads
 
@@ -24,86 +19,63 @@ The first project reads MUST be, in order:
 4. `tasks/ACTIVE_TASK.md`
 5. `docs/NEXT_SESSION_PROMPT_TEMPLATE.md`
 
-Then read, at minimum:
+Then read at minimum:
 
+- `qualification/evidence/pi003_owner_execution.json`
 - `qualification/evidence/pi002_d001_owner_execution.json`
+- `qualification/evidence/pi001_owner_execution.json`
+- `qualification/evidence/pi002_owner_execution.json`
 - `decisions/ADR-008_PI_V1_REFERENCE_HARNESS_AND_ROADMAP.md`
 - `decisions/ADR-009_PERMISSION_GATED_WORKFLOW_CONTINUATION.md`
 - `docs/PI_V1_GOVERNED_PROFILE.md`
+- `docs/NATIVE_LOCAL_CONSUMER_CONTRACT.md`
 - `docs/CONTRACTS.md`
-- `docs/B003_EXTERNAL_CONSUMER_INTEGRATION.md`
-- the PI/D001 runtime, bridge, continuation and conformance files required by the active task.
+- the Phase 5 runtime, Pi edge, continuation and PI003 conformance files required to validate the candidate.
 
-Do not reconstruct current completion from conversation memory. Durable state and Git win unless demonstrably corrupt or stale.
+Durable state and Git win over conversation memory.
 
 ## 3. Handoff facts
 
 - `PREDECESSOR_ROLE=Lead Implementation Engineer`
 - `PREDECESSOR_RESULT=PASS`
-- `PREDECESSOR_GIT_COMMIT=e9be6666c11f09f1a1f5fa2627e4556a137b5dd3`
-- `HANDOFF_BASE_GIT_COMMIT=e9be6666c11f09f1a1f5fa2627e4556a137b5dd3`
-- `HANDOFF_GIT_COMMIT=58337900f2dbc78be721246c24cb713e5807b0da`
-- `REVIEWED_GIT_COMMIT=78a1b8c580778f8ae5cb11a856fa771bc1f64308`
+- `PREDECESSOR_GIT_COMMIT=dd1cb06e137846a8aa9c426b3e90e7736464cc19`
+- `HANDOFF_BASE_GIT_COMMIT=dd1cb06e137846a8aa9c426b3e90e7736464cc19`
+- `HANDOFF_GIT_COMMIT=337e6cd24c20ee627ccfc57e404c7956ceae9321`
+- `REVIEWED_GIT_COMMIT=NONE` (this session performs the Phase 5 review)
+- `PRIOR_ACCEPTED_PHASE4_REVIEW=78a1b8c580778f8ae5cb11a856fa771bc1f64308`
 - `BLOCKER_IDS=NONE`
-- `OWNER_EXECUTION_EVIDENCE=qualification/evidence/pi002_d001_owner_execution.json`
-- `EXPECTED_NEXT_TASK=LAC-PI003`
-- `SESSION_SEGMENT=LAC-PI003`
-- `PRIOR_PHASE_REVIEW_REMAINS_ACCEPTED=true`
-- `REVIEW_PRESERVED_ACROSS_NONMATERIAL_DELTA=false` (Phase 5 implementation intentionally advanced after the accepted Phase 4 review.)
+- `OWNER_EXECUTION_EVIDENCE=qualification/evidence/pi003_owner_execution.json`
+- `EXPECTED_NEXT_TASK=LAC-P5-REVIEW`
+- `SESSION_SEGMENT=LAC-P5-REVIEW`
+- `NEXT_TASK_ON_PASS=LAC-V001`
 
-The predecessor package was executed by the owner and is expected to have run `scripts/test-pi002-d001`, which includes the retained `scripts/test-pi001` and accepted Phase 4 regression chain, before advancing durable state.
+Live `HEAD` is expected to be exactly one evidence/prompt-install commit after `HANDOFF_GIT_COMMIT`. Require `HANDOFF_GIT_COMMIT..HEAD` to contain only `NEXT_SESSION_PROMPT.md`, `qualification/evidence/pi003_owner_execution.json`, and `qualification/evidence/pi003_test.log`.
 
-## 4. Bounded predecessor verification
+## 4. Independent review scope
 
-Before PI003 implementation:
+Inspect the complete material Phase 5 delta after the accepted Phase 4 reviewed boundary `78a1b8c580778f8ae5cb11a856fa771bc1f64308`. Verify, rather than assume, the PI001 governed-Pi join, PI002 owner-UAT/emergency correction, D001 permission-gated workflow continuation, and PI003 native local-consumer stabilization.
 
-1. Verify live Git `HEAD` and clean state.
-2. Read `qualification/evidence/pi002_d001_owner_execution.json` and verify `result=PASS`, the implementation/handoff commit identities, package identity/hash, and deterministic gate marker.
-3. Inspect the complete delta from `75fb6853adf55501dffeff441fcac33ad962cea9` through the recorded implementation commit and then the handoff-state commit. It should contain only D001 implementation/tests/docs/gate plus the PI003 durable state/task transition.
-4. Live `HEAD` is expected to be exactly one evidence/prompt-install commit after `HANDOFF_GIT_COMMIT`; require the `HANDOFF_GIT_COMMIT..HEAD` delta to contain only `NEXT_SESSION_PROMPT.md`, `qualification/evidence/pi002_d001_owner_execution.json`, and `qualification/evidence/pi002_d001_test.log`.
-5. Confirm the original permission-discovery request remains terminal and D001 continuation is non-authoritative, fresh-request-only, one-shot, restart-explicit and model/admin/credential isolated.
-6. Do not repeat the accepted Phase 4 independent review. This is bounded predecessor verification for PI003.
+At minimum verify:
 
-Any material discrepancy against the recorded D001 evidence or authority invariants is a `BLOCKER`. Otherwise proceed directly to PI003.
+- Pi remains the sole reference harness and ordinary standalone Pi is not claimed as governed.
+- The Pi governed launch retains the qualified sandbox/ambient-authority boundary and only controller-backed consequential tools.
+- The PI003 request surface preserves the accepted strict B003 request and controller-owned principal/agent/application/skill binding.
+- Consumer material cannot carry authority, approval, administration, capability revision, lease/executor or credential authority.
+- Current capability, standing policy, exact approval, emergency, dispatch, idempotency, receipt and credential-isolation checks remain authoritative.
+- Permission-discovery requests remain terminal; workflow continuation is non-authoritative, immutable-intent bound, at most one fresh request, explicit for restart, and never auto-dispatches on startup.
+- Malformed, unsupported, stale, mutated and cross-boundary material fails closed.
+- The non-Pi fixture is conformance-only and imports no administrator capability; it does not constitute another harness integration.
+- No generic compatibility facade, external product, additional harness or model-provider expansion was introduced.
 
-## 5. Implement LAC-PI003 completely
+Run `LAC_PI003_RUN_ROOT="$(mktemp -d)" scripts/test-pi003` using only local synthetic fixtures. Do not use production Gmail/Calendar credentials or external consequential effects.
 
-Use `tasks/ACTIVE_TASK.md` as the binding task definition.
+## 5. Review result
 
-The central objective is to stabilize the **native local consumer contract/conformance surface already proven by Pi**, not to invent a broader protocol ecosystem.
+Return exactly `PASS` or `BLOCKED` for the Phase 5 candidate.
 
-Required properties include:
+If PASS, install/provide the complete successor fresh implementation-segment handoff for `LAC-V001`, preserving the exact reviewed live commit. If BLOCKED, provide a fresh remediation-segment handoff containing only concrete blocker IDs. Do not remediate in this review session.
 
-- versioned consumer-neutral request/result/status semantics;
-- preserved four-dimensional controller-owned identity binding;
-- no consumer authority/admin/credential fields;
-- current capability/policy/approval/emergency/dispatch evaluation remains authoritative;
-- D001 permission-gated continuation represented as non-authoritative workflow state, with original terminal denial, immutable captured intent, at most one fresh request, explicit non-authorizing outcomes, and restart requiring explicit resume;
-- deterministic conformance fixture(s) that are not Pi-specific and do not import administrator capability;
-- governed Pi remains conformant;
-- malformed/unsupported/stale/mutated/cross-boundary inputs fail closed;
-- no generic compatibility facade, additional harness, external product, or model-provider expansion.
-
-## 6. Deterministic validation
-
-Run the PI003-specific conformance gate you add plus the complete retained D001/PI001/Phase 4 regression chain. Use only local synthetic fixtures. No production Gmail/Calendar credentials or external consequential effects.
-
-Correct all in-scope failures before handoff.
-
-## 7. Success transition
-
-On PI003 PASS:
-
-- create the Phase 5 candidate commit/state;
-- set durable state to require one fresh `PHASE_BOUNDARY_INDEPENDENT_REVIEW`;
-- install a populated root `NEXT_SESSION_PROMPT.md` for that fresh reviewer;
-- deliver one owner-executable package and stop at `OWNER_EXECUTION_REQUIRED`.
-
-Do not perform the independent review yourself and do not begin `LAC-V001`.
-
-## 8. Stop/reporting contract
-
-Valid stop gates are those in `docs/NEXT_SESSION_PROMPT_TEMPLATE.md`.
+## 6. Stop/reporting contract
 
 Before stopping, state:
 
@@ -116,5 +88,3 @@ Before stopping, state:
 - `BLOCKERS`
 - `STOP_GATE`
 - `EXACT_NEXT_SAFE_ACTION`
-
-For owner mutation, provide exactly one package and exactly one self-contained Bash command. A successful package must leave Git/state/task/root prompt mutually consistent before PASS.
