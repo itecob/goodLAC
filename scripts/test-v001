@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+export PYTHONDONTWRITEBYTECODE=1
+: "${LAC_V001_RUN_ROOT:?LAC_V001_RUN_ROOT is required}"
+mkdir -p "$LAC_V001_RUN_ROOT"
+
+echo "==> V001 productization acceptance"
+python3 -m unittest tests.acceptance.test_v001_productization -v
+
+echo "==> V001 syntax/static"
+PYTHONPYCACHEPREFIX="$LAC_V001_RUN_ROOT/pycache" python3 -m py_compile \
+  packages/productization/__init__.py packages/productization/v1.py \
+  scripts/lac-v1 tests/acceptance/test_v001_productization.py
+bash -n scripts/test-v001
+
+echo "==> V001 retained Phase 5 and earlier security/conformance regression"
+export LAC_PI003_RUN_ROOT="$LAC_V001_RUN_ROOT/pi003-regression"
+rm -rf "$LAC_PI003_RUN_ROOT"
+scripts/test-pi003
+
+git diff --check
+echo "LAC_V001_PERSISTENT_SERVICE_AUTOSTART=NONE_BY_DESIGN"
+echo "LAC_V001_CANONICAL_AUTHORITY_MOVED=NO"
+echo "LAC_V001_TEST=PASS"
