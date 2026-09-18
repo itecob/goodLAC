@@ -1,8 +1,8 @@
 {
-  "active_task": "LAC-P5-REVIEW",
+  "active_task": "LAC-V001",
   "blockers": [],
   "last_accepted_release": null,
-  "next_action": "Run one fresh Phase 5 phase-boundary independent review of the LAC-PI001 through LAC-PI003 candidate. Do not begin LAC-V001 unless that review passes.",
+  "next_action": "Implement LAC-V001 v1 Pi-reference packaging/productization from the accepted Phase 5 reviewed boundary. Preserve all accepted authority, sandbox, identity, approval, continuation, credential-isolation and no-bypass semantics.",
   "nonblocking_notes": [
     "Fresh independent Phase 4 re-review passed at live reviewed HEAD 78a1b8c580778f8ae5cb11a856fa771bc1f64308; reviewed P4-B002 implementation commit cd61b1c95a65782dfb9e9442d3422885df8a11f7; no Phase 4 blockers remain.",
     "The accepted A004 owner terminal launches real pinned Pi Agent Core 0.85.1 inside the qualified sandbox with only LAC-governed tools, but that path still uses the earlier fixed-ALLOW qualification policy rather than the completed Phase 4 permission-management runtime.",
@@ -13,10 +13,11 @@
     "LAC-PI002 real owner UAT passed on 2026-09-17 against Pi Agent Core 0.85.1 and Bubblewrap/network-none after bounded emergency-admin remediation commit fbbaddd1b9cf5e5f1d8c0d81a3350309848f4583.",
     "Owner approved a forward Phase 5 correction before PI003: terminal permission-configuration denials remain closed, while governed consumers gain a separate non-authoritative workflow-continuation mechanism that can resume only by submitting a fresh request after owner policy configuration.",
     "LAC-PI002-D001 permission-gated workflow continuation passed deterministic qualification at implementation commit e9be6666c11f09f1a1f5fa2627e4556a137b5dd3; the original denied effect remains closed and continuation is non-authoritative, one-shot, fresh-request-only, and restart-explicit.",
-    "LAC-PI003 native local-consumer contract/conformance stabilization completed at implementation commit dd1cb06e137846a8aa9c426b3e90e7736464cc19; B003 authority semantics and accepted D001 durable continuation state were preserved while governed Pi moved to the consumer-neutral facade."
+    "LAC-PI003 native local-consumer contract/conformance stabilization completed at implementation commit dd1cb06e137846a8aa9c426b3e90e7736464cc19; B003 authority semantics and accepted D001 durable continuation state were preserved while governed Pi moved to the consumer-neutral facade.",
+    "Fresh Phase 5 independent review PASS at exact reviewed live commit 2fddb4d3fbb2dfbd991a0a7aa8d1fb2b919cb0f2. Fresh scripts/test-pi003 and retained regression chain passed. Two Markdown status lines in ADR-008/ADR-009 contain nonblocking trailing whitespace; no Phase 5 runtime/security blocker remains."
   ],
-  "phase": "PHASE_5_PI_V1_PRODUCTION_INTEGRATION",
-  "phase_status": "CANDIDATE_FOR_INDEPENDENT_REVIEW",
+  "phase": "PHASE_6_V1_PRODUCTIZATION",
+  "phase_status": "ACTIVE_IMPLEMENTATION",
   "project_version": "0.1.0-dev",
   "schema": "lac.project-state/v1"
 }

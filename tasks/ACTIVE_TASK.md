@@ -1,28 +1,63 @@
-# ACTIVE TASK — LAC-P5-REVIEW
+# ACTIVE TASK — LAC-V001
 
 ## Task ID
-`LAC-P5-REVIEW`
-
-## Session mode
-`PHASE_BOUNDARY_INDEPENDENT_REVIEW`
+`LAC-V001`
 
 ## Objective
-Perform one fresh independent phase-boundary review of the completed Phase 5 Pi v1 production-integration candidate through LAC-PI003.
+Productize the accepted LAC v1 Pi-reference path into a reproducible local-first Linux distribution without changing the accepted controller authority model.
 
-The candidate implementation commit is `dd1cb06e137846a8aa9c426b3e90e7736464cc19`. The accepted Phase 4 review baseline is `78a1b8c580778f8ae5cb11a856fa771bc1f64308`.
+## In scope
+- Installer and clean-target installation workflow.
+- The accepted `scripts/lac-pi` governed Pi launcher/profile as the reference user path.
+- Configuration workflow for required local paths/runtime settings.
+- Owner permission/approval UX over the accepted P004/P005 administration API; canonical authority must remain in LAC.
+- Service auto-start where appropriate and explicitly bounded.
+- Upgrade and database migration handling with pre-migration backup when required.
+- Rollback/recovery behavior.
+- Portable Linux distribution packaging and operating/recovery documentation.
+- Deterministic clean-install, upgrade, rollback, restart, permission/approval and governed-effect regression tests.
+- Mandatory owner-package release qualification defined in `docs/NEXT_SESSION_PROMPT_TEMPLATE.md`.
 
-## Review requirements
+## Out of scope
+- Any additional harness integration.
+- OpenClaw implementation.
+- External-product/application workflow logic.
+- Generic compatibility-protocol facade merely for breadth.
+- Additional model-provider expansion.
+- Moving policy, approval, identity, leases, receipts, credentials, durable authority state, or emergency control into Pi or a UI.
+- Weakening the accepted sandbox, credential isolation, four-dimensional binding, exact approval, non-resumption, continuation, idempotency or emergency semantics.
 
-- Verify live Git identity and clean state plus recorded PI003 owner-execution evidence.
-- Inspect the complete material Phase 5 delta after the accepted Phase 4 boundary, including ADR-008/ADR-009, PI001, PI002, D001 and PI003.
-- Verify the native local-consumer contract preserves controller-owned four-dimensional identity binding and capability/policy/approval/emergency/lease/receipt authority.
-- Verify D001 original terminal denial, one-shot fresh-request continuation, non-authorizing outcomes, mutation/staleness failure, restart-explicit behavior and admin/credential isolation.
-- Verify governed Pi is conformant and remains the sole reference harness; ordinary standalone Pi is outside the governance claim.
-- Run `scripts/test-pi003` with a fresh local synthetic run root. Do not use production credentials or external consequential effects.
-- Return exactly PASS or BLOCKED. Do not remediate in the independent-review session.
+## Required inputs
+- Accepted Phase 5 reviewed commit recorded by the successor prompt.
+- `docs/TECHNICAL_DESIGN_AND_IMPLEMENTATION_SPECIFICATION_v0.1.md`, especially Phase 6 and package-verification requirements.
+- `docs/PI_V1_GOVERNED_PROFILE.md`.
+- `docs/NATIVE_LOCAL_CONSUMER_CONTRACT.md`.
+- Accepted Phase 5 deterministic gates and owner execution evidence.
 
-## On PASS
-Activate `LAC-V001` productization in a fresh implementation session.
+## Required outputs
+- Reproducible v1 installer/package for the accepted Pi reference path.
+- Bounded configuration and owner administration workflow.
+- Upgrade/migration/rollback/recovery path.
+- Portable operating documentation.
+- Deterministic productization test suite and evidence.
+- One release-qualified owner-executable package/handoff when owner mutation is required.
 
-## On BLOCKED
-Create a fresh remediation-segment handoff containing only concrete blocker IDs; remediation must create a corrected Phase 5 candidate and return to a fresh re-review.
+## Acceptance tests
+- Clean installation into a disposable target succeeds and produces only the intended files/services/state.
+- Post-install governed Pi uses the accepted controller-backed tool surface and sandbox boundary.
+- Permission discovery, configured ALLOW, explicit DENY, exact REQUIRE_APPROVAL, emergency pause/resume, duplicate prevention and receipts remain functional.
+- Ordinary standalone Pi is never represented as governed.
+- Agent/model runtime cannot reach the admin surface or service credentials.
+- Restart preserves canonical controller state and never auto-dispatches a continuation.
+- Upgrade/migration preserves accepted durable state or fails closed with a restorable backup.
+- Rollback restores the exact supported preinstall state.
+- Offline/local governance remains usable without required SaaS.
+- Package verification follows `build -> tests -> package -> clean-target install -> post-install tests -> rollback test where applicable -> package hash -> owner handoff`.
+- Every owner-executable package passes the mandatory complete lifecycle qualification in `docs/NEXT_SESSION_PROMPT_TEMPLATE.md`.
+- Applicable retained Phase 5 and earlier security/conformance regression gates pass.
+
+## Package required?
+`yes`
+
+## Next task on success
+`LAC-P6-REVIEW` — fresh Phase 6/v1 productization phase-boundary independent review.

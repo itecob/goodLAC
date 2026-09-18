@@ -1,6 +1,6 @@
 # LOCAL AGENT CONTROLLER — NEXT SESSION PROMPT TEMPLATE
 
-**Template version:** 0.2.0  
+**Template version:** 0.2.1
 **Purpose:** Preserve forward progress, fresh-session implementation objectivity, bounded context, durable crash recovery, and phase-boundary independent review.
 
 This template is subordinate to the controlling Local Agent Controller Technical Design and Implementation Specification v0.1. `PROJECT_STATE.json`, Git, `UPSTREAM_LOCK.json`, and `tasks/ACTIVE_TASK.md` are durable truth. Conversation memory and predecessor conclusions never override durable evidence.
@@ -155,6 +155,28 @@ Provide exactly one self-contained Bash command implementing:
 `package hash verification -> preflight -> backup -> install/migrate -> deterministic verification -> durable-state advance -> successor-prompt install -> final result`
 
 The package must fail closed on unexpected Git/state/task input, preserve the terminal, emit PASS/FAIL, and record durable evidence/log paths.
+
+### A4.1 Mandatory owner-package release qualification
+
+Before delivering **any owner-executable package**, the implementation agent MUST qualify the complete package lifecycle, not only its payload, archive hash, component tests, or `verify.sh`.
+
+At minimum, before release:
+
+1. Verify all asserted predecessor/handoff Git deltas from actual repository history; never infer commit contents from intended workflow.
+2. Run `git diff --check` or an equivalent whitespace/hygiene check across every file the package will add or modify.
+3. Check every generated evidence/log/state/prompt path against `.gitignore` and Git tracking rules; explicitly handle any intentionally tracked ignored file.
+4. Verify shell syntax, Python syntax where applicable, executable bits, archive layout, manifest checksums, and package SHA-256.
+5. Exercise the **exact owner-facing Bash command and complete installer lifecycle** in a disposable repository/fixture representing the expected preinstall state:
+   `hash/preflight -> backup -> apply -> deterministic tests -> hygiene checks -> implementation/transition commit -> state/task transition -> evidence generation -> evidence staging/commit -> successor prompt install -> final Git/state assertions`.
+6. Verify every generated artifact, including execution evidence, logs, state files, active-task files, and `NEXT_SESSION_PROMPT.md`, for expected content, path, tracking behavior, and exact commit membership.
+7. Require the simulated final worktree to be clean and all expected final HEAD/state/task/prompt relationships to hold.
+8. If any deterministic defect is found during package qualification, correct it and repeat the **complete** qualification before giving the package to the owner.
+9. A package is not release-qualified merely because component tests, payload tests, archive verification, or `verify.sh` pass.
+10. Preserve fail-closed rollback to the exact preinstall state for any owner-side failure.
+11. Qualify against the **actual expected preinstall bytes and metadata**. Prefer a disposable clone/worktree of the exact expected predecessor tree. If a synthetic fixture is unavoidable, every file, line, whitespace sequence, mode, ignore/tracking rule and precondition that the installer reads or modifies MUST be copied byte-for-byte from the expected preinstall state; never sanitize or normalize fixture input.
+12. Every release gate whose exit status matters MUST be explicitly checked and propagated. Never print a PASS marker after a nonzero hygiene/test/preflight command merely because later commands succeeded.
+
+The package-building session must treat formatting, quoting, whitespace, staging, ignored-file handling, fixture fidelity, exit-status propagation, commit membership, generated evidence and successor-handoff installation as tested release behavior, not clerical afterthoughts.
 
 ### A5. Segment stop rule
 
