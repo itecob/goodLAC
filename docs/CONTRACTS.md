@@ -153,3 +153,15 @@ malformed or mutation-mismatched continuation state fails closed. Each continuat
 pending-resolution revision observed at capture and accepts only the first later owner event;
 therefore a stale resolution from an earlier equivalent request cannot be reused. Equivalent
 P002 pending-item aggregation does not merge continuation identities or captured intents.
+
+
+## PI003 native local-consumer contract
+
+`lac.native-local-consumer-contract/v1` stabilizes the consumer-neutral local surface proven by
+B003 and the governed Pi reference path. Its request is the accepted strict
+`lac.external-consumer-request/v1`; its public result, continuation-status and explicit-resume
+projections are versioned native schemas documented in `docs/NATIVE_LOCAL_CONSUMER_CONTRACT.md`.
+The B003 four-dimensional controller binding and all capability/policy/approval/emergency/lease/
+dispatch/receipt semantics remain authoritative. D001 continuation remains non-authoritative,
+terminal-request preserving and one-fresh-request-only. Unsupported, authority-bearing, stale,
+mutated and cross-binding material fails closed.

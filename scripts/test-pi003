@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+export PYTHONDONTWRITEBYTECODE=1
+: "${LAC_PI003_RUN_ROOT:?LAC_PI003_RUN_ROOT is required}"
+mkdir -p "$LAC_PI003_RUN_ROOT"
+
+echo "==> PI003 native local-consumer contract acceptance"
+python3 -m unittest tests.acceptance.test_pi003_native_consumer_contract -v
+
+echo "==> PI003 governed-Pi conformance"
+python3 -m unittest tests.integration.test_pi003_pi_conformance tests.integration.test_pi_v1_source_boundary -v
+
+echo "==> PI003 syntax/static"
+PYTHONPYCACHEPREFIX="$LAC_PI003_RUN_ROOT/pycache" python3 -m py_compile \
+  packages/runtime/native_contract.py packages/runtime/native_consumer.py \
+  packages/runtime/workflow_continuation.py packages/runtime/__init__.py \
+  packages/adapters/pi/production.py scripts/pi_v1_controller_bridge.py \
+  tests/fixtures/pi003_native_consumer_fixture.py \
+  tests/acceptance/test_pi003_native_consumer_contract.py \
+  tests/integration/test_pi003_pi_conformance.py tests/integration/test_pi_v1_source_boundary.py
+bash -n scripts/lac-pi scripts/test-pi003 scripts/test-pi002-d001 scripts/test-pi001
+
+echo "==> Retained D001 / PI001 / accepted Phase 4 regression chain"
+export LAC_PI002_D001_RUN_ROOT="$LAC_PI003_RUN_ROOT/pi002-d001-regression"
+rm -rf "$LAC_PI002_D001_RUN_ROOT"
+scripts/test-pi002-d001
+
+git diff --check
+echo "LAC_PI003_EXTERNAL_EFFECTS=NONE_LOCAL_SYNTHETIC_FIXTURES_ONLY"
+echo "LAC_PI003_NATIVE_CONTRACT=PASS"
+echo "LAC_PI003_GOVERNED_PI_CONFORMANCE=PASS"
+echo "LAC_PI003_TEST=PASS"

@@ -6,7 +6,6 @@ from datetime import datetime
 from typing import Any, Callable, Mapping
 
 from packages.adapters.pi.adapter import PiAgentAdapterError, _arguments_for_tool
-from packages.capabilities import PendingPermissionRepository
 from packages.core import EffectRequest, canonical_json
 from packages.effects.filesystem import (
     FILESYSTEM_CREATE_ACTION,
@@ -15,18 +14,14 @@ from packages.effects.filesystem import (
     FilesystemEffectAdapter,
 )
 from packages.effects.shell import SHELL_EXEC_ACTION, ShellEffectAdapter
-from packages.dispatcher import DispatchPaused
 from packages.runtime import (
     EXTERNAL_CONSUMER_REQUEST_SCHEMA,
     ExternalConsumerDeclaration,
     ExternalConsumerRuntime,
-    ExternalConsumerRuntimeError,
+    NativeLocalConsumerRuntime,
 )
-from packages.runtime.pi_continuation import (
-    PI_V1_CONTINUATION_TTL_SECONDS,
-    PiWorkflowContinuationError,
-    PiWorkflowContinuationStore,
-)
+from packages.runtime.pi_continuation import PiWorkflowContinuationError
+from packages.runtime.workflow_continuation import NATIVE_CONTINUATION_TTL_SECONDS
 from packages.state import SQLiteStateStore
 
 PI_V1_PRINCIPAL_ID = "principal:owner"
@@ -175,7 +170,7 @@ class PiPermissionRuntime:
         shell_adapter: ShellEffectAdapter,
         run_id: str,
         clock: Callable[[], datetime] | None = None,
-        continuation_ttl_seconds: int = PI_V1_CONTINUATION_TTL_SECONDS,
+        continuation_ttl_seconds: int = NATIVE_CONTINUATION_TTL_SECONDS,
     ):
         if not isinstance(store, SQLiteStateStore):
             raise PiV1RuntimeError("store must be SQLiteStateStore")
@@ -198,11 +193,13 @@ class PiPermissionRuntime:
             clock=clock,
             request_ttl_seconds=PI_V1_REQUEST_TTL_SECONDS,
         )
-        self.continuations = PiWorkflowContinuationStore(
-            store,
+        self.consumer = NativeLocalConsumerRuntime(
+            store=store,
+            authority_runtime=self.runtime,
             clock=clock,
-            ttl_seconds=continuation_ttl_seconds,
+            continuation_ttl_seconds=continuation_ttl_seconds,
         )
+        self.continuations = self.consumer.continuations
 
     def _identity(self, tool_call_id: str) -> PiV1RequestIdentity:
         if (
@@ -246,71 +243,18 @@ class PiPermissionRuntime:
         }
 
     def _decorate(self, response: Mapping[str, Any]):
-        result = dict(response)
-        rid = result.get("request_id")
-        closure = (
-            PendingPermissionRepository(self.store).get_closure(rid)
-            if isinstance(rid, str) and rid
-            else None
-        )
-        result["permission_configuration"] = (
-            {
-                "required": True,
-                "pending_id": closure["pending_id"],
-                "reason": closure["reason"],
-            }
-            if closure is not None
-            else {"required": False}
-        )
-        return result
+        # Compatibility helper retained for accepted PI001 tests. Contract decoration is now
+        # owned by the consumer-neutral runtime rather than by the Pi edge.
+        return self.consumer.decorate(response)
 
     def _submit_authoritative(self, material: Mapping[str, Any]) -> dict[str, Any]:
-        try:
-            return self._decorate(self.runtime.submit(material))
-        except ExternalConsumerRuntimeError as exc:
-            status = self.runtime.status(str(material["request_id"]))
-            if isinstance(exc.__cause__, DispatchPaused):
-                # Emergency pause is a successful fail-closed authority recheck, not an
-                # adapter/runtime failure. No lease, receipt, or effect may exist. Translate
-                # it at the Pi edge into an explicit non-authorizing workflow result without
-                # changing the accepted dispatcher or Phase 4 external-consumer semantics.
-                if (
-                    status.get("execution_state") != "NOT_EXECUTED"
-                    or status.get("receipt") is not None
-                ):
-                    raise PiV1RuntimeError(
-                        "emergency-paused request unexpectedly entered execution state"
-                    ) from exc
-                result = dict(status)
-                result["authority_outcome"] = "DENY"
-                result["execution_state"] = "DENIED"
-                result["reason"] = "EMERGENCY_PAUSED"
-                return self._decorate(result)
-            # Adapter failures become durable FAILED receipts before the dispatcher raises.
-            if status.get("execution_state") != "FAILED":
-                raise
-            return self._decorate(status)
+        return self.consumer.submit_authoritative(material)
 
     def submit_tool(self, *, tool_name: str, arguments: object, tool_call_id: str):
         material = self.build_material(
             tool_name=tool_name, arguments=arguments, tool_call_id=tool_call_id
         )
-        result = self._submit_authoritative(material)
-        permission = result.get("permission_configuration")
-        if isinstance(permission, Mapping) and permission.get("required") is True:
-            pending_id = permission.get("pending_id")
-            canonical_hash = result.get("canonical_request_hash")
-            if not isinstance(pending_id, str) or not isinstance(canonical_hash, str):
-                raise PiWorkflowContinuationError(
-                    "permission-required denial lacks continuation binding material"
-                )
-            status = self.continuations.capture(
-                material=material,
-                canonical_request_hash=canonical_hash,
-                pending_id=pending_id,
-            )
-            result["workflow_continuation"] = status
-        return result
+        return self.consumer.submit(material)
 
     def submit_message(self, message: object):
         if not isinstance(message, Mapping):
@@ -328,10 +272,10 @@ class PiPermissionRuntime:
         )
 
     def continuation_status(self, continuation_id: str) -> dict[str, Any]:
-        return self.continuations.status(continuation_id)
+        return self.consumer.continuation_status(continuation_id)
 
     def list_continuations(self, *, recoverable_only: bool = False) -> list[dict[str, Any]]:
-        return self.continuations.list_status(recoverable_only=recoverable_only)
+        return self.consumer.list_continuations(recoverable_only=recoverable_only)
 
     def resume_continuation(
         self,
@@ -339,6 +283,7 @@ class PiPermissionRuntime:
         *,
         expected_message: Mapping[str, Any] | None = None,
     ) -> dict[str, Any]:
+        expected_material = None
         if expected_message is not None:
             if not isinstance(expected_message, Mapping):
                 raise PiWorkflowContinuationError("expected Pi message must be an object")
@@ -347,85 +292,11 @@ class PiPermissionRuntime:
                 raise PiWorkflowContinuationError(
                     "expected Pi message fields do not match governed tool request"
                 )
-            original_material = self.build_material(
+            expected_material = self.build_material(
                 tool_name=expected_message["toolName"],
                 arguments=expected_message["arguments"],
                 tool_call_id=expected_message["toolCallId"],
             )
-            self.continuations.assert_expected_intent(
-                continuation_id, original_material
-            )
-
-        prepared = self.continuations.prepare_resume(continuation_id)
-        if prepared.state == "WAITING_PERMISSION":
-            return {
-                "ok": True,
-                "kind": "WAITING_PERMISSION",
-                "workflow_continuation": prepared.status,
-                "result": None,
-            }
-        if prepared.state in {"CLOSED_NONAUTH", "EXPIRED"}:
-            return {
-                "ok": True,
-                "kind": prepared.state,
-                "workflow_continuation": prepared.status,
-                "result": self.continuations.workflow_outcome(continuation_id),
-            }
-        if prepared.state == "COMPLETED":
-            fresh_request_id = prepared.status.get("fresh_request_id")
-            if isinstance(fresh_request_id, str) and fresh_request_id:
-                result = self._decorate(self.runtime.status(fresh_request_id))
-                stored_outcome = prepared.status.get("outcome")
-                if result.get("execution_state") == "NOT_EXECUTED" and stored_outcome in {
-                    "EMERGENCY_PAUSED",
-                    "POLICY_DENY",
-                    "CAPABILITY_DENY",
-                }:
-                    # Non-effect completions have no terminal effect receipt for runtime.status
-                    # to replay. Preserve the explicit first continuation outcome without
-                    # creating another authority evaluation or consuming another budget.
-                    result["authority_outcome"] = "DENY"
-                    result["execution_state"] = "DENIED"
-                    result["reason"] = stored_outcome
-                    permission = result.get("permission_configuration")
-                    if (
-                        isinstance(permission, Mapping)
-                        and permission.get("required") is True
-                    ):
-                        result["permission_configuration"] = {
-                            "required": False,
-                            "reason": "CONTINUATION_BUDGET_EXHAUSTED",
-                        }
-                result["workflow_continuation"] = prepared.status
-                return {
-                    "ok": True,
-                    "kind": "COMPLETED",
-                    "workflow_continuation": prepared.status,
-                    "result": result,
-                }
-            raise PiWorkflowContinuationError(
-                "completed continuation lost fresh request identity"
-            )
-        if prepared.fresh_material is None:
-            raise PiWorkflowContinuationError(
-                "resumable continuation did not provide fresh request material"
-            )
-
-        result = self._submit_authoritative(prepared.fresh_material)
-        status = self.continuations.record_fresh_result(continuation_id, result)
-        permission = result.get("permission_configuration")
-        if isinstance(permission, Mapping) and permission.get("required") is True:
-            # The one-shot continuation budget is exhausted. A fresh request may itself be
-            # non-authorizing under current capability/policy state, but it must not create
-            # a nested automatic wait/retry loop for the blocked workflow.
-            result["permission_configuration"] = {
-                "required": False,
-                "reason": "CONTINUATION_BUDGET_EXHAUSTED",
-            }
-        result["workflow_continuation"] = status
-        return {
-            "ok": True,
-            "kind": status["state"],
-            "workflow_continuation": status,
-            "result": result,
-        }
+        return self.consumer.resume(
+            continuation_id, expected_material=expected_material
+        )

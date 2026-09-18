@@ -18,7 +18,7 @@ from packages.adapters.pi.production import (
 )
 from packages.effects.filesystem import FilesystemEffectAdapter
 from packages.effects.shell import ShellEffectAdapter
-from packages.runtime.pi_continuation import PiWorkflowContinuationStore
+from packages.runtime.workflow_continuation import NativeWorkflowContinuationStore
 from packages.state import (
     AgentIdentityRepository,
     EmergencyPauseRepository,
@@ -137,7 +137,7 @@ def cmd_continuation_list(args):
     state = Path(args.state).expanduser().resolve(strict=True)
     store = SQLiteStateStore(state)
     try:
-        items = PiWorkflowContinuationStore(store).list_status(
+        items = NativeWorkflowContinuationStore(store).list_status(
             recoverable_only=args.recoverable_only
         )
         print(json.dumps({"ok": True, "continuations": items}, sort_keys=True))
@@ -152,7 +152,7 @@ def cmd_continuation_status(args):
     state = Path(args.state).expanduser().resolve(strict=True)
     store = SQLiteStateStore(state)
     try:
-        status = PiWorkflowContinuationStore(store).status(args.continuation_id)
+        status = NativeWorkflowContinuationStore(store).status(args.continuation_id)
         print(json.dumps({"ok": True, "continuation": status}, sort_keys=True))
     except BaseException as exc:
         _emit_error(exc)

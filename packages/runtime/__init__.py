@@ -1,4 +1,4 @@
-"""Generic external-consumer runtime boundary for Local Agent Controller."""
+"""Native local-consumer and accepted external-consumer runtime boundaries."""
 
 from .external_consumer import (
     EXTERNAL_CONSUMER_REQUEST_SCHEMA,
@@ -10,6 +10,29 @@ from .external_consumer import (
     ExternalConsumerRequest,
     ExternalConsumerRuntime,
     ExternalConsumerRuntimeError,
+)
+from .native_contract import (
+    NATIVE_LOCAL_CONSUMER_CONTRACT,
+    NATIVE_LOCAL_CONSUMER_CONTRACT_SCHEMA,
+    NATIVE_LOCAL_CONSUMER_CONTINUATION_STATUS_SCHEMA,
+    NATIVE_LOCAL_CONSUMER_REQUEST_SCHEMA,
+    NATIVE_LOCAL_CONSUMER_RESULT_SCHEMA,
+    NATIVE_LOCAL_CONSUMER_RESUME_RESULT_SCHEMA,
+    NATIVE_LOCAL_CONSUMER_RESUME_SCHEMA,
+    NativeLocalConsumerContractError,
+    normalize_continuation_status,
+    normalize_native_result,
+    normalize_resume_result,
+    parse_native_resume_request,
+    validate_native_request,
+)
+from .native_consumer import NativeLocalConsumerRuntime, NativeLocalConsumerRuntimeError
+from .workflow_continuation import (
+    NATIVE_CONTINUATION_MAX_QUEUE_BYTES,
+    NATIVE_CONTINUATION_MAX_RECORDS,
+    NATIVE_CONTINUATION_TTL_SECONDS,
+    NativeContinuationPreparation,
+    NativeWorkflowContinuationStore,
 )
 from .pi_continuation import (
     PI_V1_CONTINUATION_SCHEMA,
@@ -31,6 +54,26 @@ __all__ = [
     "ExternalConsumerRequest",
     "ExternalConsumerRuntime",
     "ExternalConsumerRuntimeError",
+    "NATIVE_LOCAL_CONSUMER_CONTRACT",
+    "NATIVE_LOCAL_CONSUMER_CONTRACT_SCHEMA",
+    "NATIVE_LOCAL_CONSUMER_CONTINUATION_STATUS_SCHEMA",
+    "NATIVE_LOCAL_CONSUMER_REQUEST_SCHEMA",
+    "NATIVE_LOCAL_CONSUMER_RESULT_SCHEMA",
+    "NATIVE_LOCAL_CONSUMER_RESUME_RESULT_SCHEMA",
+    "NATIVE_LOCAL_CONSUMER_RESUME_SCHEMA",
+    "NativeLocalConsumerContractError",
+    "normalize_continuation_status",
+    "normalize_native_result",
+    "normalize_resume_result",
+    "parse_native_resume_request",
+    "validate_native_request",
+    "NativeLocalConsumerRuntime",
+    "NativeLocalConsumerRuntimeError",
+    "NATIVE_CONTINUATION_MAX_QUEUE_BYTES",
+    "NATIVE_CONTINUATION_MAX_RECORDS",
+    "NATIVE_CONTINUATION_TTL_SECONDS",
+    "NativeContinuationPreparation",
+    "NativeWorkflowContinuationStore",
     "PI_V1_CONTINUATION_SCHEMA",
     "PI_V1_CONTINUATION_STATUS_SCHEMA",
     "PI_V1_WORKFLOW_OUTCOME_SCHEMA",

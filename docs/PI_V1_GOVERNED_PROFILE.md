@@ -115,3 +115,14 @@ It includes direct continuation acceptance coverage, a real pinned-Pi process/to
 and the complete retained `scripts/test-pi001` gate, which in turn includes the accepted
 Phase 4 regression chain. Only local synthetic filesystem effects are used; no production
 Gmail/Calendar credentials or external consequential effects are used.
+
+
+## PI003 native-contract conformance
+
+The Pi v1 edge now translates Pi tool calls into the stabilized native local-consumer request
+and delegates result/permission-continuation behavior to `NativeLocalConsumerRuntime`. The
+accepted `ExternalConsumerRuntime` remains the authority path underneath it; Pi does not own
+policy, approval, identity, continuation authorization, lease, credential or dispatch logic.
+A separate stdlib-only fixture proves the same native contract without becoming an additional
+harness integration. `scripts/test-pi003` runs that conformance plus the complete retained D001,
+PI001 and accepted Phase 4 regression chain.
