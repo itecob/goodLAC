@@ -1,8 +1,8 @@
 {
-  "active_task": "LAC-P6-REVIEW",
+  "active_task": "NONE",
   "blockers": [],
-  "last_accepted_release": null,
-  "next_action": "Perform one fresh independent Phase 6/v1 productization review of the exact LAC-V001 candidate and owner execution evidence. Do not remediate in the review session.",
+  "last_accepted_release": "1.0.0-rc.1",
+  "next_action": "No active v1 build task. Await an explicit owner roadmap decision before any further implementation.",
   "nonblocking_notes": [
     "Fresh independent Phase 4 re-review passed at live reviewed HEAD 78a1b8c580778f8ae5cb11a856fa771bc1f64308; reviewed P4-B002 implementation commit cd61b1c95a65782dfb9e9442d3422885df8a11f7; no Phase 4 blockers remain.",
     "The accepted A004 owner terminal launches real pinned Pi Agent Core 0.85.1 inside the qualified sandbox with only LAC-governed tools, but that path still uses the earlier fixed-ALLOW qualification policy rather than the completed Phase 4 permission-management runtime.",
@@ -15,10 +15,13 @@
     "LAC-PI002-D001 permission-gated workflow continuation passed deterministic qualification at implementation commit e9be6666c11f09f1a1f5fa2627e4556a137b5dd3; the original denied effect remains closed and continuation is non-authoritative, one-shot, fresh-request-only, and restart-explicit.",
     "LAC-PI003 native local-consumer contract/conformance stabilization completed at implementation commit dd1cb06e137846a8aa9c426b3e90e7736464cc19; B003 authority semantics and accepted D001 durable continuation state were preserved while governed Pi moved to the consumer-neutral facade.",
     "Fresh Phase 5 independent review PASS at exact reviewed live commit 2fddb4d3fbb2dfbd991a0a7aa8d1fb2b919cb0f2. Fresh scripts/test-pi003 and retained regression chain passed. Two Markdown status lines in ADR-008/ADR-009 contain nonblocking trailing whitespace; no Phase 5 runtime/security blocker remains.",
-    "LAC-V001 v1 Pi-reference productization candidate completed at implementation commit e76856cd151eefa8ae4ede7c473005eafb762e8a; versioned user-level distribution/configuration/owner UX and rollback were added without moving canonical authority, and the retained Phase 5 regression chain passed."
+    "LAC-V001 v1 Pi-reference productization candidate completed at implementation commit e76856cd151eefa8ae4ede7c473005eafb762e8a; versioned user-level distribution/configuration/owner UX and rollback were added without moving canonical authority, and the retained Phase 5 regression chain passed.",
+    "Fresh Phase 6 independent review PASS at exact reviewed live commit e53a79e22f6c4aa14457b535a55d08a387a91262. Fresh scripts/test-v001 and retained Phase 5/earlier regression chain passed; exact portable distribution SHA was reproduced; no Phase 6 blockers remain. Active v1 roadmap closed at accepted release candidate 1.0.0-rc.1.",
+    "Phase 6 nonblocking documentation note P6-NB001: docs/V1_PRODUCTIZATION.md can be read as implying the preinstall SQLite backup remains after rollback, while rollback removes the V001 backup directory. V001 performs no database migration or rewrite, so this does not violate the binding rollback/data-integrity requirement.",
+    "Phase 6 nonblocking documentation note P6-NB002: deterministic-distribution wording says same Git index is sufficient for byte identity, but VERSION metadata also embeds source_head. The exact reviewed implementation commit reproduces the recorded distribution SHA, so release reproducibility is satisfied."
   ],
   "phase": "PHASE_6_V1_PRODUCTIZATION",
-  "phase_status": "CANDIDATE_AWAITING_INDEPENDENT_REVIEW",
+  "phase_status": "COMPLETE",
   "project_version": "1.0.0-rc.1",
   "schema": "lac.project-state/v1"
 }
