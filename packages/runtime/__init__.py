@@ -11,6 +11,15 @@ from .external_consumer import (
     ExternalConsumerRuntime,
     ExternalConsumerRuntimeError,
 )
+from .pi_continuation import (
+    PI_V1_CONTINUATION_SCHEMA,
+    PI_V1_CONTINUATION_STATUS_SCHEMA,
+    PI_V1_WORKFLOW_OUTCOME_SCHEMA,
+    ContinuationPreparation,
+    PiWorkflowContinuationError,
+    PiWorkflowContinuationIntegrityError,
+    PiWorkflowContinuationStore,
+)
 
 __all__ = [
     "EXTERNAL_CONSUMER_REQUEST_SCHEMA",
@@ -22,4 +31,11 @@ __all__ = [
     "ExternalConsumerRequest",
     "ExternalConsumerRuntime",
     "ExternalConsumerRuntimeError",
+    "PI_V1_CONTINUATION_SCHEMA",
+    "PI_V1_CONTINUATION_STATUS_SCHEMA",
+    "PI_V1_WORKFLOW_OUTCOME_SCHEMA",
+    "ContinuationPreparation",
+    "PiWorkflowContinuationError",
+    "PiWorkflowContinuationIntegrityError",
+    "PiWorkflowContinuationStore",
 ]

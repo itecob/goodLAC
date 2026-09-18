@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+export PYTHONDONTWRITEBYTECODE=1
+: "${LAC_PI002_D001_RUN_ROOT:?LAC_PI002_D001_RUN_ROOT is required}"
+mkdir -p "$LAC_PI002_D001_RUN_ROOT"
+
+echo "==> D001 workflow-continuation acceptance"
+python3 -m unittest tests.acceptance.test_pi_v1_workflow_continuation -v
+
+echo "==> D001 source/security boundary"
+python3 -m unittest tests.integration.test_pi_v1_source_boundary -v
+
+echo "==> D001 real pinned Pi suspension/continuation probe"
+python3 -m unittest tests.integration.test_pi_v1_profile -v
+
+echo "==> D001 syntax/static"
+PYTHONPYCACHEPREFIX="$LAC_PI002_D001_RUN_ROOT/pycache" python3 -m py_compile \
+  packages/runtime/pi_continuation.py packages/runtime/__init__.py \
+  packages/adapters/pi/production.py scripts/pi_v1_controller_bridge.py \
+  scripts/pi_v1_terminal.py tests/acceptance/test_pi_v1_workflow_continuation.py \
+  tests/integration/test_pi_v1_profile.py tests/integration/test_pi_v1_source_boundary.py
+bash -n scripts/lac-pi scripts/test-pi001 scripts/test-pi002-d001
+
+echo "==> Retained PI001 and accepted Phase 4 regression chain"
+export LAC_PI001_RUN_ROOT="$LAC_PI002_D001_RUN_ROOT/pi001-regression"
+rm -rf "$LAC_PI001_RUN_ROOT"
+scripts/test-pi001
+
+git diff --check
+echo "LAC_PI002_D001_EXTERNAL_EFFECTS=NONE_LOCAL_SYNTHETIC_FIXTURES_ONLY"
+echo "LAC_PI002_D001_TEST=PASS"

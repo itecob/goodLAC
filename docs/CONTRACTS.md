@@ -112,3 +112,44 @@ A consumer capability declaration is descriptive and grants zero authority. Its 
 Every B003-created request ID also has a controller-created canonical durable `lac.external-consumer-request-binding/v1` record binding `principal_id`, `agent_id`, `application_id`, and `skill_id`. This binding is established before a new canonical `EffectRequest` is created and is verified before existing-request reuse, terminal receipt replay, exact-approval discovery, capability/policy evaluation, lease creation, adapter invocation, or status/result disclosure. A request created by an older runtime without this four-dimensional binding is not retroactively claimable and fails closed. The binding uses existing durable controller state and does not change the global `lac.effect-request/v1` schema.
 
 Successful runtime responses contain the typed adapter result and a bounded public receipt projection. Duplicate identical requests replay canonical terminal result/receipt state without a second adapter invocation only when the complete four-dimensional durable binding matches. The external-consumer boundary imports no administrator transport and exposes no policy/registry/approval mutation operation.
+
+## Phase 5 Pi permission-gated workflow continuation contract
+
+`LAC-PI002-D001` adds workflow continuity only at the governed Pi edge. It does not alter the
+Phase 4 authorization model.
+
+When a Pi effect reaches the accepted permission-discovery path, the canonical effect request
+is terminally `DENY` and its P002 closure remains immutable. The host may create one bounded
+`lac.pi-v1-workflow-continuation/v1` record containing the original request binding, immutable
+typed intent, pending-permission identity, expiry and a one-shot fresh-request budget. The
+continuation is non-authoritative: it cannot set policy, register capability, create approval,
+choose principal/agent/application/skill identity, create leases, access credentials, or
+invoke an effect adapter directly.
+
+While an active Pi tool RPC is blocked on owner configuration, the trusted host withholds the
+terminal configuration-required result from Pi. The model therefore does not receive an
+opportunity to retry, mutate or route around the blocked effect inside that turn.
+
+An owner administrative resolution is also non-authoritative. `NO_CHANGE` and `DISMISSED`
+close the continuation without a fresh request. An authorizing administrative disposition
+(`POLICY_UPDATED`, `CAPABILITY_UPDATED`, or `POLICY_AND_CAPABILITY_UPDATED`) permits the host
+to claim at most one deterministic fresh request identity from the unchanged captured intent.
+The fresh request is a normal `lac.external-consumer-request/v1` request and must traverse the
+complete current capability/policy/approval/emergency/lease/sandbox/receipt path. It may be
+`ALLOW`, `REQUIRE_APPROVAL`, or `DENY`; the administrative disposition does not select that
+outcome. A durable emergency pause on that fresh request is surfaced by the Pi edge as an
+explicit non-authorizing `EMERGENCY_PAUSED` completion with no effect receipt; later emergency
+resume does not grant a second continuation attempt.
+
+The original denied request is never reused. A fresh continuation request that itself reaches
+permission discovery ends non-authorizing rather than recursively opening another automatic
+continuation. Duplicate or concurrent resume attempts are bound to the same single fresh
+request identity and rely on the existing controller idempotency/receipt rules to prevent a
+second effect.
+
+Continuation state is durable across governed-Pi restart, but startup only reports recoverable
+state. Dispatch after restart requires an explicit owner resume event. Stale, expired,
+malformed or mutation-mismatched continuation state fails closed. Each continuation binds the
+pending-resolution revision observed at capture and accepts only the first later owner event;
+therefore a stale resolution from an earlier equivalent request cannot be reused. Equivalent
+P002 pending-item aggregation does not merge continuation identities or captured intents.

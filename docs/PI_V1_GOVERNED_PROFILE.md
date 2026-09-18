@@ -32,33 +32,86 @@ validation path, before the owner-only administrator socket begins serving reque
 Registration is descriptive and grants zero authority. The public P005 `lacctl` client
 remains intentionally narrower and does not gain a `skills.register` operation.
 
-A known but unconfigured first request returns terminal `DENY` plus a pending permission
-item. The original request never resumes after configuration; issue a fresh tool request.
+## Permission-gated workflow continuation
 
-Use another owner terminal for administration:
+A known but unconfigured first request is still terminally `DENY`. Its canonical request
+identity is never revived. D001 adds a bounded, non-authoritative continuation record that
+captures the immutable effect intent and the pending-permission identity after that terminal
+denial.
+
+While the owner is configuring the permission, the trusted Pi host keeps the synchronous
+effect RPC blocked. The denied result is not returned to the Pi worker, so the model cannot
+continue the turn, retry the effect, mutate it, or improvise an alternate consequential route
+while the owner decision is outstanding.
+
+Owner configuration remains out-of-band through the authenticated administration surface:
 
 ```bash
 scripts/lacctl pending list
 scripts/lacctl pending show <pending_id>
-scripts/lacctl approvals approve <decision_id>
-scripts/lacctl approvals reject <decision_id>
+scripts/lacctl permissions set <policy-json-file>
+scripts/lacctl pending resolve <pending_id> POLICY_UPDATED
+# or explicitly:
+scripts/lacctl pending resolve <pending_id> NO_CHANGE
+scripts/lacctl pending dismiss <pending_id>
 ```
 
-For `REQUIRE_APPROVAL`, the host prints the exact decision and holds the current Pi tool
-execution while polling the **same canonical request**. Approval creation itself does not
-dispatch. On trusted retry, LAC re-evaluates current policy, validates the exact one-time
-approval, then executes at most once. A current `DENY` still wins.
+After an authorizing administrative disposition (`POLICY_UPDATED`, `CAPABILITY_UPDATED`, or
+`POLICY_AND_CAPABILITY_UPDATED`), the host may allocate exactly one fresh request identity
+from the captured immutable intent. That fresh request traverses the ordinary Phase 4
+`ExternalConsumerRuntime`; capability validation, current policy, emergency state, exact
+approval, lease, sandbox, receipt and idempotency checks are all performed again. The owner
+administrative disposition is not authority and does not imply `ALLOW`.
+
+If current policy returns `REQUIRE_APPROVAL`, the fresh request remains the exact approval
+subject and is not replaced by another continuation request. If current policy denies,
+`NO_CHANGE` is selected, or the pending item is dismissed, no effect occurs. A fresh request
+that encounters another configuration-required denial does not recursively create another
+automatic continuation; the one-shot continuation budget is exhausted and the workflow ends
+non-authorizing. If the fresh request is blocked by the durable emergency pause, the Pi edge
+returns explicit `DENY / DENIED / EMERGENCY_PAUSED`; lifting the pause does not retry that
+continuation because its one-shot fresh-request budget has already been consumed.
+
+Security-relevant mutation of the original tool name, arguments, resource, run identity,
+request identity or idempotency binding invalidates same-process continuation. Equivalent
+pending-permission aggregation never merges distinct continuation identities. Each continuation
+also records the pending item's resolution revision at capture time, so an old resolution from a
+prior equivalent request cannot authorize a later blocked workflow.
+
+## Restart recovery
+
+Continuation state is durable in the controller database. Profile startup may report blocked
+continuations, but startup is read-only and never dispatches them. Recovery requires an
+explicit owner event:
+
+```text
+/continuations
+/resume <continuation_id>
+```
+
+`/resume` uses the stored immutable intent and can consume the one-shot fresh-request budget.
+This recovery completes the captured effect workflow; it does not treat restart as authority
+and does not reconstruct a lost model transcript.
+
+## Exact approval
+
+For ordinary `REQUIRE_APPROVAL`, and for a fresh D001 continuation request that evaluates to
+`REQUIRE_APPROVAL`, the host prints the exact decision and holds the current Pi tool execution
+while polling the **same canonical request**. Approval creation itself does not dispatch. On
+trusted retry, LAC re-evaluates current policy, validates the exact one-time approval, then
+executes at most once. A current `DENY` still wins.
 
 Visible outcomes distinguish successful execution/receipt, exact approval pending,
-permission configuration required, explicit configured denial, and terminal effect
-failure.
+permission configuration wait, explicit configured denial/non-authorization, expiration,
+and terminal effect failure.
 
-The deterministic gate is:
+The D001 deterministic gate is:
 
 ```bash
-LAC_PI001_RUN_ROOT="$(mktemp -d)" scripts/test-pi001
+LAC_PI002_D001_RUN_ROOT="$(mktemp -d)" scripts/test-pi002-d001
 ```
 
-It includes a real pinned-Pi process/tool probe through the production broker, plus the
-accepted Phase 4 regression chain. Only local synthetic filesystem effects are used; no
-production Gmail/Calendar credentials or external consequential effects are used.
+It includes direct continuation acceptance coverage, a real pinned-Pi process/tool probe,
+and the complete retained `scripts/test-pi001` gate, which in turn includes the accepted
+Phase 4 regression chain. Only local synthetic filesystem effects are used; no production
+Gmail/Calendar credentials or external consequential effects are used.
