@@ -1,8 +1,8 @@
 {
-  "active_task": "NONE",
+  "active_task": "LAC-PI005",
   "blockers": [],
   "last_accepted_release": "1.0.0-rc.1",
-  "next_action": "No active v1 build task. Await an explicit owner roadmap decision before any further implementation.",
+  "next_action": "Implement LAC-PI005 native governed Pi TUI/session integration without weakening the accepted LAC sandbox, authority, permission, approval, credential-isolation or no-bypass semantics.",
   "nonblocking_notes": [
     "Fresh independent Phase 4 re-review passed at live reviewed HEAD 78a1b8c580778f8ae5cb11a856fa771bc1f64308; reviewed P4-B002 implementation commit cd61b1c95a65782dfb9e9442d3422885df8a11f7; no Phase 4 blockers remain.",
     "The accepted A004 owner terminal launches real pinned Pi Agent Core 0.85.1 inside the qualified sandbox with only LAC-governed tools, but that path still uses the earlier fixed-ALLOW qualification policy rather than the completed Phase 4 permission-management runtime.",
@@ -18,10 +18,11 @@
     "LAC-V001 v1 Pi-reference productization candidate completed at implementation commit e76856cd151eefa8ae4ede7c473005eafb762e8a; versioned user-level distribution/configuration/owner UX and rollback were added without moving canonical authority, and the retained Phase 5 regression chain passed.",
     "Fresh Phase 6 independent review PASS at exact reviewed live commit e53a79e22f6c4aa14457b535a55d08a387a91262. Fresh scripts/test-v001 and retained Phase 5/earlier regression chain passed; exact portable distribution SHA was reproduced; no Phase 6 blockers remain. Active v1 roadmap closed at accepted release candidate 1.0.0-rc.1.",
     "Phase 6 nonblocking documentation note P6-NB001: docs/V1_PRODUCTIZATION.md can be read as implying the preinstall SQLite backup remains after rollback, while rollback removes the V001 backup directory. V001 performs no database migration or rewrite, so this does not violate the binding rollback/data-integrity requirement.",
-    "Phase 6 nonblocking documentation note P6-NB002: deterministic-distribution wording says same Git index is sufficient for byte identity, but VERSION metadata also embeds source_head. The exact reviewed implementation commit reproduces the recorded distribution SHA, so release reproducibility is satisfied."
+    "Phase 6 nonblocking documentation note P6-NB002: deterministic-distribution wording says same Git index is sufficient for byte identity, but VERSION metadata also embeds source_head. The exact reviewed implementation commit reproduces the recorded distribution SHA, so release reproducibility is satisfied.",
+    "Owner-authorized LAC-PI004 default-governed Pi entrypoint completed at implementation commit 2b26291ba0ca0d2f61c07a47e9c4317396be6420; ordinary installed pi now routes through LAC by default, dangerous bypass is explicit, and rc.1 install-state/pi command rollback preservation and tool-manager PATH precedence is qualified through an exact-restorable owner-shell override. 1.0.0-rc.1 remains the last independently accepted release pending the new roadmap review."
   ],
-  "phase": "PHASE_6_V1_PRODUCTIZATION",
-  "phase_status": "COMPLETE",
-  "project_version": "1.0.0-rc.1",
+  "phase": "PHASE_7_DEFAULT_GOVERNED_PI_UX",
+  "phase_status": "ACTIVE_IMPLEMENTATION",
+  "project_version": "1.0.0-rc.2",
   "schema": "lac.project-state/v1"
 }
