@@ -1,4 +1,4 @@
-# LAC v1 Productization — 1.0.0-rc.2 candidate
+# LAC v1 Productization — 1.0.0-rc.3 candidate
 
 `LAC-V001` packages the accepted governed Pi reference path without creating a second authority boundary.
 Canonical capability, policy, approval, emergency, identity, lease, receipt, credential and continuation state remains in LAC.
@@ -54,3 +54,14 @@ The native Pi TUI is intentionally not claimed by PI004. PI005 is the separate s
 `pi` and `lac-pi` both enter the LAC-governed launcher by default. `pi --dangerously-bypass-lac` is the explicit owner/debug escape hatch and verifies the pinned Pi checkout before bypass.
 
 To prevent a tool-manager PATH entry from silently outranking `~/.local/bin/pi`, rc.2 installs a small shell function for the owner's Bash, Zsh, or Fish startup surface that invokes the LAC launcher by absolute path. PI004 does not modify or execute mise or another tool manager. The shell startup material and LAC shell fragment are part of the exact rollback set.
+
+## rc.3 native governed Pi TUI
+
+`1.0.0-rc.3` replaces the custom governed prompt loop with pinned Pi 0.85.1's native
+source CLI/TUI. The Pi process still runs inside the accepted Bubblewrap network-none boundary.
+The host workspace, owner admin socket, service credentials and host network are not mounted.
+Stock Pi built-in tools are disabled; exactly one trusted LAC extension registers the four existing
+controller-backed consequential tools and the LAC model broker. Extension discovery, skills, prompt
+templates, themes, context files and session persistence are disabled by explicit CLI flags.
+`--dangerously-bypass-lac` remains the explicit top-level owner/debug path and is not exposed to the
+governed model.

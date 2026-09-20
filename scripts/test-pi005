@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+CURRENT_STAGE="bootstrap"
+on_err() {
+  local rc="$?" line="$1" command="$2"
+  printf 'LAC_PI005_TEST_LOUD_FAIL stage=%s line=%s rc=%s command=%q\n' "$CURRENT_STAGE" "$line" "$rc" "$command" >&2
+  return "$rc"
+}
+trap 'on_err "$LINENO" "$BASH_COMMAND"' ERR
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+export PYTHONDONTWRITEBYTECODE=1
+: "${LAC_PI005_RUN_ROOT:?LAC_PI005_RUN_ROOT is required}"
+mkdir -p "$LAC_PI005_RUN_ROOT"
+
+CURRENT_STAGE="source_acceptance"
+echo "==> PI005 native Pi TUI/source acceptance"
+python3 -m unittest tests.acceptance.test_pi005_native_tui -v
+
+CURRENT_STAGE="runtime_conformance"
+echo "==> PI005 native Pi TUI runtime conformance"
+python3 -m unittest tests.integration.test_pi005_native_tui_profile -v
+
+CURRENT_STAGE="syntax_static"
+echo "==> PI005 syntax/static"
+PYTHONPYCACHEPREFIX="$LAC_PI005_RUN_ROOT/pycache" python3 -m py_compile \
+  scripts/pi_native_tui_host.py \
+  tests/acceptance/test_pi005_native_tui.py \
+  tests/integration/test_pi005_native_tui_profile.py \
+  packages/productization/v1.py
+node --check scripts/pi_native_tui.mjs
+bash -n scripts/lac-pi scripts/test-pi005
+
+CURRENT_STAGE="staged_diff_hygiene"
+echo "==> PI005 staged diff hygiene"
+git diff --cached --check
+
+CURRENT_STAGE="retained_regression"
+echo "==> PI005 retained PI004/V001 and earlier regression"
+export LAC_PI004_RUN_ROOT="$LAC_PI005_RUN_ROOT/pi004-regression"
+rm -rf "$LAC_PI004_RUN_ROOT"
+scripts/test-pi004
+
+git diff --check
+echo "LAC_PI005_NATIVE_TUI=PASS"
+echo "LAC_PI005_PINNED_PI_SOURCE_CLI=PASS"
+echo "LAC_PI005_RESOURCE_EXTENSION_BYPASS=BLOCKED"
+echo "LAC_PI005_DANGEROUS_BYPASS_TOP_LEVEL_ONLY=PASS"
+echo "LAC_PI005_AUTHORITY_CORE_MODIFIED=NO"
+echo "LAC_PI005_TEST=PASS"

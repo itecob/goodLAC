@@ -15,7 +15,7 @@ import tempfile
 from pathlib import Path, PurePosixPath
 from typing import Any, Iterable, Mapping
 
-RELEASE_VERSION = "1.0.0-rc.2"
+RELEASE_VERSION = "1.0.0-rc.3"
 RELEASE_SCHEMA = "lac.v1-product-release/v1"
 CONFIG_SCHEMA = "lac.v1-owner-config/v1"
 INSTALL_SCHEMA = "lac.v1-install-state/v1"
@@ -362,13 +362,17 @@ def _install_shell_integration(home: Path | None, pi_launcher: Path) -> dict[str
             raise ProductizationError("shell rc must be a real regular file when present")
         before = rc.read_bytes() if rc.exists() else b""
         block = _shell_rc_block(fragment)
-        if SHELL_BLOCK_START.encode() in before or SHELL_BLOCK_END.encode() in before:
-            raise ProductizationError("pre-existing LAC shell marker is unsupported; fail closed")
-        rc.parent.mkdir(parents=True, exist_ok=True)
-        sep = b"" if not before or before.endswith(b"\n") else b"\n"
-        rc.write_bytes(before + sep + block)
-        if not before:
-            rc.chmod(0o600)
+        start_count = before.count(SHELL_BLOCK_START.encode())
+        end_count = before.count(SHELL_BLOCK_END.encode())
+        if start_count or end_count:
+            if start_count != 1 or end_count != 1 or block not in before:
+                raise ProductizationError("pre-existing LAC shell marker is malformed or unmanaged; fail closed")
+        else:
+            rc.parent.mkdir(parents=True, exist_ok=True)
+            sep = b"" if not before or before.endswith(b"\n") else b"\n"
+            rc.write_bytes(before + sep + block)
+            if not before:
+                rc.chmod(0o600)
     return {"shell": shell, "rc_path": str(rc_raw) if rc_raw is not None else None, "fragment_path": str(fragment)}
 
 
@@ -751,7 +755,7 @@ def launch_pi(home: Path | None, extra: list[str]) -> int:
     if extra and extra[0] == DANGEROUS_BYPASS_FLAG:
         return _verify_and_launch_pinned_ungoverned_pi(app, config, extra[1:], env)
     argv = [
-        "python3", str(app / "scripts/pi_v1_terminal.py"),
+        "python3", str(app / "scripts/pi_native_tui_host.py"),
         "--workspace", config["workspace"], "--state", config["state"],
         "--trace", config["trace"], "--runtime", config["runtime"], *extra,
     ]
@@ -789,7 +793,7 @@ def doctor(home: Path | None = None, *, static_only: bool = False) -> dict[str, 
         "owner_shell": _target_shell(),
         "dangerous_bypass_is_explicit": True,
     }
-    for binary in ("git", "node", "bwrap"):
+    for binary in ("git", "node", "bwrap", "fd", "rg"):
         checks[binary] = shutil.which(binary) is not None
     if not static_only:
         env = dict(os.environ); env["LAC_PI_CHECKOUT"] = config["pi_checkout"]

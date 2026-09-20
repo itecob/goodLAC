@@ -67,7 +67,7 @@ class Pi004DefaultGovernedEntrypointTests(unittest.TestCase):
                 p, prior_state, prior_mode, external_material = self._prior_rc1(home, external_pi_kind=kind)
                 archive = self._archive(td)
                 state = v1.install_distribution(archive, home)
-                self.assertEqual(state["version"], "1.0.0-rc.2")
+                self.assertEqual(state["version"], v1.RELEASE_VERSION)
                 self.assertTrue((p["bin"] / "pi").is_symlink())
                 self.assertEqual((p["bin"] / "pi").resolve(), (p["current"] / "bin" / "pi").resolve())
                 self.assertNotEqual(p["install_state"].read_bytes(), prior_state)
@@ -84,7 +84,7 @@ class Pi004DefaultGovernedEntrypointTests(unittest.TestCase):
             archive = self._archive(td)
             original = v1._write_private_json
             def fail_on_new_install_state(path, value):
-                if path == p["install_state"] and isinstance(value, dict) and value.get("version") == "1.0.0-rc.2":
+                if path == p["install_state"] and isinstance(value, dict) and value.get("version") == v1.RELEASE_VERSION:
                     raise RuntimeError("synthetic post-mutation failure")
                 return original(path, value)
             with mock.patch.object(v1, "_write_private_json", side_effect=fail_on_new_install_state):
@@ -94,7 +94,7 @@ class Pi004DefaultGovernedEntrypointTests(unittest.TestCase):
             self.assertEqual(stat.S_IMODE(p["install_state"].stat().st_mode), prior_mode)
             self._assert_external(p["bin"] / "pi", external_material)
             self.assertEqual(p["current"].resolve().name, "1.0.0-rc.1")
-            self.assertFalse((p["releases"] / "1.0.0-rc.2").exists())
+            self.assertFalse((p["releases"] / v1.RELEASE_VERSION).exists())
 
     def test_default_pi_dispatch_is_governed_and_dangerous_bypass_is_explicit(self):
         calls = []
@@ -102,7 +102,7 @@ class Pi004DefaultGovernedEntrypointTests(unittest.TestCase):
              mock.patch.object(v1, "current_app", return_value=Path("/app")), \
              mock.patch.object(v1, "_exec", side_effect=lambda argv, env=None: calls.append((argv,env)) or 0):
             self.assertEqual(v1.launch_pi(None, ["--profile-probe"]), 0)
-        self.assertEqual(calls[0][0][0:2], ["python3", "/app/scripts/pi_v1_terminal.py"])
+        self.assertEqual(calls[0][0][0:2], ["python3", "/app/scripts/pi_native_tui_host.py"])
         self.assertNotIn(v1.DANGEROUS_BYPASS_FLAG, calls[0][0])
 
     def test_dangerous_bypass_verifies_pin_and_executes_exact_pinned_cli(self):
@@ -178,7 +178,7 @@ class Pi004DefaultGovernedEntrypointTests(unittest.TestCase):
             archive = self._archive(td)
             original = v1._write_private_json
             def fail_on_new_install_state(path, value):
-                if path == p["install_state"] and isinstance(value, dict) and value.get("version") == "1.0.0-rc.2":
+                if path == p["install_state"] and isinstance(value, dict) and value.get("version") == v1.RELEASE_VERSION:
                     raise RuntimeError("synthetic shell post-mutation failure")
                 return original(path, value)
             with mock.patch.dict(os.environ, {"SHELL": "/bin/bash", "LAC_PI004_TARGET_SHELL": "bash"}, clear=False), \

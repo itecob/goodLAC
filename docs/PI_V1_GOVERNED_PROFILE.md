@@ -1,12 +1,15 @@
 # LAC-Governed Pi v1 Profile
 
-`scripts/lac-pi` is the explicit LAC-governed Pi v1 profile. It reuses the exact qualified
-Pi Agent Core 0.85.1 checkout and accepted A004 Bubblewrap boundary, replacing A003/A004's
-fixed-ALLOW effect bridge with the accepted Phase 4 capability, standing-permission,
-exact-approval, dispatch, receipt and emergency semantics.
+`scripts/lac-pi` is the LAC-governed Pi v1 profile used by the default installed `pi` command.
+PI005 runs pinned Pi 0.85.1's native source CLI/TUI through the checkout-local TypeScript runtime with Pi's root tsconfig inside the accepted A004 Bubblewrap
+boundary, loading exactly one explicit trusted LAC extension. The effect bridge remains the accepted Phase 4
+capability, standing-permission, exact-approval, dispatch, receipt and emergency path; the TUI does
+not become an authority boundary.
 
-Ordinary standalone Pi remains separately runnable. A Pi process not started through
-`scripts/lac-pi` is not represented as LAC-governed.
+Upstream standalone Pi remains separately runnable only through the explicit top-level
+`pi --dangerously-bypass-lac` owner/debug escape hatch (or direct owner execution outside the
+LAC-managed command). A Pi process not started through the governed launcher is not represented
+as LAC-governed.
 
 ## Start
 
@@ -25,6 +28,14 @@ The model-facing consequential tool surface remains exactly `lac_fs_read`,
 `lac_fs_create`, `lac_fs_replace`, and `lac_shell_exec`. Pi has no direct workspace mount,
 service credential, owner runtime directory/admin socket, host network, or general host
 process authority.
+
+The native Pi process is launched through pinned `packages/coding-agent/src/cli.ts` using the
+checkout-local `tsx` runtime and root `tsconfig.json`, with built-in tools disabled and an exact allowlist containing only the four LAC tools.
+All ambient extension/resource discovery and session persistence are disabled; only the explicit
+read-only `/lac/pi_native_tui.mjs` extension is loaded. Host-side model/effect RPC uses one owner-private Unix-domain broker socket created inside the
+private Bubblewrap runtime root before launch. The socket survives the checkout-local `tsx` process
+boundary without exposing the owner admin socket or host filesystem, so native Pi UI/resource features
+cannot create a second host effect path.
 
 Profile startup idempotently registers the canonical `lac-pi-v1 / governed-local-effects`
 manifest inside the trusted controller host process through the existing P004 `AdminService`
