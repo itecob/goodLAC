@@ -1,0 +1,25 @@
+{
+  "authority_core_modified": false,
+  "dangerous_bypass": "TOP_LEVEL_OWNER_EXPLICIT_ONLY",
+  "distribution_sha256": "094bec442836a0cb1ea09738863554d3ca9a86cdc7defaa816c66e9893ab94f8",
+  "handoff_state_commit": "a27c0e335d1293e0b6c9a2cc7a48b36d0da526bd",
+  "implementation_commit": "35dde36cbb63227cdea5ea77552aa1a6f2bcf450",
+  "installed_release": "1.0.0-rc.3",
+  "native_pi_tui": "Pinned Pi 0.85.1 source CLI/TUI via checkout-local tsx",
+  "owner_execution_log": "${HOME}/.local/state/local-agent-controller/qualification/pi005-owner-execution.log",
+  "package_id": "LAC_PI005_NATIVE_GOVERNED_PI_TUI_v0.1.12",
+  "package_sha256": "5e315699569fe49a11ff55f9ab58be59ad5f93b6894e26b8d69012315acd0c0f",
+  "predecessor_implementation_commit": "2b26291ba0ca0d2f61c07a47e9c4317396be6420",
+  "preinstall_git_commit": "d2d67276c17c659fcb8462e2d1fc63405a00fd2e",
+  "prior_release": "1.0.0-rc.2",
+  "resource_loading": "CLOSED",
+  "retained_regression_gate": "PASS",
+  "schema": "lac.pi005-owner-execution/v1",
+  "status": "PASS",
+  "tool_surface": [
+    "lac_fs_read",
+    "lac_fs_create",
+    "lac_fs_replace",
+    "lac_shell_exec"
+  ]
+}
