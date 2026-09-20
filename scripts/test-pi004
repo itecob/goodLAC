@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+export PYTHONDONTWRITEBYTECODE=1
+: "${LAC_PI004_RUN_ROOT:?LAC_PI004_RUN_ROOT is required}"
+mkdir -p "$LAC_PI004_RUN_ROOT"
+
+echo "==> PI004 default-governed Pi entrypoint acceptance"
+python3 -m unittest tests.acceptance.test_pi004_default_governed_entrypoint -v
+
+echo "==> PI004 syntax/static"
+PYTHONPYCACHEPREFIX="$LAC_PI004_RUN_ROOT/pycache" python3 -m py_compile packages/productization/v1.py tests/acceptance/test_pi004_default_governed_entrypoint.py
+bash -n scripts/test-pi004
+
+echo "==> PI004 retained V001 and earlier security/conformance regression"
+export LAC_V001_RUN_ROOT="$LAC_PI004_RUN_ROOT/v001-regression"
+rm -rf "$LAC_V001_RUN_ROOT"
+scripts/test-v001
+
+git diff --check
+echo "LAC_PI004_DEFAULT_PI_GOVERNED=PASS"
+echo "LAC_PI004_DANGEROUS_BYPASS_EXPLICIT=PASS"
+echo "LAC_PI004_AUTHORITY_CORE_MODIFIED=NO"
+echo "LAC_PI004_TEST=PASS"
