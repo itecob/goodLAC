@@ -1,43 +1,43 @@
-# ACTIVE TASK — LAC-PI005
+# ACTIVE TASK — LAC-PI006
 
 ## Task ID
-`LAC-PI005`
+`LAC-PI006`
 
 ## Objective
-Replace the custom governed terminal frontend with Pi's native TUI/session surface while preserving the exact LAC-governed authority boundary.
+Run owner UAT and bounded stabilization for the native default-governed Pi experience delivered by PI005, without broadening LAC authority or the approved tool/resource surface.
 
 ## In scope
-- Use the pinned Pi 0.85.1 supported TUI/session/SDK surfaces rather than a competing custom TUI.
-- Keep ordinary installed `pi` default-governed through the PI004 launcher.
-- Preserve only controller-backed consequential tools and the accepted Bubblewrap ambient-authority boundary.
-- Qualify Pi resource/package/extension/skill loading so executable extensions cannot create an alternate consequential-effect path.
-- Preserve controller-owned principal/agent/application/skill identity, owner-only administration, permissions, exact approvals, emergency pause, receipts/idempotency and restart/non-auto-dispatch behavior.
-- Preserve `pi --dangerously-bypass-lac` only as the explicit top-level owner/debug escape hatch; it must not become a governed-model escalation route.
-- Deterministic native-TUI/source/conformance tests and retained PI004/V001 regressions.
+- Owner UAT of ordinary installed `pi` entering pinned Pi 0.85.1's native TUI through LAC by default.
+- Multi-turn native TUI use with the existing four controller-backed consequential tools.
+- Owner permission discovery/configuration, exact approval, emergency pause, receipt/idempotency and D001 continuation/restart behavior through the native TUI path.
+- Verify restart remains non-auto-dispatch and recovered continuations require an explicit owner event.
+- Verify `pi --dangerously-bypass-lac` remains an explicit top-level owner/debug escape hatch and is unavailable through governed model/tool authority.
+- Bounded stabilization only for defects discovered by this UAT; rerun PI005 and retained regressions after any remediation.
+- Prepare the resulting candidate for the fresh independent Phase 7 review after owner UAT passes.
 
 ## Out of scope
 - New harnesses or model providers.
 - New authority-core semantics.
-- External application workflow logic.
-- Generic compatibility facade.
-- Expanding consequential tool authority merely to match stock Pi defaults.
+- Broader consequential tool authority.
+- Re-enabling arbitrary Pi extensions/resources in the governed profile.
+- Generic compatibility facade or external application workflow logic.
 
 ## Accepted predecessor
-- PI004 implementation commit: `2b26291ba0ca0d2f61c07a47e9c4317396be6420`
-- PI004 candidate release: `1.0.0-rc.2`
+- PI005 implementation commit: `35dde36cbb63227cdea5ea77552aa1a6f2bcf450`
+- PI005 candidate release: `1.0.0-rc.3`
 - Last independently accepted release remains `1.0.0-rc.1`.
-- PI004 distribution SHA-256: `6d42e53d46d3be8b844dc5d9da1870728653a8ce9a36cbfd9f70a3db45757b4c`
+- PI005 distribution SHA-256: `094bec442836a0cb1ea09738863554d3ca9a86cdc7defaa816c66e9893ab94f8`
 
 ## Acceptance tests
-- Normal `pi` opens the real Pi TUI/session surface through the LAC-governed process boundary.
-- Stock Bash/read/write/edit authority is not reintroduced.
-- Extensions/resources cannot acquire ambient filesystem/process/network/credential/admin authority outside LAC.
-- Existing permission/approval/continuation/emergency/idempotency/receipt semantics remain intact.
-- Dangerous bypass remains owner-explicit and unavailable through governed shell/tool authority.
-- Applicable PI004/V001 and earlier regression gates pass.
+- Owner confirms ordinary `pi` visibly opens the real Pi native TUI and remains LAC-governed.
+- Permission discovery/configuration and exact approval complete through the unchanged owner-only administration path.
+- Emergency pause, receipt/idempotency and D001 continuation/restart semantics remain unchanged.
+- Native TUI resource/extension confinement remains passing.
+- Dangerous bypass remains explicit and top-level only.
+- PI005 and all applicable retained regression gates pass after any stabilization change.
 
 ## Package required?
-`yes`
+`yes` if stabilization mutation is required; otherwise record owner UAT evidence and advance to fresh independent Phase 7 review without inventing a code change.
 
 ## Next task on success
-`LAC-PI006` — owner UAT and stabilization of the native default-governed Pi experience.
+Fresh independent Phase 7 review of the rc.3 candidate.
