@@ -161,6 +161,16 @@ async function ambientProbes(bootstrap) {
     pid:process.pid, cwd:process.cwd() };
 }
 
+function continuationLine(item) {
+  const owner=item && typeof item.owner_resolution === "object" && item.owner_resolution ? item.owner_resolution.resolution : "PENDING_OWNER_CONFIGURATION";
+  return `continuation=${String(item?.continuation_id || "-")} state=${String(item?.state || "?")} original=${String(item?.original_request_id || "-")} fresh=${String(item?.fresh_request_id || "-")} owner=${String(owner)}`;
+}
+async function recoverableContinuations() {
+  const response=await rpc("continuation_list",{recoverable_only:true});
+  if(!response || response.ok!==true || !Array.isArray(response.continuations)) throw new Error("LAC continuation recovery inspection failed closed");
+  return response.continuations;
+}
+
 export default async function lacGovernedPiExtension(pi) {
   await connected;
   const bootstrap=await nextMessage();
@@ -180,13 +190,60 @@ export default async function lacGovernedPiExtension(pi) {
       cost:{input:0,output:0,cacheRead:0,cacheWrite:0}, contextWindow:131072, maxTokens:2048 }],
     streamSimple:makeRpcStreamFn(Number(bootstrap.timeoutSeconds || 300), String(bootstrap.mode)),
   });
+  pi.registerCommand("lac-continuations",{
+    description:"Show recoverable LAC permission-gated workflow continuations",
+    handler:async (_args,ctx)=>{
+      try {
+        const items=await recoverableContinuations();
+        if(!items.length){ ctx.ui.notify("No recoverable LAC workflow continuations.","info"); return; }
+        ctx.ui.notify(items.map(continuationLine).join("\n"),"info");
+      } catch(error) {
+        ctx.ui.notify(`LAC continuation inspection failed closed: ${error instanceof Error?error.message:String(error)}`,"warning");
+      }
+    },
+  });
+  pi.registerCommand("lac-resume",{
+    description:"Explicitly resume one recovered LAC workflow continuation",
+    handler:async (args,ctx)=>{
+      const continuationId=String(args || "").trim();
+      if(!continuationId){ ctx.ui.notify("Usage: /lac-resume <continuation_id>","warning"); return; }
+      try {
+        const response=await rpc("continuation_resume",{continuation_id:continuationId});
+        if(!response || response.ok!==true){ ctx.ui.notify("LAC continuation resume failed closed; no effect was dispatched.","warning"); return; }
+        const resume=response.resume;
+        if(!resume || typeof resume!=="object") throw new Error("resume result is malformed");
+        if(resume.kind==="WAITING_PERMISSION"){
+          ctx.ui.notify("Continuation remains blocked. Configure and resolve the owner permission item first; no effect was dispatched.","warning");
+          return;
+        }
+        const result=resume.result;
+        if(!result || typeof result!=="object") throw new Error("resume result lacks effect outcome");
+        if(result.authority_outcome==="REQUIRE_APPROVAL" && result.execution_state==="PENDING_APPROVAL"){
+          ctx.ui.notify(`Exact owner approval required for decision ${String(result.decision_id || "-")}. Approve or reject through lac-owner, then run /lac-resume ${continuationId} again. Approval alone does not dispatch.`,"warning");
+          return;
+        }
+        const receipt=result.receipt && typeof result.receipt==="object" ? result.receipt.receipt_id : "-";
+        ctx.ui.notify(`LAC continuation completed: authority=${String(result.authority_outcome || "?")} state=${String(result.execution_state || "?")} request=${String(result.request_id || "-")} receipt=${String(receipt || "-")}`,"info");
+      } catch(error) {
+        ctx.ui.notify(`LAC continuation resume failed closed: ${error instanceof Error?error.message:String(error)}`,"warning");
+      }
+    },
+  });
+  pi.on("session_start",async (_event,ctx)=>{
+    try {
+      const items=await recoverableContinuations();
+      if(items.length) ctx.ui.notify(`Recovered ${items.length} blocked LAC workflow continuation(s). No effect was dispatched on restart. Use /lac-continuations and /lac-resume <continuation_id>.`,"warning");
+    } catch(error) {
+      ctx.ui.notify(`LAC continuation recovery inspection failed closed: ${error instanceof Error?error.message:String(error)}`,"warning");
+    }
+  });
   const argv=process.argv.slice(2);
   const required=["--no-builtin-tools","--no-extensions","--no-skills","--no-prompt-templates","--no-themes","--no-context-files","--no-session"];
   for(const flag of required) if(!argv.includes(flag)) throw new Error(`missing governed Pi lockdown flag: ${flag}`);
   const extIndex=argv.indexOf("-e");
   if(extIndex<0 || argv[extIndex+1]!=="/lac/pi_native_tui.mjs") throw new Error("trusted PI005 extension is not the explicit extension path");
   const probes=await ambientProbes(bootstrap);
-  emit({ type:"ready", tool_surface:[...GOVERNED_TOOL_NAMES], frontend:"PiSourceCLI", entrypoint:"/pi/packages/coding-agent/src/cli.ts",
+  emit({ type:"ready", tool_surface:[...GOVERNED_TOOL_NAMES], owner_commands:["lac-continuations","lac-resume"], frontend:"PiSourceCLI", entrypoint:"/pi/packages/coding-agent/src/cli.ts",
     resources:{extension_discovery:false,skills:false,prompt_templates:false,themes:false,context_files:false,session_persistence:false}, probes });
   const ack=await nextMessage();
   if(!ack || ack.type!=="ready_ack" || ack.ok!==true) throw new Error("PI005 ready acknowledgement missing");

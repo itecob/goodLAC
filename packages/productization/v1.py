@@ -15,7 +15,7 @@ import tempfile
 from pathlib import Path, PurePosixPath
 from typing import Any, Iterable, Mapping
 
-RELEASE_VERSION = "1.0.0-rc.3"
+RELEASE_VERSION = "1.0.0-rc.4"
 RELEASE_SCHEMA = "lac.v1-product-release/v1"
 CONFIG_SCHEMA = "lac.v1-owner-config/v1"
 INSTALL_SCHEMA = "lac.v1-install-state/v1"

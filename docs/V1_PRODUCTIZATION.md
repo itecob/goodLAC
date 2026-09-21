@@ -1,4 +1,4 @@
-# LAC v1 Productization — 1.0.0-rc.3 candidate
+# LAC v1 Productization — 1.0.0-rc.4 candidate
 
 `LAC-V001` packages the accepted governed Pi reference path without creating a second authority boundary.
 Canonical capability, policy, approval, emergency, identity, lease, receipt, credential and continuation state remains in LAC.
@@ -65,3 +65,14 @@ controller-backed consequential tools and the LAC model broker. Extension discov
 templates, themes, context files and session persistence are disabled by explicit CLI flags.
 `--dangerously-bypass-lac` remains the explicit top-level owner/debug path and is not exposed to the
 governed model.
+
+
+## rc.4 PI006 restart-recovery stabilization
+
+`1.0.0-rc.4` is a bounded PI006 stabilization of the native governed Pi TUI. It adds
+owner-only, LAC-namespaced `/lac-continuations` and `/lac-resume <continuation_id>` commands
+through the single trusted LAC extension so D001 restart recovery remains available after the
+PI005 native-TUI transition. Startup continuation inspection is read-only and never dispatches.
+Pi's built-in `/resume` session command is not intercepted. The model-facing consequential tool
+surface remains exactly the existing four controller-backed tools; authority-core, policy,
+approval, identity, credential, lease, receipt and sandbox semantics are unchanged.

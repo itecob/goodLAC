@@ -267,6 +267,32 @@ class AuthorityBroker(legacy.PiV1InteractiveSession):
                         fail(f"prohibited Pi resource entered model context: {canary}")
                 return _probe_model_events(self.model_request_count)
             return baseline.model_events(payload)
+        if kind == "continuation_list":
+            material = {} if payload is None else payload
+            if not isinstance(material, Mapping) or set(material) - {"recoverable_only"}:
+                fail("native Pi continuation-list request is malformed")
+            recoverable_only = material.get("recoverable_only", True)
+            if not isinstance(recoverable_only, bool):
+                fail("native Pi continuation-list recoverable_only must be boolean")
+            response = legacy.bridge_continuation_list(self.state, recoverable_only=recoverable_only)
+            if not isinstance(response, Mapping):
+                fail("native Pi continuation-list response is malformed")
+            if response.get("ok") is not True:
+                return dict(response)
+            items = response.get("continuations")
+            if not isinstance(items, list):
+                fail("native Pi continuation-list result is malformed")
+            return {"ok": True, "continuations": items}
+        if kind == "continuation_resume":
+            if not isinstance(payload, Mapping) or set(payload) != {"continuation_id"}:
+                fail("native Pi continuation-resume request is malformed")
+            continuation_id = payload.get("continuation_id")
+            if not isinstance(continuation_id, str) or not continuation_id or continuation_id != continuation_id.strip():
+                fail("native Pi continuation-resume identity is invalid")
+            response = self._resume_once(continuation_id)
+            if not isinstance(response, Mapping):
+                fail("native Pi continuation-resume response is malformed")
+            return dict(response)
         if kind == "effect_request":
             result = self._effect(payload)
             if isinstance(result, dict):
@@ -382,6 +408,8 @@ class BrokerProcess:
     def _verify_ready(self, value: Mapping[str, Any]) -> None:
         if tuple(value.get("tool_surface") or ()) != EXPECTED_TOOLS:
             fail("native Pi tool surface is not exactly the four governed tools")
+        if tuple(value.get("owner_commands") or ()) != ("lac-continuations", "lac-resume"):
+            fail("native Pi owner recovery command surface is unexpected")
         if value.get("frontend") != "PiSourceCLI" or value.get("entrypoint") != "/pi/packages/coding-agent/src/cli.ts":
             fail("native Pi did not start through the pinned Pi source CLI")
         resources = value.get("resources")

@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+CURRENT_STAGE="bootstrap"
+on_err() {
+  local rc="$?" line="$1" command="$2"
+  printf 'LAC_PI006_TEST_LOUD_FAIL stage=%s line=%s rc=%s command=%q\n' "$CURRENT_STAGE" "$line" "$rc" "$command" >&2
+  return "$rc"
+}
+trap 'on_err "$LINENO" "$BASH_COMMAND"' ERR
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+export PYTHONDONTWRITEBYTECODE=1
+: "${LAC_PI006_RUN_ROOT:?LAC_PI006_RUN_ROOT is required}"
+mkdir -p "$LAC_PI006_RUN_ROOT"
+
+CURRENT_STAGE="pi006_acceptance"
+echo "==> PI006 native restart-recovery stabilization acceptance"
+python3 -m unittest tests.acceptance.test_pi006_native_tui_restart -v
+
+CURRENT_STAGE="syntax_static"
+echo "==> PI006 syntax/static"
+PYTHONPYCACHEPREFIX="$LAC_PI006_RUN_ROOT/pycache" python3 -m py_compile \
+  scripts/pi_native_tui_host.py \
+  tests/acceptance/test_pi006_native_tui_restart.py \
+  packages/productization/v1.py
+node --check scripts/pi_native_tui.mjs
+bash -n scripts/lac-pi scripts/test-pi005 scripts/test-pi006
+
+CURRENT_STAGE="staged_diff_hygiene"
+echo "==> PI006 staged diff hygiene"
+git diff --cached --check
+
+CURRENT_STAGE="retained_pi005_regression"
+echo "==> PI006 retained PI005 and earlier regression"
+export LAC_PI005_RUN_ROOT="$LAC_PI006_RUN_ROOT/pi005-regression"
+rm -rf "$LAC_PI005_RUN_ROOT"
+scripts/test-pi005
+
+git diff --check
+echo "LAC_PI006_NATIVE_RESTART_NOTICE=PASS"
+echo "LAC_PI006_LAC_CONTINUATIONS_COMMAND=PASS"
+echo "LAC_PI006_LAC_RESUME_COMMAND=PASS"
+echo "LAC_PI006_PI_BUILTIN_RESUME_UNTOUCHED=PASS"
+echo "LAC_PI006_TOOL_SURFACE_UNCHANGED=PASS"
+echo "LAC_PI006_TEST=PASS"

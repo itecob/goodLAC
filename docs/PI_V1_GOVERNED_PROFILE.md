@@ -91,18 +91,22 @@ prior equivalent request cannot authorize a later blocked workflow.
 
 ## Restart recovery
 
-Continuation state is durable in the controller database. Profile startup may report blocked
-continuations, but startup is read-only and never dispatches them. Recovery requires an
-explicit owner event:
+Continuation state is durable in the controller database. The native Pi TUI startup path
+checks only for recoverable continuation metadata and never dispatches an effect. When blocked
+work exists, the trusted LAC extension shows an owner-visible notice. Recovery requires an
+explicit owner event through LAC-namespaced native TUI commands:
 
 ```text
-/continuations
-/resume <continuation_id>
+/lac-continuations
+/lac-resume <continuation_id>
 ```
 
-`/resume` uses the stored immutable intent and can consume the one-shot fresh-request budget.
-This recovery completes the captured effect workflow; it does not treat restart as authority
-and does not reconstruct a lost model transcript.
+Pi's built-in `/resume` command remains untouched for Pi session navigation. `/lac-resume` uses
+the stored immutable intent and can consume the one-shot fresh-request budget. If the fresh
+request requires exact approval, approval alone does not dispatch; the owner must invoke
+`/lac-resume <continuation_id>` again after the approval decision. This recovery completes the
+captured effect workflow; it does not treat restart or approval as authority and does not
+reconstruct a lost model transcript.
 
 ## Exact approval
 

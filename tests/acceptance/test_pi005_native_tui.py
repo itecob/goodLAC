@@ -123,7 +123,7 @@ class Pi005NativeTuiSourceTests(unittest.TestCase):
             with mock.patch.dict(os.environ, {"SHELL": "/bin/bash", "LAC_PI004_TARGET_SHELL": "bash"}, clear=False):
                 v1.build_distribution(ROOT, archive)
                 state = v1.install_distribution(archive, home)
-                self.assertEqual(state["version"], "1.0.0-rc.3")
+                self.assertEqual(state["version"], v1.RELEASE_VERSION)
                 v1.rollback(home)
             self.assertEqual(paths["current"].resolve().name, "1.0.0-rc.2")
             self.assertEqual(paths["install_state"].read_bytes(), prior_state)
