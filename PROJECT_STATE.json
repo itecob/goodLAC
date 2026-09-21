@@ -2,7 +2,7 @@
   "active_task": "LAC-PI006",
   "blockers": [],
   "last_accepted_release": "1.0.0-rc.1",
-  "next_action": "Complete LAC-PI006 owner UAT against the rc.4 native default-governed Pi candidate, including the restored namespaced restart-recovery commands, then hand the passing candidate to one fresh independent Phase 7 review.",
+  "next_action": "Resume LAC-PI006 owner UAT against rc.5 after bounded installed administrator-wrapper argument-forwarding stabilization, beginning with the preserved restart-recovery continuation; then hand the passing candidate to one fresh independent Phase 7 review.",
   "nonblocking_notes": [
     "Fresh independent Phase 4 re-review passed at live reviewed HEAD 78a1b8c580778f8ae5cb11a856fa771bc1f64308; reviewed P4-B002 implementation commit cd61b1c95a65782dfb9e9442d3422885df8a11f7; no Phase 4 blockers remain.",
     "The accepted A004 owner terminal launches real pinned Pi Agent Core 0.85.1 inside the qualified sandbox with only LAC-governed tools, but that path still uses the earlier fixed-ALLOW qualification policy rather than the completed Phase 4 permission-management runtime.",
@@ -21,10 +21,11 @@
     "Phase 6 nonblocking documentation note P6-NB002: deterministic-distribution wording says same Git index is sufficient for byte identity, but VERSION metadata also embeds source_head. The exact reviewed implementation commit reproduces the recorded distribution SHA, so release reproducibility is satisfied.",
     "Owner-authorized LAC-PI004 default-governed Pi entrypoint completed at implementation commit 2b26291ba0ca0d2f61c07a47e9c4317396be6420; ordinary installed pi now routes through LAC by default, dangerous bypass is explicit, and rc.1 install-state/pi command rollback preservation and tool-manager PATH precedence is qualified through an exact-restorable owner-shell override. 1.0.0-rc.1 remains the last independently accepted release pending the new roadmap review.",
     "LAC-PI005 native governed Pi TUI completed at implementation commit 35dde36cbb63227cdea5ea77552aa1a6f2bcf450; pinned Pi 0.85.1 native source CLI/TUI now runs inside the accepted Bubblewrap network-none boundary with external extensions/resources closed and the exact four LAC controller-backed tools preserved. Candidate rc.3 distribution SHA-256: 094bec442836a0cb1ea09738863554d3ca9a86cdc7defaa816c66e9893ab94f8.",
-    "PI006 bounded stabilization implementation commit 81ea310e2e1bc43b63323c182ac4ce53917d5bad restores explicit native-TUI D001 restart recovery through owner-only /lac-continuations and /lac-resume commands without changing the four-tool model effect surface or authority core. Owner UAT remains required before Phase 7 review."
+    "PI006 bounded stabilization implementation commit 81ea310e2e1bc43b63323c182ac4ce53917d5bad restores explicit native-TUI D001 restart recovery through owner-only /lac-continuations and /lac-resume commands without changing the four-tool model effect surface or authority core. Owner UAT remains required before Phase 7 review.",
+    "PI006 owner UAT exposed installed administrator-wrapper option forwarding defect PI006-UAT-ADMIN-WRAPPER-001. Bounded rc.5 remediation at implementation commit 5ee9442ecc861519f2c6734888f0f6a682a2f226 delegates ctl/owner passthrough arguments before outer argparse; authority semantics and the four-tool model effect surface are unchanged."
   ],
   "phase": "PHASE_7_DEFAULT_GOVERNED_PI_UX",
   "phase_status": "ACTIVE_IMPLEMENTATION",
-  "project_version": "1.0.0-rc.4",
+  "project_version": "1.0.0-rc.5",
   "schema": "lac.project-state/v1"
 }

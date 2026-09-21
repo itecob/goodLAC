@@ -4,13 +4,14 @@
 `LAC-PI006`
 
 ## Objective
-Complete owner UAT for the native default-governed Pi experience after the bounded rc.4 restart-recovery stabilization, without broadening LAC authority or the approved tool/resource surface.
+Complete owner UAT for the native default-governed Pi experience after the bounded rc.4 restart-recovery stabilization and bounded rc.5 installed administrator-wrapper forwarding stabilization, without broadening LAC authority or the approved tool/resource surface.
 
 ## Stabilization state
 - PI006 pre-UAT source inspection found that PI005's native TUI no longer exposed the prior explicit D001 restart-recovery owner controls.
 - Bounded stabilization implementation commit: `81ea310e2e1bc43b63323c182ac4ce53917d5bad`.
-- Candidate release: `1.0.0-rc.4`.
+- Candidate release: `1.0.0-rc.5`.
 - Native owner recovery controls are `/lac-continuations` and `/lac-resume <continuation_id>` because Pi owns built-in `/resume` for Pi session navigation.
+- Owner UAT exposed `PI006-UAT-ADMIN-WRAPPER-001`: installed `lacctl`/`lac-owner` option-style arguments were rejected by outer product argparse before P005 parsing. rc.5 forwards those passthrough commands before outer argparse; admin authority semantics are unchanged.
 - Startup recovery inspection is read-only and never dispatches. Approval alone never dispatches a recovered continuation.
 - Model-facing consequential effect surface remains exactly `lac_fs_read`, `lac_fs_create`, `lac_fs_replace`, `lac_shell_exec`.
 - Authority core, capability semantics, policy, approval, identity, credentials, leases, receipts and sandbox semantics are unchanged.
@@ -35,7 +36,7 @@ Complete owner UAT for the native default-governed Pi experience after the bound
 - PI005 implementation commit: `35dde36cbb63227cdea5ea77552aa1a6f2bcf450`.
 - PI005 owner-pass live handoff commit: `f403962d5ef0dc239cd632efbdad1ca0f9a92a65`.
 - PI006 stabilization implementation commit: `81ea310e2e1bc43b63323c182ac4ce53917d5bad`.
-- Candidate release: `1.0.0-rc.4`.
+- Candidate release: `1.0.0-rc.5`.
 - Last independently accepted release remains `1.0.0-rc.1`.
 
 ## Acceptance tests
@@ -51,4 +52,4 @@ Complete owner UAT for the native default-governed Pi experience after the bound
 `yes` only if owner UAT exposes another in-scope stabilization defect; otherwise record owner UAT evidence and advance to fresh independent Phase 7 review without inventing another code change.
 
 ## Next task on success
-Fresh independent Phase 7 review of the rc.4 candidate.
+Fresh independent Phase 7 review of the rc.5 candidate.
