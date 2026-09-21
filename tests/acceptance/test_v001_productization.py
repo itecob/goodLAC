@@ -107,5 +107,21 @@ class V001ProductizationTests(unittest.TestCase):
             self.assertIn("lacctl",help_proc.stdout)
             self.assertNotIn("register",help_proc.stdout.lower())
 
+            ctl_help=subprocess.run(
+                [str(p["bin"]/"lacctl"), "--json", "--help"],
+                env={**os.environ,"HOME":str(home)},
+                text=True, capture_output=True, check=False,
+            )
+            self.assertEqual(ctl_help.returncode,0,ctl_help.stderr)
+            self.assertIn("--json",ctl_help.stdout)
+
+            owner_option_help=subprocess.run(
+                [str(p["bin"]/"lac-owner"), "permissions", "set", "--help"],
+                env={**os.environ,"HOME":str(home)},
+                text=True, capture_output=True, check=False,
+            )
+            self.assertEqual(owner_option_help.returncode,0,owner_option_help.stderr)
+            self.assertIn("--file",owner_option_help.stdout)
+
 
 if __name__ == "__main__": unittest.main()

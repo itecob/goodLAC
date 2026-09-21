@@ -15,7 +15,7 @@ import tempfile
 from pathlib import Path, PurePosixPath
 from typing import Any, Iterable, Mapping
 
-RELEASE_VERSION = "1.0.0-rc.4"
+RELEASE_VERSION = "1.0.0-rc.5"
 RELEASE_SCHEMA = "lac.v1-product-release/v1"
 CONFIG_SCHEMA = "lac.v1-owner-config/v1"
 INSTALL_SCHEMA = "lac.v1-install-state/v1"
@@ -825,8 +825,16 @@ def main(argv: list[str] | None = None) -> int:
     raw = list(sys.argv[1:] if argv is None else argv)
     if raw and raw[0] == "pi":
         return launch_pi(None, raw[1:])
+    if raw and raw[0] == "ctl":
+        return launch_ctl(None, raw[1:])
+    if raw and raw[0] == "owner":
+        return owner_command(None, raw[1:])
     if len(raw) >= 3 and raw[0] == "--home" and raw[2] == "pi":
         return launch_pi(Path(raw[1]).expanduser().resolve(), raw[3:])
+    if len(raw) >= 3 and raw[0] == "--home" and raw[2] == "ctl":
+        return launch_ctl(Path(raw[1]).expanduser().resolve(), raw[3:])
+    if len(raw) >= 3 and raw[0] == "--home" and raw[2] == "owner":
+        return owner_command(Path(raw[1]).expanduser().resolve(), raw[3:])
     a = _parser().parse_args(raw)
     home = a.home.expanduser().resolve() if a.home else None
     if a.command == "build":

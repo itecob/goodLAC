@@ -1,4 +1,4 @@
-# LAC v1 Productization — 1.0.0-rc.4 candidate
+# LAC v1 Productization — 1.0.0-rc.5 candidate
 
 `LAC-V001` packages the accepted governed Pi reference path without creating a second authority boundary.
 Canonical capability, policy, approval, emergency, identity, lease, receipt, credential and continuation state remains in LAC.
@@ -76,3 +76,17 @@ PI005 native-TUI transition. Startup continuation inspection is read-only and ne
 Pi's built-in `/resume` session command is not intercepted. The model-facing consequential tool
 surface remains exactly the existing four controller-backed tools; authority-core, policy,
 approval, identity, credential, lease, receipt and sandbox semantics are unchanged.
+
+## rc.5 PI006 installed administrator-wrapper forwarding stabilization
+
+`1.0.0-rc.5` is a bounded PI006 owner-UAT stabilization. Owner UAT exposed that the
+installed `lacctl` and `lac-owner` wrappers routed passthrough arguments through the outer
+`lac-v1` argparse surface before delegation. Supported nested option forms such as
+`lacctl --json pending list` and `lacctl permissions set --file <policy.json>` could
+therefore be rejected before the accepted P005 client parsed them.
+
+rc.5 delegates `ctl` and `owner` passthrough surfaces before outer argparse. The accepted
+owner-only admin socket, peer-UID checks, P004/P005 protocol, canonical authority state,
+permission and approval semantics, emergency pause, continuation semantics, sandbox, and
+four-tool model effect surface are unchanged. Installed-wrapper acceptance now exercises
+option-style forwarding without requiring an administrator socket.
