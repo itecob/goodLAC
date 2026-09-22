@@ -1,4 +1,4 @@
-# LAC v1 Productization — 1.0.0-rc.6 candidate
+# LAC v1 Productization — 1.0.0-rc.7 candidate
 
 `LAC-V001` packages the accepted governed Pi reference path without creating a second authority boundary.
 Canonical capability, policy, approval, emergency, identity, lease, receipt, credential and continuation state remains in LAC.
@@ -104,3 +104,23 @@ rc.6 binds socket cleanup to the exact device/inode identity acquired by that se
 and treats expected peer disconnect errors as a non-authorizing completed connection. The
 owner-only peer-UID boundary, authority semantics, policy, approvals, continuation behavior,
 sandbox and four-tool model effect surface are unchanged.
+
+## rc.7 PI006 interactive idle and permission-backlog stabilization
+
+`1.0.0-rc.7` is a bounded PI006 owner-UAT stabilization. Owner UAT exposed that the
+interactive native-Pi broker inherited a one-hour idle receive timeout intended as a
+bounded host wait. If the governed Pi child remained healthy but produced no broker RPC
+for 3,600 seconds, the host treated ordinary inactivity as a fatal timeout and tore down
+the TUI.
+
+rc.7 keeps deterministic probe mode bounded at 45 seconds but removes the idle deadline
+from interactive broker service. The host continues polling the child process at bounded
+intervals, so a real child exit is still detected promptly while owner or agent inactivity
+does not terminate the governed TUI. The D001 workflow-continuation TTL remains 3,600
+seconds: an unresolved synchronous workflow still expires fail-closed and cannot later be
+revived. The separate P002/P006 pending-permission queue remains durable and has no TTL,
+so an owner can review and configure a permission after hours or days; that late review
+affects only future fresh requests and never revives the expired original request.
+
+Authority-core semantics, policy/approval binding, emergency pause, idempotency, receipts,
+sandboxing and the exact four-tool model effect surface are unchanged.

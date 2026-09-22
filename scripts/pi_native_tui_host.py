@@ -361,10 +361,10 @@ class BrokerProcess:
             fail("native Pi broker socket unavailable")
         self.host_sock.sendall(json.dumps(dict(value), sort_keys=True).encode("utf-8") + b"\n")
 
-    def _recv(self, timeout: float = 360.0) -> dict[str, Any]:
+    def _recv(self, timeout: float | None = 360.0) -> dict[str, Any]:
         if self.host_sock is None:
             fail("native Pi broker socket unavailable")
-        deadline = time.monotonic() + timeout
+        deadline = None if timeout is None else time.monotonic() + timeout
         parts: list[bytes] = []
         size = 0
         while True:
@@ -372,10 +372,10 @@ class BrokerProcess:
                 if self.proc.returncode == 0:
                     raise EOFError("native Pi exited cleanly")
                 self._child_failure(f"native Pi exited {self.proc.returncode} while broker was waiting")
-            remaining = deadline - time.monotonic()
-            if remaining <= 0:
+            remaining = None if deadline is None else deadline - time.monotonic()
+            if remaining is not None and remaining <= 0:
                 self._child_failure("timed out waiting for native Pi broker message")
-            self.host_sock.settimeout(min(0.25, remaining))
+            self.host_sock.settimeout(0.25 if remaining is None else min(0.25, remaining))
             try:
                 chunk = self.host_sock.recv(1)
             except socket.timeout:
@@ -568,7 +568,7 @@ class BrokerProcess:
     def serve(self) -> None:
         if self.proc is None:
             fail("native Pi process is not started")
-        receive_timeout = 45.0 if self.mode == "probe" else 3600.0
+        receive_timeout = 45.0 if self.mode == "probe" else None
         while self.proc.poll() is None:
             self.last_broker_phase = (
                 f"awaiting_rpc:model_requests={self.authority.model_request_count}:"

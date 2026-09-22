@@ -141,7 +141,9 @@ class Pi005NativeTuiSourceTests(unittest.TestCase):
         self.assertIn('admin = _start_admin_server(state)', host)
         self.assertIn('native Pi stderr tail:', host)
         self.assertIn('stderr=subprocess.PIPE if self.mode == "probe" else None', host)
-        self.assertIn('receive_timeout = 45.0 if self.mode == "probe" else 3600.0', host)
+        self.assertIn('receive_timeout = 45.0 if self.mode == "probe" else None', host)
+        self.assertIn('def _recv(self, timeout: float | None = 360.0)', host)
+        self.assertNotIn('receive_timeout = 45.0 if self.mode == "probe" else 3600.0', host)
         self.assertIn('broker_phase=', host)
         self.assertIn('PI005 profile probe exceeded 90 seconds; partial output follows:', integration)
 

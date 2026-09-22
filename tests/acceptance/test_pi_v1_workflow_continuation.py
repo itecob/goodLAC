@@ -347,6 +347,56 @@ class PiV1WorkflowContinuationTests(unittest.TestCase):
         with self.assertRaises(PiWorkflowContinuationIntegrityError):
             runtime.list_continuations()
 
+    def test_expired_continuation_preserves_pending_backlog_for_late_owner_review(self):
+        clock = MutableClock()
+        runtime = self.make_runtime(
+            "run:d001:late-review", clock=clock, continuation_ttl_seconds=30
+        )
+        _message, _blocked, status = self.block(
+            "late-review", path="late-review-original.txt", content="never", runtime=runtime
+        )
+        pending_id = status["pending_id"]
+        self.assertFalse((self.workspace / "late-review-original.txt").exists())
+
+        clock.advance(31)
+        expired = runtime.resume_continuation(status["continuation_id"])
+        self.assertEqual(expired["kind"], "EXPIRED")
+        self.assertEqual(expired["workflow_continuation"]["resume_budget_used"], 0)
+        self.assertFalse((self.workspace / "late-review-original.txt").exists())
+
+        raw_pending = PendingPermissionRepository(self.store).list_pending()
+        matches = [item for item in raw_pending if item.get("pending_id") == pending_id]
+        self.assertEqual(len(matches), 1)
+        self.assertEqual(matches[0]["status"], "PENDING")
+
+        owner_view = self.admin_call("pending.list", {})["pending"]
+        owner_matches = [item for item in owner_view if item.get("pending_id") == pending_id]
+        self.assertEqual(len(owner_matches), 1)
+        self.assertEqual(owner_matches[0]["administrative_status"], "PENDING")
+
+        self.set_policy("ALLOW", rule_id="late-review-future-allow")
+        resolution = self.resolve(pending_id)
+        self.assertEqual(resolution["resolution"]["status"], "RESOLVED")
+        self.assertEqual(resolution["resolution"]["resolution"], "POLICY_UPDATED")
+        self.assertFalse((self.workspace / "late-review-original.txt").exists())
+
+        fresh = runtime.submit_message(
+            self.msg(
+                "late-review-fresh",
+                path="late-review-fresh.txt",
+                content="after-owner-review",
+            )
+        )
+        self.assertEqual(
+            (fresh["authority_outcome"], fresh["execution_state"]),
+            ("ALLOW", "SUCCEEDED"),
+        )
+        self.assertEqual(
+            (self.workspace / "late-review-fresh.txt").read_text(),
+            "after-owner-review",
+        )
+        self.assertFalse((self.workspace / "late-review-original.txt").exists())
+
     def test_stale_prior_pending_resolution_cannot_authorize_a_later_continuation(self):
         first_message, _first, first_status = self.block(
             "stale-a", path="stale-a.txt", content="A"
