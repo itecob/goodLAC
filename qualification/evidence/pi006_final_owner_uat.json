@@ -1,0 +1,56 @@
+{
+  "authority_core_modified_by_finalization": false,
+  "blockers": [],
+  "candidate_release": "1.0.0-rc.8",
+  "distribution_sha256": "74945c5813414b38fc405e684e42c9bd612d7b9733bfb8dfda7c95ff7ee6d756",
+  "final_durable_verification": {
+    "doctor_static_rc8": "PASS",
+    "exact_one_time_approval_consumed": "PASS",
+    "expected_durable_receipt_set": "PASS",
+    "final_emergency_pause_resumed": "PASS",
+    "four_tool_final_filesystem_state": "PASS",
+    "lac_fs_create_durable_receipt": "PASS",
+    "lac_fs_read_durable_receipt": "PASS",
+    "lac_fs_replace_durable_receipt": "PASS",
+    "lac_shell_exec_durable_receipt": "PASS",
+    "original_request_never_executed": "PASS",
+    "original_to_fresh_request_binding": "PASS",
+    "restart_continuation_completed": "PASS",
+    "restart_effect_exact_content": "PASS",
+    "restart_idempotency_binding": "PASS",
+    "restart_resume_budget_exactly_once": "PASS",
+    "restart_single_durable_receipt": "PASS"
+  },
+  "identities": {
+    "approval_id": "approval:admin:333236fb502ccc4a8a3c6b5e16453403e4ca03a555e12861cee6a21d0a8c0808",
+    "continuation_id": "continuation:pi-v1:dc65eb3e9077607aba378d0121cc3e8ef99eb8eeb0731d010261becb5b4280b2",
+    "create_receipt_id": "receipt:c885b51438c1265ac21fab58a41b66c0722e46bf1a5ed3449d26a9976a1fb167",
+    "fresh_request_id": "effect:pi-v1-cont:5f1325f33ea6012b566e263764b7bebcd76448f3",
+    "original_request_id": "effect:pi-v1:8e0bf4737019ee8a2aaff0d13bcbf85bd66653be",
+    "read_receipt_id": "receipt:757bff11a347d64cdcad779efaea32820e2875547834bd86a0a3ca2da410bda8",
+    "replace_receipt_id": "receipt:4e73ee16aabdcd03dc2ab299cf1193bb27d816784bbcc397abca01a928e123cc",
+    "restart_receipt_id": "receipt:51afdea89d91bb120c3a2a0f3eb6d3f274f585d6f18cabc0347c218809bda6d3",
+    "shell_receipt_id": "receipt:28370d4462f50a20881d61368f91d14d11797f500d553d4373cd4f77b88dd90a"
+  },
+  "implementation_commit": "430eafc4fc2bf9ea578390efbbcbfa8edf3bc7af",
+  "installed_dangerous_bypass_source_cli_smoke": "PASS",
+  "next_gate": "PHASE_BOUNDARY_INDEPENDENT_REVIEW",
+  "nonblocking_findings": [
+    {
+      "classification": "NONBLOCKING_UI_FINDING",
+      "id": "PI006-UAT-NB-DUPLICATE-COMPLETION-TOAST",
+      "summary": "Repeating /lac-resume for an already completed continuation produced no visible duplicate completion toast; durable exactly-once state and /lac-continuations responsiveness remained correct."
+    }
+  ],
+  "owner_uat_complete": true,
+  "pre_finalization_handoff_head": "bdfc6a10ab020fb9d600bc04b3215f21a124ebd2",
+  "remediated_owner_uat_defects": [
+    "PI006-UAT-ADMIN-WRAPPER-001",
+    "PI006-UAT-ADMIN-SOCKET-002",
+    "PI006-UAT-INTERACTIVE-IDLE-003",
+    "PI006-UAT-DANGEROUS-BYPASS-004"
+  ],
+  "schema": "lac.pi006-final-owner-uat/v1",
+  "status": "PASS",
+  "tool_surface_modified_by_finalization": false
+}

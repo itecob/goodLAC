@@ -1,58 +1,63 @@
-# ACTIVE TASK — LAC-PI006
+# ACTIVE TASK — LAC-P7-REVIEW
 
 ## Task ID
-`LAC-PI006`
+`LAC-P7-REVIEW`
+
+## Mode
+`PHASE_BOUNDARY_INDEPENDENT_REVIEW`
 
 ## Objective
-Complete owner UAT for the native default-governed Pi experience after the bounded rc.4 restart-recovery stabilization and bounded rc.5 installed administrator-wrapper forwarding stabilization, without broadening LAC authority or the approved tool/resource surface.
+Perform one fresh independent Phase 7 review of the `1.0.0-rc.8` default-governed Pi UX candidate after completed PI006 owner UAT.
 
-## Stabilization state
-- PI006 pre-UAT source inspection found that PI005's native TUI no longer exposed the prior explicit D001 restart-recovery owner controls.
-- Bounded stabilization implementation commit: `81ea310e2e1bc43b63323c182ac4ce53917d5bad`.
+The reviewer must independently determine whether the Phase 7 delta preserves the controlling rule:
+
+> **AI proposes. Deterministic software determines authorization and effects.**
+
+## Candidate scope
+Review the complete Phase 7 extension from the last independently accepted `1.0.0-rc.1` baseline through the rc.8 candidate:
+
+- PI004 default-governed ordinary `pi` entrypoint with explicit top-level `--dangerously-bypass-lac`;
+- PI005 pinned Pi 0.85.1 native source CLI/TUI inside Bubblewrap/network-none with exactly four LAC tools and ambient resource/extension loading closed;
+- PI006 explicit native restart recovery through `/lac-continuations` and `/lac-resume`;
+- rc.5 administrator-wrapper forwarding stabilization;
+- rc.6 administrator-socket collision/ownership stabilization;
+- rc.7 interactive-idle and permission-backlog stabilization;
+- rc.8 dangerous-bypass source-CLI stabilization;
+- final PI006 owner-UAT durable evidence.
+
+## Exact candidate facts
 - Candidate release: `1.0.0-rc.8`.
-- Native owner recovery controls are `/lac-continuations` and `/lac-resume <continuation_id>` because Pi owns built-in `/resume` for Pi session navigation.
-- Owner UAT exposed `PI006-UAT-ADMIN-WRAPPER-001`: installed `lacctl`/`lac-owner` option-style arguments were rejected by outer product argparse before P005 parsing. rc.5 forwards those passthrough commands before outer argparse; admin authority semantics are unchanged.
-- Owner UAT then exposed `PI006-UAT-ADMIN-SOCKET-002`: launching a second governed Pi while the first owner admin endpoint was active failed closed as intended, but the contending server cleanup could unlink the active endpoint and the existing server could terminate on the probe's early disconnect. rc.6 binds socket cleanup to the listener identity actually acquired by that server and tolerates the expected disconnect without changing authority semantics.
-- Owner UAT then exposed `PI006-UAT-INTERACTIVE-IDLE-003`: the interactive broker host treated 3,600 seconds without a broker RPC as fatal inactivity and could tear down a healthy governed Pi TUI. rc.7 removes only the interactive idle deadline, keeps probe mode bounded, keeps the one-hour continuation TTL fail-closed, and regression-tests that the separate pending-permission backlog remains durable for late owner review and future fresh requests.
-- Owner UAT then exposed `PI006-UAT-DANGEROUS-BYPASS-004`: the explicit top-level dangerous bypass still targeted the historical prebuilt Pi bundle, which is absent from the accepted pinned source checkout. rc.8 verifies the accepted pin and launches the exact pinned Pi 0.85.1 source CLI through the checkout-local tsx runtime; installed qualification exercises the real bypass help path. Default Pi governance and authority semantics are unchanged.
-- Startup recovery inspection is read-only and never dispatches. Approval alone never dispatches a recovered continuation.
-- Model-facing consequential effect surface remains exactly `lac_fs_read`, `lac_fs_create`, `lac_fs_replace`, `lac_shell_exec`.
-- Authority core, capability semantics, policy, approval, identity, credentials, leases, receipts and sandbox semantics are unchanged.
+- Last independently accepted release: `1.0.0-rc.1`.
+- rc.8 implementation commit: `430eafc4fc2bf9ea578390efbbcbfa8edf3bc7af`.
+- rc.8 stabilization handoff HEAD before final-UAT recording: `bdfc6a10ab020fb9d600bc04b3215f21a124ebd2`.
+- rc.8 deterministic distribution SHA-256: `74945c5813414b38fc405e684e42c9bd612d7b9733bfb8dfda7c95ff7ee6d756`.
+- Final owner-UAT evidence: `qualification/evidence/pi006_final_owner_uat.json`.
+- Blockers entering review: `NONE`.
+- Exact review-candidate Git commit is installed into root `NEXT_SESSION_PROMPT.md` by the finalization package.
 
-## In scope
-- Owner UAT of ordinary installed `pi` entering pinned Pi 0.85.1's native TUI through LAC by default.
-- Multi-turn native TUI use with the existing four controller-backed consequential tools.
-- Owner permission discovery/configuration, exact approval, emergency pause, receipt/idempotency and D001 continuation/restart behavior through the native TUI path.
-- Verify restart remains non-auto-dispatch and recovered continuations require an explicit owner event through `/lac-resume`.
-- Verify `pi --dangerously-bypass-lac` remains an explicit top-level owner/debug escape hatch and is unavailable through governed model/tool authority.
-- Bounded stabilization only for any additional defect discovered by this UAT; rerun PI006/PI005 retained gates after any further remediation.
-- Prepare the resulting candidate for the fresh independent Phase 7 review after owner UAT passes.
+## Binding review checks
+- Ordinary installed `pi` is governed by default.
+- Ungoverned Pi requires the explicit top-level dangerous flag and uses the accepted pinned source CLI.
+- Governed Pi exposes exactly `lac_fs_read`, `lac_fs_create`, `lac_fs_replace`, `lac_shell_exec`.
+- Model/tool authority cannot reach the dangerous bypass, owner admin socket, host credentials, ambient host filesystem, arbitrary executables, or host network.
+- Restart never auto-dispatches; owner recovery is explicit and one fresh request only.
+- Exact approval remains request/hash/policy bound and single-use.
+- Emergency pause retains deny precedence and resume itself never dispatches.
+- Idempotency and durable receipts remain exactly-once.
+- Interactive TUI has no one-hour inactivity shutdown; synchronous continuation TTL remains one hour and expired continuations remain fail-closed.
+- Pending-permission backlog remains durable for later owner review but never revives an expired/original request.
+- rc.8 removed the obsolete prebuilt-bundle dependency without weakening the dangerous-bypass separation.
+- `scripts/test-pi006` and retained regression chain pass.
+- Final PI006 owner-UAT evidence is internally consistent with the preserved isolated UAT database/workspace.
 
-## Out of scope
-- New harnesses or model providers.
-- New authority-core semantics.
-- Broader consequential tool authority.
-- Re-enabling arbitrary Pi extensions/resources in the governed profile.
-- Generic compatibility facade or external application workflow logic.
-
-## Accepted predecessor
-- PI005 implementation commit: `35dde36cbb63227cdea5ea77552aa1a6f2bcf450`.
-- PI005 owner-pass live handoff commit: `f403962d5ef0dc239cd632efbdad1ca0f9a92a65`.
-- PI006 stabilization implementation commit: `81ea310e2e1bc43b63323c182ac4ce53917d5bad`.
-- Candidate release: `1.0.0-rc.8`.
-- Last independently accepted release remains `1.0.0-rc.1`.
-
-## Acceptance tests
-- Owner confirms ordinary `pi` visibly opens the real Pi native TUI and remains LAC-governed.
-- Permission discovery/configuration and exact approval complete through the unchanged owner-only administration path.
-- Emergency pause, receipt/idempotency and D001 continuation/restart semantics remain unchanged.
-- A recoverable continuation is reported on restart without dispatch, and only explicit `/lac-resume <continuation_id>` may attempt the one fresh request.
-- Native TUI resource/extension confinement remains passing.
-- Dangerous bypass remains explicit and top-level only.
-- `scripts/test-pi006` and its retained PI005/earlier regression chain pass after stabilization.
+## Reviewer constraints
+The reviewer is independent and does not remediate. Classify only concrete binding violations as blockers. Record non-gating cleanup separately.
 
 ## Package required?
-`yes` only if owner UAT exposes another in-scope stabilization defect; otherwise record owner UAT evidence and advance to fresh independent Phase 7 review without inventing another code change.
+No implementation package is part of this task. If the review result requires a durable state transition, follow the phase-boundary review workflow and hand the result to the owner without implementing future product scope in the same review.
 
-## Next task on success
-Fresh independent Phase 7 review of the rc.8 candidate.
+## Next task on PASS
+Record Phase 7 acceptance of the exact reviewed rc.8 candidate and return the project to a closed/accepted roadmap state unless the owner separately authorizes new scope.
+
+## Next task on BLOCKED
+Create a fresh bounded remediation segment containing only the review blocker IDs, then require one fresh Phase 7 re-review.
