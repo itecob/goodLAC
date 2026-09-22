@@ -142,6 +142,50 @@ class AdminTransportIntegrationTests(unittest.TestCase):
         finally:
             server.close()
 
+    def test_second_server_probe_preserves_active_owner_socket_and_server(self):
+        server = UnixAdminServer(self.service, runtime_dir=self.runtime)
+        contender = UnixAdminServer(self.service, runtime_dir=self.runtime)
+        stop = threading.Event()
+        errors = []
+
+        server.start()
+
+        def serve():
+            while not stop.is_set():
+                try:
+                    server.serve_once(timeout=0.05)
+                except BaseException as exc:
+                    errors.append(exc)
+                    return
+
+        thread = threading.Thread(target=serve)
+        thread.start()
+        try:
+            with self.assertRaises(AdminTransportError):
+                contender.start()
+
+            # A server instance that never acquired the listener must not unlink
+            # another instance's active endpoint during cleanup.
+            contender.close()
+            stop.set()
+            thread.join(timeout=2.0)
+
+            self.assertFalse(thread.is_alive())
+            self.assertEqual(errors, [])
+            self.assertTrue(server.socket_path.is_socket())
+
+            # The active server must still accept a real owner request after the
+            # contender's connect-and-close liveness probe.
+            response = json.loads(
+                self.transact(server, request_bytes("skills.list", {}))
+            )
+            self.assertTrue(response["ok"])
+        finally:
+            stop.set()
+            thread.join(timeout=2.0)
+            contender.close()
+            server.close()
+
     def test_insecure_runtime_directory_fails_closed(self):
         self.runtime.chmod(0o755)
         with self.assertRaises(AdminTransportError):

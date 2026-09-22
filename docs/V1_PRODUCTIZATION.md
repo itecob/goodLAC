@@ -1,4 +1,4 @@
-# LAC v1 Productization — 1.0.0-rc.5 candidate
+# LAC v1 Productization — 1.0.0-rc.6 candidate
 
 `LAC-V001` packages the accepted governed Pi reference path without creating a second authority boundary.
 Canonical capability, policy, approval, emergency, identity, lease, receipt, credential and continuation state remains in LAC.
@@ -90,3 +90,17 @@ owner-only admin socket, peer-UID checks, P004/P005 protocol, canonical authorit
 permission and approval semantics, emergency pause, continuation semantics, sandbox, and
 four-tool model effect surface are unchanged. Installed-wrapper acceptance now exercises
 option-style forwarding without requiring an administrator socket.
+
+## rc.6 PI006 administrator-socket collision stabilization
+
+`1.0.0-rc.6` is a bounded PI006 owner-UAT stabilization. A second governed Pi launch while
+an existing governed Pi administrator endpoint was active correctly failed closed, but the
+contending `UnixAdminServer` instance could subsequently unlink the endpoint pathname even
+though it never acquired that listener. The connect-and-close liveness probe could also cause
+the active single-request server to encounter a disconnected peer while sending its error
+response.
+
+rc.6 binds socket cleanup to the exact device/inode identity acquired by that server instance
+and treats expected peer disconnect errors as a non-authorizing completed connection. The
+owner-only peer-UID boundary, authority semantics, policy, approvals, continuation behavior,
+sandbox and four-tool model effect surface are unchanged.

@@ -85,6 +85,7 @@ class UnixAdminServer:
         )
         self.socket_path = self.runtime_dir / ADMIN_SOCKET_RELATIVE_PATH
         self._listener: socket.socket | None = None
+        self._socket_identity: tuple[int, int] | None = None
 
     def _prepare_parent(self) -> None:
         parent = self.socket_path.parent
@@ -127,6 +128,7 @@ class UnixAdminServer:
         self._prepare_parent()
         self._remove_stale_socket()
         listener = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        socket_identity: tuple[int, int] | None = None
         try:
             old_umask = os.umask(0o077)
             try:
@@ -143,6 +145,7 @@ class UnixAdminServer:
             ):
                 raise AdminTransportError("administrator socket ownership/permissions failed closed")
             listener.listen(8)
+            socket_identity = (info.st_dev, info.st_ino)
         except BaseException:
             listener.close()
             try:
@@ -151,6 +154,7 @@ class UnixAdminServer:
                 pass
             raise
         self._listener = listener
+        self._socket_identity = socket_identity
         return self.socket_path
 
     @staticmethod
@@ -218,7 +222,11 @@ class UnixAdminServer:
                     code="ADMIN_INTERNAL_FAILURE",
                     message="administrator operation failed closed",
                 )
-            connection.sendall(encode_response(response))
+            try:
+                connection.sendall(encode_response(response))
+            except OSError as exc:
+                if exc.errno not in {errno.EPIPE, errno.ECONNRESET, errno.ENOTCONN}:
+                    raise
         return True
 
     def serve_forever(self) -> None:
@@ -231,12 +239,20 @@ class UnixAdminServer:
 
     def close(self) -> None:
         listener = self._listener
+        socket_identity = self._socket_identity
         self._listener = None
+        self._socket_identity = None
         if listener is not None:
             listener.close()
+        if socket_identity is None:
+            return
         try:
             info = self.socket_path.lstat()
         except FileNotFoundError:
             return
-        if stat.S_ISSOCK(info.st_mode) and info.st_uid == self.owner_uid:
+        if (
+            stat.S_ISSOCK(info.st_mode)
+            and info.st_uid == self.owner_uid
+            and (info.st_dev, info.st_ino) == socket_identity
+        ):
             self.socket_path.unlink()
