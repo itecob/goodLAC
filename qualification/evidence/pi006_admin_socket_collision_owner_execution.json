@@ -1,0 +1,19 @@
+{
+  "authority_core_modified": false,
+  "defect_id": "PI006-UAT-ADMIN-SOCKET-002",
+  "distribution_sha256": "7e14347dc236ee0f64efe378bd32bfed31fecb86612a08777a53f02a157557f7",
+  "implementation_commit": "78cc2d2b005b97e67f8e7a42485c53cf245a9066",
+  "installed_release": "1.0.0-rc.6",
+  "owner_uat_remaining": true,
+  "package_id": "LAC_PI006_ADMIN_SOCKET_OWNERSHIP_STABILIZATION_v0.1.2",
+  "package_sha256": "8a31fc830a326c6edf963c8856c4cf221f1ee1e07a66636aaf837d3b293c45b0",
+  "preinstall_git_commit": "fd315d23bb47a4ebfa0182a9864c3db49d19d2f6",
+  "preserved_restart_uat_pointer": "${HOME}/.local/state/local-agent-controller/qualification/pi006-owner-uat-current",
+  "retained_pi006_gate": "PASS",
+  "schema": "lac.pi006-admin-socket-collision-owner-execution/v1",
+  "socket_cleanup_bound_to_listener_identity": true,
+  "premature_peer_disconnect_tolerated": true,
+  "status": "PASS",
+  "task": "LAC-PI006",
+  "tool_surface_modified": false
+}
