@@ -1,4 +1,4 @@
-# LAC v1 Productization — 1.0.0-rc.7 candidate
+# LAC v1 Productization — 1.0.0-rc.8 candidate
 
 `LAC-V001` packages the accepted governed Pi reference path without creating a second authority boundary.
 Canonical capability, policy, approval, emergency, identity, lease, receipt, credential and continuation state remains in LAC.
@@ -124,3 +124,23 @@ affects only future fresh requests and never revives the expired original reques
 
 Authority-core semantics, policy/approval binding, emergency pause, idempotency, receipts,
 sandboxing and the exact four-tool model effect surface are unchanged.
+
+## rc.8 PI006 dangerous-bypass pinned-source stabilization
+
+`1.0.0-rc.8` is a bounded PI006 owner-UAT stabilization. The explicit
+`pi --dangerously-bypass-lac` owner/debug path still targeted the historical prebuilt
+`packages/coding-agent/dist/bundle/cli.js` entrypoint even though PI005 moved the accepted
+pinned Pi 0.85.1 runtime to the source CLI at `packages/coding-agent/src/cli.ts`. The
+accepted pinned checkout does not require that historical bundle to exist, so the explicit
+bypass could fail before Pi started.
+
+rc.8 keeps the bypass explicit and ungoverned, verifies the accepted Pi pin first, then
+launches the exact pinned source CLI through the checkout-local `tsx` runtime and root
+TypeScript configuration. It rejects missing or symlinked source/config/package metadata,
+rejects a coding-agent version other than 0.85.1, and requires the selected `tsx` runtime
+to resolve inside the pinned checkout. Installed qualification now runs a real
+`--dangerously-bypass-lac --help` smoke check against the accepted checkout.
+
+The default `pi` path remains governed. Authority-core semantics, policy/approval binding,
+emergency pause, continuation behavior, idempotency, receipts, sandboxing, and the exact
+four-tool governed model surface are unchanged.

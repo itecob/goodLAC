@@ -15,7 +15,7 @@ import tempfile
 from pathlib import Path, PurePosixPath
 from typing import Any, Iterable, Mapping
 
-RELEASE_VERSION = "1.0.0-rc.7"
+RELEASE_VERSION = "1.0.0-rc.8"
 RELEASE_SCHEMA = "lac.v1-product-release/v1"
 CONFIG_SCHEMA = "lac.v1-owner-config/v1"
 INSTALL_SCHEMA = "lac.v1-install-state/v1"
@@ -23,6 +23,14 @@ CONFIG_KEYS = ("workspace", "state", "trace", "pi_checkout", "runtime")
 BIN_NAMES = ("pi", "lac-pi", "lacctl", "lac-owner", "lac-config", "lac-doctor")
 TAKEOVER_BIN_NAMES = ("pi",)
 DANGEROUS_BYPASS_FLAG = "--dangerously-bypass-lac"
+PINNED_PI_SOURCE_CLI_REL = Path("packages/coding-agent/src/cli.ts")
+PINNED_PI_ROOT_TSCONFIG_REL = Path("tsconfig.json")
+PINNED_PI_CODING_AGENT_PACKAGE_REL = Path("packages/coding-agent/package.json")
+PINNED_PI_TSX_CANDIDATES = (
+    Path("node_modules/tsx/dist/cli.mjs"),
+    Path("node_modules/tsx/dist/cli.cjs"),
+    Path("node_modules/.bin/tsx"),
+)
 SHELL_BLOCK_START = "# >>> Local Agent Controller default-governed pi >>>"
 SHELL_BLOCK_END = "# <<< Local Agent Controller default-governed pi <<<"
 SHELL_FRAGMENT_REL = ".config/local-agent-controller/shell/pi.sh"
@@ -715,6 +723,36 @@ def _exec(argv: list[str], env: dict[str, str] | None = None) -> int:
     return 127
 
 
+def _resolve_pinned_pi_source_cli(checkout: Path) -> tuple[Path, Path, Path]:
+    checkout = checkout.expanduser().resolve(strict=True)
+    source = checkout / PINNED_PI_SOURCE_CLI_REL
+    tsconfig = checkout / PINNED_PI_ROOT_TSCONFIG_REL
+    package = checkout / PINNED_PI_CODING_AGENT_PACKAGE_REL
+    for path, label in ((source, "source CLI"), (tsconfig, "root tsconfig"), (package, "coding-agent package metadata")):
+        if not path.is_file() or path.is_symlink():
+            raise ProductizationError(f"pinned Pi {label} unavailable: {path}")
+    try:
+        metadata = json.loads(package.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ProductizationError("pinned Pi coding-agent metadata is unreadable") from exc
+    if metadata.get("version") != "0.85.1":
+        raise ProductizationError(f"unexpected pinned Pi coding-agent version: {metadata.get('version')!r}")
+
+    for rel in PINNED_PI_TSX_CANDIDATES:
+        candidate = checkout / rel
+        try:
+            resolved = candidate.resolve(strict=True)
+        except OSError:
+            continue
+        try:
+            resolved.relative_to(checkout)
+        except ValueError:
+            continue
+        if resolved.is_file():
+            return source, resolved, tsconfig
+    raise ProductizationError("checkout-local tsx runtime required for pinned Pi source CLI is unavailable")
+
+
 def _verify_and_launch_pinned_ungoverned_pi(app: Path, config: Mapping[str, Any], extra: list[str], env: dict[str, str]) -> int:
     verify = subprocess.run(
         ["python3", str(app / "scripts/verify_pi_pin.py")],
@@ -728,9 +766,7 @@ def _verify_and_launch_pinned_ungoverned_pi(app: Path, config: Mapping[str, Any]
     if verify.returncode != 0:
         raise ProductizationError(f"pinned Pi verification failed before dangerous bypass: {verify.stdout[-1600:]}")
     checkout = Path(str(config["pi_checkout"])).expanduser().resolve(strict=True)
-    cli = checkout / "packages" / "coding-agent" / "dist" / "bundle" / "cli.js"
-    if not cli.is_file() or cli.is_symlink():
-        raise ProductizationError(f"pinned Pi CLI entrypoint unavailable: {cli}")
+    source_cli, tsx_cli, root_tsconfig = _resolve_pinned_pi_source_cli(checkout)
     node = shutil.which("node")
     if not node:
         raise ProductizationError("Node.js is required for pinned Pi dangerous bypass")
@@ -741,7 +777,10 @@ def _verify_and_launch_pinned_ungoverned_pi(app: Path, config: Mapping[str, Any]
         file=sys.stderr,
         flush=True,
     )
-    return _exec([str(node_path), str(cli), *extra], env)
+    return _exec(
+        [str(node_path), str(tsx_cli), "--tsconfig", str(root_tsconfig), str(source_cli), *extra],
+        env,
+    )
 
 
 def launch_pi(home: Path | None, extra: list[str]) -> int:

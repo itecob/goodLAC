@@ -105,20 +105,43 @@ class Pi004DefaultGovernedEntrypointTests(unittest.TestCase):
         self.assertEqual(calls[0][0][0:2], ["python3", "/app/scripts/pi_native_tui_host.py"])
         self.assertNotIn(v1.DANGEROUS_BYPASS_FLAG, calls[0][0])
 
-    def test_dangerous_bypass_verifies_pin_and_executes_exact_pinned_cli(self):
+    def test_dangerous_bypass_verifies_pin_and_executes_exact_pinned_source_cli(self):
         with tempfile.TemporaryDirectory() as raw:
-            td=Path(raw); checkout=td/"pi"; cli=checkout/"packages/coding-agent/dist/bundle/cli.js"; cli.parent.mkdir(parents=True); cli.write_text("x")
-            app=td/"app"; (app/"scripts").mkdir(parents=True); (app/"scripts/verify_pi_pin.py").write_text("x")
-            calls=[]
-            completed=type("Completed",(),{"returncode":0,"stdout":"PASS"})()
+            td = Path(raw)
+            checkout = td / "pi"
+            source = checkout / "packages/coding-agent/src/cli.ts"
+            source.parent.mkdir(parents=True)
+            source.write_text("export {};\n", encoding="utf-8")
+            package = checkout / "packages/coding-agent/package.json"
+            package.write_text(json.dumps({"version": "0.85.1"}) + "\n", encoding="utf-8")
+            tsconfig = checkout / "tsconfig.json"
+            tsconfig.write_text("{}\n", encoding="utf-8")
+            tsx = checkout / "node_modules/tsx/dist/cli.mjs"
+            tsx.parent.mkdir(parents=True)
+            tsx.write_text("export {};\n", encoding="utf-8")
+            app = td / "app"
+            (app / "scripts").mkdir(parents=True)
+            (app / "scripts/verify_pi_pin.py").write_text("x", encoding="utf-8")
+            calls = []
+            completed = type("Completed", (), {"returncode": 0, "stdout": "PASS"})()
             with mock.patch("subprocess.run", return_value=completed), \
                  mock.patch("shutil.which", return_value="/bin/true"), \
                  mock.patch.object(v1, "_exec", side_effect=lambda argv, env=None: calls.append(argv) or 0):
-                rc=v1._verify_and_launch_pinned_ungoverned_pi(app,{"pi_checkout":str(checkout)},["--help"],{})
-            self.assertEqual(rc,0)
+                rc = v1._verify_and_launch_pinned_ungoverned_pi(
+                    app, {"pi_checkout": str(checkout)}, ["--help"], {}
+                )
+            self.assertEqual(rc, 0)
             self.assertEqual(Path(calls[0][0]).resolve(), Path("/bin/true").resolve())
-            self.assertEqual(calls[0][1],str(cli))
-            self.assertEqual(calls[0][2:], ["--help"])
+            self.assertEqual(calls[0][1], str(tsx))
+            self.assertEqual(calls[0][2:4], ["--tsconfig", str(tsconfig)])
+            self.assertEqual(calls[0][4], str(source))
+            self.assertEqual(calls[0][5:], ["--help"])
+
+    def test_dangerous_bypass_has_no_prebuilt_bundle_dependency(self):
+        source = (ROOT / "packages/productization/v1.py").read_text(encoding="utf-8")
+        self.assertNotIn('"dist" / "bundle" / "cli.js"', source)
+        self.assertIn('PINNED_PI_SOURCE_CLI_REL = Path("packages/coding-agent/src/cli.ts")', source)
+        self.assertIn('Path("node_modules/tsx/dist/cli.mjs")', source)
 
     def test_governed_shell_cannot_launch_node_or_pi(self):
         source=(ROOT/"scripts/pi_v1_controller_bridge.py").read_text(encoding="utf-8")
