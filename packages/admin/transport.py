@@ -135,6 +135,17 @@ class UnixAdminServer:
                 listener.bind(str(self.socket_path))
             finally:
                 os.umask(old_umask)
+            info = self.socket_path.lstat()
+            if (
+                stat.S_ISLNK(info.st_mode)
+                or not stat.S_ISSOCK(info.st_mode)
+                or info.st_uid != self.owner_uid
+            ):
+                raise AdminTransportError("administrator socket ownership/permissions failed closed")
+            # bind() success is the acquisition event. Record the exact pathname
+            # identity before any later setup step can fail. A bind() failure leaves
+            # this unset and therefore grants no cleanup authority.
+            socket_identity = (info.st_dev, info.st_ino)
             os.chmod(self.socket_path, 0o600)
             info = self.socket_path.lstat()
             if (
@@ -142,16 +153,24 @@ class UnixAdminServer:
                 or not stat.S_ISSOCK(info.st_mode)
                 or info.st_uid != self.owner_uid
                 or stat.S_IMODE(info.st_mode) != 0o600
+                or (info.st_dev, info.st_ino) != socket_identity
             ):
                 raise AdminTransportError("administrator socket ownership/permissions failed closed")
             listener.listen(8)
-            socket_identity = (info.st_dev, info.st_ino)
         except BaseException:
             listener.close()
-            try:
-                self.socket_path.unlink()
-            except FileNotFoundError:
-                pass
+            if socket_identity is not None:
+                try:
+                    info = self.socket_path.lstat()
+                except FileNotFoundError:
+                    pass
+                else:
+                    if (
+                        stat.S_ISSOCK(info.st_mode)
+                        and info.st_uid == self.owner_uid
+                        and (info.st_dev, info.st_ino) == socket_identity
+                    ):
+                        self.socket_path.unlink()
             raise
         self._listener = listener
         self._socket_identity = socket_identity

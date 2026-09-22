@@ -13,6 +13,10 @@ export PYTHONDONTWRITEBYTECODE=1
 : "${LAC_PI006_RUN_ROOT:?LAC_PI006_RUN_ROOT is required}"
 mkdir -p "$LAC_PI006_RUN_ROOT"
 
+CURRENT_STAGE="admin_transport_bind_race"
+echo "==> PI006 administrator transport ownership race regression"
+python3 -m unittest tests.integration.test_admin_transport -v
+
 CURRENT_STAGE="pi006_acceptance"
 echo "==> PI006 native restart-recovery stabilization acceptance"
 python3 -m unittest tests.acceptance.test_pi006_native_tui_restart -v
@@ -22,6 +26,8 @@ echo "==> PI006 syntax/static"
 PYTHONPYCACHEPREFIX="$LAC_PI006_RUN_ROOT/pycache" python3 -m py_compile \
   scripts/pi_native_tui_host.py \
   tests/acceptance/test_pi006_native_tui_restart.py \
+  tests/integration/test_admin_transport.py \
+  packages/admin/transport.py \
   packages/productization/v1.py
 node --check scripts/pi_native_tui.mjs
 bash -n scripts/lac-pi scripts/test-pi005 scripts/test-pi006

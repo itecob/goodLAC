@@ -1,4 +1,4 @@
-# LAC v1 Productization — 1.0.0-rc.8 candidate
+# LAC v1 Productization — 1.0.0-rc.9 candidate
 
 `LAC-V001` packages the accepted governed Pi reference path without creating a second authority boundary.
 Canonical capability, policy, approval, emergency, identity, lease, receipt, credential and continuation state remains in LAC.
@@ -33,7 +33,7 @@ Releases are versioned and the `current` pointer changes atomically. Existing ow
 
 `python3 <installed-app>/scripts/lac-v1 rollback` (normally invoked by the owner package on failure) restores the prior installed release pointer and owner configuration. Because V001 performs no database migration, rollback does not rewrite the canonical controller database. A preinstall database backup remains available for recovery inspection.
 
-Restart never auto-dispatches D001 workflow continuation. The accepted explicit `/resume <continuation_id>` behavior remains unchanged.
+Restart never auto-dispatches D001 workflow continuation. The accepted explicit `/lac-resume <continuation_id>` behavior remains unchanged.
 
 ## Portable distribution
 
@@ -144,3 +144,24 @@ to resolve inside the pinned checkout. Installed qualification now runs a real
 The default `pi` path remains governed. Authority-core semantics, policy/approval binding,
 emergency pause, continuation behavior, idempotency, receipts, sandboxing, and the exact
 four-tool governed model surface are unchanged.
+
+## rc.9 Phase 7 administrator-socket bind-race remediation
+
+`1.0.0-rc.9` remediates the Phase 7 independent-review blocker
+`P7-B001-ADMIN-SOCKET-BIND-RACE-UNLINK`. The rc.6 lifecycle already prevented an instance
+that never acquired a listener from unlinking another endpoint during normal `close()`, but the
+`UnixAdminServer.start()` exception path still unlinked the pathname unconditionally. If another
+owner server bound the administrator socket after stale-path inspection and before a contender's
+`bind()`, the losing contender could therefore remove the winning server's live pathname.
+
+rc.9 records pathname device/inode ownership only after a successful `bind()` and permits
+exception cleanup only when the current pathname still matches that acquired identity. A failed
+`bind()` establishes no cleanup authority. Deterministic integration coverage synchronizes the
+missing TOCTOU ordering, proves the winning socket pathname remains present, and proves the
+winning server still accepts an authenticated owner administration request afterward. The existing
+sequential collision regression is retained.
+
+Owner UID checks, mode `0600`, runtime-directory validation, `SO_PEERCRED`, emergency pause,
+policy and approval semantics, continuation behavior, idempotency, receipts, credential isolation,
+sandboxing, ambient-resource restrictions, and the exact four-tool governed model surface are
+unchanged.

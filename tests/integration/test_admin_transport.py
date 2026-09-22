@@ -1,3 +1,4 @@
+import errno
 import json
 import os
 import socket
@@ -182,6 +183,64 @@ class AdminTransportIntegrationTests(unittest.TestCase):
             self.assertTrue(response["ok"])
         finally:
             stop.set()
+            thread.join(timeout=2.0)
+            contender.close()
+            server.close()
+
+    def test_bind_race_loser_does_not_unlink_competing_owner_socket(self):
+        contender = UnixAdminServer(self.service, runtime_dir=self.runtime)
+        server = UnixAdminServer(self.service, runtime_dir=self.runtime)
+        inspection_complete = threading.Event()
+        server_bound = threading.Event()
+        contender_errors = []
+
+        original_remove_stale_socket = contender._remove_stale_socket
+
+        def synchronized_stale_inspection():
+            original_remove_stale_socket()
+            inspection_complete.set()
+            if not server_bound.wait(timeout=2.0):
+                raise AssertionError("competing administrator server did not bind")
+
+        contender._remove_stale_socket = synchronized_stale_inspection
+
+        def start_contender():
+            try:
+                contender.start()
+            except BaseException as exc:
+                contender_errors.append(exc)
+
+        thread = threading.Thread(target=start_contender)
+        thread.start()
+        try:
+            self.assertTrue(inspection_complete.wait(timeout=2.0))
+
+            # B wins the exact TOCTOU window: A has completed stale-path
+            # inspection but has not attempted bind() yet.
+            server.start()
+            owner_info = server.socket_path.lstat()
+            owner_identity = (owner_info.st_dev, owner_info.st_ino)
+            server_bound.set()
+
+            thread.join(timeout=2.0)
+            self.assertFalse(thread.is_alive())
+            self.assertEqual(len(contender_errors), 1)
+            self.assertIsInstance(contender_errors[0], OSError)
+            self.assertEqual(contender_errors[0].errno, errno.EADDRINUSE)
+
+            # A's bind-failure cleanup has run. It must not unlink B's endpoint.
+            current_info = server.socket_path.lstat()
+            self.assertTrue(server.socket_path.is_socket())
+            self.assertEqual((current_info.st_dev, current_info.st_ino), owner_identity)
+
+            # B must remain operational for a legitimate owner administration call.
+            response = json.loads(
+                self.transact(server, request_bytes("skills.list", {}))
+            )
+            self.assertTrue(response["ok"])
+            self.assertEqual(response["result"]["skills"], [])
+        finally:
+            server_bound.set()
             thread.join(timeout=2.0)
             contender.close()
             server.close()
