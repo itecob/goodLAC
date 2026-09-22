@@ -2,7 +2,7 @@
   "active_task": "LAC-PI006",
   "blockers": [],
   "last_accepted_release": "1.0.0-rc.1",
-  "next_action": "Resume LAC-PI006 owner UAT against rc.6 after bounded administrator-socket collision/lifecycle stabilization, beginning with the preserved restart-recovery continuation; then hand the passing candidate to one fresh independent Phase 7 review.",
+  "next_action": "Resume LAC-PI006 owner UAT against rc.7 after bounded interactive-idle/backlog stabilization. Re-launch ordinary governed pi against the preserved isolated UAT state, verify the emergency pause remains active and pi006-emergency.txt remains absent, complete emergency-pause recovery and the remaining four-tool/native-TUI/dangerous-bypass checks, then hand the passing rc.7 candidate to one fresh independent Phase 7 review.",
   "nonblocking_notes": [
     "Fresh independent Phase 4 re-review passed at live reviewed HEAD 78a1b8c580778f8ae5cb11a856fa771bc1f64308; reviewed P4-B002 implementation commit cd61b1c95a65782dfb9e9442d3422885df8a11f7; no Phase 4 blockers remain.",
     "The accepted A004 owner terminal launches real pinned Pi Agent Core 0.85.1 inside the qualified sandbox with only LAC-governed tools, but that path still uses the earlier fixed-ALLOW qualification policy rather than the completed Phase 4 permission-management runtime.",
@@ -23,10 +23,11 @@
     "LAC-PI005 native governed Pi TUI completed at implementation commit 35dde36cbb63227cdea5ea77552aa1a6f2bcf450; pinned Pi 0.85.1 native source CLI/TUI now runs inside the accepted Bubblewrap network-none boundary with external extensions/resources closed and the exact four LAC controller-backed tools preserved. Candidate rc.3 distribution SHA-256: 094bec442836a0cb1ea09738863554d3ca9a86cdc7defaa816c66e9893ab94f8.",
     "PI006 bounded stabilization implementation commit 81ea310e2e1bc43b63323c182ac4ce53917d5bad restores explicit native-TUI D001 restart recovery through owner-only /lac-continuations and /lac-resume commands without changing the four-tool model effect surface or authority core. Owner UAT remains required before Phase 7 review.",
     "PI006 owner UAT exposed installed administrator-wrapper option forwarding defect PI006-UAT-ADMIN-WRAPPER-001. Bounded rc.5 remediation at implementation commit 5ee9442ecc861519f2c6734888f0f6a682a2f226 delegates ctl/owner passthrough arguments before outer argparse; authority semantics and the four-tool model effect surface are unchanged.",
-    "PI006 owner UAT exposed PI006-UAT-ADMIN-SOCKET-002: a second governed Pi launch correctly detected the active owner admin socket, but the contending server cleanup could unlink a socket it did not own and the active server did not tolerate the probe's early disconnect. rc.6 binds cleanup to the acquired socket device/inode and tolerates expected peer disconnect during response send; authority semantics and the four-tool model effect surface are unchanged."
+    "PI006 owner UAT exposed PI006-UAT-ADMIN-SOCKET-002: a second governed Pi launch correctly detected the active owner admin socket, but the contending server cleanup could unlink a socket it did not own and the active server did not tolerate the probe's early disconnect. rc.6 binds cleanup to the acquired socket device/inode and tolerates expected peer disconnect during response send; authority semantics and the four-tool model effect surface are unchanged.",
+    "PI006 owner UAT exposed PI006-UAT-INTERACTIVE-IDLE-003: the interactive native-Pi host used a 3,600-second broker idle receive timeout, so an otherwise healthy governed TUI could terminate solely because no broker RPC arrived for one hour. 1.0.0-rc.7 removes the interactive idle deadline while retaining the 45-second deterministic probe bound and the 3,600-second D001 continuation TTL. Regression coverage proves continuation expiry remains fail-closed while the separate pending-permission backlog remains durable and owner-reviewable for future fresh requests. Authority semantics and the four-tool model effect surface are unchanged."
   ],
   "phase": "PHASE_7_DEFAULT_GOVERNED_PI_UX",
   "phase_status": "ACTIVE_IMPLEMENTATION",
-  "project_version": "1.0.0-rc.6",
+  "project_version": "1.0.0-rc.7",
   "schema": "lac.project-state/v1"
 }

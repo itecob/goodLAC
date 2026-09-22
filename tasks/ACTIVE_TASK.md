@@ -9,10 +9,11 @@ Complete owner UAT for the native default-governed Pi experience after the bound
 ## Stabilization state
 - PI006 pre-UAT source inspection found that PI005's native TUI no longer exposed the prior explicit D001 restart-recovery owner controls.
 - Bounded stabilization implementation commit: `81ea310e2e1bc43b63323c182ac4ce53917d5bad`.
-- Candidate release: `1.0.0-rc.6`.
+- Candidate release: `1.0.0-rc.7`.
 - Native owner recovery controls are `/lac-continuations` and `/lac-resume <continuation_id>` because Pi owns built-in `/resume` for Pi session navigation.
 - Owner UAT exposed `PI006-UAT-ADMIN-WRAPPER-001`: installed `lacctl`/`lac-owner` option-style arguments were rejected by outer product argparse before P005 parsing. rc.5 forwards those passthrough commands before outer argparse; admin authority semantics are unchanged.
 - Owner UAT then exposed `PI006-UAT-ADMIN-SOCKET-002`: launching a second governed Pi while the first owner admin endpoint was active failed closed as intended, but the contending server cleanup could unlink the active endpoint and the existing server could terminate on the probe's early disconnect. rc.6 binds socket cleanup to the listener identity actually acquired by that server and tolerates the expected disconnect without changing authority semantics.
+- Owner UAT then exposed `PI006-UAT-INTERACTIVE-IDLE-003`: the interactive broker host treated 3,600 seconds without a broker RPC as fatal inactivity and could tear down a healthy governed Pi TUI. rc.7 removes only the interactive idle deadline, keeps probe mode bounded, keeps the one-hour continuation TTL fail-closed, and regression-tests that the separate pending-permission backlog remains durable for late owner review and future fresh requests.
 - Startup recovery inspection is read-only and never dispatches. Approval alone never dispatches a recovered continuation.
 - Model-facing consequential effect surface remains exactly `lac_fs_read`, `lac_fs_create`, `lac_fs_replace`, `lac_shell_exec`.
 - Authority core, capability semantics, policy, approval, identity, credentials, leases, receipts and sandbox semantics are unchanged.
@@ -37,7 +38,7 @@ Complete owner UAT for the native default-governed Pi experience after the bound
 - PI005 implementation commit: `35dde36cbb63227cdea5ea77552aa1a6f2bcf450`.
 - PI005 owner-pass live handoff commit: `f403962d5ef0dc239cd632efbdad1ca0f9a92a65`.
 - PI006 stabilization implementation commit: `81ea310e2e1bc43b63323c182ac4ce53917d5bad`.
-- Candidate release: `1.0.0-rc.6`.
+- Candidate release: `1.0.0-rc.7`.
 - Last independently accepted release remains `1.0.0-rc.1`.
 
 ## Acceptance tests
@@ -53,4 +54,4 @@ Complete owner UAT for the native default-governed Pi experience after the bound
 `yes` only if owner UAT exposes another in-scope stabilization defect; otherwise record owner UAT evidence and advance to fresh independent Phase 7 review without inventing another code change.
 
 ## Next task on success
-Fresh independent Phase 7 review of the rc.6 candidate.
+Fresh independent Phase 7 review of the rc.7 candidate.
