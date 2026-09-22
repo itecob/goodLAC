@@ -1,0 +1,50 @@
+{
+  "authority_core_modified": false,
+  "candidate_release": "1.0.0-rc.8",
+  "defect_id": "PI006-UAT-DANGEROUS-BYPASS-004",
+  "distribution_sha256": "74945c5813414b38fc405e684e42c9bd612d7b9733bfb8dfda7c95ff7ee6d756",
+  "implementation_commit": "430eafc4fc2bf9ea578390efbbcbfa8edf3bc7af",
+  "next_owner_uat": "Run one read-only durable verifier over the preserved PI006 UAT database/workspace, record final owner-UAT evidence, then advance to a fresh independent Phase 7 review of rc.8.",
+  "owner_uat_remaining": true,
+  "package_id": "LAC_PI006_DANGEROUS_BYPASS_SOURCE_CLI_STABILIZATION_v0.1.1",
+  "package_sha256": "3b8bfe8b089cbe1ec34e5227ac9aedaedb66baef17ac00cb8de8bc9cd5daa9f1",
+  "recorded_at_utc": "2026-09-22T12:31:32.839282Z",
+  "retained_owner_uat": {
+    "default_governed_native_pi": "PASS",
+    "duplicate_completion_toast_visibility": "NONBLOCKING_UI_FINDING",
+    "emergency_pause_overrides_allow": "PASS",
+    "emergency_pause_persists_across_rc7_upgrade": "PASS",
+    "emergency_resume_dispatches_nothing": "PASS",
+    "exact_approval_and_idempotency": "PASS",
+    "filesystem_read": {
+      "receipt_id": "receipt:757bff11a347d64cdcad779efaea32820e2875547834bd86a0a3ca2da410bda8",
+      "status": "PASS"
+    },
+    "filesystem_replace": {
+      "receipt_id": "receipt:4e73ee16aabdcd03dc2ab299cf1193bb27d816784bbcc397abca01a928e123cc",
+      "status": "PASS"
+    },
+    "post_resume_create": {
+      "receipt_id": "receipt:c885b51438c1265ac21fab58a41b66c0722e46bf1a5ed3449d26a9976a1fb167",
+      "status": "PASS"
+    },
+    "restart_no_auto_dispatch": "PASS",
+    "shell_exec": {
+      "receipt_id": "receipt:28370d4462f50a20881d61368f91d14d11797f500d553d4373cd4f77b88dd90a",
+      "return_code": 0,
+      "status": "PASS",
+      "stdout": "PI006_SHELL_PASS"
+    }
+  },
+  "schema": "lac.pi006-stabilization-owner-execution/v1",
+  "stabilization": {
+    "checkout_local_tsx_required": true,
+    "coding_agent_version": "0.85.1",
+    "dangerous_bypass_remains_explicit_top_level_only": true,
+    "installed_real_bypass_help_smoke": "PASS",
+    "obsolete_prebuilt_bundle_dependency_removed": true,
+    "pinned_source_cli": "packages/coding-agent/src/cli.ts"
+  },
+  "status": "PASS",
+  "tool_surface_modified": false
+}
