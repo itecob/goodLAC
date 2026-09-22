@@ -245,6 +245,73 @@ class AdminTransportIntegrationTests(unittest.TestCase):
             contender.close()
             server.close()
 
+    def test_stale_cleanup_does_not_unlink_replacement_owner_socket(self):
+        contender = UnixAdminServer(self.service, runtime_dir=self.runtime)
+        server = UnixAdminServer(self.service, runtime_dir=self.runtime)
+        classification_complete = threading.Event()
+        server_bound = threading.Event()
+        contender_errors = []
+        classified_identity = {}
+
+        contender._prepare_parent()
+        stale = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        stale.bind(str(contender.socket_path))
+        stale.close()
+        initial_info = contender.socket_path.lstat()
+        initial_identity = (initial_info.st_dev, initial_info.st_ino)
+
+        original_identity_bound_unlink = contender._unlink_stale_socket_if_same_identity
+
+        def synchronized_identity_bound_unlink(stale_identity):
+            classified_identity["value"] = stale_identity
+            classification_complete.set()
+            if not server_bound.wait(timeout=2.0):
+                raise AssertionError("replacement administrator server did not bind")
+            return original_identity_bound_unlink(stale_identity)
+
+        contender._unlink_stale_socket_if_same_identity = synchronized_identity_bound_unlink
+
+        def start_contender():
+            try:
+                contender.start()
+            except BaseException as exc:
+                contender_errors.append(exc)
+
+        thread = threading.Thread(target=start_contender)
+        thread.start()
+        try:
+            self.assertTrue(classification_complete.wait(timeout=2.0))
+            self.assertEqual(classified_identity.get("value"), initial_identity)
+
+            # A has classified the exact stale socket but has not performed its
+            # final identity-bound removal. B replaces it and acquires the path.
+            contender.socket_path.unlink()
+            server.start()
+            owner_info = server.socket_path.lstat()
+            owner_identity = (owner_info.st_dev, owner_info.st_ino)
+            self.assertNotEqual(owner_identity, initial_identity)
+            server_bound.set()
+
+            thread.join(timeout=2.0)
+            self.assertFalse(thread.is_alive())
+            self.assertEqual(len(contender_errors), 1)
+            self.assertIsInstance(contender_errors[0], AdminTransportError)
+
+            # A must not unlink the replacement pathname. B keeps the exact
+            # identity it acquired and remains reachable by a legitimate owner.
+            current_info = server.socket_path.lstat()
+            self.assertEqual((current_info.st_dev, current_info.st_ino), owner_identity)
+            response = json.loads(
+                self.transact(server, request_bytes("skills.list", {}))
+            )
+            self.assertTrue(response["ok"])
+            self.assertEqual(response["result"]["skills"], [])
+        finally:
+            server_bound.set()
+            thread.join(timeout=2.0)
+            contender.close()
+            server.close()
+
     def test_insecure_runtime_directory_fails_closed(self):
         self.runtime.chmod(0o755)
         with self.assertRaises(AdminTransportError):

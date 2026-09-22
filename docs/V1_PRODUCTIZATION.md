@@ -1,4 +1,4 @@
-# LAC v1 Productization — 1.0.0-rc.9 candidate
+# LAC v1 Productization — 1.0.0-rc.10 candidate
 
 `LAC-V001` packages the accepted governed Pi reference path without creating a second authority boundary.
 Canonical capability, policy, approval, emergency, identity, lease, receipt, credential and continuation state remains in LAC.
@@ -164,4 +164,25 @@ sequential collision regression is retained.
 Owner UID checks, mode `0600`, runtime-directory validation, `SO_PEERCRED`, emergency pause,
 policy and approval semantics, continuation behavior, idempotency, receipts, credential isolation,
 sandboxing, ambient-resource restrictions, and the exact four-tool governed model surface are
+unchanged.
+
+## rc.10 Phase 7 administrator-socket stale-cleanup race remediation
+
+`1.0.0-rc.10` remediates Phase 7 blocker
+`P7-B002-ADMIN-SOCKET-STALE-CLEANUP-TOCTOU-UNLINK`. Stale classification records the
+exact owner socket device/inode before the liveness probe. `ENOENT` during probing creates
+no removal authority. After `ECONNREFUSED`, cleanup re-establishes that the pathname is
+still the same owner socket identity before unlinking; disappearance returns without removal,
+and an identity/type/owner change fails closed without unlinking the replacement.
+
+A deterministic synchronized regression creates a stale owner socket, pauses contender A
+after classifying that exact identity but before final removal, lets server B replace and bind
+the pathname, then resumes A. The regression proves A does not unlink B, B retains the exact
+pathname identity it acquired, and B still accepts a legitimate owner `skills.list` request.
+The rc.9 failed-`bind()` race regression and earlier sequential active-server collision
+regression remain retained.
+
+Owner UID checks, mode `0600`, runtime-directory validation, `SO_PEERCRED`, emergency pause,
+policy and approval semantics, continuation behavior, idempotency, receipts, credential isolation,
+sandboxing, ambient-resource restrictions, and the exact four-tool governed model surface remain
 unchanged.

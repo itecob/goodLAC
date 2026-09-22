@@ -97,6 +97,25 @@ class UnixAdminServer:
         except OSError as exc:
             raise AdminTransportError("failed to harden administrator socket directory") from exc
 
+    def _unlink_stale_socket_if_same_identity(self, stale_identity: tuple[int, int]) -> None:
+        try:
+            info = self.socket_path.lstat()
+        except FileNotFoundError:
+            return
+        if (
+            stat.S_ISLNK(info.st_mode)
+            or not stat.S_ISSOCK(info.st_mode)
+            or info.st_uid != self.owner_uid
+            or (info.st_dev, info.st_ino) != stale_identity
+        ):
+            raise AdminTransportError("administrator socket path changed during stale cleanup")
+        try:
+            self.socket_path.unlink()
+        except FileNotFoundError:
+            return
+        except OSError as exc:
+            raise AdminTransportError("failed to remove stale owner administrator socket") from exc
+
     def _remove_stale_socket(self) -> None:
         try:
             info = self.socket_path.lstat()
@@ -106,21 +125,23 @@ class UnixAdminServer:
             raise AdminTransportError("administrator socket path exists and is not a real Unix socket")
         if info.st_uid != self.owner_uid:
             raise AdminTransportError("existing administrator socket has unexpected owner UID")
+        stale_identity = (info.st_dev, info.st_ino)
         probe = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         probe.settimeout(0.1)
         try:
             probe.connect(str(self.socket_path))
         except OSError as exc:
-            if exc.errno not in {errno.ECONNREFUSED, errno.ENOENT}:
+            if exc.errno == errno.ENOENT:
+                # The inspected pathname disappeared during classification. That
+                # creates no authority to unlink a pathname that may appear later.
+                return
+            if exc.errno != errno.ECONNREFUSED:
                 raise AdminTransportError("existing administrator socket cannot be safely classified") from exc
         else:
             raise AdminTransportError("administrator socket is already active")
         finally:
             probe.close()
-        try:
-            self.socket_path.unlink()
-        except OSError as exc:
-            raise AdminTransportError("failed to remove stale owner administrator socket") from exc
+        self._unlink_stale_socket_if_same_identity(stale_identity)
 
     def start(self) -> Path:
         if self._listener is not None:
