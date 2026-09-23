@@ -1,0 +1,59 @@
+{
+  "accepted_release_after_review": "1.0.0-rc.11",
+  "blockers": [],
+  "candidate_release": "1.0.0-rc.11",
+  "distribution_sha256": "93f9468d02638b2a06dc5323e5cd27eee04f07afc657ea001c979b6c2fc2fc7d",
+  "fresh_host_tests_constraint": "The connected Web-File-Tool root was read-only/non-executable. The reviewer inspected live source, Git reflog/ref state, durable evidence, and owner execution logs, and used a bounded local synthetic fixture to confirm Linux directory flock exclusion. Owner-host tests were not represented as fresh reviewer execution.",
+  "fresh_host_tests_run_by_reviewer": false,
+  "implementation_commit": "8d2ecfa3a839879302729ac2cb6a07bd28b0f79f",
+  "last_accepted_release_before_review": "1.0.0-rc.1",
+  "live_head_observed": "8d899439dad9874ba14cea043940e68cb260e1f9",
+  "nonblocking_findings": [
+    {
+      "classification": "NONBLOCKING_UI_FINDING",
+      "id": "PI006-UAT-NB-DUPLICATE-COMPLETION-TOAST",
+      "summary": "Previously recorded duplicate completed /lac-resume toast visibility finding remains nonblocking."
+    }
+  ],
+  "owner_execution_evidence": "qualification/evidence/p7_admin_socket_final_unlink_race_remediation_owner_execution.json",
+  "owner_execution_log": "${HOME}/Downloads/LAC_P7_R003_ADMIN_SOCKET_FINAL_UNLINK_RACE_v0.1.1_owner_execution_20260923_072235.log",
+  "remediated_blocker": "P7-B003-ADMIN-SOCKET-FINAL-LSTAT-UNLINK-TOCTOU",
+  "review_candidate_commit": "818ec607e55f73ef93864ec5a86a793a062262ff",
+  "review_result": "PASS",
+  "roadmap_status_after_review": "CLOSED",
+  "schema": "lac.phase7-independent-review/v1",
+  "synthetic_fixture": {
+    "directory_flock_acquisition_after_release": "PASS",
+    "directory_flock_exclusion_while_holder_active": "PASS"
+  },
+  "verified": {
+    "admin_surface_isolated": true,
+    "all_legitimate_bind_acquisitions_use_same_lifecycle_lock": true,
+    "bubblewrap_network_none_retained": true,
+    "continuation_semantics_retained": true,
+    "credential_isolation_retained": true,
+    "critical_final_validation_to_unlink_interval_serialized": true,
+    "dangerous_bypass_explicit_and_pinned": true,
+    "default_pi_governed": true,
+    "emergency_pause_retained": true,
+    "enoent_grants_unlink_authority": false,
+    "exact_approval_retained": true,
+    "handoff_commit_identified_as_fresh_review_prompt": true,
+    "handoff_live_head_exactly_one_commit_after_candidate": true,
+    "idempotency_retained": true,
+    "insecure_runtime_directory_fails_closed": true,
+    "model_tool_surface_exactly_four": true,
+    "owned_close_cleanup_uses_lifecycle_lock": true,
+    "owned_exception_cleanup_uses_lifecycle_lock": true,
+    "owner_package_preflight_requires_prompt_only_candidate_to_head_delta": true,
+    "owner_uid_real_socket_mode_0600_peercred_semantics_retained": true,
+    "rc10_replacement_before_final_check_regression_retained": true,
+    "rc11_distribution_sha_consistent_with_owner_evidence_and_log": true,
+    "rc11_exact_window_regression_is_meaningful": true,
+    "rc11_release_version_consistent": true,
+    "rc9_failed_bind_regression_retained": true,
+    "sequential_active_server_collision_regression_retained": true,
+    "stale_cleanup_and_bind_remain_separate_serialized_phases": true,
+    "wrong_peer_uid_rejection_retained": true
+  }
+}
