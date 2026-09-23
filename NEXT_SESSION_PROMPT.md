@@ -1,17 +1,17 @@
-# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / BOUNDED PHASE 7 RC.10 FINAL-UNLINK RACE REMEDIATION
+# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 7 RC.11 INDEPENDENT RE-REVIEW
 
 ## 1. Role and controlling rule
 
-You are the fresh **Lead Implementation Engineer** for the user-owned Local Agent Controller (LAC).
+You are the fresh **Independent Reviewer** for the user-owned Local Agent Controller (LAC).
 
-`MODE=IMPLEMENTATION_SEGMENT`
-`SESSION_SEGMENT=LAC-P7-R003-ADMIN-SOCKET-FINAL-UNLINK-RACE`
+`MODE=PHASE_BOUNDARY_INDEPENDENT_REVIEW`
+`SESSION_SEGMENT=LAC-P7-REVIEW`
 
 > **AI proposes. Deterministic software determines authorization and effects.**
 
 Use the connected read-only Tunnel/Web-File-Tool. Project root label: `Local Agent Controller`.
 
-Do not broaden the product. Remediate only the concrete Phase 7 blocker below, run the complete retained gate, produce one owner-executable package, and stop at owner execution.
+Do not remediate. Independently determine whether the corrected Phase 7 candidate satisfies the binding Phase 7 requirements and whether the concrete rc.10 blocker is actually closed. Return exactly `PASS` or `BLOCKED`.
 
 ## 2. Mandatory durable reads
 
@@ -29,6 +29,7 @@ Then read the controlling specification and, at minimum:
 - `tests/integration/test_admin_transport.py`
 - `scripts/test-pi006`
 - `tests/acceptance/test_pi006_native_tui_restart.py`
+- `qualification/evidence/p7_admin_socket_final_unlink_race_remediation_owner_execution.json`
 - `qualification/evidence/phase7_rc10_independent_review.json`
 - `qualification/evidence/p7_admin_socket_stale_cleanup_race_remediation_owner_execution.json`
 - `qualification/evidence/p7_admin_socket_bind_race_remediation_owner_execution.json`
@@ -38,66 +39,50 @@ Then read the controlling specification and, at minimum:
 
 ## 3. Exact handoff facts
 
-- `PREDECESSOR_ROLE=Fresh Independent Reviewer`
-- `PREDECESSOR_RESULT=BLOCKED`
-- `PREDECESSOR_GIT_COMMIT=47fa58699e91a521dbfdf07c6b774644d7364381`
-- `HANDOFF_BASE_GIT_COMMIT=47fa58699e91a521dbfdf07c6b774644d7364381`
-- `BLOCKED_REVIEW_CANDIDATE_GIT_COMMIT=9ca498c5abff6dc1e55c63d45c5e140618d9c8eb`
-- `BLOCKED_REVIEW_CANDIDATE_RELEASE=1.0.0-rc.10`
+- `PREDECESSOR_ROLE=Lead Implementation Engineer`
+- `PREDECESSOR_RESULT=PASS`
+- `PREDECESSOR_GIT_COMMIT=818ec607e55f73ef93864ec5a86a793a062262ff`
+- `IMPLEMENTATION_GIT_COMMIT=8d2ecfa3a839879302729ac2cb6a07bd28b0f79f`
+- `HANDOFF_BASE_GIT_COMMIT=818ec607e55f73ef93864ec5a86a793a062262ff`
+- `REVIEW_CANDIDATE_GIT_COMMIT=818ec607e55f73ef93864ec5a86a793a062262ff`
+- `REVIEW_CANDIDATE_RELEASE=1.0.0-rc.11`
 - `LAST_ACCEPTED_RELEASE=1.0.0-rc.1`
-- `BLOCKER_IDS=P7-B003-ADMIN-SOCKET-FINAL-LSTAT-UNLINK-TOCTOU`
-- `OWNER_EXECUTION_EVIDENCE=qualification/evidence/phase7_rc10_independent_review.json`
-- `EXPECTED_NEXT_TASK=LAC-P7-R003-ADMIN-SOCKET-FINAL-UNLINK-RACE`
-- `SESSION_SEGMENT=LAC-P7-R003-ADMIN-SOCKET-FINAL-UNLINK-RACE`
+- `REMEDIATED_BLOCKER_IDS=P7-B003-ADMIN-SOCKET-FINAL-LSTAT-UNLINK-TOCTOU`
+- `OWNER_EXECUTION_EVIDENCE=qualification/evidence/p7_admin_socket_final_unlink_race_remediation_owner_execution.json`
+- `EXPECTED_NEXT_TASK=LAC-P7-REVIEW`
+- `SESSION_SEGMENT=LAC-P7-REVIEW`
 
-The live HEAD should be exactly one prompt-only handoff commit after `PREDECESSOR_GIT_COMMIT`. Verify that delta before implementation. Any unexpected material delta is a blocker.
+The live HEAD should be exactly one prompt-only handoff commit after `REVIEW_CANDIDATE_GIT_COMMIT`. Verify that delta before review. Any unexpected material delta is a blocker.
 
-## 4. Concrete blocker to remediate
+## 4. Review target
 
-`P7-B003-ADMIN-SOCKET-FINAL-LSTAT-UNLINK-TOCTOU`
+The rc.10 blocker was a final TOCTOU between `_unlink_stale_socket_if_same_identity()` validating the stale socket pathname and the subsequent pathname `unlink()`.
 
-rc.10's stale cleanup records the classified socket identity and later calls `_unlink_stale_socket_if_same_identity()`. That helper performs a final `lstat()` identity/type/owner check and then a separate pathname `unlink()`.
+The corrected rc.11 implementation claims to use one owner-private administrator socket-directory lifecycle lock for both stale classification/removal and each bind acquisition. Stale cleanup and bind remain separate serialized phases, allowing ordinary contenders to race for bind only after stale removal is complete. Owned exception/close pathname cleanup also participates in the same lifecycle serialization.
 
-This leaves a final TOCTOU window:
+Independently verify the mechanism rather than trusting this description.
 
-```text
-A: final lstat(path) confirms stale socket S
-B: unlink S
-B: bind live administrator socket B at path
-A: unlink(path)
-=> A removes B's live endpoint
-```
+## 5. Binding review requirements
 
-The rc.10 synchronized regression does not exercise this ordering. It pauses before the helper's final identity check, so a replacement already present when A resumes is detected. It does not prove safety after A's final validation but before its destructive unlink.
-
-## 5. Binding remediation requirements
-
-1. Close the final validation-to-unlink race for competing legitimate LAC starters.
-2. Do not claim closure by adding another pathname `lstat()` before `unlink()`.
-3. Use the smallest deterministic synchronization or equivalent replacement-safe mechanism that prevents another LAC contender from installing a live endpoint inside the stale-removal critical interval.
-4. Preserve `ENOENT` as non-authorizing: disappearance never grants authority to unlink a later pathname.
-5. Preserve owner UID, real-socket validation, owner-private runtime directory, mode `0600`, and `SO_PEERCRED`.
-6. Add a deterministic regression synchronized **after A's final identity/type/owner validation and before destructive removal**. Let B replace/bind; after A resumes, prove B's pathname identity remains and B successfully serves owner `skills.list`.
-7. Retain:
-   - rc.10 earlier replacement-before-final-check regression;
-   - rc.9 failed-`bind()` race regression;
-   - sequential active-server collision regression;
-   - wrong-peer-UID rejection;
-   - insecure-runtime-directory fail-closed behavior.
-8. Run fresh:
+1. Verify a competing legitimate LAC starter cannot install a live endpoint between A's final stale identity/type/owner validation and A's destructive stale unlink.
+2. Verify closure is not merely another pathname `lstat()` before `unlink()`; the synchronization must protect the destructive interval and every legitimate competing bind must participate in the same exclusion protocol.
+3. Verify the deterministic regression synchronizes A **after final identity/type/owner validation and before destructive removal**, starts B through the normal LAC startup path, proves B cannot acquire lifecycle serialization during A's critical interval, then after A resumes forces B to win the separately serialized bind race and proves B retains its exact pathname identity and serves owner `skills.list`.
+4. Verify rc.10's earlier replacement-before-final-check regression remains meaningful, including its intentional test-only raw replacement that challenges identity validation independently of cooperative startup serialization.
+5. Verify rc.9 failed-bind race regression, sequential active-server collision regression, wrong-peer-UID rejection, insecure-runtime-directory fail-closed behavior, `ENOENT` non-authority, owner UID, real-socket validation, owner-private runtime directory, mode `0600`, and `SO_PEERCRED` remain intact.
+6. Run fresh when executable access is available:
    - `python3 -m unittest tests.integration.test_admin_transport -v`
    - `LAC_PI006_RUN_ROOT="$(mktemp -d)" scripts/test-pi006`
-9. Preserve the complete Phase 7 scope: default-governed `pi`, explicit pinned dangerous bypass, exact four LAC model tools, admin isolation, emergency pause, exact approval, continuation, idempotency, credentials, and Bubblewrap/network-none semantics.
-10. Advance only to a corrected candidate (normally `1.0.0-rc.11`) for one fresh Phase 7 independent re-review. Do not self-accept the phase.
+7. Preserve the complete Phase 7 scope: default-governed `pi`, explicit pinned dangerous bypass, exact four LAC model tools, admin isolation, emergency pause, exact approval, continuation, idempotency, credentials, and Bubblewrap/network-none semantics.
+8. Verify release/version/evidence claims for `1.0.0-rc.11`, including the recorded deterministic distribution SHA and exact owner execution evidence.
+9. Do not create new architecture scope. Findings are only `BLOCKER` or `NONBLOCKING` under the controlling review rules.
 
-## 6. Package/release qualification
+If the connected project root is read-only/non-executable, do not represent owner-host tests as fresh reviewer execution. Inspect the live source, Git/evidence, and use only bounded synthetic local fixtures needed to validate the concurrency claim.
 
-Follow `docs/NEXT_SESSION_PROMPT_TEMPLATE.md` exactly. Before release, qualify the complete owner-facing package lifecycle against the exact expected predecessor state, including Git delta verification, `git diff --check`, syntax, generated evidence/tracking, exact owner Bash command, rollback, final clean worktree, commit membership, and successor prompt installation.
+## 6. Result and handoff
 
-Any package failure is still this same remediation segment.
+Return exactly one phase result:
 
-## 7. Stop rule
+- `PASS`: record rc.11 as the accepted Phase 7 candidate and close the current owner-authorized Phase 7 roadmap unless durable state contains a further explicit owner task. Install a recoverable successor prompt reflecting that state.
+- `BLOCKED`: identify only concrete binding blocker IDs and install a fresh bounded remediation prompt for those blockers. Do not remediate in the review session.
 
-Stop only at a valid gate. The normal successful gate is `OWNER_EXECUTION_REQUIRED`.
-
-On successful owner execution, the package must install a fresh `LAC-P7-REVIEW` root prompt for the corrected candidate. Do not perform that re-review in the remediation session.
+The duplicate completed `/lac-resume` toast remains a previously recorded nonblocking UI finding unless new evidence makes it materially violate a binding requirement.
