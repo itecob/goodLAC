@@ -1,52 +1,43 @@
-# ACTIVE TASK — LAC-P7-R003-ADMIN-SOCKET-FINAL-UNLINK-RACE
+# ACTIVE TASK — LAC-P7-REVIEW
 
 ## Task ID
-`LAC-P7-R003-ADMIN-SOCKET-FINAL-UNLINK-RACE`
+`LAC-P7-REVIEW`
 
 ## Mode
-`IMPLEMENTATION_SEGMENT`
+`PHASE_BOUNDARY_INDEPENDENT_REVIEW`
 
 ## Objective
-Remediate only `P7-B003-ADMIN-SOCKET-FINAL-LSTAT-UNLINK-TOCTOU` in the Phase 7 `1.0.0-rc.10` administrator-socket lifecycle, then produce one corrected candidate for a fresh Phase 7 independent re-review.
+Independently review the corrected Phase 7 `1.0.0-rc.11` candidate after bounded remediation of `P7-B003-ADMIN-SOCKET-FINAL-LSTAT-UNLINK-TOCTOU`.
 
 The binding rule remains:
 
 > **AI proposes. Deterministic software determines authorization and effects.**
 
-## Concrete blocker
-`packages/admin/transport.py` currently re-validates the stale pathname with `lstat()` and then performs a separate pathname `unlink()`. A second legitimate LAC starter can replace and bind the administrator socket after that final validation but before the unlink, allowing the first contender to remove the second server's live endpoint.
-
-The rc.10 synchronized regression pauses before `_unlink_stale_socket_if_same_identity()` performs its final `lstat()`. It therefore does not cover the remaining final `lstat() -> unlink(pathname)` interleaving.
-
-## In scope
-- `packages/admin/transport.py`
-- `tests/integration/test_admin_transport.py`
-- only the minimal product/version/docs/test/evidence changes required for a corrected Phase 7 candidate
-- package/handoff state needed to send that corrected candidate to one fresh Phase 7 re-review
+## Review scope
+- verify the exact candidate Git identity and clean handoff state;
+- verify the final administrator-socket stale-cleanup validation-to-unlink race is closed for competing legitimate LAC starters;
+- verify the deterministic exact-window regression actually synchronizes after A's final identity/type/owner validation and before destructive removal, starts B through the normal LAC path, and proves B's acquired pathname identity and owner `skills.list` remain intact after A resumes;
+- retain rc.10 replacement-before-final-check, rc.9 failed-bind, sequential active-server collision, wrong-peer-UID, insecure-runtime-directory, owner UID, mode `0600`, owner-private runtime directory, and `SO_PEERCRED` coverage;
+- verify the complete retained PI006/PI005/PI004/V001/earlier gate and the exact four model tools;
+- verify default-governed `pi`, explicit pinned `--dangerously-bypass-lac`, emergency pause, exact approval, continuation, idempotency, credential isolation, and Bubblewrap/network-none semantics remain unchanged;
+- verify product/package/evidence/version claims for `1.0.0-rc.11`.
 
 ## Out of scope
-- authority-core redesign
-- policy, approval, continuation, idempotency, credential, sandbox, or tool-surface changes
-- additional harness/model/provider work
-- unrelated cleanup or refactoring
+- remediation during the review;
+- authority-core redesign;
+- unrelated cleanup/refactoring;
+- new harnesses, providers, adapters, or product scope.
 
-## Binding remediation requirements
-1. Remove the final stale-cleanup check-to-unlink race. A contender that has classified stale socket S must not be able to unlink a different live endpoint B that appears after any validation step and before destructive pathname removal.
-2. Do not treat another pre-unlink `lstat()` as sufficient closure. The destructive stale-removal operation must be protected from a competing legitimate LAC start/bind through the critical interval, or use an equivalent mechanism that makes replacement-safe cleanup deterministic.
-3. Preserve the rc.10 `ENOENT` rule: disappearance during probing or cleanup grants no authority to unlink a later pathname.
-4. Preserve owner UID, real-socket, mode `0600`, validated owner-private runtime directory, and `SO_PEERCRED` behavior.
-5. Retain the rc.9 failed-`bind()` race regression and the sequential active-server collision regression.
-6. Add a deterministic regression that synchronizes contender A **after A's final identity/type/owner validation and before its destructive unlink**, lets contender B replace and bind the pathname, then resumes A. The test must prove B's pathname still exists with B's acquired identity and B accepts an owner `skills.list`.
-7. `scripts/test-pi006` and its complete retained PI005/PI004/V001/earlier regression chain must pass.
-8. The governed Pi model-facing surface must remain exactly `lac_fs_read`, `lac_fs_create`, `lac_fs_replace`, `lac_shell_exec`.
-9. Ordinary installed `pi` remains governed by default; `--dangerously-bypass-lac` remains explicit, pinned, and unavailable to the governed model.
-10. Produce a new corrected candidate version (normally `1.0.0-rc.11`) and send it to one fresh Phase 7 independent re-review. Do not self-accept Phase 7.
+## Required evidence
+- `qualification/evidence/p7_admin_socket_final_unlink_race_remediation_owner_execution.json`
+- predecessor blocked review `qualification/evidence/phase7_rc10_independent_review.json`
+- live implementation/tests/docs and Git history.
 
-## Required implementation discipline
-Use the live durable files and Git as truth. Inspect the exact predecessor delta before editing. Run task-specific tests and the complete retained gate. Correct all in-scope deterministic failures before handoff. Release-qualify the complete owner package lifecycle against the exact expected predecessor bytes and metadata.
+## Result rule
+Return exactly `PASS` or `BLOCKED`. Only concrete violations of binding Phase 7 requirements may block. Do not self-remediate.
 
-## Next task on PASS
-Fresh `LAC-P7-REVIEW` of the corrected candidate.
+## On PASS
+Record `1.0.0-rc.11` as the accepted Phase 7 candidate and close the current owner-authorized Phase 7 roadmap unless durable state contains a further explicit owner task.
 
-## Next task on BLOCKED
-Remain in this remediation segment until this blocker is actually closed or a genuine architecture/authority gate is reached.
+## On BLOCKED
+Create a fresh remediation handoff containing only the concrete blocker IDs and remain within Phase 7.
