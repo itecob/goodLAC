@@ -1,48 +1,52 @@
-# ACTIVE TASK — LAC-P7-REVIEW
+# ACTIVE TASK — LAC-P7-R003-ADMIN-SOCKET-FINAL-UNLINK-RACE
 
 ## Task ID
-`LAC-P7-REVIEW`
+`LAC-P7-R003-ADMIN-SOCKET-FINAL-UNLINK-RACE`
 
 ## Mode
-`PHASE_BOUNDARY_INDEPENDENT_REVIEW`
+`IMPLEMENTATION_SEGMENT`
 
 ## Objective
-Perform one fresh independent Phase 7 re-review of the corrected `1.0.0-rc.10` default-governed Pi UX candidate after bounded remediation of `P7-B002-ADMIN-SOCKET-STALE-CLEANUP-TOCTOU-UNLINK`.
+Remediate only `P7-B003-ADMIN-SOCKET-FINAL-LSTAT-UNLINK-TOCTOU` in the Phase 7 `1.0.0-rc.10` administrator-socket lifecycle, then produce one corrected candidate for a fresh Phase 7 independent re-review.
 
-The reviewer must independently determine whether the complete Phase 7 candidate preserves the controlling rule:
+The binding rule remains:
 
 > **AI proposes. Deterministic software determines authorization and effects.**
 
-## Candidate scope
-Review the complete Phase 7 extension from the last independently accepted `1.0.0-rc.1` baseline through the corrected `1.0.0-rc.10` candidate, including PI004, PI005, PI006, rc.5 through rc.10, and retained final PI006 owner-UAT evidence where unaffected.
+## Concrete blocker
+`packages/admin/transport.py` currently re-validates the stale pathname with `lstat()` and then performs a separate pathname `unlink()`. A second legitimate LAC starter can replace and bind the administrator socket after that final validation but before the unlink, allowing the first contender to remove the second server's live endpoint.
 
-## Exact candidate facts
-- Corrected candidate release: `1.0.0-rc.10`.
-- Last independently accepted release: `1.0.0-rc.1`.
-- Prior corrected rc.9 review candidate: `d798db68016de665e54d2c53558af320daa98b31`.
-- P7-R002 remediation implementation commit: `cfd648dc3273a64c80a529fd8688f621b02cbfc1`.
-- Remediation distribution SHA-256: `268be5b8e62a2eee352a565f6a2e6867aed3f5a7d4f9f5779f93c9f3d46ad47d`.
-- Remediation owner execution evidence: `qualification/evidence/p7_admin_socket_stale_cleanup_race_remediation_owner_execution.json`.
-- Prior blocker `P7-B001-ADMIN-SOCKET-BIND-RACE-UNLINK`: `REMEDIATED_PENDING_FRESH_REVIEW`.
-- New blocker `P7-B002-ADMIN-SOCKET-STALE-CLEANUP-TOCTOU-UNLINK`: `REMEDIATED_PENDING_FRESH_REVIEW`.
-- Blockers entering re-review: `NONE`.
-- Exact corrected review-candidate Git commit is installed into root `NEXT_SESSION_PROMPT.md` by the remediation package.
+The rc.10 synchronized regression pauses before `_unlink_stale_socket_if_same_identity()` performs its final `lstat()`. It therefore does not cover the remaining final `lstat() -> unlink(pathname)` interleaving.
 
-## Binding re-review checks
-- Reproduce/inspect the deterministic stale-cleanup replacement race: A classifies exact stale socket S; B replaces and binds; A resumes final stale cleanup; A does not unlink B; B's pathname identity remains; B accepts owner `skills.list`.
-- Confirm `ENOENT` during probing grants no authority to unlink a later pathname.
-- Retain the rc.9 synchronized failed-`bind()` race regression and the earlier sequential active-server collision regression.
-- Retain wrong-peer-UID rejection, mode `0600`, owner request success and insecure-runtime-directory fail-closed behavior.
-- Ordinary installed `pi` remains governed by default; bypass remains explicit and pinned.
-- Governed Pi exposes exactly `lac_fs_read`, `lac_fs_create`, `lac_fs_replace`, `lac_shell_exec`.
-- Restart, approval, emergency pause, continuation, idempotency, credential and sandbox semantics remain unchanged.
-- `scripts/test-pi006` and its retained PI005/PI004/V001/earlier regression chain pass.
+## In scope
+- `packages/admin/transport.py`
+- `tests/integration/test_admin_transport.py`
+- only the minimal product/version/docs/test/evidence changes required for a corrected Phase 7 candidate
+- package/handoff state needed to send that corrected candidate to one fresh Phase 7 re-review
 
-## Reviewer constraints
-The reviewer is independent and does not remediate. Review the complete retained Phase 7 scope, not only rc.10. Classify only concrete binding violations as blockers. The known duplicate completed `/lac-resume` toast visibility issue remains nonblocking unless new evidence establishes a binding violation.
+## Out of scope
+- authority-core redesign
+- policy, approval, continuation, idempotency, credential, sandbox, or tool-surface changes
+- additional harness/model/provider work
+- unrelated cleanup or refactoring
+
+## Binding remediation requirements
+1. Remove the final stale-cleanup check-to-unlink race. A contender that has classified stale socket S must not be able to unlink a different live endpoint B that appears after any validation step and before destructive pathname removal.
+2. Do not treat another pre-unlink `lstat()` as sufficient closure. The destructive stale-removal operation must be protected from a competing legitimate LAC start/bind through the critical interval, or use an equivalent mechanism that makes replacement-safe cleanup deterministic.
+3. Preserve the rc.10 `ENOENT` rule: disappearance during probing or cleanup grants no authority to unlink a later pathname.
+4. Preserve owner UID, real-socket, mode `0600`, validated owner-private runtime directory, and `SO_PEERCRED` behavior.
+5. Retain the rc.9 failed-`bind()` race regression and the sequential active-server collision regression.
+6. Add a deterministic regression that synchronizes contender A **after A's final identity/type/owner validation and before its destructive unlink**, lets contender B replace and bind the pathname, then resumes A. The test must prove B's pathname still exists with B's acquired identity and B accepts an owner `skills.list`.
+7. `scripts/test-pi006` and its complete retained PI005/PI004/V001/earlier regression chain must pass.
+8. The governed Pi model-facing surface must remain exactly `lac_fs_read`, `lac_fs_create`, `lac_fs_replace`, `lac_shell_exec`.
+9. Ordinary installed `pi` remains governed by default; `--dangerously-bypass-lac` remains explicit, pinned, and unavailable to the governed model.
+10. Produce a new corrected candidate version (normally `1.0.0-rc.11`) and send it to one fresh Phase 7 independent re-review. Do not self-accept Phase 7.
+
+## Required implementation discipline
+Use the live durable files and Git as truth. Inspect the exact predecessor delta before editing. Run task-specific tests and the complete retained gate. Correct all in-scope deterministic failures before handoff. Release-qualify the complete owner package lifecycle against the exact expected predecessor bytes and metadata.
 
 ## Next task on PASS
-Durably record Phase 7 acceptance of the exact corrected `1.0.0-rc.10` candidate and return the project to a closed/accepted roadmap state unless the owner separately authorizes new scope.
+Fresh `LAC-P7-REVIEW` of the corrected candidate.
 
 ## Next task on BLOCKED
-Create one fresh bounded remediation segment containing only the new concrete blocker IDs, then require another fresh Phase 7 re-review.
+Remain in this remediation segment until this blocker is actually closed or a genuine architecture/authority gate is reached.
