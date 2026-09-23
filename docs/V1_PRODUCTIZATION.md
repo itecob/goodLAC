@@ -1,4 +1,4 @@
-# LAC v1 Productization — 1.0.0-rc.10 candidate
+# LAC v1 Productization — 1.0.0-rc.11 candidate
 
 `LAC-V001` packages the accepted governed Pi reference path without creating a second authority boundary.
 Canonical capability, policy, approval, emergency, identity, lease, receipt, credential and continuation state remains in LAC.
@@ -181,6 +181,36 @@ the pathname, then resumes A. The regression proves A does not unlink B, B retai
 pathname identity it acquired, and B still accepts a legitimate owner `skills.list` request.
 The rc.9 failed-`bind()` race regression and earlier sequential active-server collision
 regression remain retained.
+
+Owner UID checks, mode `0600`, runtime-directory validation, `SO_PEERCRED`, emergency pause,
+policy and approval semantics, continuation behavior, idempotency, receipts, credential isolation,
+sandboxing, ambient-resource restrictions, and the exact four-tool governed model surface remain
+unchanged.
+
+## rc.11 Phase 7 administrator-socket final-unlink race remediation
+
+`1.0.0-rc.11` remediates Phase 7 blocker
+`P7-B003-ADMIN-SOCKET-FINAL-LSTAT-UNLINK-TOCTOU`. Every legitimate LAC
+administrator-server startup now serializes stale-socket classification and destructive removal by
+taking an exclusive Linux `flock()` on the already validated owner-private administrator socket
+directory. After acquiring the lock, LAC revalidates that the open directory descriptor and current
+pathname still identify the same real owner directory before touching the stale socket.
+
+The same exclusive lifecycle lock protects stale classification/removal and each `bind()` acquisition.
+Stale cleanup releases its lock before the separate bind phase, so normal contenders may still race
+for the endpoint, but no compliant contender can install a live administrator endpoint while another
+contender is inside stale removal. The rc.9 rule remains authoritative: a failed `bind()` establishes
+no pathname cleanup authority. Owned exception/close cleanup also participates in the lifecycle lock,
+and `ENOENT` during stale probing or validation remains non-authorizing.
+
+The rc.11 deterministic regression pauses contender A after the final stale identity/type/owner
+validation and before destructive removal, verifies the exclusive directory lock is actually held,
+starts contender B through the normal LAC startup path, then resumes A. B is blocked from lifecycle
+acquisition until stale removal completes, is forced to win the subsequent separately serialized bind
+race, retains the exact pathname identity it acquired, and successfully serves an owner `skills.list`.
+The rc.10 replacement-before-final-check
+identity regression, rc.9 failed-bind race regression, sequential active-server collision behavior,
+wrong-peer-UID rejection, and insecure-runtime-directory fail-closed behavior remain retained.
 
 Owner UID checks, mode `0600`, runtime-directory validation, `SO_PEERCRED`, emergency pause,
 policy and approval semantics, continuation behavior, idempotency, receipts, credential isolation,

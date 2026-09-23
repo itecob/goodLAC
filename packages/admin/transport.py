@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import errno
+import fcntl
 import os
 import socket
 import stat
@@ -97,11 +98,43 @@ class UnixAdminServer:
         except OSError as exc:
             raise AdminTransportError("failed to harden administrator socket directory") from exc
 
-    def _unlink_stale_socket_if_same_identity(self, stale_identity: tuple[int, int]) -> None:
+    def _acquire_socket_directory_lock(self) -> int:
+        parent = self.socket_path.parent
+        flags = os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC | os.O_NOFOLLOW
+        try:
+            lock_fd = os.open(parent, flags)
+        except OSError as exc:
+            raise AdminTransportError("failed to open administrator socket directory for lifecycle serialization") from exc
+        try:
+            try:
+                fcntl.flock(lock_fd, fcntl.LOCK_EX)
+            except OSError as exc:
+                raise AdminTransportError("failed to serialize administrator socket lifecycle") from exc
+            locked = os.fstat(lock_fd)
+            try:
+                current = parent.lstat()
+            except FileNotFoundError as exc:
+                raise AdminTransportError("administrator socket directory disappeared during lifecycle serialization") from exc
+            if (
+                not stat.S_ISDIR(locked.st_mode)
+                or locked.st_uid != self.owner_uid
+                or stat.S_IMODE(locked.st_mode) & 0o077
+                or stat.S_ISLNK(current.st_mode)
+                or not stat.S_ISDIR(current.st_mode)
+                or current.st_uid != self.owner_uid
+                or (current.st_dev, current.st_ino) != (locked.st_dev, locked.st_ino)
+            ):
+                raise AdminTransportError("administrator socket directory changed during lifecycle serialization")
+            return lock_fd
+        except BaseException:
+            os.close(lock_fd)
+            raise
+
+    def _stale_socket_identity_is_current(self, stale_identity: tuple[int, int]) -> bool:
         try:
             info = self.socket_path.lstat()
         except FileNotFoundError:
-            return
+            return False
         if (
             stat.S_ISLNK(info.st_mode)
             or not stat.S_ISSOCK(info.st_mode)
@@ -109,12 +142,24 @@ class UnixAdminServer:
             or (info.st_dev, info.st_ino) != stale_identity
         ):
             raise AdminTransportError("administrator socket path changed during stale cleanup")
+        return True
+
+    def _unlink_stale_socket_if_same_identity(self, stale_identity: tuple[int, int]) -> None:
+        if not self._stale_socket_identity_is_current(stale_identity):
+            return
         try:
             self.socket_path.unlink()
         except FileNotFoundError:
             return
         except OSError as exc:
             raise AdminTransportError("failed to remove stale owner administrator socket") from exc
+
+    def _remove_stale_socket_serialized(self) -> None:
+        lock_fd = self._acquire_socket_directory_lock()
+        try:
+            self._remove_stale_socket()
+        finally:
+            os.close(lock_fd)
 
     def _remove_stale_socket(self) -> None:
         try:
@@ -147,52 +192,56 @@ class UnixAdminServer:
         if self._listener is not None:
             return self.socket_path
         self._prepare_parent()
-        self._remove_stale_socket()
+        self._remove_stale_socket_serialized()
         listener = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         socket_identity: tuple[int, int] | None = None
+        bind_lock_fd = self._acquire_socket_directory_lock()
         try:
-            old_umask = os.umask(0o077)
             try:
-                listener.bind(str(self.socket_path))
-            finally:
-                os.umask(old_umask)
-            info = self.socket_path.lstat()
-            if (
-                stat.S_ISLNK(info.st_mode)
-                or not stat.S_ISSOCK(info.st_mode)
-                or info.st_uid != self.owner_uid
-            ):
-                raise AdminTransportError("administrator socket ownership/permissions failed closed")
-            # bind() success is the acquisition event. Record the exact pathname
-            # identity before any later setup step can fail. A bind() failure leaves
-            # this unset and therefore grants no cleanup authority.
-            socket_identity = (info.st_dev, info.st_ino)
-            os.chmod(self.socket_path, 0o600)
-            info = self.socket_path.lstat()
-            if (
-                stat.S_ISLNK(info.st_mode)
-                or not stat.S_ISSOCK(info.st_mode)
-                or info.st_uid != self.owner_uid
-                or stat.S_IMODE(info.st_mode) != 0o600
-                or (info.st_dev, info.st_ino) != socket_identity
-            ):
-                raise AdminTransportError("administrator socket ownership/permissions failed closed")
-            listener.listen(8)
-        except BaseException:
-            listener.close()
-            if socket_identity is not None:
+                old_umask = os.umask(0o077)
                 try:
-                    info = self.socket_path.lstat()
-                except FileNotFoundError:
-                    pass
-                else:
-                    if (
-                        stat.S_ISSOCK(info.st_mode)
-                        and info.st_uid == self.owner_uid
-                        and (info.st_dev, info.st_ino) == socket_identity
-                    ):
-                        self.socket_path.unlink()
-            raise
+                    listener.bind(str(self.socket_path))
+                finally:
+                    os.umask(old_umask)
+                info = self.socket_path.lstat()
+                if (
+                    stat.S_ISLNK(info.st_mode)
+                    or not stat.S_ISSOCK(info.st_mode)
+                    or info.st_uid != self.owner_uid
+                ):
+                    raise AdminTransportError("administrator socket ownership/permissions failed closed")
+                # bind() success is the acquisition event. Record the exact pathname
+                # identity before any later setup step can fail. A bind() failure leaves
+                # this unset and therefore grants no cleanup authority.
+                socket_identity = (info.st_dev, info.st_ino)
+                os.chmod(self.socket_path, 0o600)
+                info = self.socket_path.lstat()
+                if (
+                    stat.S_ISLNK(info.st_mode)
+                    or not stat.S_ISSOCK(info.st_mode)
+                    or info.st_uid != self.owner_uid
+                    or stat.S_IMODE(info.st_mode) != 0o600
+                    or (info.st_dev, info.st_ino) != socket_identity
+                ):
+                    raise AdminTransportError("administrator socket ownership/permissions failed closed")
+                listener.listen(8)
+            except BaseException:
+                listener.close()
+                if socket_identity is not None:
+                    try:
+                        info = self.socket_path.lstat()
+                    except FileNotFoundError:
+                        pass
+                    else:
+                        if (
+                            stat.S_ISSOCK(info.st_mode)
+                            and info.st_uid == self.owner_uid
+                            and (info.st_dev, info.st_ino) == socket_identity
+                        ):
+                            self.socket_path.unlink()
+                raise
+        finally:
+            os.close(bind_lock_fd)
         self._listener = listener
         self._socket_identity = socket_identity
         return self.socket_path
@@ -282,17 +331,23 @@ class UnixAdminServer:
         socket_identity = self._socket_identity
         self._listener = None
         self._socket_identity = None
-        if listener is not None:
-            listener.close()
         if socket_identity is None:
+            if listener is not None:
+                listener.close()
             return
+        lock_fd = self._acquire_socket_directory_lock()
         try:
-            info = self.socket_path.lstat()
-        except FileNotFoundError:
-            return
-        if (
-            stat.S_ISSOCK(info.st_mode)
-            and info.st_uid == self.owner_uid
-            and (info.st_dev, info.st_ino) == socket_identity
-        ):
-            self.socket_path.unlink()
+            if listener is not None:
+                listener.close()
+            try:
+                info = self.socket_path.lstat()
+            except FileNotFoundError:
+                return
+            if (
+                stat.S_ISSOCK(info.st_mode)
+                and info.st_uid == self.owner_uid
+                and (info.st_dev, info.st_ino) == socket_identity
+            ):
+                self.socket_path.unlink()
+        finally:
+            os.close(lock_fd)
