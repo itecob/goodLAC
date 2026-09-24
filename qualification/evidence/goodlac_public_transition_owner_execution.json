@@ -1,0 +1,55 @@
+{
+  "accepted_release_unchanged": "1.0.0-rc.11",
+  "branch": "main",
+  "brand": "goodLAC",
+  "changed_worktree_entries": [
+    "M NEXT_SESSION_PROMPT.md",
+    " M PROJECT_STATE.json",
+    " M README.md",
+    " M tasks/ACTIVE_TASK.md",
+    "?? .github/ISSUE_TEMPLATE/bug_report.md",
+    "?? .github/ISSUE_TEMPLATE/feature_request.md",
+    "?? .github/PULL_REQUEST_TEMPLATE.md",
+    "?? BRAND.md",
+    "?? CLA-DRAFT.md",
+    "?? COMMERCIAL-LICENSING.md",
+    "?? CONFORMANCE.md",
+    "?? CONTRIBUTING.md",
+    "?? LICENSE-DRAFT.md",
+    "?? NOTICE",
+    "?? SECURITY.md"
+  ],
+  "cla_draft_requires_legal_review": true,
+  "github_repository_rename": {
+    "status": "PENDING_AUTHENTICATED_CODEX_PUBLICATION_STEP",
+    "target": "itecob/goodLAC"
+  },
+  "license_draft_requires_legal_review": true,
+  "operative_license_changed": false,
+  "origin_before_github_rename": "https://github.com/itecob/local-agent-controller.git",
+  "owner": "ITECOB Inc.",
+  "owner_actions_remaining": [
+    "Legal review of LICENSE-DRAFT.md before activation.",
+    "Legal review of CLA-DRAFT.md before activation.",
+    "Add approved commercial-licensing contact channel.",
+    "Confirm/configure private vulnerability-reporting channel.",
+    "Rename GitHub repository to itecob/goodLAC, commit/push, and update origin.",
+    "Perform a bounded durable-state closeout after publication."
+  ],
+  "recorded_at_utc": "2026-09-24T17:35:16Z",
+  "runtime_or_authority_code_changed": false,
+  "schema": "goodlac.public-transition-owner-execution/v1",
+  "starting_head": "4a88bbf3aa1606d7e70bf618e5421dc46f9c08f9",
+  "tests": {
+    "document_and_boundary_validation": "PASS",
+    "exact_public_brand_validation": "PASS",
+    "git diff --check": "PASS",
+    "scripts/test-c010": "PASS",
+    "scripts/test-pi006": "PASS",
+    "third_party_provenance_immutability": "PASS"
+  },
+  "third_party_notices_sha256_after": "92d3e4dc4b6dd5aa95d2afd4bd746cb7f2b09345ff19beafd742cfeaf9d1db96",
+  "third_party_notices_sha256_before": "92d3e4dc4b6dd5aa95d2afd4bd746cb7f2b09345ff19beafd742cfeaf9d1db96",
+  "upstream_lock_sha256_after": "e330ffbcb226bde03a1eea4d2154d5e7890c8104cdfe6af4f38044f26816992d",
+  "upstream_lock_sha256_before": "e330ffbcb226bde03a1eea4d2154d5e7890c8104cdfe6af4f38044f26816992d"
+}

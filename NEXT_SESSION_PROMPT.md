@@ -1,55 +1,72 @@
-# NEXT SESSION PROMPT — LOCAL AGENT CONTROLLER / PHASE 7 COMPLETE — ROADMAP CLOSED
+# NEXT SESSION PROMPT — goodLAC PUBLIC REPOSITORY TRANSITION
 
-## 1. Role and controlling rule
+## 1. Role
 
-You are the successor state verifier for the user-owned **Local Agent Controller (LAC)**.
+You are the successor verifier/reviewer for the owner-authorized **goodLAC** public repository transition.
 
-`MODE=ROADMAP_CLOSED`
-`SESSION_SEGMENT=NONE`
+goodLAC is the public product brand. **Local Agent Controller (LAC)** remains the underlying technical description and compatibility namespace.
 
-> **AI proposes. Deterministic software determines authorization and effects.**
+## 2. Durable reads
 
-Use the connected read-only Tunnel/Web-File-Tool. Project root label: `Local Agent Controller`.
-
-The current owner-authorized roadmap is complete. Do not invent or begin new implementation scope unless the owner explicitly authorizes a new roadmap task.
-
-## 2. Mandatory durable reads
-
-Read first, in this order:
+Read first:
 
 1. `PROJECT_STATE.json`
-2. `docs/ARCHITECTURE.md`
-3. `UPSTREAM_LOCK.json`
-4. `tasks/ACTIVE_TASK.md`
-5. `docs/NEXT_SESSION_PROMPT_TEMPLATE.md`
+2. `tasks/ACTIVE_TASK.md`
+3. `README.md`
+4. `BRAND.md`
+5. `COMMERCIAL-LICENSING.md`
+6. `LICENSE-DRAFT.md`
+7. `CONTRIBUTING.md`
+8. `CLA-DRAFT.md`
+9. `SECURITY.md`
+10. `docs/ARCHITECTURE.md`
 
-Then read only the files needed for the owner's current request.
+Then read only what is needed for the current owner request.
 
-## 3. Accepted state
+## 3. Accepted technical baseline
 
-- `PHASE_7_REVIEW_RESULT=PASS`
-- `ACCEPTED_RELEASE=1.0.0-rc.11`
-- `REVIEW_CANDIDATE_GIT_COMMIT=818ec607e55f73ef93864ec5a86a793a062262ff`
-- `IMPLEMENTATION_GIT_COMMIT=8d2ecfa3a839879302729ac2cb6a07bd28b0f79f`
-- `REVIEW_ACCEPTANCE_GIT_COMMIT=f8b975b7ea1850b382d702eefa4fcec4119f05b1`
-- `BLOCKER_IDS=NONE`
-- `ACTIVE_TASK=NONE`
-- `ROADMAP_STATUS=CLOSED`
-- `OWNER_EXECUTION_EVIDENCE=qualification/evidence/p7_admin_socket_final_unlink_race_remediation_owner_execution.json`
-- `INDEPENDENT_REVIEW_EVIDENCE=qualification/evidence/phase7_rc11_independent_review.json`
+The last independently accepted authority/runtime release remains:
 
-The live HEAD should be exactly one prompt-only handoff commit after `REVIEW_ACCEPTANCE_GIT_COMMIT`. Verify that delta before relying on this handoff. Any unexpected material delta must be reported rather than silently accepted.
+- release: `1.0.0-rc.11`
+- Phase 7 review candidate: `818ec607e55f73ef93864ec5a86a793a062262ff`
+- Phase 7 implementation commit: `8d2ecfa3a839879302729ac2cb6a07bd28b0f79f`
+- Phase 7 review acceptance commit: `f8b975b7ea1850b382d702eefa4fcec4119f05b1`
+- closed-roadmap handoff baseline before this transition: `4a88bbf3aa1606d7e70bf618e5421dc46f9c08f9`
 
-## 4. Phase 7 disposition
+The goodLAC public transition does not reopen or rewrite accepted Phase 7 evidence.
 
-The corrected rc.11 candidate closed `P7-B003-ADMIN-SOCKET-FINAL-LSTAT-UNLINK-TOCTOU` by serializing stale classification/removal and every legitimate administrator-socket bind acquisition on the same validated owner-private socket-directory lifecycle lock. Owned exception/close cleanup participates in the same lifecycle serialization. The exact-window regression and retained Phase 7/PI006 gate passed in owner evidence; the independent reviewer had read-only/non-executable tunnel access and did not represent owner-host tests as fresh reviewer execution.
+## 4. Branding rule
 
-The previously recorded duplicate completed `/lac-resume` toast remains nonblocking.
+Use **goodLAC** exactly in normal product prose.
 
-## 5. Successor behavior
+Do not mechanically rename technical compatibility identifiers merely because they contain `lac`, `LAC`, or `local-agent-controller`.
 
-If the owner asks for project status, report that Phase 7 is accepted at `1.0.0-rc.11` and the current roadmap is closed.
+Preserve established schemas, environment variables, commands, model-facing tools, state paths, socket/protocol identities, durable record identities, and historical evidence unless a separately authorized migration exists.
 
-If the owner explicitly authorizes new LAC work, treat that owner instruction as the new roadmap authority. Create a bounded durable task/state transition before implementation, preserve the accepted Phase 7 baseline, and use a fresh implementation segment. Do not reopen Phase 7 merely because a future task is added.
+## 5. Licensing rule
 
-If the owner has not authorized new work, there is no implementation task to execute and no further session is required.
+No operative goodLAC project license is activated by the branding/governance transition.
+
+`LICENSE-DRAFT.md` and `CLA-DRAFT.md` are explicitly unreviewed drafts. They must not be renamed/promoted to operative documents until legal review is complete and the owner separately authorizes activation.
+
+Documentation may describe the intended licensing model but must not represent draft permissions or restrictions as already operative.
+
+## 6. GitHub publication target
+
+The owner-authorized repository name is `goodLAC`.
+
+The intended renamed repository is `itecob/goodLAC`.
+
+The authenticated GitHub publication step is separate from the local package.
+
+## 7. Security and conformance
+
+Do not invent a security email address, commercial licensing contact, pricing, trademark registration, certification program, legal approval, or goodLAC Conformance repository URL.
+
+goodLAC Conformance remains a separate future project. Technical conformance does not imply brand endorsement.
+
+## 8. Current task
+
+`GOODLAC-PUBLIC-001` remains active until the owner accepts the local diff and the authenticated GitHub rename/commit/push is completed.
+
+After publication, update durable state in a separate bounded change rather than rewriting historical qualification evidence.
