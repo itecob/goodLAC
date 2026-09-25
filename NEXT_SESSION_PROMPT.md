@@ -1,12 +1,18 @@
-# NEXT SESSION PROMPT — goodLAC PUBLIC REPOSITORY TRANSITION
+# NEXT SESSION PROMPT — goodLAC CLOSED HANDOFF
 
-## 1. Role
+## 1. Current project identity
 
-You are the successor verifier/reviewer for the owner-authorized **goodLAC** public repository transition.
+The public product brand is **goodLAC**.
 
-goodLAC is the public product brand. **Local Agent Controller (LAC)** remains the underlying technical description and compatibility namespace.
+A correct public description is:
 
-## 2. Durable reads
+> goodLAC is a source-available Local Agent Controller developed by ITECOB Inc.
+
+**Local Agent Controller (LAC)** remains the underlying technical description and compatibility namespace.
+
+Do not mechanically rename established technical identifiers merely because they contain `LAC`, `lac`, or `local-agent-controller`.
+
+## 2. Durable state
 
 Read first:
 
@@ -14,16 +20,36 @@ Read first:
 2. `tasks/ACTIVE_TASK.md`
 3. `README.md`
 4. `BRAND.md`
-5. `COMMERCIAL-LICENSING.md`
-6. `LICENSE-DRAFT.md`
-7. `CONTRIBUTING.md`
-8. `CLA-DRAFT.md`
-9. `SECURITY.md`
+5. `SECURITY.md`
+6. `COMMERCIAL-LICENSING.md`
+7. `LICENSE-DRAFT.md`
+8. `CONTRIBUTING.md`
+9. `CLA-DRAFT.md`
 10. `docs/ARCHITECTURE.md`
 
-Then read only what is needed for the current owner request.
+Then read only what is necessary for the owner's current request.
 
-## 3. Accepted technical baseline
+## 3. Roadmap/task state
+
+There is **no active task**.
+
+The prior authority/runtime roadmap remains historically closed.
+
+The bounded public-repository transition `GOODLAC-PUBLIC-001` is complete and closed. Its published transition commit is:
+
+`b1b70454aa4576c4463c934fdada3d51024c6c98`
+
+The GitHub repository is:
+
+`itecob/goodLAC`
+
+The local canonical `origin` is expected to target:
+
+`https://github.com/itecob/goodLAC.git`
+
+Future project work requires new explicit owner authorization. Do not silently reopen `GOODLAC-PUBLIC-001` or rewrite its evidence.
+
+## 4. Accepted technical baseline
 
 The last independently accepted authority/runtime release remains:
 
@@ -31,42 +57,71 @@ The last independently accepted authority/runtime release remains:
 - Phase 7 review candidate: `818ec607e55f73ef93864ec5a86a793a062262ff`
 - Phase 7 implementation commit: `8d2ecfa3a839879302729ac2cb6a07bd28b0f79f`
 - Phase 7 review acceptance commit: `f8b975b7ea1850b382d702eefa4fcec4119f05b1`
-- closed-roadmap handoff baseline before this transition: `4a88bbf3aa1606d7e70bf618e5421dc46f9c08f9`
+- Phase 7 result: PASS
 
-The goodLAC public transition does not reopen or rewrite accepted Phase 7 evidence.
+The goodLAC public identity/governance transition did not change authority/runtime code and does not constitute a new security qualification.
 
-## 4. Branding rule
+## 5. Compatibility namespace freeze
 
-Use **goodLAC** exactly in normal product prose.
+Unless a separately authorized migration says otherwise, preserve established technical/compatibility identifiers, including:
 
-Do not mechanically rename technical compatibility identifiers merely because they contain `lac`, `LAC`, or `local-agent-controller`.
+- `lac.*` schemas/protocol identifiers;
+- `LAC_*` environment variables;
+- `lacctl`, `lac-pi`, and related commands;
+- model-facing tools such as `lac_fs_read`, `lac_fs_create`, `lac_fs_replace`, and `lac_shell_exec`;
+- `/lac-*` owner commands;
+- capability/application/skill identifiers;
+- state, request, receipt, approval, continuation, and audit identities;
+- socket/protocol identities; and
+- existing `local-agent-controller` state/configuration/cache/install paths.
 
-Preserve established schemas, environment variables, commands, model-facing tools, state paths, socket/protocol identities, durable record identities, and historical evidence unless a separately authorized migration exists.
+Historical qualification evidence, hashes, review artifacts, and provenance may retain the historical project name and technical LAC terminology.
 
-## 5. Licensing rule
+## 6. Licensing status
 
-No operative goodLAC project license is activated by the branding/governance transition.
+There is currently **no operative goodLAC project license**.
 
-`LICENSE-DRAFT.md` and `CLA-DRAFT.md` are explicitly unreviewed drafts. They must not be renamed/promoted to operative documents until legal review is complete and the owner separately authorizes activation.
+`LICENSE-DRAFT.md` is explicitly:
 
-Documentation may describe the intended licensing model but must not represent draft permissions or restrictions as already operative.
+**DRAFT — LEGAL REVIEW REQUIRED BEFORE PUBLIC RELEASE**
 
-## 6. GitHub publication target
+It must not be renamed or promoted to `LICENSE` until legal review is complete and the owner explicitly authorizes activation.
 
-The owner-authorized repository name is `goodLAC`.
+`CLA-DRAFT.md` is also not active. Do not require contributor acceptance or enable a CLA bot against the draft.
 
-The intended renamed repository is `itecob/goodLAC`.
+Do not represent intended licensing permissions/restrictions as operative before activation.
 
-The authenticated GitHub publication step is separate from the local package.
+## 7. Remaining owner/legal actions
 
-## 7. Security and conformance
+These are open owner/legal matters, not active implementation tasks:
 
-Do not invent a security email address, commercial licensing contact, pricing, trademark registration, certification program, legal approval, or goodLAC Conformance repository URL.
+- legal review of the Community License draft;
+- legal review of the CLA draft;
+- add an approved commercial-licensing contact channel; and
+- configure or confirm a private vulnerability-reporting channel.
 
-goodLAC Conformance remains a separate future project. Technical conformance does not imply brand endorsement.
+Do not invent email addresses, prices, trademark registrations, certification programs, legal approvals, or security contacts.
 
-## 8. Current task
+The owner reported that the GitHub repository remains private. Do not change repository visibility without explicit owner authorization.
 
-`GOODLAC-PUBLIC-001` remains active until the owner accepts the local diff and the authenticated GitHub rename/commit/push is completed.
+## 8. goodLAC Conformance
 
-After publication, update durable state in a separate bounded change rather than rewriting historical qualification evidence.
+goodLAC Conformance remains a separate project.
+
+Do not invent a repository URL or merge Conformance implementation into this core repository without explicit owner authorization.
+
+Technical conformance and brand endorsement/certification are separate.
+
+## 9. Governing product invariant
+
+**AI proposes. Deterministic software determines authorization and effects.**
+
+Model output is never owner authorization.
+
+Future changes must not silently grant permission-management authority, policy-mutation authority, exact-approval authority, or alternate ungoverned effect routes to the model.
+
+## 10. Handoff rule
+
+When the owner authorizes new work, establish a new bounded task with explicit scope, starting commit, acceptance criteria, rollback/recovery plan, and qualification requirements.
+
+Do not rewrite prior accepted roadmap evidence to make new work appear retroactive.
