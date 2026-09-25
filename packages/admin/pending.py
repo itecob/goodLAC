@@ -176,7 +176,10 @@ class PendingAdminRepository:
         resolution: str,
         resolved_by: str,
         resolved_at_utc: str,
+        force_new_revision: bool = False,
     ) -> PendingAdminResolution:
+        if not isinstance(force_new_revision, bool):
+            raise PendingAdminError("force_new_revision must be boolean")
         history = self.history(pending_id)
         normalized = PendingAdminResolution.create(
             pending_id=pending_id,
@@ -186,7 +189,7 @@ class PendingAdminRepository:
             resolved_by=resolved_by,
             resolved_at_utc=resolved_at_utc,
         )
-        if history:
+        if history and not force_new_revision:
             latest = history[-1]
             if (
                 latest.status == normalized.status

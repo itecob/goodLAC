@@ -25,6 +25,7 @@ ADMIN_OPERATIONS = frozenset(
         "permissions.show",
         "permissions.replace",
         "permissions.revoke",
+        "permissions.decide",
         "pending.list",
         "pending.show",
         "pending.resolve",

@@ -22,6 +22,11 @@ from packages.state.policy_decisions import PolicyDecisionRepository
 from packages.state.emergency_pause import EmergencyPauseRepository, EmergencyPauseStateError
 from packages.state.store import SQLiteStateStore, StateStoreError
 
+from .owner_permissions import (
+    OwnerPermissionDecisionConflict,
+    OwnerPermissionDecisionError,
+    OwnerPermissionDecisionService,
+)
 from .pending import PendingAdminError, PendingAdminRepository
 from .protocol import AdminRequest
 
@@ -159,6 +164,9 @@ class AdminService:
         self._policy_decisions = PolicyDecisionRepository(store)
         self._effect_requests = EffectRequestRepository(store)
         self._emergency = EmergencyPauseRepository(store)
+        self._owner_permissions = OwnerPermissionDecisionService(
+            store, owner_uid=self.owner_uid
+        )
 
         self._operations: dict[str, Callable[[dict[str, Any]], Any]] = {
             "skills.list": self._skills_list,
@@ -168,6 +176,7 @@ class AdminService:
             "permissions.show": self._permissions_show,
             "permissions.replace": self._permissions_replace,
             "permissions.revoke": self._permissions_revoke,
+            "permissions.decide": self._permissions_decide,
             "pending.list": self._pending_list,
             "pending.show": self._pending_show,
             "pending.resolve": self._pending_resolve,
@@ -272,6 +281,23 @@ class AdminService:
         else:
             raise AdminBadRequest("kind must be RULE or DEFAULT")
         return _snapshot_material(self._policy.replace_admin(rules=rules, defaults=defaults))
+
+    def _permissions_decide(self, arguments: dict[str, Any]) -> Any:
+        args = _exact_arguments(
+            arguments,
+            required={"continuation_id", "pending_id", "choice", "scope"},
+        )
+        try:
+            return self._owner_permissions.decide(
+                continuation_id=_required_text(args["continuation_id"], "continuation_id"),
+                pending_id=_required_text(args["pending_id"], "pending_id"),
+                choice=_required_text(args["choice"], "choice", maximum=32),
+                scope=_required_text(args["scope"], "scope", maximum=32),
+            )
+        except OwnerPermissionDecisionConflict as exc:
+            raise AdminConflict(str(exc)) from exc
+        except OwnerPermissionDecisionError as exc:
+            raise AdminBadRequest(str(exc)) from exc
 
     def _pending_records(self) -> list[dict[str, Any]]:
         result: list[dict[str, Any]] = []

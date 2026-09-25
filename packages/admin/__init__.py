@@ -1,5 +1,13 @@
 """Isolated owner-only Local Agent Controller administration surface."""
 
+from .owner_permissions import (
+    OWNER_PERMISSION_CHOICES,
+    OWNER_PERMISSION_DECISION_SCHEMA,
+    OWNER_PERMISSION_SCOPES,
+    OwnerPermissionDecisionConflict,
+    OwnerPermissionDecisionError,
+    OwnerPermissionDecisionService,
+)
 from .pending import (
     PENDING_ADMIN_RESOLUTION_SCHEMA,
     PendingAdminError,
@@ -33,6 +41,12 @@ from .transport import (
 )
 
 __all__ = [
+    "OWNER_PERMISSION_CHOICES",
+    "OWNER_PERMISSION_DECISION_SCHEMA",
+    "OWNER_PERMISSION_SCOPES",
+    "OwnerPermissionDecisionConflict",
+    "OwnerPermissionDecisionError",
+    "OwnerPermissionDecisionService",
     "PENDING_ADMIN_RESOLUTION_SCHEMA",
     "PendingAdminError",
     "PendingAdminRepository",

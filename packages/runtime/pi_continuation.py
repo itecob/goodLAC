@@ -346,7 +346,18 @@ class PiWorkflowContinuationStore:
                 "approval-pending continuation lacks exact decision identity"
             )
         if value["state"] == "CLOSED_NONAUTH":
-            if (
+            direct_owner_deny = value["outcome"] == "OWNER_DENY_ONCE"
+            if direct_owner_deny:
+                if (
+                    value["resolution_revision"] is not None
+                    or value["resolution_status"] is not None
+                    or value["resolution"] is not None
+                    or value["completed_at_utc"] is None
+                ):
+                    raise PiWorkflowContinuationIntegrityError(
+                        "direct owner denial cannot fabricate pending-resolution authority"
+                    )
+            elif (
                 value["resolution_revision"] is None
                 or value["resolution_status"] not in {"RESOLVED", "DISMISSED"}
                 or value["resolution"] not in _NONAUTHORIZING_RESOLUTIONS
@@ -568,7 +579,11 @@ class PiWorkflowContinuationStore:
         )
 
     def _status_from_record(self, record: Mapping[str, Any]) -> dict[str, Any]:
-        resolution = self._read_owner_resolution(
+        direct_owner_deny = (
+            record["state"] == "CLOSED_NONAUTH"
+            and record["outcome"] == "OWNER_DENY_ONCE"
+        )
+        resolution = None if direct_owner_deny else self._read_owner_resolution(
             record["pending_id"],
             after_revision=record["resolution_baseline_revision"],
         )
@@ -718,6 +733,71 @@ class PiWorkflowContinuationStore:
 
     def status(self, continuation_id: str) -> dict[str, Any]:
         return self._status_from_record(self._record_by_id(continuation_id))
+
+    def owner_decision_binding(self, continuation_id: str) -> dict[str, Any]:
+        record = self._record_by_id(continuation_id)
+        state = "EXPIRED" if self._expired_wait(record) else record["state"]
+        return {
+            "continuation_id": record["continuation_id"],
+            "original_request_id": record["original_request_id"],
+            "pending_id": record["pending_id"],
+            "run_id": record["run_id"],
+            "action": record["action"],
+            "resource": record["resource"],
+            "state": state,
+            "resolution_baseline_revision": record["resolution_baseline_revision"],
+        }
+
+    def owner_deny_once(
+        self,
+        continuation_id: str,
+        *,
+        expected_pending_id: str,
+        expected_resolution_baseline_revision: int,
+    ) -> dict[str, Any]:
+        continuation_id = _required_text(continuation_id, "continuation_id")
+        expected_pending_id = _required_text(expected_pending_id, "expected_pending_id")
+        if (
+            isinstance(expected_resolution_baseline_revision, bool)
+            or not isinstance(expected_resolution_baseline_revision, int)
+            or expected_resolution_baseline_revision < 0
+        ):
+            raise PiWorkflowContinuationError(
+                "expected resolution baseline revision is invalid"
+            )
+        with self._store.transaction() as conn:
+            queue = self._load_queue_in_transaction(conn)
+            index = self._find_index(queue, continuation_id)
+            if index is None:
+                raise PiWorkflowContinuationError("workflow continuation was not found")
+            record = dict(queue["records"][index])
+            if record["state"] != "WAITING_PERMISSION":
+                raise PiWorkflowContinuationError(
+                    "workflow continuation is no longer waiting for permission"
+                )
+            if self._expired_wait(record):
+                raise PiWorkflowContinuationError("workflow continuation has expired")
+            if record["pending_id"] != expected_pending_id:
+                raise PiWorkflowContinuationError(
+                    "owner denial pending identity does not bind continuation"
+                )
+            if record["resolution_baseline_revision"] != expected_resolution_baseline_revision:
+                raise PiWorkflowContinuationError(
+                    "owner denial resolution baseline does not bind continuation"
+                )
+            if self._read_owner_resolution(
+                record["pending_id"],
+                after_revision=record["resolution_baseline_revision"],
+            ) is not None:
+                raise PiWorkflowContinuationError(
+                    "newer owner pending resolution exists; direct denial is stale"
+                )
+            record["state"] = "CLOSED_NONAUTH"
+            record["completed_at_utc"] = _utc(self._clock())
+            record["outcome"] = "OWNER_DENY_ONCE"
+            queue["records"][index] = record
+            self._write_queue_in_transaction(conn, queue)
+        return self._status_from_record(record)
 
     def list_status(self, *, recoverable_only: bool = False) -> list[dict[str, Any]]:
         result: list[dict[str, Any]] = []

@@ -129,3 +129,9 @@ Active v1 sequence:
 `LAC-PI001 -> LAC-PI002 -> LAC-PI002-D001 -> LAC-PI003 -> phase-boundary independent review -> LAC-V001 productization`.
 
 No additional harness integration, external-product implementation, generic compatibility-protocol facade, or additional model-provider expansion is part of the active v1 roadmap unless the owner explicitly amends it.
+
+## Post-v1 owner permission decision contract
+
+The post-v1 roadmap adds a bounded owner permission-decision operation over the existing administration boundary. The model-facing runtime does not receive this operation. The operation binds an exact workflow continuation to its exact pending-permission identity and derives the standing-policy scope from durable controller-known metadata. `ALLOW_ONCE` and `ASK_EVERY_TIME` install `REQUIRE_APPROVAL`; exact approval remains bound to the fresh canonical request and is still re-evaluated before dispatch. `DENY_ONCE` is represented as an exact non-authorizing continuation closure rather than an aggregated pending-item resolution, so one owner denial cannot accidentally close another equivalent blocked request.
+
+R1 supports only the exact trusted resource selector scope. R2 must make that selector/project identity session-project-aware before the TUI exposes `Always` choices as project-scoped UX. The accepted rc.11 authority, approval, emergency, continuation, sandbox, idempotency and fail-closed invariants remain unchanged.

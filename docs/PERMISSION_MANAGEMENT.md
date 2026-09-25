@@ -218,3 +218,11 @@ Phase 4 independent review
 ```
 
 No Chief of Staff implementation begins inside the LAC repository.
+
+## Post-v1 ordinary owner-choice contract
+
+The low-level full-snapshot `permissions.replace` operation remains an administrator primitive. The post-v1 product path adds an owner-authenticated bounded operation for an exact waiting workflow continuation and exact pending-permission item. Its choices are `ALLOW_ONCE`, `ALWAYS_ALLOW`, `ASK_EVERY_TIME`, `DENY_ONCE`, and `ALWAYS_DENY`; its R1 scope is the exact controller-known resource selector. The caller cannot supply arbitrary action/resource/application/skill scope material.
+
+`ALLOW_ONCE` creates `REQUIRE_APPROVAL` standing state, advances the pending configuration disposition, resumes through D001 as one fresh request, and requires an exact one-time approval for that fresh request. `ASK_EVERY_TIME` uses the same standing state but requires an explicit exact decision for the current request and every later match. `ALWAYS_ALLOW` and `ALWAYS_DENY` create scoped standing rules. `DENY_ONCE` mutates no standing policy and closes only the bound continuation non-authoritatively.
+
+The original first-use request remains terminally denied. A bounded owner choice is administration, not dispatch authority; all fresh requests still traverse capability validation, current standing policy, exact approval where required, emergency pause, lease/idempotency and adapter checks.

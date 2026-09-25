@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+umask 077
+ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+export PYTHONDONTWRITEBYTECODE=1
+
+RUN_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/goodlac-post-v1-r1.XXXXXX")"
+cleanup() {
+  rm -rf -- "$RUN_ROOT"
+}
+trap cleanup EXIT INT TERM
+
+python3 -m unittest -v \
+  tests.acceptance.test_post_v1_r1_owner_permission_decision \
+  tests.integration.test_admin_service \
+  tests.acceptance.test_pi_v1_workflow_continuation
+
+export LAC_PI006_RUN_ROOT="$RUN_ROOT/pi006-regression"
+mkdir -p "$LAC_PI006_RUN_ROOT"
+scripts/test-pi006
+
+echo "GOODLAC_POST_V1_R1_OWNER_PERMISSION_DECISION=PASS"
