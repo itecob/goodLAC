@@ -1,55 +1,41 @@
-# ACTIVE TASK — NONE
+# ACTIVE TASK — POSTV1-R2 PROJECT-ROOT / SESSION WORKSPACE
 
-## Status
+## Task ID
+`POSTV1-R2-PROJECT-ROOT-SESSION-WORKSPACE`
 
-`CLOSED`
+## Mode
+`IMPLEMENTATION_SEGMENT`
 
-There is no active implementation, remediation, productization, branding, or governance task.
+## Historical accepted authority/runtime baseline
+- accepted release: `1.0.0-rc.11`
+- prior Phase 7 review: `PASS`
+- prior authority/runtime roadmap: `CLOSED`
 
-## Last completed bounded task
+Do not rewrite the prior acceptance evidence. This is a new post-v1 roadmap.
 
-`GOODLAC-PUBLIC-001` — goodLAC public repository identity/governance transition.
+## Completed repository/governance predecessor
+- task: `GOODLAC-PUBLIC-001`
+- repository: `itecob/goodLAC`
+- publication commit: `b1b70454aa4576c4463c934fdada3d51024c6c98`
+- closeout/start commit: `ce20f345a7de5342b33267387d436739af82e6e1`
+- runtime/authority implementation changed by public transition: `false`
+- operative project LICENSE activated: `false`
+- `LICENSE-DRAFT.md` and `CLA-DRAFT.md`: remain legal-review drafts
 
-Published repository transition commit:
+Do not reopen, erase, roll back, or rewrite the completed public-repository transition or its evidence.
 
-`b1b70454aa4576c4463c934fdada3d51024c6c98`
+## R1 predecessor
+- R1 implementation commit: `5c598120a182ed88d235cffec326532c90f564c4`
+- owner execution evidence: `qualification/evidence/post_v1_r1_owner_permission_decision_owner_execution.json`
+- result: `PASS`
 
-Repository:
+## Active implementation scope
+Make ordinary installed governed `pi` bind the canonical launch CWD as an immutable session workspace by default. Preserve an explicit fixed-workspace mode only where justified. Introduce trusted project identity into permission/resource scope so a standing permission made in Project A does not silently authorize Project B. Preserve all rc.11 sandbox/path/symlink/resource-discovery invariants and the R1 owner-decision contract.
 
-`itecob/goodLAC`
+Do not implement the Pi TUI permission dialog in this segment; that is R3 after project scope is deterministic and tested.
 
-The public product brand is **goodLAC**. **Local Agent Controller (LAC)** remains the established technical description and compatibility namespace.
+## Target release train
+`1.0.0-rc.12` — not accepted until R5 integrated owner UAT and R6 fresh independent review PASS.
 
-## Accepted authority/runtime baseline
-
-The last independently accepted authority/runtime release remains:
-
-- release: `1.0.0-rc.11`
-- Phase 7 review candidate: `818ec607e55f73ef93864ec5a86a793a062262ff`
-- Phase 7 implementation commit: `8d2ecfa3a839879302729ac2cb6a07bd28b0f79f`
-- Phase 7 review result: PASS
-
-`GOODLAC-PUBLIC-001` did not change runtime/authority implementation and did not create a new security qualification.
-
-## Licensing/governance status
-
-No operative goodLAC project license has been activated.
-
-`LICENSE-DRAFT.md` remains a legal-review draft and does not itself grant permission.
-
-`CLA-DRAFT.md` remains a legal-review draft and is not an active contributor agreement.
-
-Outstanding owner/legal actions are not active roadmap tasks:
-
-1. legal review of `LICENSE-DRAFT.md`;
-2. legal review of `CLA-DRAFT.md`;
-3. add an approved commercial-licensing contact channel; and
-4. configure or confirm a private vulnerability-reporting channel.
-
-Repository visibility is outside this closeout. The owner reported that publication left the GitHub repository private.
-
-## Future work
-
-Future implementation, authority/security changes, protocol or compatibility migrations, license activation, CLA activation, repository-visibility changes, or new productization work require a new explicit owner authorization and a newly bounded task/roadmap segment.
-
-Historical accepted evidence must remain intact.
+## Blockers
+None recorded.

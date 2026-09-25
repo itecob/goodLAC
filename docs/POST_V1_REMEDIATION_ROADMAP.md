@@ -35,7 +35,7 @@ R1 is deliberately resource-selector scoped rather than hard-coding the current 
 
 ### R1 — Owner permission-decision contract
 
-Status: `IN_PROGRESS` until owner package execution records PASS.
+Status: `COMPLETE` — owner package execution and retained regression gate PASS.
 
 Define deterministic owner choices over a blocked first-use continuation and canonical pending permission record. The operation accepts only an exact continuation identity, exact pending identity, an enumerated choice, and an enumerated scope. It derives action/resource/application/skill/principal/agent scope from controller-known durable state rather than owner- or model-supplied strings.
 

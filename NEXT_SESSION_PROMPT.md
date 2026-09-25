@@ -1,127 +1,98 @@
-# NEXT SESSION PROMPT — goodLAC CLOSED HANDOFF
+# NEXT SESSION PROMPT — goodLAC / POST-V1 R2 PROJECT-ROOT SESSION WORKSPACE
 
-## 1. Current project identity
+## 1. Role and controlling rule
 
-The public product brand is **goodLAC**.
+You are the next Lead Implementation Engineer for owner-authorized post-v1 remediation of **goodLAC** (repository historically named Local Agent Controller / LAC).
 
-A correct public description is:
+`MODE=IMPLEMENTATION_SEGMENT`
+`SESSION_SEGMENT=POSTV1-R2-PROJECT-ROOT-SESSION-WORKSPACE`
+`REPOSITORY=itecob/goodLAC`
+`PUBLIC_REPOSITORY_TRANSITION_CLOSEOUT=ce20f345a7de5342b33267387d436739af82e6e1`
+`NO_OPERATIVE_PROJECT_LICENSE=true`
 
-> goodLAC is a source-available Local Agent Controller developed by ITECOB Inc.
+> **AI proposes. Deterministic software determines authorization and effects.**
 
-**Local Agent Controller (LAC)** remains the underlying technical description and compatibility namespace.
+Use the connected read-only Web-File-Tool. The authorized local root label may remain `Local Agent Controller`; that label is not the public product name. Any mutation must be delivered as one owner-executable package and one self-contained Bash command.
 
-Do not mechanically rename established technical identifiers merely because they contain `LAC`, `lac`, or `local-agent-controller`.
+## 2. Mandatory durable reads
 
-## 2. Durable state
-
-Read first:
+Read first, in order:
 
 1. `PROJECT_STATE.json`
 2. `tasks/ACTIVE_TASK.md`
 3. `README.md`
 4. `BRAND.md`
 5. `SECURITY.md`
-6. `COMMERCIAL-LICENSING.md`
-7. `LICENSE-DRAFT.md`
-8. `CONTRIBUTING.md`
-9. `CLA-DRAFT.md`
-10. `docs/ARCHITECTURE.md`
+6. `LICENSE-DRAFT.md`
+7. `CLA-DRAFT.md`
+8. `docs/ARCHITECTURE.md`
+9. `UPSTREAM_LOCK.json`
+10. `docs/POST_V1_REMEDIATION_ROADMAP.md`
+11. `qualification/evidence/post_v1_r1_owner_permission_decision_owner_execution.json`
+12. `qualification/evidence/goodlac_public_transition_closeout.json`
 
-Then read only what is necessary for the owner's current request.
+Then inspect only the source/tests needed for R2.
 
-## 3. Roadmap/task state
+## 3. Handoff facts
 
-There is **no active task**.
+- `PREDECESSOR_ROLE=Lead Implementation Engineer`
+- `PREDECESSOR_RESULT=PASS`
+- `PREDECESSOR_GIT_COMMIT=5c598120a182ed88d235cffec326532c90f564c4`
+- `HANDOFF_BASE_GIT_COMMIT=5c598120a182ed88d235cffec326532c90f564c4`
+- `ACCEPTED_HISTORICAL_RELEASE=1.0.0-rc.11`
+- `TARGET_RELEASE_TRAIN=1.0.0-rc.12`
+- `OWNER_EXECUTION_EVIDENCE=qualification/evidence/post_v1_r1_owner_permission_decision_owner_execution.json`
+- `EXPECTED_NEXT_TASK=POSTV1-R2-PROJECT-ROOT-SESSION-WORKSPACE`
+- `SESSION_SEGMENT=POSTV1-R2-PROJECT-ROOT-SESSION-WORKSPACE`
+- `PUBLICATION_COMMIT=b1b70454aa4576c4463c934fdada3d51024c6c98`
+- `PUBLIC_REPOSITORY_TRANSITION_CLOSEOUT=ce20f345a7de5342b33267387d436739af82e6e1`
 
-The prior authority/runtime roadmap remains historically closed.
+The live HEAD should be exactly one workflow/evidence/state transition commit after `5c598120a182ed88d235cffec326532c90f564c4`. Verify that parent/HEAD delta before relying on this handoff. Any unexpected material delta is a blocker.
 
-The bounded public-repository transition `GOODLAC-PUBLIC-001` is complete and closed. Its published transition commit is:
+## 4. Historical and repository-governance boundary
 
-`b1b70454aa4576c4463c934fdada3d51024c6c98`
+The rc.11 Phase 7 independent review remains accepted historical evidence. Do not reopen or rewrite it. R1-R6 are a new owner-authorized post-v1 roadmap created from real product-use findings.
 
-The GitHub repository is:
+`GOODLAC-PUBLIC-001` was completed before this roadmap started. It changed public identity/governance documentation only and did not change authority/runtime implementation. Preserve the repository identity `itecob/goodLAC`, its publication/closeout evidence, the goodLAC capitalization rules, and the compatibility-namespace freeze. Do not create an operative `LICENSE`, activate `LICENSE-DRAFT.md`, activate `CLA-DRAFT.md`, change repository visibility, or alter commercial/security contact claims as part of R2.
 
-`itecob/goodLAC`
+## 5. R1 facts to preserve
 
-The local canonical `origin` is expected to target:
+R1 added an owner-only bounded permission-decision contract. `permissions.decide` is on the isolated admin surface only; the model-facing runtime did not gain a permission tool. Scope is derived from controller-known durable pending/request metadata. `ALLOW_ONCE` and `ASK_EVERY_TIME` establish `REQUIRE_APPROVAL`; the former is intended for host orchestration to approve only the resulting fresh exact canonical request. `DENY_ONCE` closes exactly one continuation non-authoritatively and does not mutate standing policy or the aggregated pending resolution.
 
-`https://github.com/itecob/goodLAC.git`
+Do not expose these admin operations to the governed Pi sandbox.
 
-Future project work requires new explicit owner authorization. Do not silently reopen `GOODLAC-PUBLIC-001` or rewrite its evidence.
+## 6. R2 binding requirements
 
-## 4. Accepted technical baseline
+Normal installed behavior must become:
 
-The last independently accepted authority/runtime release remains:
+```bash
+cd /their/project
+pi
+```
 
-- release: `1.0.0-rc.11`
-- Phase 7 review candidate: `818ec607e55f73ef93864ec5a86a793a062262ff`
-- Phase 7 implementation commit: `8d2ecfa3a839879302729ac2cb6a07bd28b0f79f`
-- Phase 7 review acceptance commit: `f8b975b7ea1850b382d702eefa4fcec4119f05b1`
-- Phase 7 result: PASS
+The canonical launch CWD should become the immutable governed project root for that session by default. Do not mutate persistent global workspace configuration merely because Pi was launched elsewhere. Determine and document safe precedence for explicit launch override, any retained fixed-workspace mode, then launch CWD.
 
-The goodLAC public identity/governance transition did not change authority/runtime code and does not constitute a new security qualification.
+The selected root must be canonical, existing, a directory, controller/host-selected before model effects, immutable for the session, and the sole project mount at `/workspace`. Preserve no-parent-traversal, no-symlink-escape, no host-filesystem exposure, and disabled project-local Pi extensions/skills/prompts/themes/context/session resources. Dangerous bypass remains only the accepted explicit dangerous flag.
 
-## 5. Compatibility namespace freeze
+Most importantly, make project identity participate in trusted permission scope before R3. A standing `Always allow` chosen in Project A must not silently authorize Project B. Do not derive project identity from arbitrary model strings. Reuse or extend the capability/resource contract deterministically and document migration/compatibility effects.
 
-Unless a separately authorized migration says otherwise, preserve established technical/compatibility identifiers, including:
+## 7. Required R2 adversarial coverage
 
-- `lac.*` schemas/protocol identifiers;
-- `LAC_*` environment variables;
-- `lacctl`, `lac-pi`, and related commands;
-- model-facing tools such as `lac_fs_read`, `lac_fs_create`, `lac_fs_replace`, and `lac_shell_exec`;
-- `/lac-*` owner commands;
-- capability/application/skill identifiers;
-- state, request, receipt, approval, continuation, and audit identities;
-- socket/protocol identities; and
-- existing `local-agent-controller` state/configuration/cache/install paths.
+At minimum prove:
 
-Historical qualification evidence, hashes, review artifacts, and provenance may retain the historical project name and technical LAC terminology.
+- launch CWD is canonical session workspace by default;
+- two sessions launched from different projects remain isolated;
+- model output cannot replace project identity/root;
+- Project A standing permission cannot authorize Project B under the displayed scope;
+- `../`, absolute path tricks and symlink escapes still fail;
+- project-local extension/resource discovery remains disabled;
+- admin socket and host filesystem remain unavailable in the sandbox;
+- existing R1 permission decisions continue to function with project-aware scope;
+- emergency pause, exact approval re-evaluation, one-shot continuation, idempotency and duplicate prevention remain intact;
+- explicit dangerous bypass remains unchanged and ungoverned only by the accepted flag.
 
-## 6. Licensing status
+## 8. Stop gate
 
-There is currently **no operative goodLAC project license**.
+Complete only R2 in this segment. Do not implement R3 TUI owner dialogs until R2 is owner-qualified and the project-aware scope contract is durable.
 
-`LICENSE-DRAFT.md` is explicitly:
-
-**DRAFT — LEGAL REVIEW REQUIRED BEFORE PUBLIC RELEASE**
-
-It must not be renamed or promoted to `LICENSE` until legal review is complete and the owner explicitly authorizes activation.
-
-`CLA-DRAFT.md` is also not active. Do not require contributor acceptance or enable a CLA bot against the draft.
-
-Do not represent intended licensing permissions/restrictions as operative before activation.
-
-## 7. Remaining owner/legal actions
-
-These are open owner/legal matters, not active implementation tasks:
-
-- legal review of the Community License draft;
-- legal review of the CLA draft;
-- add an approved commercial-licensing contact channel; and
-- configure or confirm a private vulnerability-reporting channel.
-
-Do not invent email addresses, prices, trademark registrations, certification programs, legal approvals, or security contacts.
-
-The owner reported that the GitHub repository remains private. Do not change repository visibility without explicit owner authorization.
-
-## 8. goodLAC Conformance
-
-goodLAC Conformance remains a separate project.
-
-Do not invent a repository URL or merge Conformance implementation into this core repository without explicit owner authorization.
-
-Technical conformance and brand endorsement/certification are separate.
-
-## 9. Governing product invariant
-
-**AI proposes. Deterministic software determines authorization and effects.**
-
-Model output is never owner authorization.
-
-Future changes must not silently grant permission-management authority, policy-mutation authority, exact-approval authority, or alternate ungoverned effect routes to the model.
-
-## 10. Handoff rule
-
-When the owner authorizes new work, establish a new bounded task with explicit scope, starting commit, acceptance criteria, rollback/recovery plan, and qualification requirements.
-
-Do not rewrite prior accepted roadmap evidence to make new work appear retroactive.
+Leave a precise successor prompt and recoverable owner package state.

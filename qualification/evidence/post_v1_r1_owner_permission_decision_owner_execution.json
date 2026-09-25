@@ -1,0 +1,49 @@
+{
+  "accepted_baseline_release": "1.0.0-rc.11",
+  "implementation_commit": "5c598120a182ed88d235cffec326532c90f564c4",
+  "next_task": "POSTV1-R2-PROJECT-ROOT-SESSION-WORKSPACE",
+  "package_version": "0.1.3",
+  "preinstall_head": "ce20f345a7de5342b33267387d436739af82e6e1",
+  "preserved_public_repository_transition": {
+    "cla_draft_status": "DRAFT_LEGAL_REVIEW_REQUIRED",
+    "closeout_commit": "ce20f345a7de5342b33267387d436739af82e6e1",
+    "license_draft_status": "DRAFT_LEGAL_REVIEW_REQUIRED",
+    "operative_license_changed": false,
+    "pre_transition_head": "4a88bbf3aa1606d7e70bf618e5421dc46f9c08f9",
+    "publication_commit": "b1b70454aa4576c4463c934fdada3d51024c6c98",
+    "repository": "itecob/goodLAC",
+    "runtime_or_authority_code_changed": false,
+    "task": "GOODLAC-PUBLIC-001",
+    "task_status": "COMPLETE"
+  },
+  "recorded_at_utc": "2026-09-25T15:16:12.365852Z",
+  "result": "PASS",
+  "schema": "goodlac.post-v1-r1-owner-execution/v1",
+  "security_claims": {
+    "allow_once_uses_require_approval_plus_exact_once_approval": true,
+    "deny_once_closes_only_exact_continuation": true,
+    "model_tool_surface_changed": false,
+    "original_first_use_request_remains_terminally_denied": true,
+    "owner_decision_operation_is_admin_surface_only": true,
+    "pinned_pi_ui_api_verified": {
+      "commit": "da840b6216578c2a571d0374ac6a2091a83f9d91",
+      "extension_ui_methods": [
+        "select",
+        "confirm"
+      ],
+      "trusted_extension_is_owner_input_tcb": true,
+      "version": "0.85.1"
+    },
+    "policy_scope_source": "controller-known pending/canonical request metadata",
+    "project_identity_deferred_to_r2": true,
+    "r1_scope": "exact trusted resource selector"
+  },
+  "segment": "POSTV1-R1-OWNER-PERMISSION-DECISION-CONTRACT",
+  "target_release_train": "1.0.0-rc.12",
+  "tests": {
+    "command": "scripts/test-post-v1-r1",
+    "exit_code": 0,
+    "output_bytes": 159007,
+    "output_sha256": "6fdbdd4bac51a95eebf1ed59061b12f1eedea20c35692c48148732590ca8772d"
+  }
+}
