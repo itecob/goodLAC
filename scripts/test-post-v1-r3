@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+umask 077
+ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+export PYTHONDONTWRITEBYTECODE=1
+RUN_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/goodlac-post-v1-r3.XXXXXX")"
+trap 'rm -rf -- "$RUN_ROOT"' EXIT INT TERM
+
+python3 -m unittest -v tests.acceptance.test_post_v1_r3_pi_tui_owner_permission_gate
+PYTHONPYCACHEPREFIX="$RUN_ROOT/pycache" python3 -m py_compile \
+  packages/adapters/pi/tui_owner_gate.py \
+  scripts/pi_native_tui_host.py \
+  tests/acceptance/test_post_v1_r3_pi_tui_owner_permission_gate.py
+node --check scripts/pi_native_tui.mjs
+node --check packages/adapters/pi/governed_pi.mjs
+bash -n scripts/test-post-v1-r3
+
+export LAC_PI006_RUN_ROOT="$RUN_ROOT/pi006"
+export LAC_PI005_RUN_ROOT="$RUN_ROOT/pi005"
+scripts/test-post-v1-r2
+git diff --check
+echo "GOODLAC_POST_V1_R3_PI_TUI_OWNER_PERMISSION_GATE=PASS"

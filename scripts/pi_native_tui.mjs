@@ -53,6 +53,96 @@ async function rpc(kind, payload) {
   return response.payload;
 }
 
+
+const OWNER_PERMISSION_OPTIONS = Object.freeze([
+  ["Allow once", "ALLOW_ONCE"],
+  ["Always allow", "ALWAYS_ALLOW"],
+  ["Ask every time", "ASK_EVERY_TIME"],
+  ["Deny once", "DENY_ONCE"],
+  ["Always deny", "ALWAYS_DENY"],
+]);
+const OWNER_PERMISSION_LABELS = Object.freeze(OWNER_PERMISSION_OPTIONS.map(([label]) => label));
+const OWNER_PERMISSION_VALUES = new Map(OWNER_PERMISSION_OPTIONS);
+
+function ownerGateTimeout(gate) {
+  const raw = Number(gate?.timeout_ms ?? 300000);
+  if (!Number.isFinite(raw)) return 300000;
+  return Math.max(1000, Math.min(300000, Math.trunc(raw)));
+}
+
+function trustedProjectLine(gate) {
+  const project = gate && typeof gate.project === "object" ? gate.project : null;
+  const path = project && typeof project.path === "string" ? project.path : "";
+  const application = project && typeof project.application_id === "string" ? project.application_id : "";
+  if (!path || !application) throw new Error("LAC owner gate lacks trusted project scope");
+  return { path, application };
+}
+
+async function bestEffortRpc(kind, payload) {
+  try { return await rpc(kind, payload); } catch { return null; }
+}
+
+function resultSummary(result) {
+  const receipt=result?.receipt && typeof result.receipt==="object" ? result.receipt.receipt_id : "-";
+  return `authority=${String(result?.authority_outcome || "?")} state=${String(result?.execution_state || "?")} request=${String(result?.request_id || "-")} receipt=${String(receipt || "-")}`;
+}
+
+async function resolveOwnerGate(response, ctx, signal) {
+  let current=response;
+  for (let step=0; step<4; step++) {
+    if(!current || current.ok!==true) throw new Error(`LAC owner gate failed closed (${String(current?.error_type || "unknown")})`);
+    if(current.result && typeof current.result==="object") return current.result;
+    const gate=current.owner_gate;
+    if(!gate || typeof gate!=="object") throw new Error("LAC owner gate response is malformed");
+    if(!ctx || ctx.hasUI!==true || ctx.mode!=="tui") throw new Error("LAC owner decision requires the trusted interactive Pi TUI");
+    const project=trustedProjectLine(gate);
+    const timeout=ownerGateTimeout(gate);
+    const action=String(gate.action || "?");
+    const resource=String(gate.resource || "?");
+
+    if(gate.kind==="PERMISSION_DECISION") {
+      let selected;
+      try {
+        selected=await ctx.ui.select(
+          `goodLAC permission — ${project.path}\nAction: ${action}\nScope: ${resource}`,
+          [...OWNER_PERMISSION_LABELS],
+          { signal, timeout },
+        );
+      } catch(error) {
+        await bestEffortRpc("permission_cancel",{challenge_id:String(gate.challenge_id || "")});
+        throw error;
+      }
+      if(selected===undefined) {
+        current=await rpc("permission_cancel",{challenge_id:String(gate.challenge_id || "")});
+        continue;
+      }
+      const choice=OWNER_PERMISSION_VALUES.get(selected);
+      if(!choice) throw new Error("LAC owner permission selection is not recognized");
+      current=await rpc("permission_decide",{challenge_id:String(gate.challenge_id || ""),choice});
+      continue;
+    }
+
+    if(gate.kind==="EXACT_APPROVAL") {
+      let approved=false;
+      try {
+        approved=await ctx.ui.confirm(
+          "goodLAC exact approval",
+          `Project: ${project.path}\nAction: ${action}\nScope: ${resource}\n\nAllow this exact request once?\n\nApproval alone does not dispatch.`,
+          { signal, timeout },
+        );
+      } catch(error) {
+        await bestEffortRpc("approval_decide",{challenge_id:String(gate.challenge_id || ""),approve:false});
+        throw error;
+      }
+      current=await rpc("approval_decide",{challenge_id:String(gate.challenge_id || ""),approve:approved===true});
+      continue;
+    }
+
+    throw new Error(`unknown LAC owner gate kind: ${String(gate.kind)}`);
+  }
+  throw new Error("LAC owner gate exceeded bounded transition count");
+}
+
 function cloneUsage() {
   return { input:0, output:0, cacheRead:0, cacheWrite:0, totalTokens:0,
     cost:{ input:0, output:0, cacheRead:0, cacheWrite:0, total:0 } };
@@ -175,10 +265,9 @@ export default async function lacGovernedPiExtension(pi) {
   await connected;
   const bootstrap=await nextMessage();
   if(!bootstrap || bootstrap.type!=="bootstrap" || !["interactive","probe"].includes(bootstrap.mode)) throw new Error("invalid PI005 bootstrap");
-  const executeLac=async ({toolCallId,toolName,arguments:toolArguments})=>{
+  const executeLac=async ({toolCallId,toolName,arguments:toolArguments,signal,context})=>{
     const response=await rpc("effect_request",{toolCallId,toolName,arguments:toolArguments});
-    if(!response || response.ok!==true) throw new Error(`LAC effect failed closed (${String(response?.error_type || "unknown")})`);
-    return response.result;
+    return await resolveOwnerGate(response,context,signal);
   };
   for(const tool of createGovernedLacTools({Type,executeLac})) pi.registerTool(tool);
   pi.registerProvider("lac-freetoken",{
@@ -212,18 +301,19 @@ export default async function lacGovernedPiExtension(pi) {
         if(!response || response.ok!==true){ ctx.ui.notify("LAC continuation resume failed closed; no effect was dispatched.","warning"); return; }
         const resume=response.resume;
         if(!resume || typeof resume!=="object") throw new Error("resume result is malformed");
+        let result=null;
         if(resume.kind==="WAITING_PERMISSION"){
-          ctx.ui.notify("Continuation remains blocked. Configure and resolve the owner permission item first; no effect was dispatched.","warning");
-          return;
+          const challenge=await rpc("permission_challenge",{continuation_id:continuationId});
+          result=await resolveOwnerGate(challenge,ctx,ctx.signal);
+        } else {
+          result=resume.result;
+          if(!result || typeof result!=="object") throw new Error("resume result lacks effect outcome");
+          if(result.authority_outcome==="REQUIRE_APPROVAL" && result.execution_state==="PENDING_APPROVAL"){
+            const challenge=await rpc("continuation_approval_challenge",{continuation_id:continuationId});
+            result=await resolveOwnerGate(challenge,ctx,ctx.signal);
+          }
         }
-        const result=resume.result;
-        if(!result || typeof result!=="object") throw new Error("resume result lacks effect outcome");
-        if(result.authority_outcome==="REQUIRE_APPROVAL" && result.execution_state==="PENDING_APPROVAL"){
-          ctx.ui.notify(`Exact owner approval required for decision ${String(result.decision_id || "-")}. Approve or reject through lac-owner, then run /lac-resume ${continuationId} again. Approval alone does not dispatch.`,"warning");
-          return;
-        }
-        const receipt=result.receipt && typeof result.receipt==="object" ? result.receipt.receipt_id : "-";
-        ctx.ui.notify(`LAC continuation completed: authority=${String(result.authority_outcome || "?")} state=${String(result.execution_state || "?")} request=${String(result.request_id || "-")} receipt=${String(receipt || "-")}`,"info");
+        ctx.ui.notify(`LAC continuation completed: ${resultSummary(result)}`,"info");
       } catch(error) {
         ctx.ui.notify(`LAC continuation resume failed closed: ${error instanceof Error?error.message:String(error)}`,"warning");
       }

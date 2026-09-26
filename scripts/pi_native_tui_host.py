@@ -25,6 +25,7 @@ if str(REPO_ROOT) not in sys.path:
 import scripts.a004_terminal as baseline
 import scripts.pi_v1_terminal as legacy
 from packages.adapters.pi.production import canonical_project_root, pi_v1_project_application_id
+from packages.adapters.pi.tui_owner_gate import PiTuiOwnerGate
 from packages.capabilities import PendingPermissionRepository
 from packages.policy import StandingPolicyRule
 from packages.sandbox import NetworkMode, SandboxMount, SandboxSpec, get_selected_backend
@@ -260,6 +261,71 @@ class AuthorityBroker(legacy.PiV1InteractiveSession):
         self.mode = mode
         self.model_request_count = 0
         self.effect_results: list[dict[str, Any]] = []
+        self.owner_gate = PiTuiOwnerGate(
+            state=self.state,
+            workspace=self.workspace,
+            session_id=self.run_id,
+            owner_uid=os.getuid(),
+            continuation_status=lambda continuation_id: legacy.bridge_continuation_status(
+                self.state, self.workspace, continuation_id
+            ),
+            continuation_resume=lambda continuation_id, expected_message: self._resume_once(
+                continuation_id, expected_message=expected_message
+            ),
+            retry_effect=lambda payload: legacy.bridge_json(
+                self.state, self.workspace, self.run_id, payload
+            ),
+            trace_result=lambda payload, result: self._trace_result(payload, result),
+        )
+
+    def close_owner_gate(self) -> None:
+        gate = getattr(self, "owner_gate", None)
+        if gate is not None:
+            gate.close()
+            self.owner_gate = None
+
+    def _permission_wait(self, payload, initial_result):
+        if self.mode == "probe":
+            return super()._permission_wait(payload, initial_result)
+        continuation = initial_result.get("workflow_continuation")
+        if not isinstance(continuation, Mapping):
+            fail("configuration-required effect lacks workflow continuation")
+        continuation_id = continuation.get("continuation_id")
+        pending_id = continuation.get("pending_id")
+        if not isinstance(continuation_id, str) or not continuation_id:
+            fail("workflow continuation lacks identity")
+        if not isinstance(pending_id, str) or not pending_id:
+            fail("workflow continuation lacks pending identity")
+        return self.owner_gate.permission_challenge(
+            continuation_id,
+            pending_id=pending_id,
+            expected_message=payload,
+        )
+
+    def _effect(self, payload):
+        if self.mode == "probe":
+            return super()._effect(payload)
+        if not isinstance(payload, Mapping):
+            fail("effect_request payload must be an object")
+        print(f"[tool] {baseline.tool_summary(payload)}", flush=True)
+        response = legacy.bridge_json(self.state, self.workspace, self.run_id, payload)
+        if response.get("ok") is not True:
+            return response
+        result = response.get("result")
+        if not isinstance(result, Mapping):
+            fail("effect result malformed")
+        result = dict(result)
+        print(legacy.effect_line(result), flush=True)
+        permission = result.get("permission_configuration")
+        if isinstance(permission, Mapping) and permission.get("required") is True:
+            return self._permission_wait(payload, result)
+        if (
+            result.get("authority_outcome") == "REQUIRE_APPROVAL"
+            and result.get("execution_state") == "PENDING_APPROVAL"
+        ):
+            return self.owner_gate.exact_approval_for_effect(result, payload)
+        self._trace_result(payload, result)
+        return response
 
     def handle_rpc(self, kind: object, payload: object) -> object:
         if kind == "model_request":
@@ -297,6 +363,26 @@ class AuthorityBroker(legacy.PiV1InteractiveSession):
             if not isinstance(response, Mapping):
                 fail("native Pi continuation-resume response is malformed")
             return dict(response)
+        if kind == "permission_challenge":
+            if not isinstance(payload, Mapping) or set(payload) != {"continuation_id"}:
+                fail("native Pi permission-challenge request is malformed")
+            return self.owner_gate.permission_challenge(payload["continuation_id"])
+        if kind == "permission_decide":
+            if not isinstance(payload, Mapping) or set(payload) != {"challenge_id", "choice"}:
+                fail("native Pi permission-decision request is malformed")
+            return self.owner_gate.permission_decide(payload["challenge_id"], payload["choice"])
+        if kind == "permission_cancel":
+            if not isinstance(payload, Mapping) or set(payload) != {"challenge_id"}:
+                fail("native Pi permission-cancel request is malformed")
+            return self.owner_gate.permission_cancel(payload["challenge_id"])
+        if kind == "continuation_approval_challenge":
+            if not isinstance(payload, Mapping) or set(payload) != {"continuation_id"}:
+                fail("native Pi continuation approval request is malformed")
+            return self.owner_gate.continuation_approval_challenge(payload["continuation_id"])
+        if kind == "approval_decide":
+            if not isinstance(payload, Mapping) or set(payload) != {"challenge_id", "approve"}:
+                fail("native Pi exact-approval request is malformed")
+            return self.owner_gate.approval_decide(payload["challenge_id"], payload["approve"])
         if kind == "effect_request":
             result = self._effect(payload)
             if isinstance(result, dict):
@@ -614,6 +700,7 @@ class BrokerProcess:
                 self.proc.wait(timeout=5)
             except subprocess.TimeoutExpired:
                 self.proc.kill(); self.proc.wait(timeout=5)
+        self.authority.close_owner_gate()
         for sock in (self.host_sock, self.broker_listener):
             if sock is not None:
                 try: sock.close()

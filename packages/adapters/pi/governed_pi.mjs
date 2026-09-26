@@ -115,7 +115,7 @@ export function createGovernedLacTools({ Type, executeLac }) {
     parameters: schemas[name],
     replay: name === "lac_fs_read" ? "safe" : "never",
     executionMode: "sequential",
-    async execute(toolCallId, params, signal) {
+    async execute(toolCallId, params, signal, _onUpdate, ctx) {
       validateToolArguments(name, params);
       if (signal?.aborted) throw new Error("Operation aborted");
       const payload = await executeLac({
@@ -123,6 +123,7 @@ export function createGovernedLacTools({ Type, executeLac }) {
         toolName: name,
         arguments: params,
         signal,
+        context: ctx,
       });
       return {
         content: [{ type: "text", text: toText(payload) }],
