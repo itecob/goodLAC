@@ -1,7 +1,7 @@
-# ACTIVE TASK — POSTV1-R3 PI TUI OWNER PERMISSION GATE
+# ACTIVE TASK — POSTV1-R4 INSTALLED TERMINAL FALLBACK AND UX CLEANUP
 
 ## Task ID
-`POSTV1-R3-PI-TUI-OWNER-PERMISSION-GATE`
+`POSTV1-R4-INSTALLED-TERMINAL-FALLBACK-UX-CLEANUP`
 
 ## Mode
 `IMPLEMENTATION_SEGMENT`
@@ -11,15 +11,16 @@
 - prior Phase 7 review: `PASS`
 - prior authority/runtime roadmap: `CLOSED`
 
-## R2 predecessor
-- implementation commit: `97c93d6386d689216cf166c1ba81d3ef4ee7011a`
+## R3 predecessor
+- implementation commit: `971148ca33083d4a8015d8c2692e8f49303582b2`
 - result: `PASS`
-- project-aware scope: controller-derived project-specific Pi application identity
-- ordinary workspace precedence: explicit governed `--workspace` -> configured `fixed` workspace -> canonical launch CWD
-- cross-project continuation recovery: fail-closed
+- owner gate: pinned Pi 0.85.1 trusted ExtensionUIContext select/confirm
+- authority: canonical goodLAC policy/approval state; no model permission tool
+- challenge boundary: bounded, opaque, session/project/exact-subject bound, expiring and one-use
+- project scope: controller-derived R2 project application identity
 
 ## Active implementation scope
-Implement the controller-owned owner permission decision gate inside the trusted pinned Pi TUI extension using the exact R1 choices and R2 project-aware scope. The model must receive no permission-management tool or owner-decision authority. General owner admin socket remains outside the sandbox. Use bounded opaque challenges with exact session/continuation/pending binding, expiry, one-use consumption, and fail-closed cancellation/disconnect/restart behavior.
+Implement only the installed terminal fallback and UX cleanup for the accepted R1 choices. Provide a concise installed owner command surface for ordinary permission decisions, retain low-level `lacctl permissions set --file` as an administrator/scripting primitive, and correct ordinary installed documentation. Reuse canonical R1 permission/approval semantics; do not create another authority path.
 
 ## Target release train
 `1.0.0-rc.12` — not accepted until R5 integrated owner UAT and R6 fresh independent review PASS.

@@ -57,6 +57,8 @@ Make ordinary installed governed Pi bind the canonical launch CWD as an immutabl
 
 ### R3 — Pi TUI owner permission gate
 
+Status: `COMPLETE` — owner package qualification and retained regression PASS at implementation commit `971148ca33083d4a8015d8c2692e8f49303582b2`.
+
 Feasibility was verified before R1 implementation against the exact accepted Pi pin `da840b6216578c2a571d0374ac6a2091a83f9d91` / Pi 0.85.1: `ExtensionUIContext` exposes blocking owner-facing `select()` and `confirm()` dialogs. Use those exact pinned APIs to render the permission gate from the explicit goodLAC extension. The trusted extension is therefore part of the owner-input capture TCB; do not claim the TUI is outside the authorization boundary. Canonical policy/approval truth remains in goodLAC. Add bounded opaque challenges with exact session/continuation/pending binding, expiry, one-use consumption, fail-closed cancellation/disconnect/restart behavior, and no model-facing permission tool. The general owner admin socket must remain outside the sandbox.
 
 ### R4 — Installed terminal fallback and UX cleanup
