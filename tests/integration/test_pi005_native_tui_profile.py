@@ -15,6 +15,12 @@ class Pi005NativeTuiProfileIntegrationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="lac-pi005-profile-") as raw:
             root = Path(raw)
             workspace = root / "workspace"
+            workspace.mkdir()
+            (workspace / ".pi" / "extensions").mkdir(parents=True)
+            (workspace / ".pi" / "extensions" / "must-not-load.mjs").write_text(
+                'throw new Error("PI005_PROJECT_EXTENSION_MUST_NOT_LOAD");\n', encoding="utf-8"
+            )
+            (workspace / "AGENTS.md").write_text("PI005_PROJECT_CONTEXT_MUST_NOT_LOAD\n", encoding="utf-8")
             state = root / "controller.db"
             trace = root / "effect-trace.jsonl"
             runtime_dir = root / "runtime"

@@ -5,7 +5,7 @@ from pathlib import Path
 REPO_ROOT=Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path: sys.path.insert(0,str(REPO_ROOT))
 from packages.admin import AdminRequest, AdminService, UnixAdminServer
-from packages.adapters.pi.production import PI_V1_CAPABILITY_MANIFEST
+from packages.adapters.pi.production import pi_v1_capability_manifest, pi_v1_project_application_id
 from packages.state import SQLiteStateStore
 _stop=False
 def _stop_now(_s,_f):
@@ -16,15 +16,17 @@ def _parent_alive(pid):
 def main():
     p=argparse.ArgumentParser()
     p.add_argument("--state",required=True,type=Path)
+    p.add_argument("--workspace",required=True,type=Path)
     p.add_argument("--parent-pid",required=True,type=int)
     a=p.parse_args()
     signal.signal(signal.SIGTERM,_stop_now); signal.signal(signal.SIGINT,_stop_now)
     store=SQLiteStateStore(a.state.expanduser().resolve(strict=True))
     service=AdminService(store,owner_uid=os.getuid())
+    application_id=pi_v1_project_application_id(a.workspace)
     bootstrap=AdminRequest.create(
-        request_id="admin:pi-v1:bootstrap-register",
+        request_id=f"admin:pi-v1:bootstrap-register:{application_id.rsplit('.',1)[-1]}",
         operation="skills.register",
-        arguments={"manifest":PI_V1_CAPABILITY_MANIFEST},
+        arguments={"manifest":pi_v1_capability_manifest(application_id)},
     )
     registration=service.execute(bootstrap,peer_uid=os.getuid())
     server=UnixAdminServer(service)

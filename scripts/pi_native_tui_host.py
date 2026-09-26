@@ -24,6 +24,7 @@ if str(REPO_ROOT) not in sys.path:
 
 import scripts.a004_terminal as baseline
 import scripts.pi_v1_terminal as legacy
+from packages.adapters.pi.production import canonical_project_root, pi_v1_project_application_id
 from packages.capabilities import PendingPermissionRepository
 from packages.policy import StandingPolicyRule
 from packages.sandbox import NetworkMode, SandboxMount, SandboxSpec, get_selected_backend
@@ -102,7 +103,7 @@ def verify_native_cli_entrypoint() -> tuple[Path, Path, Path]:
     fail("checkout-local tsx runtime required for pinned Pi source CLI is unavailable")
 
 
-def _stage_runtime(rootfs: Path, agent_state: Path) -> tuple[Path, tuple[SandboxMount, ...]]:
+def _stage_runtime(rootfs: Path, agent_state: Path, workspace: Path) -> tuple[Path, tuple[SandboxMount, ...]]:
     for rel in ("proc", "dev", "tmp", "lac", "lac/agent", "pi", "nonexistent", "workspace"):
         (rootfs / rel).mkdir(parents=True, exist_ok=True)
     agent_state.mkdir(mode=0o700, parents=True, exist_ok=False)
@@ -132,6 +133,7 @@ def _stage_runtime(rootfs: Path, agent_state: Path) -> tuple[Path, tuple[Sandbox
     (rootfs / "lac" / "governed_pi.mjs").touch()
     return node, (
         SandboxMount(source=baseline.PI_CHECKOUT, target=PurePosixPath("/pi"), writable=False),
+        SandboxMount(source=workspace, target=PurePosixPath("/workspace"), writable=False),
         SandboxMount(source=EXTENSION, target=PurePosixPath("/lac/pi_native_tui.mjs"), writable=False),
         SandboxMount(source=GOVERNED_PI, target=PurePosixPath("/lac/governed_pi.mjs"), writable=False),
         SandboxMount(source=agent_state, target=PurePosixPath("/lac/agent"), writable=True),
@@ -177,7 +179,7 @@ def _admin_socket_path() -> Path:
     return Path(f"/run/user/{os.getuid()}") / "lac" / "admin-v1.sock"
 
 
-def _start_admin_server(state: Path) -> subprocess.Popen[str]:
+def _start_admin_server(state: Path, workspace: Path) -> subprocess.Popen[str]:
     proc = subprocess.Popen(
         [
             sys.executable,
@@ -185,6 +187,8 @@ def _start_admin_server(state: Path) -> subprocess.Popen[str]:
             str(legacy.ADMIN_SERVER),
             "--state",
             str(state),
+            "--workspace",
+            str(workspace),
             "--parent-pid",
             str(os.getpid()),
         ],
@@ -274,7 +278,7 @@ class AuthorityBroker(legacy.PiV1InteractiveSession):
             recoverable_only = material.get("recoverable_only", True)
             if not isinstance(recoverable_only, bool):
                 fail("native Pi continuation-list recoverable_only must be boolean")
-            response = legacy.bridge_continuation_list(self.state, recoverable_only=recoverable_only)
+            response = legacy.bridge_continuation_list(self.state, self.workspace, recoverable_only=recoverable_only)
             if not isinstance(response, Mapping):
                 fail("native Pi continuation-list response is malformed")
             if response.get("ok") is not True:
@@ -303,7 +307,7 @@ class AuthorityBroker(legacy.PiV1InteractiveSession):
 
 class BrokerProcess:
     def __init__(self, *, workspace: Path, state: Path, trace: Path, mode: str, permission_wait_hook=None) -> None:
-        self.workspace = workspace.resolve()
+        self.workspace = canonical_project_root(workspace)
         self.state = state.resolve()
         self.trace = trace.resolve()
         self.mode = mode
@@ -454,8 +458,7 @@ class BrokerProcess:
         source_cli, tsx_cli, root_tsconfig = verify_native_cli_entrypoint()
         if not EXTENSION.is_file() or not GOVERNED_PI.is_file():
             fail("PI005 trusted extension or governed Pi adapter is unavailable")
-        self.workspace.mkdir(parents=True, exist_ok=True)
-        self.workspace.chmod(0o700)
+        self.workspace = canonical_project_root(self.workspace)
         self.trace.parent.mkdir(parents=True, exist_ok=True)
         self.listener = baseline.ListenerProbe()
         self.tempdir = tempfile.TemporaryDirectory(prefix="lac-pi005-native-tui-")
@@ -464,7 +467,7 @@ class BrokerProcess:
         rootfs.mkdir()
         self.fixture = _ambient_fixture(tmp_root)
         agent_state = tmp_root / "agent-state"
-        node, mounts = _stage_runtime(rootfs, agent_state)
+        node, mounts = _stage_runtime(rootfs, agent_state, self.workspace)
         self.broker_path = rootfs / "lac" / "broker.sock"
         self.broker_listener = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         self.broker_listener.bind(str(self.broker_path))
@@ -646,10 +649,10 @@ def _unwrap_native_effect_result(value: Mapping[str, Any]) -> dict[str, Any]:
     fail(f"native Pi effect observation has unexpected shape: {dict(value)!r}")
 
 
-def _profile_permission_hook(status: Mapping[str, Any]) -> None:
+def _profile_permission_hook(status: Mapping[str, Any], workspace: Path) -> None:
     rule = StandingPolicyRule.create(
         rule_id="pi005-native-probe-allow-create",
-        application_id=legacy.PI_V1_APPLICATION_ID,
+        application_id=pi_v1_project_application_id(workspace),
         skill_id=legacy.PI_V1_SKILL_ID,
         action="filesystem.create",
         resource_selector="filesystem:workspace",
@@ -677,7 +680,7 @@ def run_profile_probe(workspace: Path, state: Path, trace: Path) -> int:
         workflow = (continuation_id, pending_id)
         if configured_workflow is None:
             configured_workflow = workflow
-            _profile_permission_hook(snapshot)
+            _profile_permission_hook(snapshot, workspace)
         elif workflow != configured_workflow:
             fail("native Pi duplicate probe entered a second permission workflow")
         # A duplicate call may re-observe the same already-resolved continuation.
@@ -750,21 +753,21 @@ def run_interactive(workspace: Path, state: Path, trace: Path, runtime_mode: str
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Native Pi CLI/TUI bound to the LAC-governed v1 authority path")
-    parser.add_argument("--workspace", type=Path, default=legacy.default_workspace())
+    parser.add_argument("--workspace", type=Path, default=Path.cwd())
     parser.add_argument("--state", type=Path, default=legacy.default_state())
     parser.add_argument("--trace", type=Path, default=legacy.default_trace())
     parser.add_argument("--runtime", choices=("manage", "external"), default="manage")
     parser.add_argument("--profile-probe", action="store_true")
     args = parser.parse_args()
 
-    workspace = args.workspace.expanduser().resolve()
+    workspace = canonical_project_root(args.workspace)
     state = args.state.expanduser().resolve()
     trace = args.trace.expanduser().resolve()
     legacy.initialize_state(state, workspace)
     admin = None
     runtime = None
     try:
-        admin = _start_admin_server(state)
+        admin = _start_admin_server(state, workspace)
         if args.profile_probe:
             return run_profile_probe(workspace, state, trace)
         runtime_mode = "external"

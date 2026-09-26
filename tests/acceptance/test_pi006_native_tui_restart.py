@@ -31,7 +31,7 @@ class Pi006NativeTuiRestartStabilizationTests(unittest.TestCase):
         host = (ROOT / "scripts/pi_native_tui_host.py").read_text(encoding="utf-8")
         for token in (
             'if kind == "continuation_list":',
-            'legacy.bridge_continuation_list(self.state, recoverable_only=recoverable_only)',
+            'legacy.bridge_continuation_list(self.state, self.workspace, recoverable_only=recoverable_only)',
             'if kind == "continuation_resume":',
             'response = self._resume_once(continuation_id)',
             '("lac-continuations", "lac-resume")',

@@ -18,7 +18,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 import scripts.a004_terminal as baseline
-from packages.adapters.pi.production import PI_V1_APPLICATION_ID, PI_V1_SKILL_ID
+from packages.adapters.pi.production import (PI_V1_APPLICATION_ID, PI_V1_SKILL_ID, canonical_project_root, pi_v1_project_application_id)
 from packages.capabilities import PendingPermissionRepository
 from packages.lacctl import LacctlClient
 from packages.policy import StandingPolicyRule
@@ -36,7 +36,7 @@ class PiV1TerminalError(RuntimeError):
 
 
 def default_workspace():
-    return Path.home() / ".local/share/local-agent-controller/pi-v1-workspace"
+    return Path.cwd()
 
 
 def default_state():
@@ -101,14 +101,14 @@ def bridge_json(state, workspace, run_id, payload):
     )
 
 
-def bridge_continuation_status(state, continuation_id):
+def bridge_continuation_status(state, workspace, continuation_id):
     return _bridge(
-        ["continuation-status", "--state", str(state), continuation_id]
+        ["continuation-status", "--state", str(state), "--workspace", str(workspace), continuation_id]
     )
 
 
-def bridge_continuation_list(state, *, recoverable_only=True):
-    args = ["continuation-list", "--state", str(state)]
+def bridge_continuation_list(state, workspace, *, recoverable_only=True):
+    args = ["continuation-list", "--state", str(state), "--workspace", str(workspace)]
     if recoverable_only:
         args.append("--recoverable-only")
     return _bridge(args)
@@ -136,8 +136,7 @@ def bridge_continuation_resume(
 
 
 def initialize_state(state, workspace):
-    workspace.mkdir(parents=True, exist_ok=True)
-    workspace.chmod(0o700)
+    workspace = canonical_project_root(workspace)
     proc = subprocess.run(
         [
             sys.executable,
@@ -160,7 +159,7 @@ def initialize_state(state, workspace):
         )
 
 
-def start_admin_server(state):
+def start_admin_server(state, workspace):
     proc = subprocess.Popen(
         [
             sys.executable,
@@ -168,6 +167,8 @@ def start_admin_server(state):
             str(ADMIN_SERVER),
             "--state",
             str(state),
+            "--workspace",
+            str(workspace),
             "--parent-pid",
             str(os.getpid()),
         ],
@@ -330,7 +331,7 @@ class PiV1InteractiveSession(baseline.InteractiveSession):
         announced_decision = None
         while True:
             status_response = bridge_continuation_status(
-                self.state, continuation_id
+                self.state, self.workspace, continuation_id
             )
             if status_response.get("ok") is not True:
                 return status_response
@@ -532,7 +533,7 @@ def profile_status(session, runtime_mode):
         f"runtime={runtime_mode} model={baseline.SERVED_MODEL_ID} pi_agent_core=0.85.1\n"
         f"pi_pid={session.pi_pid or '-'} profile=lac-governed-v1 sandbox=bubblewrap network=none\n"
         f"tools={','.join(baseline.EXPECTED_TOOLS)}\n"
-        f"application={PI_V1_APPLICATION_ID} skill={PI_V1_SKILL_ID}\n"
+        f"application={pi_v1_project_application_id(session.workspace)} skill={PI_V1_SKILL_ID}\n"
         f"workspace={session.workspace}\nstate={session.state}\ntrace={session.trace}\n"
         "standalone_pi=separate_and_not_claimed_as_lac_governed"
     )
@@ -547,7 +548,7 @@ def run_profile_probe(workspace, state, trace):
         observed_waits.append(dict(status))
         rule = StandingPolicyRule.create(
             rule_id="pi-d001-profile-probe-allow-create",
-            application_id=PI_V1_APPLICATION_ID,
+            application_id=pi_v1_project_application_id(workspace),
             skill_id=PI_V1_SKILL_ID,
             action="filesystem.create",
             resource_selector="filesystem:workspace",
@@ -626,8 +627,8 @@ def run_profile_probe(workspace, state, trace):
     return 0
 
 
-def _show_recoverable(state):
-    response = bridge_continuation_list(state, recoverable_only=True)
+def _show_recoverable(state, workspace):
+    response = bridge_continuation_list(state, workspace, recoverable_only=True)
     if response.get("ok") is not True:
         raise PiV1TerminalError(
             f"continuation recovery inspection failed: {response.get('error')}"
@@ -647,7 +648,7 @@ def run_interactive(workspace, state, trace, runtime_mode):
     with PiV1InteractiveSession(workspace=workspace, state=state, trace=trace) as session:
         print("LAC-governed Pi v1 profile. Type /help for controls.")
         print(profile_status(session, runtime_mode))
-        _show_recoverable(state)
+        _show_recoverable(state, workspace)
         while True:
             try:
                 raw = baseline.read_terminal_input("\nlac-pi> ")
@@ -674,7 +675,7 @@ def run_interactive(workspace, state, trace, runtime_mode):
                 print(profile_status(session, runtime_mode))
                 continue
             if cmd == "/continuations":
-                items = _show_recoverable(state)
+                items = _show_recoverable(state, workspace)
                 if not items:
                     print("No recoverable workflow continuations.")
                 else:
@@ -708,7 +709,7 @@ def main():
     p.add_argument("--profile-probe", action="store_true")
     a = p.parse_args()
     baseline.verify_accepted_pins()
-    workspace = a.workspace.expanduser().resolve()
+    workspace = canonical_project_root(a.workspace)
     state = a.state.expanduser().resolve()
     trace = a.trace.expanduser().resolve()
     initialize_state(state, workspace)
@@ -721,7 +722,7 @@ def main():
 
     signal.signal(signal.SIGTERM, terminate)
     try:
-        admin = start_admin_server(state)
+        admin = start_admin_server(state, workspace)
         if a.profile_probe:
             return run_profile_probe(workspace, state, trace)
         mode = "external"

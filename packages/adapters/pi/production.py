@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 from dataclasses import dataclass
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Callable, Mapping
 
 from packages.adapters.pi.adapter import PiAgentAdapterError, _arguments_for_tool
@@ -29,6 +30,30 @@ PI_V1_AGENT_ID = "agent:pi"
 PI_V1_APPLICATION_ID = "lac-pi-v1"
 PI_V1_SKILL_ID = "governed-local-effects"
 PI_V1_REQUEST_TTL_SECONDS = 3600
+
+
+def canonical_project_root(value: str | Path) -> Path:
+    """Return the immutable canonical host-selected project root for one governed session."""
+    try:
+        root = Path(value).expanduser().resolve(strict=True)
+    except OSError as exc:
+        raise PiV1RuntimeError(f"governed project root is unavailable: {value}") from exc
+    if not root.is_dir():
+        raise PiV1RuntimeError(f"governed project root must be an existing directory: {root}")
+    return root
+
+
+def pi_v1_project_application_id(value: str | Path) -> str:
+    root = canonical_project_root(value)
+    st = root.stat()
+    material = canonical_json({
+        "canonical_root": str(root),
+        "device": int(st.st_dev),
+        "inode": int(st.st_ino),
+    }).encode("utf-8")
+    digest = hashlib.sha256(material).hexdigest()
+    return f"{PI_V1_APPLICATION_ID}.project.{digest[:32]}"
+
 
 _FS_RESOURCE = "filesystem:workspace"
 _SHELL_RESOURCE = "shell:workspace"
@@ -101,6 +126,14 @@ PI_V1_CAPABILITY_MANIFEST = {
 }
 
 
+def pi_v1_capability_manifest(application_id: str = PI_V1_APPLICATION_ID) -> dict[str, Any]:
+    if not isinstance(application_id, str) or not application_id or application_id != application_id.strip():
+        raise PiV1RuntimeError("application_id must be non-empty trimmed text")
+    manifest = dict(PI_V1_CAPABILITY_MANIFEST)
+    manifest["application_id"] = application_id
+    return manifest
+
+
 class PiV1RuntimeError(RuntimeError):
     pass
 
@@ -169,6 +202,7 @@ class PiPermissionRuntime:
         filesystem_adapter: FilesystemEffectAdapter,
         shell_adapter: ShellEffectAdapter,
         run_id: str,
+        application_id: str = PI_V1_APPLICATION_ID,
         clock: Callable[[], datetime] | None = None,
         continuation_ttl_seconds: int = NATIVE_CONTINUATION_TTL_SECONDS,
     ):
@@ -176,18 +210,21 @@ class PiPermissionRuntime:
             raise PiV1RuntimeError("store must be SQLiteStateStore")
         if not isinstance(run_id, str) or not run_id or run_id != run_id.strip():
             raise PiV1RuntimeError("run_id must be non-empty trimmed text")
+        if not isinstance(application_id, str) or not application_id or application_id != application_id.strip():
+            raise PiV1RuntimeError("application_id must be non-empty trimmed text")
         self.store = store
         self.run_id = run_id
+        self.application_id = application_id
         self.filesystem_adapter = filesystem_adapter
         self.shell_adapter = shell_adapter
         self.composite_adapter = PiV1CompositeAdapter(filesystem_adapter, shell_adapter)
-        self.declaration = ExternalConsumerDeclaration.create(PI_V1_CAPABILITY_MANIFEST)
+        self.declaration = ExternalConsumerDeclaration.create(pi_v1_capability_manifest(self.application_id))
         self.runtime = ExternalConsumerRuntime(
             store=store,
             declaration=self.declaration,
             principal_id=PI_V1_PRINCIPAL_ID,
             agent_id=PI_V1_AGENT_ID,
-            application_id=PI_V1_APPLICATION_ID,
+            application_id=self.application_id,
             skill_id=PI_V1_SKILL_ID,
             adapter=self.composite_adapter,
             clock=clock,
@@ -212,7 +249,7 @@ class PiPermissionRuntime:
             {
                 "run_id": self.run_id,
                 "agent_id": PI_V1_AGENT_ID,
-                "application_id": PI_V1_APPLICATION_ID,
+                "application_id": self.application_id,
                 "skill_id": PI_V1_SKILL_ID,
                 "tool_call_id": tool_call_id,
             }

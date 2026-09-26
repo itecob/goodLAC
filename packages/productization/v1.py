@@ -19,7 +19,7 @@ RELEASE_VERSION = "1.0.0-rc.11"
 RELEASE_SCHEMA = "lac.v1-product-release/v1"
 CONFIG_SCHEMA = "lac.v1-owner-config/v1"
 INSTALL_SCHEMA = "lac.v1-install-state/v1"
-CONFIG_KEYS = ("workspace", "state", "trace", "pi_checkout", "runtime")
+CONFIG_KEYS = ("workspace", "workspace_mode", "state", "trace", "pi_checkout", "runtime")
 BIN_NAMES = ("pi", "lac-pi", "lacctl", "lac-owner", "lac-config", "lac-doctor")
 TAKEOVER_BIN_NAMES = ("pi",)
 DANGEROUS_BYPASS_FLAG = "--dangerously-bypass-lac"
@@ -107,6 +107,7 @@ def default_config(home: Path | None = None) -> dict[str, Any]:
     return {
         "schema": CONFIG_SCHEMA,
         "workspace": str(p["home"] / ".local/share/local-agent-controller/pi-v1-workspace"),
+        "workspace_mode": "launch-cwd",
         "state": str(p["controller_state"]),
         "trace": str(p["home"] / ".local/state/local-agent-controller/pi-v1/effect-trace.jsonl"),
         "pi_checkout": str(p["home"] / ".cache/local-agent-controller/phase0/upstream/pi"),
@@ -115,11 +116,17 @@ def default_config(home: Path | None = None) -> dict[str, Any]:
 
 
 def validate_config(value: Any, home: Path | None = None) -> dict[str, Any]:
-    if not isinstance(value, dict) or set(value) != {"schema", *CONFIG_KEYS}:
+    if not isinstance(value, dict):
+        raise ProductizationError("config fields are invalid")
+    expected = {"schema", *CONFIG_KEYS}
+    legacy = expected - {"workspace_mode"}
+    observed = set(value)
+    if observed != expected and observed != legacy:
         raise ProductizationError("config fields are invalid")
     if value.get("schema") != CONFIG_SCHEMA:
         raise ProductizationError("unsupported config schema")
     out = dict(value)
+    out.setdefault("workspace_mode", "launch-cwd")
     for key in ("workspace", "state", "trace", "pi_checkout"):
         raw = out.get(key)
         if not isinstance(raw, str) or not raw or raw != raw.strip() or "\x00" in raw:
@@ -128,6 +135,8 @@ def validate_config(value: Any, home: Path | None = None) -> dict[str, Any]:
         if not candidate.is_absolute():
             raise ProductizationError(f"config {key} must be absolute")
         out[key] = str(candidate)
+    if out.get("workspace_mode") not in {"launch-cwd", "fixed"}:
+        raise ProductizationError("config workspace_mode must be launch-cwd or fixed")
     if out.get("runtime") not in {"manage", "external"}:
         raise ProductizationError("config runtime must be manage or external")
     return out
@@ -783,6 +792,52 @@ def _verify_and_launch_pinned_ungoverned_pi(app: Path, config: Mapping[str, Any]
     )
 
 
+def _canonical_launch_workspace(value: str | Path) -> Path:
+    try:
+        workspace = Path(value).expanduser().resolve(strict=True)
+    except OSError as exc:
+        raise ProductizationError(f"governed workspace is unavailable: {value}") from exc
+    if not workspace.is_dir():
+        raise ProductizationError(f"governed workspace must be an existing directory: {workspace}")
+    return workspace
+
+
+def _governed_workspace_override(extra: list[str]) -> tuple[str | None, list[str]]:
+    override = None
+    forwarded: list[str] = []
+    index = 0
+    while index < len(extra):
+        item = extra[index]
+        if item == "--workspace":
+            if override is not None or index + 1 >= len(extra):
+                raise ProductizationError("governed --workspace must appear exactly once with a value")
+            override = extra[index + 1]
+            index += 2
+            continue
+        if item.startswith("--workspace="):
+            if override is not None:
+                raise ProductizationError("governed --workspace must appear at most once")
+            override = item.split("=", 1)[1]
+            if not override:
+                raise ProductizationError("governed --workspace requires a value")
+            index += 1
+            continue
+        forwarded.append(item)
+        index += 1
+    return override, forwarded
+
+
+def _select_governed_workspace(config: Mapping[str, Any], extra: list[str]) -> tuple[Path, list[str]]:
+    override, forwarded = _governed_workspace_override(extra)
+    if override is not None:
+        selected: str | Path = override
+    elif config.get("workspace_mode", "launch-cwd") == "fixed":
+        selected = str(config["workspace"])
+    else:
+        selected = Path.cwd()
+    return _canonical_launch_workspace(selected), forwarded
+
+
 def launch_pi(home: Path | None, extra: list[str]) -> int:
     if os.environ.get(LAUNCHER_PROBE_ENV) == LAUNCHER_PROBE_VALUE:
         print(LAUNCHER_PROBE_MARKER)
@@ -793,10 +848,11 @@ def launch_pi(home: Path | None, extra: list[str]) -> int:
     env["LAC_PI_CHECKOUT"] = config["pi_checkout"]
     if extra and extra[0] == DANGEROUS_BYPASS_FLAG:
         return _verify_and_launch_pinned_ungoverned_pi(app, config, extra[1:], env)
+    workspace, forwarded = _select_governed_workspace(config, extra)
     argv = [
         "python3", str(app / "scripts/pi_native_tui_host.py"),
-        "--workspace", config["workspace"], "--state", config["state"],
-        "--trace", config["trace"], "--runtime", config["runtime"], *extra,
+        "--workspace", str(workspace), "--state", config["state"],
+        "--trace", config["trace"], "--runtime", config["runtime"], *forwarded,
     ]
     return _exec(argv, env)
 

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+umask 077
+ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+export PYTHONDONTWRITEBYTECODE=1
+RUN_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/goodlac-post-v1-r2.XXXXXX")"
+trap 'rm -rf -- "$RUN_ROOT"' EXIT INT TERM
+python3 -m unittest -v tests.acceptance.test_post_v1_r2_project_workspace
+PYTHONPYCACHEPREFIX="$RUN_ROOT/pycache" python3 -m py_compile packages/adapters/pi/production.py packages/productization/v1.py scripts/pi_v1_admin_server.py scripts/pi_v1_controller_bridge.py scripts/pi_v1_terminal.py scripts/pi_native_tui_host.py tests/acceptance/test_post_v1_r2_project_workspace.py
+bash -n scripts/lac-pi scripts/test-post-v1-r1 scripts/test-post-v1-r2
+export LAC_PI006_RUN_ROOT="$RUN_ROOT/pi006"
+export LAC_PI005_RUN_ROOT="$RUN_ROOT/pi005"
+scripts/test-post-v1-r1
+git diff --check
+echo "GOODLAC_POST_V1_R2_PROJECT_ROOT_SESSION_WORKSPACE=PASS"

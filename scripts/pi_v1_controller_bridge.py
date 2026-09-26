@@ -15,7 +15,10 @@ from packages.adapters.pi.production import (
     PI_V1_AGENT_ID,
     PI_V1_PRINCIPAL_ID,
     PiPermissionRuntime,
+    canonical_project_root,
+    pi_v1_project_application_id,
 )
+from packages.capabilities import PendingPermissionRepository
 from packages.effects.filesystem import FilesystemEffectAdapter
 from packages.effects.shell import ShellEffectAdapter
 from packages.runtime.workflow_continuation import NativeWorkflowContinuationStore
@@ -45,7 +48,7 @@ def canonical_binary(name):
 
 
 def initialize_state(state, workspace):
-    workspace.resolve(strict=True)
+    canonical_project_root(workspace)
     state = state.expanduser().resolve()
     is_new = not state.exists()
     store = SQLiteStateStore(state)
@@ -60,6 +63,8 @@ def initialize_state(state, workspace):
 
 
 def build_runtime(state, workspace, run_id):
+    workspace = canonical_project_root(workspace)
+    application_id = pi_v1_project_application_id(workspace)
     store = SQLiteStateStore(state)
     fs = FilesystemEffectAdapter(workspace)
     shell = ShellEffectAdapter(
@@ -71,8 +76,30 @@ def build_runtime(state, workspace, run_id):
         ),
     )
     return store, PiPermissionRuntime(
-        store=store, filesystem_adapter=fs, shell_adapter=shell, run_id=run_id
+        store=store, filesystem_adapter=fs, shell_adapter=shell, run_id=run_id,
+        application_id=application_id,
     )
+
+
+def _continuation_application_id(store, status):
+    pending_id = status.get("pending_id") if isinstance(status, dict) else None
+    if not isinstance(pending_id, str) or not pending_id:
+        raise RuntimeError("workflow continuation lacks pending project binding")
+    matches = [
+        item for item in PendingPermissionRepository(store).list_pending()
+        if item.get("pending_id") == pending_id
+    ]
+    if len(matches) != 1:
+        raise RuntimeError("workflow continuation pending project binding is unavailable or non-unique")
+    application_id = matches[0].get("application_id")
+    if not isinstance(application_id, str) or not application_id:
+        raise RuntimeError("workflow continuation pending project application is invalid")
+    return application_id
+
+
+def _assert_continuation_project(store, status, application_id):
+    if _continuation_application_id(store, status) != application_id:
+        raise RuntimeError("workflow continuation belongs to a different governed project")
 
 
 def _emit_error(exc, *, request_id=None):
@@ -135,11 +162,17 @@ def cmd_effect(args):
 
 def cmd_continuation_list(args):
     state = Path(args.state).expanduser().resolve(strict=True)
+    workspace = canonical_project_root(args.workspace)
+    application_id = pi_v1_project_application_id(workspace)
     store = SQLiteStateStore(state)
     try:
-        items = NativeWorkflowContinuationStore(store).list_status(
+        raw_items = NativeWorkflowContinuationStore(store).list_status(
             recoverable_only=args.recoverable_only
         )
+        items = [
+            item for item in raw_items
+            if _continuation_application_id(store, item) == application_id
+        ]
         print(json.dumps({"ok": True, "continuations": items}, sort_keys=True))
     except BaseException as exc:
         _emit_error(exc)
@@ -150,9 +183,12 @@ def cmd_continuation_list(args):
 
 def cmd_continuation_status(args):
     state = Path(args.state).expanduser().resolve(strict=True)
+    workspace = canonical_project_root(args.workspace)
+    application_id = pi_v1_project_application_id(workspace)
     store = SQLiteStateStore(state)
     try:
         status = NativeWorkflowContinuationStore(store).status(args.continuation_id)
+        _assert_continuation_project(store, status, application_id)
         print(json.dumps({"ok": True, "continuation": status}, sort_keys=True))
     except BaseException as exc:
         _emit_error(exc)
@@ -170,6 +206,8 @@ def cmd_continuation_resume(args):
     expected_message = payload.get("expected_message")
     store, runtime = build_runtime(state, workspace, args.run_id)
     try:
+        status = runtime.continuation_status(args.continuation_id)
+        _assert_continuation_project(store, status, runtime.application_id)
         outcome = runtime.resume_continuation(
             args.continuation_id,
             expected_message=expected_message,
@@ -199,11 +237,13 @@ def main():
 
     q = sub.add_parser("continuation-list")
     q.add_argument("--state", required=True)
+    q.add_argument("--workspace", required=True)
     q.add_argument("--recoverable-only", action="store_true")
     q.set_defaults(func=cmd_continuation_list)
 
     q = sub.add_parser("continuation-status")
     q.add_argument("--state", required=True)
+    q.add_argument("--workspace", required=True)
     q.add_argument("continuation_id")
     q.set_defaults(func=cmd_continuation_status)
 

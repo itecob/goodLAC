@@ -64,9 +64,9 @@ class Pi005NativeTuiSourceTests(unittest.TestCase):
         self.assertNotIn('"--sync-fd"', host)
         self.assertIn('SandboxMount(source=baseline.PI_CHECKOUT, target=PurePosixPath("/pi"), writable=False)', host)
         self.assertIn('SandboxMount(source=agent_state, target=PurePosixPath("/lac/agent"), writable=True)', host)
+        self.assertIn('SandboxMount(source=workspace, target=PurePosixPath("/workspace"), writable=False)', host)
         self.assertEqual(host.count("writable=True"), 1)
         self.assertIn('agent_state.mkdir(mode=0o700, parents=True, exist_ok=False)', host)
-        self.assertNotIn("SandboxMount(source=self.workspace", host)
         for key in (
             "host_file_readable", "host_workspace_readable", "host_workspace_write_effect",
             "synthetic_service_credential_inherited", "arbitrary_host_executable_launched",
@@ -136,9 +136,9 @@ class Pi005NativeTuiSourceTests(unittest.TestCase):
         self.assertIn('runtime_dir.mkdir(mode=0o700)', integration)
         self.assertIn('env["XDG_RUNTIME_DIR"] = str(runtime_dir)', integration)
         host = (ROOT / "scripts/pi_native_tui_host.py").read_text(encoding="utf-8")
-        self.assertIn('def _start_admin_server(state: Path)', host)
+        self.assertIn('def _start_admin_server(state: Path, workspace: Path)', host)
         self.assertIn('admin server exited before ready rc=', host)
-        self.assertIn('admin = _start_admin_server(state)', host)
+        self.assertIn('admin = _start_admin_server(state, workspace)', host)
         self.assertIn('native Pi stderr tail:', host)
         self.assertIn('stderr=subprocess.PIPE if self.mode == "probe" else None', host)
         self.assertIn('receive_timeout = 45.0 if self.mode == "probe" else None', host)

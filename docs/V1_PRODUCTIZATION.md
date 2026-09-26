@@ -19,7 +19,7 @@ The ordinary installed `pi` command is governed by default. Ungoverned Pi remain
 
 ## Configuration
 
-Run `lac-config show`. Supported fields are `workspace`, `state`, `trace`, `pi_checkout`, and `runtime` (`manage` or `external`). The JSON file is owner-private mode `0600`. Configuration contains no permission or approval authority.
+Run `lac-config show`. Supported fields are `workspace`, `workspace_mode`, `state`, `trace`, `pi_checkout`, and `runtime` (`manage` or `external`). `workspace_mode` is `launch-cwd` by default; `fixed` explicitly selects the configured `workspace`. Existing configs without `workspace_mode` are interpreted as `launch-cwd` without an automatic rewrite. The JSON file is owner-private mode `0600`. Configuration contains no permission or approval authority.
 
 ## Service lifecycle
 
@@ -216,3 +216,9 @@ Owner UID checks, mode `0600`, runtime-directory validation, `SO_PEERCRED`, emer
 policy and approval semantics, continuation behavior, idempotency, receipts, credential isolation,
 sandboxing, ambient-resource restrictions, and the exact four-tool governed model surface remain
 unchanged.
+
+## Post-v1 R2 project-root sessions
+
+Ordinary installed use is now `cd /their/project && pi`. The launcher selects one canonical existing directory before starting the governed host and passes it as the immutable session workspace. Precedence is explicit governed `--workspace`, then `workspace_mode=fixed`, then launch CWD. The launch-CWD path never mutates persistent config.
+
+The selected project is mounted read-only at `/workspace` inside native Pi. Built-in tools and project-local extension/resource discovery remain disabled, so consequential effects continue through the four goodLAC controller-backed tools. The controller derives a project-specific Pi application identity from trusted canonical host metadata; standing permissions and R1 owner decisions therefore do not cross project roots. Restart recovery is also project-filtered. The explicit `--dangerously-bypass-lac` path is unchanged.

@@ -17,6 +17,7 @@ class PiV1ProductionProfileIntegrationTests(unittest.TestCase):
             runtime = root / "runtime"
             runtime.mkdir(mode=0o700)
             workspace = root / "workspace"
+            workspace.mkdir()
             state = root / "controller.db"
             trace = root / "trace.jsonl"
             env = dict(os.environ)
