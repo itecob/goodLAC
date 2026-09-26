@@ -1,7 +1,7 @@
-# ACTIVE TASK — POSTV1-R2 PROJECT-ROOT / SESSION WORKSPACE
+# ACTIVE TASK — POSTV1-R3 PI TUI OWNER PERMISSION GATE
 
 ## Task ID
-`POSTV1-R2-PROJECT-ROOT-SESSION-WORKSPACE`
+`POSTV1-R3-PI-TUI-OWNER-PERMISSION-GATE`
 
 ## Mode
 `IMPLEMENTATION_SEGMENT`
@@ -11,28 +11,15 @@
 - prior Phase 7 review: `PASS`
 - prior authority/runtime roadmap: `CLOSED`
 
-Do not rewrite the prior acceptance evidence. This is a new post-v1 roadmap.
-
-## Completed repository/governance predecessor
-- task: `GOODLAC-PUBLIC-001`
-- repository: `itecob/goodLAC`
-- publication commit: `b1b70454aa4576c4463c934fdada3d51024c6c98`
-- closeout/start commit: `ce20f345a7de5342b33267387d436739af82e6e1`
-- runtime/authority implementation changed by public transition: `false`
-- operative project LICENSE activated: `false`
-- `LICENSE-DRAFT.md` and `CLA-DRAFT.md`: remain legal-review drafts
-
-Do not reopen, erase, roll back, or rewrite the completed public-repository transition or its evidence.
-
-## R1 predecessor
-- R1 implementation commit: `5c598120a182ed88d235cffec326532c90f564c4`
-- owner execution evidence: `qualification/evidence/post_v1_r1_owner_permission_decision_owner_execution.json`
+## R2 predecessor
+- implementation commit: `97c93d6386d689216cf166c1ba81d3ef4ee7011a`
 - result: `PASS`
+- project-aware scope: controller-derived project-specific Pi application identity
+- ordinary workspace precedence: explicit governed `--workspace` -> configured `fixed` workspace -> canonical launch CWD
+- cross-project continuation recovery: fail-closed
 
 ## Active implementation scope
-Make ordinary installed governed `pi` bind the canonical launch CWD as an immutable session workspace by default. Preserve an explicit fixed-workspace mode only where justified. Introduce trusted project identity into permission/resource scope so a standing permission made in Project A does not silently authorize Project B. Preserve all rc.11 sandbox/path/symlink/resource-discovery invariants and the R1 owner-decision contract.
-
-Do not implement the Pi TUI permission dialog in this segment; that is R3 after project scope is deterministic and tested.
+Implement the controller-owned owner permission decision gate inside the trusted pinned Pi TUI extension using the exact R1 choices and R2 project-aware scope. The model must receive no permission-management tool or owner-decision authority. General owner admin socket remains outside the sandbox. Use bounded opaque challenges with exact session/continuation/pending binding, expiry, one-use consumption, and fail-closed cancellation/disconnect/restart behavior.
 
 ## Target release train
 `1.0.0-rc.12` — not accepted until R5 integrated owner UAT and R6 fresh independent review PASS.
