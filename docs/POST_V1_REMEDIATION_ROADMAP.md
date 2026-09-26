@@ -51,6 +51,8 @@ The original first-use effect remains terminally denied in every case. Policy ch
 
 ### R2 — Project-root / session workspace
 
+Status: `COMPLETE` — owner package qualification and retained regression PASS at implementation commit `97c93d6386d689216cf166c1ba81d3ef4ee7011a`.
+
 Make ordinary installed governed Pi bind the canonical launch CWD as an immutable session project root by default, while retaining an explicit fixed-workspace mode where justified. Introduce controller-known project identity into the trusted resource/policy scope so Project A standing permission does not silently authorize Project B. Preserve path/symlink containment and disabled project-local Pi resources.
 
 ### R3 — Pi TUI owner permission gate
