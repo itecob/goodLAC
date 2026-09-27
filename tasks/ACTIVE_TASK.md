@@ -1,29 +1,35 @@
-# ACTIVE TASK — POSTV1-R4 INSTALLED TERMINAL FALLBACK AND UX CLEANUP
+# ACTIVE TASK — POSTV1-R5 INTEGRATED OWNER UAT AND RELEASE QUALIFICATION
 
 ## Task ID
-`POSTV1-R4-INSTALLED-TERMINAL-FALLBACK-UX-CLEANUP`
+`POSTV1-R5-INTEGRATED-OWNER-UAT-RELEASE-QUALIFICATION`
 
 ## Mode
-`IMPLEMENTATION_SEGMENT`
+`OWNER_UAT_AND_RELEASE_QUALIFICATION`
 
 ## Historical accepted authority/runtime baseline
 - accepted release: `1.0.0-rc.11`
 - prior Phase 7 review: `PASS`
 - prior authority/runtime roadmap: `CLOSED`
 
-## R3 predecessor
-- implementation commit: `971148ca33083d4a8015d8c2692e8f49303582b2`
+## R4 predecessor
+- implementation commit: `6838dbf80c4d9a2572194891d3b355f39a6efbce`
 - result: `PASS`
-- owner gate: pinned Pi 0.85.1 trusted ExtensionUIContext select/confirm
-- authority: canonical goodLAC policy/approval state; no model permission tool
-- challenge boundary: bounded, opaque, session/project/exact-subject bound, expiring and one-use
-- project scope: controller-derived R2 project application identity
+- ordinary terminal path: `lac-owner decide <choice> <continuation_id> <pending_id>`
+- canonical authority path: owner-only `permissions.decide`
+- low-level full-snapshot policy path remains administrator/scripting only
+- no new model permission-management capability or dispatch path
 
-## Active implementation scope
-Implement only the installed terminal fallback and UX cleanup for the accepted R1 choices. Provide a concise installed owner command surface for ordinary permission decisions, retain low-level `lacctl permissions set --file` as an administrator/scripting primitive, and correct ordinary installed documentation. Reuse canonical R1 permission/approval semantics; do not create another authority path.
+## Active qualification scope
+Run real owner UAT from at least two ordinary project directories. Exercise Allow once,
+Always allow, Ask every time, Deny once, Always deny, overwrite/replace, restart/recovery,
+trusted project-scope display, exact approval behavior, emergency/deny re-evaluation where
+applicable, and exact Project A / Project B isolation. Record bounded owner evidence.
+
+Only after the integrated R5 gate passes may the repository stage the `1.0.0-rc.12` review
+candidate for a fresh independent R6 security/product review.
 
 ## Target release train
-`1.0.0-rc.12` — not accepted until R5 integrated owner UAT and R6 fresh independent review PASS.
+`1.0.0-rc.12` — not accepted until R6 fresh independent review PASS.
 
 ## Blockers
 None recorded.

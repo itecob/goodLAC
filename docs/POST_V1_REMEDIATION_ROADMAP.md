@@ -63,6 +63,8 @@ Feasibility was verified before R1 implementation against the exact accepted Pi 
 
 ### R4 — Installed terminal fallback and UX cleanup
 
+Status: `COMPLETE` — retained regression PASS at implementation commit `6838dbf80c4d9a2572194891d3b355f39a6efbce`.
+
 Provide a concise installed owner command surface for the same bounded choices. Preserve low-level `lacctl permissions set --file` only as an administrator/scripting primitive. Correct ordinary documentation from repository-relative commands to installed commands.
 
 ### R5 — Integrated owner UAT and release qualification

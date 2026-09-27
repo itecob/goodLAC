@@ -1,0 +1,44 @@
+{
+  "accepted_historical_release": "1.0.0-rc.11",
+  "implementation_commit": "6838dbf80c4d9a2572194891d3b355f39a6efbce",
+  "next_task": "POSTV1-R5-INTEGRATED-OWNER-UAT-RELEASE-QUALIFICATION",
+  "owner_terminal_surface": {
+    "administrator_operation": "permissions.decide",
+    "canonical_cli_operation": "lacctl permissions decide",
+    "choice_set": [
+      "ALLOW_ONCE",
+      "ALWAYS_ALLOW",
+      "ASK_EVERY_TIME",
+      "DENY_ONCE",
+      "ALWAYS_DENY"
+    ],
+    "low_level_snapshot_primitive_preserved": "lacctl permissions set --file <policy.json>",
+    "ordinary_command": "lac-owner decide <choice> <continuation_id> <pending_id>",
+    "scope": "RESOURCE_FIXED_BY_CLI",
+    "subject_scope_source": "controller-known durable continuation/pending metadata"
+  },
+  "preinstall_head": "d2968ddcad789e8dffd7b659dc3c4295bbfc93e7",
+  "qualification": {
+    "command": "scripts/test-post-v1-r4",
+    "exit_code": 0,
+    "output_bytes": 172997,
+    "output_sha256": "8a8706f483376c783daea314eea54ce6be4695bebf728e503ff11e4f0f61a33b"
+  },
+  "r3_implementation_commit": "971148ca33083d4a8015d8c2692e8f49303582b2",
+  "recorded_at_utc": "2026-09-27T00:14:33.985960Z",
+  "result": "PASS",
+  "schema": "goodlac.post-v1-r4-owner-execution/v1",
+  "security_claims": {
+    "deny_precedence_preserved": true,
+    "emergency_pause_preserved": true,
+    "exact_approval_binding_preserved": true,
+    "model_permission_tool_added": false,
+    "predispatch_policy_recheck_preserved": true,
+    "project_aware_scope_preserved": true,
+    "second_permission_authority_created": false,
+    "terminal_command_dispatches_effect": false,
+    "terminal_command_resumes_continuation": false
+  },
+  "segment": "POSTV1-R4-INSTALLED-TERMINAL-FALLBACK-UX-CLEANUP",
+  "target_release_train": "1.0.0-rc.12"
+}
