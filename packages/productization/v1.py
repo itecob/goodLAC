@@ -863,10 +863,17 @@ def launch_ctl(home: Path | None, extra: list[str]) -> int:
 
 def owner_command(home: Path | None, extra: list[str]) -> int:
     if not extra or extra[0] in {"help", "--help", "-h"}:
-        print("lac-owner commands: pending, approvals, permissions, skills, emergency")
-        print("These are thin aliases over the accepted owner-only lacctl administration API.")
+        print("lac-owner commands: decide, pending, approvals, permissions, skills, emergency")
+        print(
+            "Ordinary first-use choice: lac-owner decide "
+            "<allow-once|always-allow|ask-every-time|deny-once|always-deny> "
+            "<continuation_id> <pending_id>"
+        )
+        print("All commands remain thin aliases over the owner-only lacctl administration API.")
         return 0
     group = extra[0]
+    if group == "decide":
+        return launch_ctl(home, ["permissions", "decide", *extra[1:]])
     if group not in {"pending", "approvals", "permissions", "skills", "emergency"}:
         raise ProductizationError("unsupported owner command")
     return launch_ctl(home, extra)

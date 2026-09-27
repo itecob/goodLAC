@@ -153,3 +153,18 @@ R3 keeps owner input inside the trusted pinned Pi 0.85.1 goodLAC extension while
 Each challenge is host-created, expires after a bounded interval, is consumed at most once, and is bound to the current broker session and controller-derived project application identity plus the exact continuation/pending or approval subject. Restart discards outstanding challenges. The extension may return only the opaque challenge identity plus an enumerated owner choice; it cannot supply or replace project, continuation, pending, request, decision, principal, application, agent or skill identity. Trusted project scope displayed to the owner is derived by the host/controller.
 
 The five owner choices preserve the R1 contract: `ALLOW_ONCE`, `ALWAYS_ALLOW`, `ASK_EVERY_TIME`, `DENY_ONCE`, and `ALWAYS_DENY`. `ALLOW_ONCE` first installs `REQUIRE_APPROVAL`, resumes exactly one fresh continuation request, creates an exact one-time approval for that fresh canonical request, and then performs a separate resume. Approval creation itself never dispatches. `ASK_EVERY_TIME` uses the same exact owner confirmation path for the current and later matching requests. Cancellation is non-authorizing. All post-choice effects remain subject to current emergency state, deny precedence, capability validation, policy re-evaluation, approval binding, leases, sandboxing and idempotency.
+
+## Post-v1 installed terminal fallback contract
+
+R4 exposes the same R1 owner decision through installed `lac-owner decide` UX and the underlying
+`lacctl permissions decide` command. Both terminate at the existing owner-authenticated
+`permissions.decide` administrator operation. The terminal client fixes scope to `RESOURCE` and
+cannot supply project/application, action, resource, skill, principal or agent authority material;
+the controller derives those fields from the exact continuation/pending binding created under the
+R2 project identity.
+
+The terminal command is therefore an input surface, not a second permission authority. It does
+not resume the workflow, create an execution lease, or dispatch an effect. A later explicit
+resume/retry traverses ordinary emergency, deny-precedence, current-policy, exact-approval,
+idempotency, sandbox and dispatch checks. Low-level `lacctl permissions set --file` remains an
+administrator/scripting primitive and is not the ordinary first-use path.

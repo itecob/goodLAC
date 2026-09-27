@@ -20,6 +20,25 @@ from .client import (
 
 MAX_HUMAN_OUTPUT_BYTES = 262_144
 
+OWNER_PERMISSION_CHOICES = (
+    "ALLOW_ONCE",
+    "ALWAYS_ALLOW",
+    "ASK_EVERY_TIME",
+    "DENY_ONCE",
+    "ALWAYS_DENY",
+)
+
+
+def _owner_permission_choice(value: str) -> str:
+    if not isinstance(value, str) or value != value.strip():
+        raise argparse.ArgumentTypeError("permission choice must be trimmed text")
+    normalized = value.upper().replace("-", "_")
+    if normalized not in OWNER_PERMISSION_CHOICES:
+        labels = ", ".join(item.lower().replace("_", "-") for item in OWNER_PERMISSION_CHOICES)
+        raise argparse.ArgumentTypeError(f"permission choice must be one of: {labels}")
+    return normalized
+
+
 
 class LacctlInputError(ValueError):
     pass
@@ -56,6 +75,14 @@ def _parser() -> argparse.ArgumentParser:
     permissions_cmd.add_parser("list", allow_abbrev=False)
     permission_show = permissions_cmd.add_parser("show", allow_abbrev=False)
     permission_show.add_argument("--revision", type=int)
+    permission_decide = permissions_cmd.add_parser("decide", allow_abbrev=False)
+    permission_decide.add_argument(
+        "choice",
+        type=_owner_permission_choice,
+        metavar="{allow-once,always-allow,ask-every-time,deny-once,always-deny}",
+    )
+    permission_decide.add_argument("continuation_id")
+    permission_decide.add_argument("pending_id")
     permission_set = permissions_cmd.add_parser("set", allow_abbrev=False)
     permission_set.add_argument(
         "--file",
@@ -172,6 +199,13 @@ def _operation(args: argparse.Namespace) -> tuple[str, dict[str, Any]]:
                     raise LacctlInputError("revision must be a positive integer")
                 material["revision"] = args.revision
             return "permissions.show", material
+        if args.command == "decide":
+            return "permissions.decide", {
+                "continuation_id": args.continuation_id,
+                "pending_id": args.pending_id,
+                "choice": args.choice,
+                "scope": "RESOURCE",
+            }
         if args.command == "set":
             return "permissions.replace", _load_policy_file(args.policy_file)
         if args.command == "revoke":

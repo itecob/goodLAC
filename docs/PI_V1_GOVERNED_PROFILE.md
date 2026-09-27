@@ -55,17 +55,23 @@ effect RPC blocked. The denied result is not returned to the Pi worker, so the m
 continue the turn, retry the effect, mutate it, or improvise an alternate consequential route
 while the owner decision is outstanding.
 
-Owner configuration remains out-of-band through the authenticated administration surface:
+Owner configuration remains out-of-band through the authenticated administration surface.
+The ordinary installed terminal fallback for the same five R1 choices is:
 
 ```bash
-scripts/lacctl pending list
-scripts/lacctl pending show <pending_id>
-scripts/lacctl permissions set <policy-json-file>
-scripts/lacctl pending resolve <pending_id> POLICY_UPDATED
-# or explicitly:
-scripts/lacctl pending resolve <pending_id> NO_CHANGE
-scripts/lacctl pending dismiss <pending_id>
+lac-owner decide <allow-once|always-allow|ask-every-time|deny-once|always-deny> <continuation_id> <pending_id>
 ```
+
+The command delegates to canonical `permissions.decide` and fixes the decision scope to the exact
+controller-known `RESOURCE` binding. It cannot supply project/application, action, resource,
+skill, principal, or agent scope. `ALLOW_ONCE`, `ALWAYS_ALLOW`, `ASK_EVERY_TIME`, `DENY_ONCE`,
+and `ALWAYS_DENY` therefore retain the R1/R2 semantics. After a terminal decision, continuation
+resume remains a separate explicit event; approval creation likewise never dispatches.
+
+Installed administrative inspection remains available as `lac-owner pending ...`,
+`lac-owner approvals ...`, and the corresponding `lacctl` groups. The full-snapshot
+`lacctl permissions set --file <policy.json>` path is intentionally retained only as a
+low-level administrator/scripting primitive, not the ordinary first-use workflow.
 
 After an authorizing administrative disposition (`POLICY_UPDATED`, `CAPABILITY_UPDATED`, or
 `POLICY_AND_CAPABILITY_UPDATED`), the host may allocate exactly one fresh request identity

@@ -11,7 +11,7 @@ The user-level installer creates versioned releases under `~/.local/share/local-
 - `lac-pi` remains a compatibility alias for the same governed path.
 - `pi --dangerously-bypass-lac ...` is an explicit top-level owner escape hatch to the exact pinned upstream Pi CLI and is never represented as governed.
 - `lacctl` is the accepted owner-only P005 administration client.
-- `lac-owner` provides bounded aliases for pending permissions, approvals, permissions, skills and emergency control through `lacctl`.
+- `lac-owner` provides bounded owner UX through `lacctl`, including `lac-owner decide ...` for ordinary first-use choices plus pending, approvals, permissions, skills and emergency administration.
 - `lac-config` shows or changes only product/runtime path settings; it cannot set policy or authority.
 - `lac-doctor` verifies the installed release and local prerequisites.
 
@@ -222,3 +222,19 @@ unchanged.
 Ordinary installed use is now `cd /their/project && pi`. The launcher selects one canonical existing directory before starting the governed host and passes it as the immutable session workspace. Precedence is explicit governed `--workspace`, then `workspace_mode=fixed`, then launch CWD. The launch-CWD path never mutates persistent config.
 
 The selected project is mounted read-only at `/workspace` inside native Pi. Built-in tools and project-local extension/resource discovery remain disabled, so consequential effects continue through the four goodLAC controller-backed tools. The controller derives a project-specific Pi application identity from trusted canonical host metadata; standing permissions and R1 owner decisions therefore do not cross project roots. Restart recovery is also project-filtered. The explicit `--dangerously-bypass-lac` path is unchanged.
+
+## Post-v1 R4 installed terminal fallback candidate
+
+R4 adds no authority mechanism. The installed ordinary owner fallback is the single command
+`lac-owner decide <choice> <continuation_id> <pending_id>`. The wrapper delegates to
+`lacctl permissions decide`, which sends the already accepted R1 `permissions.decide`
+administrator operation with fixed `RESOURCE` scope. The administrator service derives the
+project/application, action, resource, skill, principal and agent binding from durable trusted
+state. `lacctl permissions set --file` remains available as the low-level full-snapshot
+administrator/scripting primitive.
+
+The command does not resume a continuation, create an effect lease, or dispatch an effect.
+Normal resume/retry remains separate, so emergency pause, deny precedence, current-policy
+re-evaluation, exact approval binding and project isolation remain authoritative.
+This R4 implementation remains part of the `1.0.0-rc.12` remediation train and is not an
+accepted release until R5 integrated owner UAT and R6 fresh independent review pass.

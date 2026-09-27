@@ -169,6 +169,7 @@ lacctl skills list
 lacctl skills show <skill>
 lacctl permissions list
 lacctl permissions show ...
+lacctl permissions decide <choice> <continuation_id> <pending_id>
 lacctl permissions set ...
 lacctl permissions revoke ...
 lacctl pending list
@@ -226,3 +227,15 @@ The low-level full-snapshot `permissions.replace` operation remains an administr
 `ALLOW_ONCE` creates `REQUIRE_APPROVAL` standing state, advances the pending configuration disposition, resumes through D001 as one fresh request, and requires an exact one-time approval for that fresh request. `ASK_EVERY_TIME` uses the same standing state but requires an explicit exact decision for the current request and every later match. `ALWAYS_ALLOW` and `ALWAYS_DENY` create scoped standing rules. `DENY_ONCE` mutates no standing policy and closes only the bound continuation non-authoritatively.
 
 The original first-use request remains terminally denied. A bounded owner choice is administration, not dispatch authority; all fresh requests still traverse capability validation, current standing policy, exact approval where required, emergency pause, lease/idempotency and adapter checks.
+
+R4 exposes the same bounded contract through installed terminal UX:
+
+```text
+lac-owner decide <allow-once|always-allow|ask-every-time|deny-once|always-deny> <continuation_id> <pending_id>
+```
+
+`lac-owner` delegates to `lacctl permissions decide`, which emits the existing
+`permissions.decide` administrator operation with fixed `RESOURCE` scope. It creates no second
+policy store, approval store, continuation authority, or dispatch route. Full-snapshot
+`lacctl permissions set --file` remains available only as the lower-level administrator/scripting
+primitive.

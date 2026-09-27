@@ -36,6 +36,7 @@ lacctl skills show <application_id> <skill_id> [--revision N]
 
 lacctl permissions list
 lacctl permissions show [--revision N]
+lacctl permissions decide <allow-once|always-allow|ask-every-time|deny-once|always-deny> <continuation_id> <pending_id>
 lacctl permissions set --file <policy.json>
 lacctl permissions revoke <rule|default> <id>
 
@@ -53,6 +54,20 @@ lacctl approvals show <decision_id>
 lacctl approvals approve <decision_id>
 lacctl approvals reject <decision_id>
 ```
+
+For ordinary installed first-use permission decisions, prefer the shorter owner surface:
+
+```text
+lac-owner decide <allow-once|always-allow|ask-every-time|deny-once|always-deny> <continuation_id> <pending_id>
+```
+
+That command is only a thin alias for `lacctl permissions decide`. The CLI fixes the R1 scope to
+`RESOURCE`; it does not accept action, resource, project/application, skill, principal, agent, or
+arbitrary scope material from the caller. The owner-only administrator service re-derives those
+values from the exact durable continuation and pending-permission binding.
+
+`permissions set --file` is retained as a low-level administrator/scripting primitive. It is not
+the ordinary first-use UX.
 
 `permissions set` replaces the complete canonical standing-policy snapshot using a UTF-8 JSON file containing exactly:
 

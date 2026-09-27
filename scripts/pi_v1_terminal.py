@@ -320,8 +320,10 @@ class PiV1InteractiveSession(baseline.InteractiveSession):
         print(
             f"[permission] workflow suspended before model continuation; pending={pending_id} "
             f"continuation={continuation_id}. The original effect is terminally closed. "
-            "Configure owner policy with scripts/lacctl, then resolve or dismiss the pending item. "
-            f"Example resolution after policy change: scripts/lacctl pending resolve {pending_id} POLICY_UPDATED",
+            "In another owner terminal choose exactly one bounded outcome with: "
+            f"lac-owner decide <allow-once|always-allow|ask-every-time|deny-once|always-deny> "
+            f"{continuation_id} {pending_id}. "
+            "The owner command changes canonical goodLAC permission state only; continuation resume remains separate.",
             flush=True,
         )
         if self.permission_wait_hook is not None:
@@ -379,7 +381,7 @@ class PiV1InteractiveSession(baseline.InteractiveSession):
                 if decision != announced_decision:
                     print(
                         f"[approval] fresh continuation request requires exact owner approval; "
-                        f"decision={decision}. In another terminal: scripts/lacctl approvals approve {decision} "
+                        f"decision={decision}. In another terminal: lac-owner approvals approve {decision} "
                         "(or reject it). The broker keeps the same fresh canonical request.",
                         flush=True,
                     )
@@ -435,7 +437,7 @@ class PiV1InteractiveSession(baseline.InteractiveSession):
                 if not announced:
                     print(
                         f"[approval] exact owner decision required; decision={decision}. In another terminal: "
-                        f"scripts/lacctl approvals approve {decision} (or reject it). "
+                        f"lac-owner approvals approve {decision} (or reject it). "
                         "The broker retries this same canonical request.",
                         flush=True,
                     )
@@ -514,7 +516,7 @@ class PiV1InteractiveSession(baseline.InteractiveSession):
                 decision = result.get("decision_id")
                 if decision != announced_decision:
                     print(
-                        f"Exact approval required: scripts/lacctl approvals approve {decision} (or reject it)."
+                        f"Exact approval required: lac-owner approvals approve {decision} (or reject it)."
                     )
                     announced_decision = decision
                 if time.monotonic() - started >= APPROVAL_WAIT_LIMIT_SECONDS:
@@ -668,7 +670,7 @@ def run_interactive(workspace, state, trace, runtime_mode):
                     "/continuations show blocked/recoverable workflow continuations\n"
                     "/resume <continuation_id> explicitly resume one recovered continuation\n"
                     "/quit clean shutdown\n"
-                    "Other text is sent to pinned Pi. Use scripts/lacctl in another owner terminal for admin."
+                    "Other text is sent to pinned Pi. Use lac-owner in another owner terminal for admin."
                 )
                 continue
             if cmd in {"/status", "status"}:

@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+umask 077
+ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+export PYTHONDONTWRITEBYTECODE=1
+RUN_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/goodlac-post-v1-r4.XXXXXX")"
+trap 'rm -rf -- "$RUN_ROOT"' EXIT INT TERM
+
+python3 -m unittest -v tests.acceptance.test_post_v1_r4_terminal_fallback
+PYTHONPYCACHEPREFIX="$RUN_ROOT/pycache" python3 -m py_compile \
+  packages/lacctl/cli.py \
+  packages/productization/v1.py \
+  scripts/pi_v1_terminal.py \
+  tests/acceptance/test_post_v1_r4_terminal_fallback.py
+bash -n scripts/test-post-v1-r4
+
+scripts/test-post-v1-r3
+git diff --check
+echo "GOODLAC_POST_V1_R4_INSTALLED_TERMINAL_FALLBACK_UX_CLEANUP=PASS"
