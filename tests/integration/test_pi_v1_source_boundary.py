@@ -9,6 +9,20 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class PiV1SourceBoundaryTests(unittest.TestCase):
+    def test_model_prompt_scopes_deny_once_to_exact_request_without_weakening_standing_deny(self):
+        from scripts import pi_v1_terminal
+
+        prompt = pi_v1_terminal.system_prompt()
+        self.assertIn("current tool request", prompt)
+        self.assertIn("OWNER_DENY_ONCE", prompt)
+        self.assertIn("only the exact completed request was denied", prompt)
+        self.assertIn("not a standing instruction or durable user preference", prompt)
+        self.assertIn("later explicitly asks for the same or an equivalent operation in a new turn", prompt)
+        self.assertIn("submit a new governed tool request", prompt)
+        self.assertIn("controller independently evaluates that fresh request", prompt)
+        self.assertIn("configured standing DENY is different", prompt)
+        self.assertIn("do not retry or seek an alternate consequential route to bypass", prompt)
+
     def test_profile_reuses_accepted_pi_sandbox_and_native_controller_runtime(self):
         terminal = (ROOT / "scripts" / "pi_v1_terminal.py").read_text()
         production = (ROOT / "packages" / "adapters" / "pi" / "production.py").read_text()

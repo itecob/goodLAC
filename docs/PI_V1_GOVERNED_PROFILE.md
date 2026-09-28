@@ -55,6 +55,14 @@ effect RPC blocked. The denied result is not returned to the Pi worker, so the m
 continue the turn, retry the effect, mutate it, or improvise an alternate consequential route
 while the owner decision is outstanding.
 
+That no-retry rule is scoped to the exact request whose owner decision is currently being
+handled. `DENY_ONCE` closes only that exact continuation and creates no standing policy.
+When the host returns `OWNER_DENY_ONCE`, a later explicit user request for the same or an
+equivalent operation is a new governed request and may be submitted normally; the controller
+independently re-evaluates capability, current policy, emergency state and any required owner
+decision. The model must not infer a standing deny or durable user preference from
+`OWNER_DENY_ONCE`. A configured standing `DENY` remains distinct and must not be bypassed.
+
 Owner configuration remains out-of-band through the authenticated administration surface.
 The ordinary installed terminal fallback for the same five R1 choices is:
 
