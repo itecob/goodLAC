@@ -71,6 +71,31 @@ Provide a concise installed owner command surface for the same bounded choices. 
 
 Run real owner UAT from at least two ordinary project directories and exercise Allow once, Always allow, Ask every time, Deny once, Always deny, overwrite/replace, restart/recovery, scope display, and exact project isolation. Record bounded owner evidence and produce the `1.0.0-rc.12` review candidate only after integrated qualification passes.
 
+### R5-R001 — Multi-Pi administrator control-plane blocker remediation
+
+Status: `ACTIVE` — discovered during R5 owner UAT before the first permission choice.
+
+R5 reached the installed governed Pi path only after retained regression, candidate build/install,
+doctor/pin checks, and external FreeToken readiness passed. The first Pi launch then failed because
+the R5 harness had orphaned an owner `lac-admin-server` on the candidate runtime socket: `admin_start`
+was invoked inside Bash command substitution, so its `ADMIN_PID` assignment was lost to the parent
+shell. This is an R5 harness lifecycle defect.
+
+The incident also exposed a product-level concurrency limitation: each native governed Pi host
+currently starts its own `pi_v1_admin_server.py`, and that server competes for the same fixed
+owner-only `admin-v1.sock`. goodLAC must support multiple simultaneous governed Pi sessions on one
+machine/server against one canonical controller truth, subject to actual host/model-runtime
+capacity.
+
+R5-R001 must separate machine/controller-scoped administrator ownership from Pi-session lifecycle
+(or implement an equivalently secure multiplexed design), preserve all Phase 7 socket-race
+protections and R1-R4 authority invariants, add deterministic multi-session isolation/emergency/
+lifecycle coverage, repair the R5 orphan-process bug, and add an installed concurrent-Pi owner-UAT
+scenario.
+
+R5 remains `BLOCKED` until this remediation passes and a fresh integrated owner UAT is rerun.
+`1.0.0-rc.12` is not accepted.
+
 ### R6 — Fresh independent security/product review
 
 A fresh reviewer, not the implementation agent, reviews the exact R5 candidate. Final disposition is `PASS` or `BLOCKED`. The prior rc.11 PASS remains historical baseline either way.

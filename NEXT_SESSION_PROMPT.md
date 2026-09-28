@@ -1,60 +1,151 @@
-# NEXT SESSION PROMPT — goodLAC / POST-V1 R5 INTEGRATED OWNER UAT AND RELEASE QUALIFICATION
+# NEXT SESSION PROMPT — goodLAC / POST-V1 R5-R001 MULTI-PI ADMIN CONTROL PLANE
 
 ## 1. Role and controlling rule
 
-You are the next Lead Qualification Engineer for owner-authorized post-v1 remediation of **goodLAC**.
+You are the Lead Remediation Engineer for the owner-authorized R5 blocker remediation of **goodLAC**.
 
-`MODE=OWNER_UAT_AND_RELEASE_QUALIFICATION`
-`SESSION_SEGMENT=POSTV1-R5-INTEGRATED-OWNER-UAT-RELEASE-QUALIFICATION`
+`MODE=BLOCKER_REMEDIATION_IMPLEMENTATION`
+`SESSION_SEGMENT=POSTV1-R5-R001-MULTI-PI-ADMIN-CONTROL-PLANE`
 `REPOSITORY=itecob/goodLAC`
-`R4_IMPLEMENTATION_COMMIT=6838dbf80c4d9a2572194891d3b355f39a6efbce`
+`R5_BLOCKED_SOURCE_HEAD=7d4730ec430ab95ad42446af81568570e02577ea`
 `ACCEPTED_HISTORICAL_RELEASE=1.0.0-rc.11`
 `TARGET_RELEASE_TRAIN=1.0.0-rc.12`
 
 > **AI proposes. Deterministic software determines authorization and effects.**
 
-Use the connected read-only Web-File-Tool. Any mutation must be delivered as one
-owner-executable package and one self-contained Bash command.
+Use the connected read-only Web-File-Tool for repository inspection. Any repository mutation must
+be delivered as one owner-executable package and one self-contained Bash command.
 
 ## 2. Mandatory durable reads
 
-Read first, in order: `PROJECT_STATE.json`, `tasks/ACTIVE_TASK.md`, `README.md`, `BRAND.md`,
-`SECURITY.md`, `LICENSE-DRAFT.md`, `CLA-DRAFT.md`, `docs/ARCHITECTURE.md`,
-`UPSTREAM_LOCK.json`, `docs/POST_V1_REMEDIATION_ROADMAP.md`, and the R1, R2, R3 and R4
-owner execution evidence. Then inspect only source/tests needed for R5.
+Read first, in order:
 
-## 3. R1-R4 facts to preserve
+1. `PROJECT_STATE.json`
+2. `tasks/ACTIVE_TASK.md`
+3. `README.md`
+4. `SECURITY.md`
+5. `docs/ARCHITECTURE.md`
+6. `docs/ADMIN_API.md`
+7. `docs/LACCTL.md`
+8. `docs/POST_V1_REMEDIATION_ROADMAP.md`
+9. `UPSTREAM_LOCK.json`
+10. R1-R4 owner execution evidence
+11. all Phase 7 admin-socket remediation evidence/tests
+12. `packages/admin/transport.py`
+13. `packages/admin/service.py`
+14. `packages/lacctl/client.py`
+15. `scripts/lac-admin-server`
+16. `scripts/pi_v1_admin_server.py`
+17. `scripts/pi_v1_terminal.py`
+18. `scripts/pi_native_tui_host.py`
+19. `scripts/pi_v1_controller_bridge.py`
+20. productization/installed-wrapper source and tests.
 
-R1 owns the five canonical owner choices and exact continuation/pending binding. R2 makes
-ordinary sessions project-aware and prevents Project A authority/recovery from crossing into
-Project B. R3 captures owner input inside the trusted pinned Pi 0.85.1 extension using bounded
-opaque one-use challenges; the model still receives exactly four consequential-effect tools and
-no permission-management capability.
+## 3. Owner-UAT facts that are binding
 
-R4 adds only installed terminal UX. `lac-owner decide <choice> <continuation_id> <pending_id>`
-delegates through `lacctl permissions decide` to the same owner-only `permissions.decide`
-administrator operation with fixed `RESOURCE` scope. The CLI cannot supply arbitrary authority
-scope. It does not resume or dispatch. Low-level `lacctl permissions set --file` remains an
-administrator/scripting primitive.
+R5 retained regression passed, candidate build/install passed, installed static doctor passed,
+installed dynamic doctor passed with exact Pi and FreeToken pins, and the accepted external
+FreeToken endpoint became ready.
 
-## 4. R5 binding requirements
+Before any owner permission choice, Scenario B failed when installed governed Pi attempted to
+start `pi_v1_admin_server.py` and received:
 
-Run real owner UAT from at least two ordinary project directories through the installed default
-governed `pi` path. Exercise all five first-use choices: Allow once, Always allow, Ask every
-time, Deny once, Always deny. Exercise both native TUI capture and the installed terminal
-fallback where applicable.
+`AdminTransportError: administrator socket is already active`
 
-Also exercise overwrite/replace, restart/recovery, trusted project-scope display, exact approval
-binding, and exact Project A / Project B isolation. Verify that original first-use requests remain
-terminally denied; approval creation alone never dispatches; emergency pause and current-policy
-deny precedence still win before dispatch; and one project's standing choice or continuation
-cannot authorize another project.
+The retained UAT root showed a live listener at:
 
-Record bounded owner evidence. Do not represent `1.0.0-rc.12` as accepted merely because R5
-passes. Stage an exact review candidate only after all R5 qualification passes.
+`$XDG_RUNTIME_DIR/lac/admin-v1.sock`
 
-## 5. Stop gate
+owned by a Python process. R5 source proved it had previously executed:
 
-Complete only R5. Do not perform the independent R6 review in the same session. Leave the exact
-candidate commit pinned for a fresh reviewer and install a precise R6 successor prompt. Preserve
-the accepted historical `1.0.0-rc.11` baseline unless and until R6 returns PASS.
+`policy_json="$(admin_json permissions list)"`
+
+where `admin_json` invokes `admin_start`. Bash command substitution ran that function in a
+subshell, so `ADMIN_PID=$!` never propagated to the parent R5 shell. The owner admin process
+therefore survived and collided with the native Pi host.
+
+A separate ordinary installed `pi` invocation also failed on an already-active admin socket.
+This exposed a product-level limitation: native Pi startup currently launches a per-Pi
+`pi_v1_admin_server.py`, while the owner CLI uses the same fixed `UnixAdminServer` socket.
+
+## 4. Product requirement
+
+Multiple simultaneous goodLAC-governed Pi sessions must be supported on one machine/server,
+subject to real hardware/model-runtime capacity.
+
+The intended authority topology is one canonical controller/admin truth capable of governing
+many concurrent Pi sessions/projects, not one global socket owner per Pi process.
+
+Do not assume that FreeToken/GPU execution must be single-request. Model-runtime concurrency and
+capacity are separate from goodLAC authority concurrency.
+
+## 5. Required design properties
+
+Design and implement the smallest architecture that satisfies all of these:
+
+- one canonical durable controller state may govern Pi A, Pi B, Pi C concurrently;
+- owner administration remains owner-only and outside the model sandbox;
+- concurrent Pi sessions do not compete to bind the same owner socket;
+- project/application identity remains controller-derived;
+- project A authority cannot cross-bind to project B;
+- permission challenges remain opaque, expiring, one-use, exact-session/project bound;
+- exact approval creation alone never dispatches;
+- current policy and emergency state are re-evaluated before dispatch;
+- emergency pause applies coherently to all sessions sharing canonical controller state;
+- continuations remain durable, fresh-request-only, explicit on restart, and project-isolated;
+- stopping/crashing Pi A does not stop Pi B or the shared admin/control plane;
+- existing Phase 7 socket ownership/race protections remain intact;
+- model-facing consequential tool surface remains exactly four tools;
+- no administrator socket/credentials enter the sandbox;
+- fail closed on missing/unavailable shared control-plane service.
+
+Strongly prefer separating machine/controller-scoped admin service ownership from Pi-session
+lifecycle. If project registration currently occurs as a side effect of per-Pi admin-server
+startup, move/bootstrap that responsibility through a controller-owned trusted path without
+granting the model authority. Do not create per-session independent canonical policy universes
+unless there is a demonstrated security reason and exact owner semantics remain coherent.
+
+## 6. Required tests
+
+Add deterministic tests proving at minimum:
+
+1. Two governed Pi/native hosts can be alive simultaneously against the same canonical state.
+2. Both can independently perform governed requests.
+3. Project A `ALWAYS_ALLOW` cannot authorize Project B.
+4. Project A continuation/approval/challenge cannot be consumed by Project B.
+5. Emergency pause blocks pre-dispatch effects in both sessions.
+6. Resume does not itself dispatch either session.
+7. Terminating one Pi leaves the other operational.
+8. Shared admin service restart preserves durable state and no effect auto-resumes.
+9. A competing second admin server still fails safely and cannot unlink/steal the active socket.
+10. Model/sandbox still cannot access the admin endpoint.
+11. R5 harness does not orphan an administrator process when using JSON capture or on failure.
+12. Full retained R4/Phase 7 regression chain passes.
+
+Also add a bounded interactive owner-UAT concurrency scenario that leaves Pi A running while Pi B
+starts and proves both are usable through the installed default governed path.
+
+## 7. R5 integration-harness repair
+
+Repair the command-substitution lifecycle defect. Do not rely on a PID assignment made in a
+subshell. Administrator startup/shutdown ownership must remain explicit and deterministic.
+
+Qualification cleanup must terminate only processes it owns and must never unlink another live
+owner endpoint.
+
+## 8. Release/state rules
+
+This remediation is a blocker child of R5. Do not activate R6.
+
+`1.0.0-rc.11` remains the accepted historical release.
+`1.0.0-rc.12` remains only the target release train.
+
+After implementation and deterministic qualification PASS:
+- record bounded remediation evidence;
+- commit the implementation separately;
+- reinstall an R5 integrated owner-UAT successor prompt/package;
+- leave R5 active for fresh owner execution;
+- do not mark R5 PASS from automated tests alone.
+
+If any binding security invariant cannot be preserved, stop with a BLOCKED disposition rather
+than weakening it.
