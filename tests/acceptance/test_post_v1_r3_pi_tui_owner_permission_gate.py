@@ -5,8 +5,14 @@ import os
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
-from packages.admin import AdminRequest, AdminService
+from packages.admin import (
+    AdminRequest,
+    AdminService,
+    ensure_admin_control_plane,
+    stop_owned_admin_control_plane,
+)
 from packages.adapters.pi.production import pi_v1_capability_manifest, pi_v1_project_application_id
 from packages.capabilities import CapabilityManifest, PendingPermissionRepository
 from packages.state import SQLiteStateStore
@@ -18,11 +24,20 @@ class PostV1R3PiTuiOwnerPermissionGateTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory(prefix="goodlac-post-v1-r3-")
         self.root = Path(self.tmp.name)
+        self.runtime = self.root / "runtime"
+        self.runtime.mkdir(mode=0o700)
+        self.runtime_patch = mock.patch.dict(
+            os.environ, {"XDG_RUNTIME_DIR": str(self.runtime)}
+        )
+        self.runtime_patch.start()
         self.workspace = self.root / "project-a"
         self.workspace.mkdir()
         self.state = self.root / "controller.db"
         self.trace = self.root / "trace.jsonl"
         legacy.initialize_state(self.state, self.workspace)
+        self.control_plane = ensure_admin_control_plane(
+            self.state, repo_root=Path(__file__).resolve().parents[2]
+        )
         self.store = SQLiteStateStore(self.state)
         self.admin = AdminService(self.store, owner_uid=os.getuid())
         self.app_id = pi_v1_project_application_id(self.workspace)
@@ -36,9 +51,13 @@ class PostV1R3PiTuiOwnerPermissionGateTests(unittest.TestCase):
         )
 
     def tearDown(self):
-        self.broker.close_owner_gate()
-        self.store.close()
-        self.tmp.cleanup()
+        try:
+            self.broker.close_owner_gate()
+            self.store.close()
+            stop_owned_admin_control_plane(self.control_plane)
+        finally:
+            self.runtime_patch.stop()
+            self.tmp.cleanup()
 
     def call(self, operation, arguments):
         return self.admin.execute(

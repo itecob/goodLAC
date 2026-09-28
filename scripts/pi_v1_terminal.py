@@ -18,6 +18,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 import scripts.a004_terminal as baseline
+from packages.admin import ensure_admin_control_plane, probe_admin_control_plane, stop_owned_admin_control_plane
 from packages.adapters.pi.production import (PI_V1_APPLICATION_ID, PI_V1_SKILL_ID, canonical_project_root, pi_v1_project_application_id)
 from packages.capabilities import PendingPermissionRepository
 from packages.lacctl import LacctlClient
@@ -25,7 +26,6 @@ from packages.policy import StandingPolicyRule
 from packages.state import SQLiteStateStore
 
 EFFECT_BRIDGE = REPO_ROOT / "scripts" / "pi_v1_controller_bridge.py"
-ADMIN_SERVER = REPO_ROOT / "scripts" / "pi_v1_admin_server.py"
 APPROVAL_WAIT_LIMIT_SECONDS = 3600
 PERMISSION_WAIT_LIMIT_SECONDS = 3600
 WAIT_POLL_SECONDS = 0.5
@@ -160,64 +160,13 @@ def initialize_state(state, workspace):
 
 
 def start_admin_server(state, workspace):
-    proc = subprocess.Popen(
-        [
-            sys.executable,
-            "-u",
-            str(ADMIN_SERVER),
-            "--state",
-            str(state),
-            "--workspace",
-            str(workspace),
-            "--parent-pid",
-            str(os.getpid()),
-        ],
-        cwd=REPO_ROOT,
-        stdin=subprocess.DEVNULL,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-        bufsize=1,
-    )
-    assert proc.stdout is not None
-    sel = selectors.DefaultSelector()
-    sel.register(proc.stdout, selectors.EVENT_READ)
-    try:
-        ready = sel.select(timeout=8)
-        if not ready:
-            stderr = (
-                proc.stderr.read()[-1600:]
-                if proc.poll() is not None and proc.stderr
-                else ""
-            )
-            proc.kill()
-            raise PiV1TerminalError(
-                f"admin server did not become ready: {stderr}"
-            )
-        line = proc.stdout.readline()
-    finally:
-        sel.close()
-    if not line:
-        raise PiV1TerminalError("admin server exited before ready")
-    try:
-        value = json.loads(line)
-    except json.JSONDecodeError as exc:
-        raise PiV1TerminalError("admin ready message malformed") from exc
-    if value.get("schema") != "lac.pi-v1-admin-ready/v1":
-        raise PiV1TerminalError(f"unexpected admin ready message: {value!r}")
-    return proc
+    canonical_project_root(workspace)
+    return ensure_admin_control_plane(state, repo_root=REPO_ROOT)
 
 
-def stop_admin_server(proc):
-    if proc is None:
-        return
-    if proc.poll() is None:
-        proc.terminate()
-        try:
-            proc.wait(timeout=5)
-        except subprocess.TimeoutExpired:
-            proc.kill()
-            proc.wait(timeout=5)
+def stop_admin_server(_lease):
+    # Shared machine/controller service lifetime is intentionally independent of Pi.
+    return None
 
 
 def effect_line(result):
@@ -290,6 +239,7 @@ class PiV1InteractiveSession(baseline.InteractiveSession):
             )
 
     def _resume_once(self, continuation_id, *, expected_message=None):
+        probe_admin_control_plane(self.state)
         response = bridge_continuation_resume(
             self.state,
             self.workspace,
@@ -404,6 +354,7 @@ class PiV1InteractiveSession(baseline.InteractiveSession):
             }
 
     def _effect(self, payload):
+        probe_admin_control_plane(self.state)
         if not isinstance(payload, Mapping):
             baseline.fail("effect_request payload must be an object")
         print(f"[tool] {baseline.tool_summary(payload)}", flush=True)
@@ -742,7 +693,10 @@ def main():
         signal.signal(signal.SIGTERM, old)
         if runtime is not None:
             runtime.stop()
-        stop_admin_server(admin)
+        if a.profile_probe and admin is not None:
+            stop_owned_admin_control_plane(admin)
+        else:
+            stop_admin_server(admin)
 
 
 if __name__ == "__main__":

@@ -85,3 +85,7 @@ Rule/default objects must be canonical P003 `lac.standing-policy-rule/v1` and `l
 - Exact approval commands create only the existing immutable one-request approval decision. They do not dispatch or execute an effect; current policy is still re-evaluated before dispatch.
 - Emergency pause/status/resume uses the same owner-authenticated P004 admin socket and wraps the existing canonical durable emergency-pause state; it does not grant dispatch authority.
 - Runtime consumers gain no administration mutation surface from `lacctl`.
+
+## R5-R001 service lifecycle
+
+Installed owner commands attach to one shared owner administrator service for the canonical controller state. Governed Pi sessions do not own or stop that service. A Pi session fails closed if the service is unavailable or bound to a different canonical state. The model sandbox never receives the socket.

@@ -1,5 +1,16 @@
 """Isolated owner-only Local Agent Controller administration surface."""
 
+
+from .control_plane import (
+    CONTROL_PLANE_READY_SCHEMA,
+    CONTROL_PLANE_STATUS_SCHEMA,
+    AdminControlPlaneError,
+    AdminControlPlaneLease,
+    ensure_admin_control_plane,
+    probe_admin_control_plane,
+    stop_owned_admin_control_plane,
+)
+
 from .owner_permissions import (
     OWNER_PERMISSION_CHOICES,
     OWNER_PERMISSION_DECISION_SCHEMA,
@@ -41,6 +52,13 @@ from .transport import (
 )
 
 __all__ = [
+    "CONTROL_PLANE_READY_SCHEMA",
+    "CONTROL_PLANE_STATUS_SCHEMA",
+    "AdminControlPlaneError",
+    "AdminControlPlaneLease",
+    "ensure_admin_control_plane",
+    "probe_admin_control_plane",
+    "stop_owned_admin_control_plane",
     "OWNER_PERMISSION_CHOICES",
     "OWNER_PERMISSION_DECISION_SCHEMA",
     "OWNER_PERMISSION_SCOPES",

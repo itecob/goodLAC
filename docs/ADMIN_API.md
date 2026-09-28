@@ -88,3 +88,7 @@ Nothing in this API changes these contracts:
 - P003 conditions consume only P002-validated trusted metadata.
 - Exact approvals bind one canonical request and are rechecked at dispatch.
 - Runtime consumers cannot mutate registry, standing policy, pending administration state, or exact approvals through the runtime interface.
+
+## R5-R001 shared control-plane status
+
+The owner-only administrator endpoint is machine/controller scoped rather than Pi-session scoped. The internal `controller.status` operation is available only through the same owner UID / SO_PEERCRED boundary and reports the canonical state path plus device/inode identity used by trusted Pi hosts to reject cross-bound endpoints. It is not a model-facing operation.

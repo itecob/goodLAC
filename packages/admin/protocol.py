@@ -12,6 +12,7 @@ MAX_ADMIN_REQUEST_ID = 160
 
 ADMIN_OPERATIONS = frozenset(
     {
+        "controller.status",
         "skills.list",
         "skills.show",
         "skills.register",

@@ -1,46 +1,50 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, json, os, signal, sys
+
+import argparse
+import json
+import os
+import sys
 from pathlib import Path
-REPO_ROOT=Path(__file__).resolve().parents[1]
-if str(REPO_ROOT) not in sys.path: sys.path.insert(0,str(REPO_ROOT))
-from packages.admin import AdminRequest, AdminService, UnixAdminServer
-from packages.adapters.pi.production import pi_v1_capability_manifest, pi_v1_project_application_id
-from packages.state import SQLiteStateStore
-_stop=False
-def _stop_now(_s,_f):
-    global _stop; _stop=True
-def _parent_alive(pid):
-    try: os.kill(pid,0); return pid>1
-    except (ProcessLookupError,PermissionError): return False
-def main():
-    p=argparse.ArgumentParser()
-    p.add_argument("--state",required=True,type=Path)
-    p.add_argument("--workspace",required=True,type=Path)
-    p.add_argument("--parent-pid",required=True,type=int)
-    a=p.parse_args()
-    signal.signal(signal.SIGTERM,_stop_now); signal.signal(signal.SIGINT,_stop_now)
-    store=SQLiteStateStore(a.state.expanduser().resolve(strict=True))
-    service=AdminService(store,owner_uid=os.getuid())
-    application_id=pi_v1_project_application_id(a.workspace)
-    bootstrap=AdminRequest.create(
-        request_id=f"admin:pi-v1:bootstrap-register:{application_id.rsplit('.',1)[-1]}",
-        operation="skills.register",
-        arguments={"manifest":pi_v1_capability_manifest(application_id)},
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from packages.admin import ensure_admin_control_plane
+from packages.adapters.pi.production import pi_v1_project_application_id
+from scripts.pi_v1_controller_bridge import initialize_state
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Compatibility shim: bootstrap a governed Pi project and attach to the shared goodLAC admin control plane"
     )
-    registration=service.execute(bootstrap,peer_uid=os.getuid())
-    server=UnixAdminServer(service)
-    try:
-        socket_path=server.start()
-        print(json.dumps({
-            "schema":"lac.pi-v1-admin-ready/v1","pid":os.getpid(),
-            "socket":str(socket_path),"state":str(store.path),
-            "registered_application_id":registration["application_id"],
-            "registered_skill_id":registration["skill_id"]
-        },sort_keys=True),flush=True)
-        while not _stop and _parent_alive(a.parent_pid):
-            server.serve_once(timeout=0.5)
-        return 0
-    finally:
-        server.close(); store.close()
-if __name__=="__main__": raise SystemExit(main())
+    parser.add_argument("--state", required=True, type=Path)
+    parser.add_argument("--workspace", required=True, type=Path)
+    parser.add_argument("--parent-pid", type=int)
+    args = parser.parse_args()
+
+    state = args.state.expanduser().resolve()
+    workspace = args.workspace.expanduser().resolve(strict=True)
+    initialize_state(state, workspace)
+    lease = ensure_admin_control_plane(state, repo_root=REPO_ROOT)
+    print(
+        json.dumps(
+            {
+                "schema": "lac.pi-v1-admin-ready/v1",
+                "pid": os.getpid(),
+                "shared_control_plane_pid": lease.server_pid,
+                "state": str(lease.state_path),
+                "registered_application_id": pi_v1_project_application_id(workspace),
+                "shared": True,
+            },
+            sort_keys=True,
+        ),
+        flush=True,
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

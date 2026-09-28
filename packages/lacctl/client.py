@@ -19,6 +19,7 @@ CLIENT_TIMEOUT_SECONDS = 2.0
 
 ADMIN_OPERATIONS = frozenset(
     {
+        "controller.status",
         "skills.list",
         "skills.show",
         "permissions.list",

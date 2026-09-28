@@ -47,10 +47,12 @@ class PiV1SourceBoundaryTests(unittest.TestCase):
     def test_builtin_registration_is_controller_owned_and_lacctl_stays_narrow(self):
         terminal = (ROOT / "scripts" / "pi_v1_terminal.py").read_text()
         admin_server = (ROOT / "scripts" / "pi_v1_admin_server.py").read_text()
+        bridge = (ROOT / "scripts" / "pi_v1_controller_bridge.py").read_text()
         self.assertNotIn('operation="skills.register"', terminal)
-        self.assertIn('operation="skills.register"', admin_server)
-        self.assertIn("AdminRequest.create", admin_server)
-        self.assertIn("service.execute", admin_server)
+        self.assertNotIn("UnixAdminServer", admin_server)
+        self.assertIn('operation="skills.register"', bridge)
+        self.assertIn("AdminRequest.create", bridge)
+        self.assertIn("AdminService", bridge)
         self.assertNotIn("skills.register", ADMIN_OPERATIONS)
 
     def test_model_tool_surface_stays_four_and_rejects_authority_material(self):

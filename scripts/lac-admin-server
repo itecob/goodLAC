@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import signal
 import sys
@@ -11,13 +12,14 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from packages.admin import AdminService, UnixAdminServer
+from packages.admin import AdminRequest, AdminService, UnixAdminServer
 from packages.state import SQLiteStateStore
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Local Agent Controller owner-only administration server")
     parser.add_argument("--state", required=True, help="Path to the canonical LAC SQLite state database")
+    parser.add_argument("--ready-json", action="store_true", help="Emit one bounded machine-readable readiness record")
     args = parser.parse_args()
 
     if os.name != "posix" or not sys.platform.startswith("linux"):
@@ -35,7 +37,28 @@ def main() -> int:
         signal.signal(signal.SIGTERM, stop)
         signal.signal(signal.SIGINT, stop)
         socket_path = server.start()
-        print(f"LAC_ADMIN_SOCKET={socket_path}", flush=True)
+        if args.ready_json:
+            status = service.execute(
+                AdminRequest.create(
+                    request_id="admin:control-plane:ready-status",
+                    operation="controller.status",
+                    arguments={},
+                ),
+                peer_uid=os.getuid(),
+            )
+            print(
+                json.dumps(
+                    {
+                        "schema": "lac.admin-control-plane-ready/v1",
+                        "socket": str(socket_path),
+                        **status,
+                    },
+                    sort_keys=True,
+                ),
+                flush=True,
+            )
+        else:
+            print(f"LAC_ADMIN_SOCKET={socket_path}", flush=True)
         try:
             while not stopping:
                 server.serve_once(timeout=0.5)

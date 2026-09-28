@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+umask 077
+
+ADMIN_PID=""
+ADMIN_READY=""
+ADMIN_STDERR=""
+
+admin_start() {
+  local app="$1"
+  local state="$2"
+  ADMIN_READY="$(mktemp "${TMPDIR:-/tmp}/goodlac-r5-admin-ready.XXXXXX")"
+  ADMIN_STDERR="$(mktemp "${TMPDIR:-/tmp}/goodlac-r5-admin-stderr.XXXXXX")"
+  python3 -u "$app/scripts/lac-admin-server" --state "$state" --ready-json \
+    >"$ADMIN_READY" 2>"$ADMIN_STDERR" &
+  ADMIN_PID=$!
+  local i
+  for i in $(seq 1 100); do
+    [[ -s "$ADMIN_READY" ]] && return 0
+    if ! kill -0 "$ADMIN_PID" 2>/dev/null; then
+      wait "$ADMIN_PID" || true
+      cat "$ADMIN_STDERR" >&2 || true
+      return 1
+    fi
+    sleep 0.05
+  done
+  return 1
+}
+
+admin_stop_owned() {
+  if [[ -n "${ADMIN_PID:-}" ]] && kill -0 "$ADMIN_PID" 2>/dev/null; then
+    kill -TERM "$ADMIN_PID"
+    wait "$ADMIN_PID" || true
+  fi
+  ADMIN_PID=""
+  [[ -z "${ADMIN_READY:-}" ]] || rm -f -- "$ADMIN_READY"
+  [[ -z "${ADMIN_STDERR:-}" ]] || rm -f -- "$ADMIN_STDERR"
+}
+
+admin_json() {
+  local lacctl_bin="$1"; shift
+  "$lacctl_bin" "$@"
+}
+
+if [[ "${1:-}" == "--library-only" ]]; then
+  exit 0
+fi
+
+cat <<'EOF'
+R5 owner-UAT lifecycle helper. Source this file.
+Call admin_start directly in the parent shell.
+Never invoke admin_start from command substitution or a pipeline.
+admin_json performs requests only and never starts a process.
+admin_stop_owned signals only the captured ADMIN_PID and never unlinks a socket.
+EOF

@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+umask 077
+ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+export PYTHONDONTWRITEBYTECODE=1
+RUN_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/goodlac-post-v1-r5-r001.XXXXXX")"
+trap 'rm -rf -- "$RUN_ROOT"' EXIT INT TERM
+
+echo "==> R5-R001 multi-Pi shared control-plane acceptance"
+python3 -m unittest -v tests.acceptance.test_post_v1_r5_r001_multi_pi_control_plane
+
+echo "==> Phase 7 administrator transport race/ownership regression"
+python3 -m unittest -v tests.integration.test_admin_transport
+
+echo "==> Controller/model source-boundary regression"
+python3 -m unittest -v tests.integration.test_pi_v1_source_boundary
+
+PYTHONPYCACHEPREFIX="$RUN_ROOT/pycache" python3 -m py_compile \
+  packages/admin/control_plane.py packages/admin/protocol.py packages/admin/service.py \
+  packages/lacctl/client.py scripts/lac-admin-server scripts/pi_v1_controller_bridge.py scripts/pi_v1_terminal.py \
+  scripts/pi_native_tui_host.py scripts/pi_v1_admin_server.py \
+  tests/acceptance/test_post_v1_r5_r001_multi_pi_control_plane.py
+bash -n scripts/test-post-v1-r5-r001 scripts/post-v1-r5-admin-harness
+
+echo "==> Retained R1-R4 authority/project/challenge/approval regression chain"
+scripts/test-post-v1-r4
+
+echo "==> Retained PI006 / Phase 7-era native restart and productization regression chain"
+scripts/test-pi006
+
+git diff --check
+
+echo "GOODLAC_POST_V1_R5_R001_MULTI_PI_ADMIN_CONTROL_PLANE=PASS"

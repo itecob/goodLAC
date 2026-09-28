@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import sys
 from pathlib import Path
@@ -16,9 +17,11 @@ from packages.adapters.pi.production import (
     PI_V1_PRINCIPAL_ID,
     PiPermissionRuntime,
     canonical_project_root,
+    pi_v1_capability_manifest,
     pi_v1_project_application_id,
 )
 from packages.capabilities import PendingPermissionRepository
+from packages.admin import AdminRequest, AdminService
 from packages.effects.filesystem import FilesystemEffectAdapter
 from packages.effects.shell import ShellEffectAdapter
 from packages.runtime.workflow_continuation import NativeWorkflowContinuationStore
@@ -48,7 +51,7 @@ def canonical_binary(name):
 
 
 def initialize_state(state, workspace):
-    canonical_project_root(workspace)
+    workspace = canonical_project_root(workspace)
     state = state.expanduser().resolve()
     is_new = not state.exists()
     store = SQLiteStateStore(state)
@@ -57,6 +60,15 @@ def initialize_state(state, workspace):
             EmergencyPauseRepository(store).resume()
         AgentIdentityRepository(store).register_active(
             PI_V1_AGENT_ID, PI_V1_PRINCIPAL_ID
+        )
+        application_id = pi_v1_project_application_id(workspace)
+        AdminService(store, owner_uid=os.getuid()).execute(
+            AdminRequest.create(
+                request_id=f"admin:pi-v1:bootstrap-register:{application_id.rsplit('.',1)[-1]}",
+                operation="skills.register",
+                arguments={"manifest": pi_v1_capability_manifest(application_id)},
+            ),
+            peer_uid=os.getuid(),
         )
     finally:
         store.close()

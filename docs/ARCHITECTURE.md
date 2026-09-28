@@ -1,5 +1,7 @@
 # Architecture — Controlling Baseline v0.1
 
+> R5-R001 shared-control-plane details: `docs/R5_R001_MULTI_PI_CONTROL_PLANE.md`.
+
 This file is the concise operating architecture derived from the controlling Technical Design and Implementation Specification v0.1, the accepted Phase 4 permission-management amendment, and ADR-008. It does not broaden the product into an assistant, workflow engine, or general-purpose harness.
 
 ## Central rule

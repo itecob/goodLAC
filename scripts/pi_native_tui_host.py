@@ -180,52 +180,8 @@ def _admin_socket_path() -> Path:
     return Path(f"/run/user/{os.getuid()}") / "lac" / "admin-v1.sock"
 
 
-def _start_admin_server(state: Path, workspace: Path) -> subprocess.Popen[str]:
-    proc = subprocess.Popen(
-        [
-            sys.executable,
-            "-u",
-            str(legacy.ADMIN_SERVER),
-            "--state",
-            str(state),
-            "--workspace",
-            str(workspace),
-            "--parent-pid",
-            str(os.getpid()),
-        ],
-        cwd=REPO_ROOT,
-        stdin=subprocess.DEVNULL,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-        bufsize=1,
-    )
-    assert proc.stdout is not None
-    sel = selectors.DefaultSelector()
-    sel.register(proc.stdout, selectors.EVENT_READ)
-    try:
-        ready = sel.select(timeout=8)
-        if not ready:
-            stderr = proc.stderr.read()[-2400:] if proc.poll() is not None and proc.stderr else ""
-            if proc.poll() is None:
-                proc.kill()
-                proc.wait(timeout=5)
-            fail(f"admin server did not become ready: {stderr}")
-        line = proc.stdout.readline()
-    finally:
-        sel.close()
-    if not line:
-        rc = proc.poll()
-        stderr = proc.stderr.read()[-2400:] if proc.stderr is not None else ""
-        fail(f"admin server exited before ready rc={rc}: {stderr}")
-    try:
-        value = json.loads(line)
-    except json.JSONDecodeError as exc:
-        fail(f"admin ready message malformed: {line[:800]!r}")
-        raise AssertionError from exc
-    if value.get("schema") != "lac.pi-v1-admin-ready/v1":
-        fail(f"unexpected admin ready message: {value!r}")
-    return proc
+def _start_admin_server(state: Path, workspace: Path):
+    return legacy.start_admin_server(state, workspace)
 
 
 def _probe_model_events(request_number: int) -> list[dict[str, Any]]:
@@ -303,6 +259,7 @@ class AuthorityBroker(legacy.PiV1InteractiveSession):
         )
 
     def _effect(self, payload):
+        legacy.probe_admin_control_plane(self.state)
         if self.mode == "probe":
             return super()._effect(payload)
         if not isinstance(payload, Mapping):
@@ -845,6 +802,7 @@ def main() -> int:
     parser.add_argument("--trace", type=Path, default=legacy.default_trace())
     parser.add_argument("--runtime", choices=("manage", "external"), default="manage")
     parser.add_argument("--profile-probe", action="store_true")
+    parser.add_argument("--control-plane-attach-probe-seconds", type=float)
     args = parser.parse_args()
 
     workspace = canonical_project_root(args.workspace)
@@ -855,6 +813,25 @@ def main() -> int:
     runtime = None
     try:
         admin = _start_admin_server(state, workspace)
+        if args.control_plane_attach_probe_seconds is not None:
+            hold = args.control_plane_attach_probe_seconds
+            if hold < 0 or hold > 30:
+                fail("control-plane attach probe duration must be between 0 and 30 seconds")
+            print(
+                json.dumps(
+                    {
+                        "schema": "goodlac.r5-r001-native-host-attach/v1",
+                        "pid": os.getpid(),
+                        "workspace": str(workspace),
+                        "application_id": pi_v1_project_application_id(workspace),
+                        "control_plane_pid": admin.server_pid,
+                    },
+                    sort_keys=True,
+                ),
+                flush=True,
+            )
+            time.sleep(hold)
+            return 0
         if args.profile_probe:
             return run_profile_probe(workspace, state, trace)
         runtime_mode = "external"
@@ -867,7 +844,10 @@ def main() -> int:
         return run_interactive(workspace, state, trace, runtime_mode)
     finally:
         if runtime is not None: runtime.stop()
-        legacy.stop_admin_server(admin)
+        if args.profile_probe and admin is not None:
+            legacy.stop_owned_admin_control_plane(admin)
+        else:
+            legacy.stop_admin_server(admin)
 
 
 if __name__ == "__main__":

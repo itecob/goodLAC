@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any, Callable, Mapping
 
 from packages.capabilities.manifest import CapabilityManifest, CapabilityManifestError
@@ -169,6 +170,7 @@ class AdminService:
         )
 
         self._operations: dict[str, Callable[[dict[str, Any]], Any]] = {
+            "controller.status": self._controller_status,
             "skills.list": self._skills_list,
             "skills.show": self._skills_show,
             "skills.register": self._skills_register,
@@ -200,6 +202,23 @@ class AdminService:
         if operation is None:
             raise AdminBadRequest("unsupported administrator operation")
         return operation(dict(request.arguments))
+
+
+    def _controller_status(self, arguments: dict[str, Any]) -> Any:
+        _exact_arguments(arguments, required=set())
+        try:
+            state = Path(self._store.path).expanduser().resolve(strict=True)
+            info = state.stat()
+        except OSError as exc:
+            raise AdminConflict("canonical controller state identity is unavailable") from exc
+        return {
+            "schema": "lac.admin-control-plane-status/v1",
+            "owner_uid": self.owner_uid,
+            "pid": os.getpid(),
+            "state_path": str(state),
+            "state_dev": info.st_dev,
+            "state_ino": info.st_ino,
+        }
 
     def _skills_list(self, arguments: dict[str, Any]) -> Any:
         _exact_arguments(arguments, required=set())
