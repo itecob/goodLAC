@@ -1,14 +1,14 @@
 {
-  "active_task": "POSTV1-R5-R001-MULTI-PI-ADMIN-CONTROL-PLANE",
+  "active_task": "POSTV1-R5-INTEGRATED-OWNER-UAT-RELEASE-QUALIFICATION",
   "blockers": [
     {
       "id": "R5-B001-MULTI-PI-ADMIN-SOCKET-LIFECYCLE",
-      "status": "ACTIVE",
-      "summary": "R5 harness orphaned lac-admin-server through command substitution, and native governed Pi instances currently compete for the same singleton owner admin socket. Remediate to support multiple simultaneous governed Pi sessions against one canonical controller/admin truth without weakening authority or Phase 7 socket protections."
+      "status": "REMEDIATED_PENDING_FRESH_R5_OWNER_UAT",
+      "summary": "R5-R001 deterministic qualification passed; one shared canonical administrator/control-plane service replaces per-Pi socket ownership. Fresh installed R5 owner UAT remains required."
     }
   ],
   "last_accepted_release": "1.0.0-rc.11",
-  "next_action": "Implement POSTV1-R5-R001 multi-Pi administrator control-plane remediation, fix the R5 admin-process lifecycle defect, add deterministic concurrent-Pi qualification, then return to R5 integrated owner UAT. Do not activate R6 or accept 1.0.0-rc.12.",
+  "next_action": "Run fresh R5 integrated owner UAT, including two simultaneous installed default-governed Pi sessions/projects against the shared administrator control plane. Keep R6 inactive and do not accept 1.0.0-rc.12 from automated qualification alone.",
   "nonblocking_notes": [
     "Fresh independent Phase 4 re-review passed at live reviewed HEAD 78a1b8c580778f8ae5cb11a856fa771bc1f64308; reviewed P4-B002 implementation commit cd61b1c95a65782dfb9e9442d3422885df8a11f7; no Phase 4 blockers remain.",
     "The accepted A004 owner terminal launches real pinned Pi Agent Core 0.85.1 inside the qualified sandbox with only LAC-governed tools, but that path still uses the earlier fixed-ALLOW qualification policy rather than the completed Phase 4 permission-management runtime.",
@@ -46,10 +46,11 @@
     "POSTV1-R2 project-root/session workspace completed at implementation commit 97c93d6386d689216cf166c1ba81d3ef4ee7011a. Ordinary governed Pi binds explicit --workspace, then fixed owner workspace mode, then canonical launch CWD; project identity is controller-derived into project-specific Pi application scope; Project A standing permission and continuation recovery cannot authorize Project B; selected project is read-only at /workspace in native Pi with project-local resources disabled; dangerous bypass remains explicit and unchanged.",
     "POSTV1-R3 Pi TUI owner permission gate completed at implementation commit 971148ca33083d4a8015d8c2692e8f49303582b2. Pinned Pi 0.85.1 ExtensionUIContext select/confirm captures the five R1 owner choices; the extension receives only opaque expiring one-use challenges bound to the active broker session and controller-derived project/exact subject; the general admin socket remains outside the sandbox; ALLOW_ONCE creates only a fresh exact approval and a separate resume performs normal pre-dispatch policy/emergency evaluation.",
     "POSTV1-R4 installed terminal fallback and UX cleanup completed at implementation commit 6838dbf80c4d9a2572194891d3b355f39a6efbce. Installed lac-owner decide is a thin alias over canonical permissions.decide with fixed RESOURCE scope; low-level lacctl permissions set --file remains an administrator/scripting primitive; authority and dispatch semantics are unchanged.",
-    "R5 owner UAT was blocked before the first permission choice by R5-B001-MULTI-PI-ADMIN-SOCKET-LIFECYCLE. Retained regression, candidate build/install, doctor, exact Pi/FreeToken pins, and external FreeToken readiness passed. The R5 harness orphaned lac-admin-server because admin_start ran inside command substitution, and source inspection exposed a product-level limitation where per-Pi admin servers compete for the same fixed owner socket. POSTV1-R5-R001 is active; rc.12 remains unaccepted."
+    "R5 owner UAT was blocked before the first permission choice by R5-B001-MULTI-PI-ADMIN-SOCKET-LIFECYCLE. Retained regression, candidate build/install, doctor, exact Pi/FreeToken pins, and external FreeToken readiness passed. The R5 harness orphaned lac-admin-server because admin_start ran inside command substitution, and source inspection exposed a product-level limitation where per-Pi admin servers compete for the same fixed owner socket. POSTV1-R5-R001 is active; rc.12 remains unaccepted.",
+    "POSTV1-R5-R001 deterministic remediation qualification passed at implementation commit 3cb10d94e349df2f1da76f298ceb0d80b4d322be. One machine/controller-scoped owner admin service now supports concurrent governed Pi sessions against exact canonical state identity; project registration moved to trusted controller-side initialization; unavailable shared-plane effect/resume paths fail closed; Phase 7 socket lifecycle and retained R1-R4/PI006 gates passed. R5 remains active for fresh owner UAT; 1.0.0-rc.12 is not accepted and R6 is not active."
   ],
   "phase": "POST_V1_REMEDIATION_PRODUCTIZATION",
-  "phase_status": "BLOCKED_ON_REMEDIATION",
+  "phase_status": "ACTIVE",
   "project_version": "1.0.0-rc.11",
   "schema": "lac.project-state/v1",
   "target_release": "1.0.0-rc.12"
