@@ -63,6 +63,14 @@ independently re-evaluates capability, current policy, emergency state and any r
 decision. The model must not infer a standing deny or durable user preference from
 `OWNER_DENY_ONCE`. A configured standing `DENY` remains distinct and must not be bypassed.
 
+The trusted Pi presentation layer also renders this distinction directly with an
+`OWNER_DENY_ONCE` tool result. That explanatory text and its bounded descriptive
+metadata (`EXACT_REQUEST_ONLY`, no standing-policy change, and fresh controller
+evaluation for a later explicit equivalent request) are non-authoritative. They
+cannot authorize a request, alter policy, revive the completed request, or bypass
+controller evaluation; they only prevent the model from misinterpreting a one-time
+owner denial as a durable future instruction.
+
 Owner configuration remains out-of-band through the authenticated administration surface.
 The ordinary installed terminal fallback for the same five R1 choices is:
 

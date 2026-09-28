@@ -23,6 +23,18 @@ class PiV1SourceBoundaryTests(unittest.TestCase):
         self.assertIn("configured standing DENY is different", prompt)
         self.assertIn("do not retry or seek an alternate consequential route to bypass", prompt)
 
+    def test_deny_once_tool_result_carries_non_authoritative_fresh_request_semantics(self):
+        governed = (ROOT / "packages" / "adapters" / "pi" / "governed_pi.mjs").read_text()
+        gate = (ROOT / "packages" / "adapters" / "pi" / "tui_owner_gate.py").read_text()
+        self.assertIn('result.reason === "OWNER_DENY_ONCE"', governed)
+        self.assertIn("denied only the exact completed request", governed)
+        self.assertIn("not a standing deny", governed)
+        self.assertIn("later explicitly asks for the same or an equivalent operation in a new turn", governed)
+        self.assertIn("call the governed tool normally", governed)
+        self.assertIn('"owner_decision_scope": "EXACT_REQUEST_ONLY"', gate)
+        self.assertIn('"standing_policy_changed": False', gate)
+        self.assertIn('"future_equivalent_requests": "REQUIRE_FRESH_CONTROLLER_EVALUATION"', gate)
+
     def test_profile_reuses_accepted_pi_sandbox_and_native_controller_runtime(self):
         terminal = (ROOT / "scripts" / "pi_v1_terminal.py").read_text()
         production = (ROOT / "packages" / "adapters" / "pi" / "production.py").read_text()

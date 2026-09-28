@@ -95,7 +95,27 @@ function makeSchemas(Type) {
 
 function toText(payload) {
   if (typeof payload === "string") return payload;
-  return JSON.stringify(payload);
+  const encoded = JSON.stringify(payload);
+  const result = payload && typeof payload === "object" && !Array.isArray(payload)
+    ? payload.result
+    : null;
+  if (
+    result &&
+    typeof result === "object" &&
+    !Array.isArray(result) &&
+    result.reason === "OWNER_DENY_ONCE"
+  ) {
+    return [
+      encoded,
+      "",
+      "Trusted goodLAC semantics: OWNER_DENY_ONCE denied only the exact completed request.",
+      "It is not a standing deny and is not a durable user preference.",
+      "Do not automatically retry this completed request.",
+      "If the user later explicitly asks for the same or an equivalent operation in a new turn, treat that as a fresh request and call the governed tool normally.",
+      "The controller will independently evaluate that fresh request and may present a new owner gate.",
+    ].join("\n");
+  }
+  return encoded;
 }
 
 export function createGovernedLacTools({ Type, executeLac }) {

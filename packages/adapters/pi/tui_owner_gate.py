@@ -244,6 +244,16 @@ class PiTuiOwnerGate:
             "receipt": None,
             "workflow_continuation": continuation,
         }
+        if reason == "OWNER_DENY_ONCE":
+            # Descriptive model-facing semantics only. These fields grant no authority,
+            # mutate no standing policy, and cannot authorize any future request.
+            result.update(
+                {
+                    "owner_decision_scope": "EXACT_REQUEST_ONLY",
+                    "standing_policy_changed": False,
+                    "future_equivalent_requests": "REQUIRE_FRESH_CONTROLLER_EVALUATION",
+                }
+            )
         expected = record.get("expected_message")
         if isinstance(expected, Mapping):
             self._trace_result(expected, result)

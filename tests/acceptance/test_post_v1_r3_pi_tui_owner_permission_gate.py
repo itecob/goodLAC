@@ -149,6 +149,13 @@ class PostV1R3PiTuiOwnerPermissionGateTests(unittest.TestCase):
         first = self.permission_gate("deny-once.txt")
         denied = self.decide(first, "DENY_ONCE")
         self.assertEqual(denied["result"]["authority_outcome"], "DENY")
+        self.assertEqual(denied["result"]["reason"], "OWNER_DENY_ONCE")
+        self.assertEqual(denied["result"]["owner_decision_scope"], "EXACT_REQUEST_ONLY")
+        self.assertIs(denied["result"]["standing_policy_changed"], False)
+        self.assertEqual(
+            denied["result"]["future_equivalent_requests"],
+            "REQUIRE_FRESH_CONTROLLER_EVALUATION",
+        )
         self.assertFalse((self.workspace / "deny-once.txt").exists())
 
         second = self.permission_gate("deny-once-next.txt")
