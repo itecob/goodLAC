@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hashlib
+import json
 import os
 import time
 import uuid
@@ -23,6 +25,8 @@ OWNER_GATE_TTL_SECONDS = 300
 _PERMISSION_CHOICES = frozenset(
     {"ALLOW_ONCE", "ALWAYS_ALLOW", "ASK_EVERY_TIME", "DENY_ONCE", "ALWAYS_DENY"}
 )
+_STANDING_CHOICES = frozenset({"ALWAYS_ALLOW", "ASK_EVERY_TIME", "ALWAYS_DENY"})
+_SHELL_STANDING_SCOPES = ("SHELL_COMMAND", "SHELL_EXECUTABLE", "RESOURCE")
 
 
 class PiTuiOwnerGateError(RuntimeError):
@@ -208,6 +212,11 @@ class PiTuiOwnerGate:
         )
         if expected_message is not None and not isinstance(expected_message, Mapping):
             raise PiTuiOwnerGateError("captured expected message must be an object")
+        standing_scopes = (
+            _SHELL_STANDING_SCOPES
+            if pending.get("action") == "shell.exec"
+            else ("RESOURCE",)
+        )
         challenge = self._new_challenge(
             self._permission_challenges,
             kind="PERMISSION_DECISION",
@@ -219,6 +228,7 @@ class PiTuiOwnerGate:
                 "expected_message": None if expected_message is None else dict(expected_message),
                 "action": pending.get("action"),
                 "resource": pending.get("resource"),
+                "standing_scopes": standing_scopes,
             },
         )
         return {
@@ -231,6 +241,7 @@ class PiTuiOwnerGate:
                 "project": self._project_display(),
                 "action": pending.get("action"),
                 "resource": pending.get("resource"),
+                "standing_scopes": list(standing_scopes),
             },
         }
 
@@ -424,27 +435,83 @@ class PiTuiOwnerGate:
             raise PiTuiOwnerGateConflict("standing permission snapshot lost rules/defaults")
         return dict(snapshot)
 
-    def _resource_ask_rule(self, record: Mapping[str, Any]) -> dict[str, Any]:
+    @staticmethod
+    def _arguments_hash(arguments: Mapping[str, Any]) -> str:
+        encoded = json.dumps(
+            dict(arguments),
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=False,
+            allow_nan=False,
+        )
+        return "sha256:" + hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+
+    def _owner_ask_rule(self, record: Mapping[str, Any]) -> dict[str, Any]:
+        view = self._admin_call("approvals.show", {"decision_id": record["decision_id"]})
+        request = view.get("request") if isinstance(view, Mapping) else None
+        if not isinstance(request, Mapping):
+            raise PiTuiOwnerGateConflict("exact approval lost canonical request material")
+        arguments = request.get("arguments")
+        if not isinstance(arguments, Mapping):
+            raise PiTuiOwnerGateConflict("exact approval lost canonical request arguments")
         snapshot = self._policy_snapshot()
-        matches = []
+        matches: list[tuple[int, dict[str, Any]]] = []
         for item in snapshot["rules"]:
-            if not isinstance(item, Mapping) or item.get("decision") != "REQUIRE_APPROVAL":
+            if (
+                not isinstance(item, Mapping)
+                or item.get("decision") != "REQUIRE_APPROVAL"
+                or not str(item.get("rule_id", "")).startswith("owner-permission:standing:")
+            ):
                 continue
             scope = item.get("scope")
-            if not isinstance(scope, Mapping) or item.get("conditions") != []:
+            if not isinstance(scope, Mapping):
                 continue
-            if (
+            if not (
                 scope.get("principal_id") == PI_V1_PRINCIPAL_ID
                 and scope.get("application_id") == self.application_id
                 and scope.get("agent_id") == PI_V1_AGENT_ID
                 and scope.get("skill_id") == PI_V1_SKILL_ID
-                and scope.get("action") == record.get("action")
-                and scope.get("resource_selector") == record.get("resource")
+                and scope.get("action") == request.get("action")
+                and scope.get("resource_selector") == request.get("resource")
             ):
-                matches.append(dict(item))
-        if len(matches) != 1:
-            raise PiTuiOwnerGateConflict("exact approval is not bound to one standing Ask every time rule")
-        return matches[0]
+                continue
+            conditions = item.get("conditions")
+            if not isinstance(conditions, list):
+                continue
+            matched = True
+            for condition in conditions:
+                if (
+                    not isinstance(condition, Mapping)
+                    or condition.get("source") != "REQUEST"
+                    or condition.get("operator") != "EQUALS"
+                ):
+                    matched = False
+                    break
+                key = condition.get("key")
+                if key == "arguments:/executable":
+                    observed = arguments.get("executable")
+                elif key == "arguments_hash":
+                    observed = self._arguments_hash(arguments)
+                else:
+                    matched = False
+                    break
+                if type(observed) is not type(condition.get("equals")) or observed != condition.get("equals"):
+                    matched = False
+                    break
+            if matched:
+                matches.append((len(conditions), dict(item)))
+        if not matches:
+            raise PiTuiOwnerGateConflict(
+                "exact approval is not bound to a standing Ask every time rule"
+            )
+        matches.sort(key=lambda pair: pair[0], reverse=True)
+        best_specificity = matches[0][0]
+        best = [item for specificity, item in matches if specificity == best_specificity]
+        if len(best) != 1:
+            raise PiTuiOwnerGateConflict(
+                "exact approval matches multiple equally specific owner Ask rules"
+            )
+        return best[0]
 
     def _replace_rule_decision(self, rule: Mapping[str, Any], decision: str) -> None:
         snapshot = self._policy_snapshot()
@@ -504,7 +571,7 @@ class PiTuiOwnerGate:
             raise PiTuiOwnerGateError("unsupported owner permission choice")
         record = self._consume(self._approval_challenges, challenge_id)
         self._validate_approval_record(record)
-        rule = self._resource_ask_rule(record)
+        rule = self._owner_ask_rule(record)
         rule_id = str(rule["rule_id"])
 
         if choice == "ASK_EVERY_TIME":
@@ -537,11 +604,22 @@ class PiTuiOwnerGate:
             return result
         raise PiTuiOwnerGateError("unsupported owner permission transition")
 
-    def permission_decide(self, challenge_id: str, choice: str) -> dict[str, Any]:
+    def permission_decide(
+        self, challenge_id: str, choice: str, scope: str = "RESOURCE"
+    ) -> dict[str, Any]:
         choice = _required_text(choice, "choice", maximum=32).upper()
+        scope = _required_text(scope, "scope", maximum=32).upper()
         if choice not in _PERMISSION_CHOICES:
             raise PiTuiOwnerGateError("unsupported owner permission choice")
         record = self._consume(self._permission_challenges, challenge_id)
+        allowed_scopes = tuple(record.get("standing_scopes") or ("RESOURCE",))
+        if choice in _STANDING_CHOICES:
+            if scope not in allowed_scopes:
+                raise PiTuiOwnerGateError("owner standing permission scope is invalid")
+        elif scope != "RESOURCE":
+            raise PiTuiOwnerGateError(
+                "one-time owner permission choices do not accept standing scope"
+            )
         self._permission_subject(
             record["continuation_id"],
             expected_pending_id=record["pending_id"],
@@ -552,7 +630,7 @@ class PiTuiOwnerGate:
                 "continuation_id": record["continuation_id"],
                 "pending_id": record["pending_id"],
                 "choice": choice,
-                "scope": "RESOURCE",
+                "scope": scope,
             },
         )
         if choice == "DENY_ONCE":

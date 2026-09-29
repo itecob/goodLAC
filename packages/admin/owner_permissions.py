@@ -24,7 +24,7 @@ OWNER_PERMISSION_DECISION_SCHEMA = "lac.owner-permission-decision/v1"
 OWNER_PERMISSION_CHOICES = frozenset(
     {"ALLOW_ONCE", "ALWAYS_ALLOW", "ASK_EVERY_TIME", "DENY_ONCE", "ALWAYS_DENY"}
 )
-OWNER_PERMISSION_SCOPES = frozenset({"RESOURCE"})
+OWNER_PERMISSION_SCOPES = frozenset({"RESOURCE", "SHELL_EXECUTABLE", "SHELL_COMMAND"})
 
 
 class OwnerPermissionDecisionError(StateStoreError):
@@ -61,9 +61,56 @@ def _scope_material(record: Mapping[str, Any]) -> dict[str, str]:
     return result
 
 
-def _rule_id(scope: Mapping[str, str]) -> str:
-    digest = hashlib.sha256(canonical_json(dict(scope)).encode("utf-8")).hexdigest()
-    return f"owner-permission:resource:{digest}"
+def _arguments_hash(arguments: Mapping[str, Any]) -> str:
+    return "sha256:" + hashlib.sha256(
+        canonical_json(dict(arguments)).encode("utf-8")
+    ).hexdigest()
+
+
+def _standing_conditions(request: Any, permission_scope: str) -> tuple[StandingPolicyCondition, ...]:
+    if permission_scope == "RESOURCE":
+        return ()
+    if request.action != "shell.exec":
+        raise OwnerPermissionDecisionError(
+            "shell-specific standing scope is valid only for shell.exec"
+        )
+    arguments = request.arguments
+    executable = arguments.get("executable") if isinstance(arguments, Mapping) else None
+    if not isinstance(executable, str) or not executable:
+        raise OwnerPermissionDecisionConflict(
+            "trusted shell request lost canonical executable"
+        )
+    executable_condition = StandingPolicyCondition.create(
+        source="REQUEST", key="arguments:/executable", equals=executable
+    )
+    if permission_scope == "SHELL_EXECUTABLE":
+        return (executable_condition,)
+    if permission_scope == "SHELL_COMMAND":
+        return (
+            executable_condition,
+            StandingPolicyCondition.create(
+                source="REQUEST",
+                key="arguments_hash",
+                equals=_arguments_hash(arguments),
+            ),
+        )
+    raise OwnerPermissionDecisionError("unsupported owner standing-permission scope")
+
+
+def _rule_id(
+    scope: Mapping[str, str],
+    *,
+    permission_scope: str,
+    conditions: tuple[StandingPolicyCondition, ...],
+) -> str:
+    material = {
+        "scope": dict(scope),
+        "permission_scope": permission_scope,
+        "conditions": [item.to_material() for item in conditions],
+    }
+    digest = hashlib.sha256(canonical_json(material).encode("utf-8")).hexdigest()
+    label = permission_scope.lower().replace("_", "-")
+    return f"owner-permission:standing:{label}:{digest}"
 
 
 class OwnerPermissionDecisionService:
@@ -107,7 +154,9 @@ class OwnerPermissionDecisionService:
             )
         return record
 
-    def _subject(self, continuation_id: str, pending_id: str) -> tuple[dict[str, Any], dict[str, Any], dict[str, str]]:
+    def _subject(
+        self, continuation_id: str, pending_id: str
+    ) -> tuple[dict[str, Any], dict[str, Any], dict[str, str], Any]:
         try:
             binding = self._continuations.owner_decision_binding(continuation_id)
         except PiWorkflowContinuationError as exc:
@@ -144,7 +193,7 @@ class OwnerPermissionDecisionService:
             raise OwnerPermissionDecisionConflict(
                 "a newer owner disposition exists; stale permission choice rejected"
             )
-        return binding, pending, scope
+        return binding, pending, scope, request
 
     def decide(
         self,
@@ -161,11 +210,17 @@ class OwnerPermissionDecisionService:
         if choice not in OWNER_PERMISSION_CHOICES:
             raise OwnerPermissionDecisionError("unsupported owner permission choice")
         if scope not in OWNER_PERMISSION_SCOPES:
-            raise OwnerPermissionDecisionError(
-                "R1 supports only the exact trusted resource scope"
-            )
+            raise OwnerPermissionDecisionError("unsupported owner permission scope")
 
-        binding, _pending, scope_values = self._subject(continuation_id, pending_id)
+        binding, _pending, scope_values, request = self._subject(continuation_id, pending_id)
+        if choice in {"ALLOW_ONCE", "DENY_ONCE"} and scope != "RESOURCE":
+            raise OwnerPermissionDecisionError(
+                "one-time owner decisions are exact-request-only and do not accept standing scope"
+            )
+        if request.action != "shell.exec" and scope != "RESOURCE":
+            raise OwnerPermissionDecisionError(
+                "non-shell standing permissions retain exact trusted resource scope"
+            )
         if choice == "DENY_ONCE":
             try:
                 closed = self._continuations.owner_deny_once(
@@ -212,8 +267,12 @@ class OwnerPermissionDecisionService:
                 "ASK_EVERY_TIME": "REQUIRE_APPROVAL",
                 "ALWAYS_DENY": "DENY",
             }[choice]
-            rule_id = _rule_id(scope_values)
-            conditions = ()
+            conditions = _standing_conditions(request, scope)
+            rule_id = _rule_id(
+                scope_values,
+                permission_scope=scope,
+                conditions=conditions,
+            )
         rule = StandingPolicyRule.create(
             rule_id=rule_id,
             principal_id=scope_values["principal_id"],
@@ -264,6 +323,7 @@ class OwnerPermissionDecisionService:
                 "policy_hash": snapshot.policy_hash,
                 "rule_id": rule.rule_id,
                 "decision": rule.decision.value,
+                "permission_scope": scope,
                 "transient_exact_request": transient_exact_request,
             },
             "pending_resolution": resolution.to_material(),

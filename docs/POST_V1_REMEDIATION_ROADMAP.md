@@ -99,3 +99,13 @@ R5 remains `BLOCKED` until this remediation passes and a fresh integrated owner 
 ### R6 — Fresh independent security/product review
 
 A fresh reviewer, not the implementation agent, reviews the exact R5 candidate. Final disposition is `PASS` or `BLOCKED`. The prior rc.11 PASS remains historical baseline either way.
+
+### R5-R003 — Shell permission scope and governed model selection
+
+Status: `ACTIVE` until owner UAT closes this implementation.
+
+Refine standing `shell.exec` permission scope to exact command, exact executable, or all shell in
+the current governed project. Preserve exact-request-only one-time choices. Also expose the
+accepted GPT-OSS endpoint and the bounded Qwen comparison endpoint through Pi's native model
+selector without changing goodLAC authority semantics. Retained regression and owner UAT are
+required before R5 can close.

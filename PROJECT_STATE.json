@@ -1,14 +1,8 @@
 {
-  "active_task": "POSTV1-R5-INTEGRATED-OWNER-UAT-RELEASE-QUALIFICATION",
-  "blockers": [
-    {
-      "id": "R5-B001-MULTI-PI-ADMIN-SOCKET-LIFECYCLE",
-      "status": "REMEDIATED_PENDING_FRESH_R5_OWNER_UAT",
-      "summary": "R5-R001 deterministic qualification passed; one shared canonical administrator/control-plane service replaces per-Pi socket ownership. Fresh installed R5 owner UAT remains required."
-    }
-  ],
+  "active_task": "POSTV1-R5-R003-SHELL-SCOPE-MODEL-SELECTOR-OWNER-UAT",
+  "blockers": [],
   "last_accepted_release": "1.0.0-rc.11",
-  "next_action": "Run fresh R5 integrated owner UAT, including two simultaneous installed default-governed Pi sessions/projects against the shared administrator control plane. Keep R6 inactive and do not accept 1.0.0-rc.12 from automated qualification alone.",
+  "next_action": "Run installed R5-R003 owner UAT for shell standing-permission scope and Pi /model switching between GPT-OSS 20B and the experimental Qwen route. Keep R6 inactive; rc.12 remains unaccepted.",
   "nonblocking_notes": [
     "Fresh independent Phase 4 re-review passed at live reviewed HEAD 78a1b8c580778f8ae5cb11a856fa771bc1f64308; reviewed P4-B002 implementation commit cd61b1c95a65782dfb9e9442d3422885df8a11f7; no Phase 4 blockers remain.",
     "The accepted A004 owner terminal launches real pinned Pi Agent Core 0.85.1 inside the qualified sandbox with only LAC-governed tools, but that path still uses the earlier fixed-ALLOW qualification policy rather than the completed Phase 4 permission-management runtime.",
@@ -47,7 +41,9 @@
     "POSTV1-R3 Pi TUI owner permission gate completed at implementation commit 971148ca33083d4a8015d8c2692e8f49303582b2. Pinned Pi 0.85.1 ExtensionUIContext select/confirm captures the five R1 owner choices; the extension receives only opaque expiring one-use challenges bound to the active broker session and controller-derived project/exact subject; the general admin socket remains outside the sandbox; ALLOW_ONCE creates only a fresh exact approval and a separate resume performs normal pre-dispatch policy/emergency evaluation.",
     "POSTV1-R4 installed terminal fallback and UX cleanup completed at implementation commit 6838dbf80c4d9a2572194891d3b355f39a6efbce. Installed lac-owner decide is a thin alias over canonical permissions.decide with fixed RESOURCE scope; low-level lacctl permissions set --file remains an administrator/scripting primitive; authority and dispatch semantics are unchanged.",
     "R5 owner UAT was blocked before the first permission choice by R5-B001-MULTI-PI-ADMIN-SOCKET-LIFECYCLE. Retained regression, candidate build/install, doctor, exact Pi/FreeToken pins, and external FreeToken readiness passed. The R5 harness orphaned lac-admin-server because admin_start ran inside command substitution, and source inspection exposed a product-level limitation where per-Pi admin servers compete for the same fixed owner socket. POSTV1-R5-R001 is active; rc.12 remains unaccepted.",
-    "POSTV1-R5-R001 deterministic remediation qualification passed at implementation commit 3cb10d94e349df2f1da76f298ceb0d80b4d322be. One machine/controller-scoped owner admin service now supports concurrent governed Pi sessions against exact canonical state identity; project registration moved to trusted controller-side initialization; unavailable shared-plane effect/resume paths fail closed; Phase 7 socket lifecycle and retained R1-R4/PI006 gates passed. R5 remains active for fresh owner UAT; 1.0.0-rc.12 is not accepted and R6 is not active."
+    "POSTV1-R5-R001 deterministic remediation qualification passed at implementation commit 3cb10d94e349df2f1da76f298ceb0d80b4d322be. One machine/controller-scoped owner admin service now supports concurrent governed Pi sessions against exact canonical state identity; project registration moved to trusted controller-side initialization; unavailable shared-plane effect/resume paths fail closed; Phase 7 socket lifecycle and retained R1-R4/PI006 gates passed. R5 remains active for fresh owner UAT; 1.0.0-rc.12 is not accepted and R6 is not active.",
+    "R5 owner-permission semantics source commit 485c431c52c8cf918423aeac6458dc5870141849 passed retained automated regression and live owner UAT: Allow once was exact-only, Ask every time preserved its standing default, Change default permission reopened the five-choice menu, Always deny suppressed later prompts, /usr/bin/ls cwd . contract passed, Escape cancellation worked, shared admin plane was restarted onto current source, and post-UAT policy cleanup was empty.",
+    "R5-R003 adds deterministic shell standing scopes (exact command / executable / project shell) and registers bounded GPT-OSS/Qwen model routes for Pi native model selection. This does not accept 1.0.0-rc.12 or activate R6."
   ],
   "phase": "POST_V1_REMEDIATION_PRODUCTIZATION",
   "phase_status": "ACTIVE",

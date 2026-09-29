@@ -41,7 +41,7 @@ _SCOPE_FIELDS = (
     "resource_selector",
 )
 _ALLOWED_CONDITION_SOURCES = frozenset({"CAPABILITY", "RESOURCE", "REQUEST"})
-_ALLOWED_REQUEST_FIELDS = frozenset({"request_id", "principal_id", "agent_id", "action", "resource"})
+_ALLOWED_REQUEST_FIELDS = frozenset({"request_id", "principal_id", "agent_id", "action", "resource", "arguments_hash"})
 _MISSING = object()
 
 
@@ -237,7 +237,11 @@ class StandingPolicyCondition:
         elif self.source == "RESOURCE":
             observed = validation.resource_type if self.key == "type" else request.resource
         else:
-            if self.key in _ALLOWED_REQUEST_FIELDS:
+            if self.key == "arguments_hash":
+                observed = "sha256:" + hashlib.sha256(
+                    _canonical_json(request.arguments).encode("utf-8")
+                ).hexdigest()
+            elif self.key in _ALLOWED_REQUEST_FIELDS:
                 observed = getattr(request, self.key)
             else:
                 observed = _request_pointer_value(

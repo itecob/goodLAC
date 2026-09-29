@@ -50,6 +50,85 @@ RESOURCE_CANARIES = (
     "PI005_PROHIBITED_PROMPT",
     "PI005_PROHIBITED_CONTEXT",
 )
+QWEN_MODEL_ID = "goodlac-exp-qwen36-35b-a3b-nvfp4"
+QWEN_FREETOKEN_URL = "http://127.0.0.1:19360"
+MODEL_ROUTES = {
+    baseline.SERVED_MODEL_ID: {
+        "id": baseline.SERVED_MODEL_ID,
+        "name": "goodLAC GPT-OSS 20B",
+        "base_url": baseline.BASE_URL,
+        "reasoning": True,
+        "context_window": 131072,
+        "max_tokens": 2048,
+    },
+    QWEN_MODEL_ID: {
+        "id": QWEN_MODEL_ID,
+        "name": "goodLAC Qwen3.6 35B A3B NVFP4",
+        "base_url": QWEN_FREETOKEN_URL,
+        "reasoning": True,
+        "context_window": 131072,
+        "max_tokens": 2048,
+    },
+}
+
+
+def model_catalog() -> list[dict[str, Any]]:
+    return [
+        {
+            "id": route["id"],
+            "name": route["name"],
+            "reasoning": route["reasoning"],
+            "contextWindow": route["context_window"],
+            "maxTokens": route["max_tokens"],
+        }
+        for route in MODEL_ROUTES.values()
+    ]
+
+
+def _model_route(payload: object) -> dict[str, Any]:
+    if not isinstance(payload, Mapping):
+        fail("model_request payload must be an object")
+    model_id = payload.get("model")
+    if not isinstance(model_id, str) or not model_id:
+        fail("model_request lacks selected model identity")
+    route = MODEL_ROUTES.get(model_id)
+    if route is None:
+        fail(f"selected model is not in the owner-host allowlist: {model_id!r}")
+    return route
+
+
+def model_events(payload: object) -> list[dict[str, Any]]:
+    route = _model_route(payload)
+    env = baseline.sanitized_provider_environment()
+    env["LAC_A003_FREETOKEN_URL"] = str(route["base_url"])
+    proc = subprocess.run(
+        [baseline.PYTHON, str(baseline.MODEL_BRIDGE)],
+        input=json.dumps(dict(payload)),
+        text=True,
+        capture_output=True,
+        env=env,
+        timeout=330,
+        check=False,
+    )
+    if proc.returncode != 0:
+        fail(
+            f"LAC ModelProvider bridge for {route['id']} exited {proc.returncode}: "
+            f"{proc.stderr.strip()[-1600:]}"
+        )
+    events: list[dict[str, Any]] = []
+    for raw in proc.stdout.splitlines():
+        if not raw.strip():
+            continue
+        try:
+            event = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            fail(f"LAC ModelProvider bridge emitted invalid JSON: {exc}")
+        if not isinstance(event, dict) or not isinstance(event.get("kind"), str):
+            fail("LAC ModelProvider bridge emitted malformed event")
+        events.append(event)
+    if not events or events[-1].get("kind") != "done":
+        fail("LAC ModelProvider bridge did not terminate with done")
+    return events
 
 
 class PiNativeTuiError(RuntimeError):
@@ -293,7 +372,7 @@ class AuthorityBroker(legacy.PiV1InteractiveSession):
                     if canary in raw:
                         fail(f"prohibited Pi resource entered model context: {canary}")
                 return _probe_model_events(self.model_request_count)
-            return baseline.model_events(payload)
+            return model_events(payload)
         if kind == "continuation_list":
             material = {} if payload is None else payload
             if not isinstance(material, Mapping) or set(material) - {"recoverable_only"}:
@@ -325,9 +404,17 @@ class AuthorityBroker(legacy.PiV1InteractiveSession):
                 fail("native Pi permission-challenge request is malformed")
             return self.owner_gate.permission_challenge(payload["continuation_id"])
         if kind == "permission_decide":
-            if not isinstance(payload, Mapping) or set(payload) != {"challenge_id", "choice"}:
+            if (
+                not isinstance(payload, Mapping)
+                or not {"challenge_id", "choice"}.issubset(payload)
+                or set(payload) - {"challenge_id", "choice", "scope"}
+            ):
                 fail("native Pi permission-decision request is malformed")
-            return self.owner_gate.permission_decide(payload["challenge_id"], payload["choice"])
+            return self.owner_gate.permission_decide(
+                payload["challenge_id"],
+                payload["choice"],
+                payload.get("scope", "RESOURCE"),
+            )
         if kind == "permission_cancel":
             if not isinstance(payload, Mapping) or set(payload) != {"challenge_id"}:
                 fail("native Pi permission-cancel request is malformed")
@@ -596,6 +683,7 @@ class BrokerProcess:
             "type": "bootstrap",
             "mode": self.mode,
             "modelId": baseline.SERVED_MODEL_ID,
+            "models": model_catalog(),
             "timeoutSeconds": 300,
             "hostFilePath": str(self.fixture["ambient"]),
             "workspaceProbeReadPath": str(self.fixture["probe_read"]),
@@ -794,7 +882,12 @@ def run_profile_probe(workspace: Path, state: Path, trace: Path) -> int:
 def run_interactive(workspace: Path, state: Path, trace: Path, runtime_mode: str) -> int:
     with BrokerProcess(workspace=workspace, state=state, trace=trace, mode="interactive") as native:
         print("LAC-governed native Pi CLI/TUI: exact pinned Pi source CLI inside Bubblewrap; effects remain controller-backed.", flush=True)
-        print(f"runtime={runtime_mode} model={baseline.SERVED_MODEL_ID} sandbox=bubblewrap network=none tools={','.join(EXPECTED_TOOLS)}", flush=True)
+        print(
+            f"runtime={runtime_mode} default_model={baseline.SERVED_MODEL_ID} "
+            f"models={','.join(MODEL_ROUTES)} sandbox=bubblewrap network=none "
+            f"tools={','.join(EXPECTED_TOOLS)}",
+            flush=True,
+        )
         native.serve()
     return 0
 

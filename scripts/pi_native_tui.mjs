@@ -63,6 +63,14 @@ const OWNER_PERMISSION_OPTIONS = Object.freeze([
 ]);
 const OWNER_PERMISSION_LABELS = Object.freeze(OWNER_PERMISSION_OPTIONS.map(([label]) => label));
 const OWNER_PERMISSION_VALUES = new Map(OWNER_PERMISSION_OPTIONS);
+const OWNER_STANDING_CHOICES = new Set(["ALWAYS_ALLOW", "ASK_EVERY_TIME", "ALWAYS_DENY"]);
+const OWNER_SCOPE_OPTIONS = Object.freeze([
+  ["Exact command", "SHELL_COMMAND"],
+  ["This executable", "SHELL_EXECUTABLE"],
+  ["All shell in this project", "RESOURCE"],
+]);
+const OWNER_SCOPE_LABELS = Object.freeze(OWNER_SCOPE_OPTIONS.map(([label]) => label));
+const OWNER_SCOPE_VALUES = new Map(OWNER_SCOPE_OPTIONS);
 
 function ownerGateTimeout(gate) {
   const raw = Number(gate?.timeout_ms ?? 300000);
@@ -118,7 +126,23 @@ async function resolveOwnerGate(response, ctx, signal) {
       }
       const choice=OWNER_PERMISSION_VALUES.get(selected);
       if(!choice) throw new Error("LAC owner permission selection is not recognized");
-      current=await rpc("permission_decide",{challenge_id:String(gate.challenge_id || ""),choice});
+      let scope="RESOURCE";
+      const allowedScopes=Array.isArray(gate.standing_scopes)?gate.standing_scopes:["RESOURCE"];
+      if(OWNER_STANDING_CHOICES.has(choice) && action==="shell.exec" && allowedScopes.length>1) {
+        const scopeLabel=await ctx.ui.select(
+          `Scope goodLAC shell permission — ${project.path}
+Action: ${action}`,
+          [...OWNER_SCOPE_LABELS],
+          { signal, timeout },
+        );
+        if(scopeLabel===undefined) {
+          current=await rpc("permission_cancel",{challenge_id:String(gate.challenge_id || "")});
+          continue;
+        }
+        scope=OWNER_SCOPE_VALUES.get(scopeLabel);
+        if(!scope || !allowedScopes.includes(scope)) throw new Error("LAC owner permission scope is not recognized");
+      }
+      current=await rpc("permission_decide",{challenge_id:String(gate.challenge_id || ""),choice,scope});
       continue;
     }
 
@@ -294,8 +318,11 @@ export default async function lacGovernedPiExtension(pi) {
     baseUrl:"http://127.0.0.1:1",
     apiKey:"LAC_PI005_LOCAL_BROKER_NONSECRET",
     api:"openai-completions",
-    models:[{ id:String(bootstrap.modelId), name:"LAC governed gpt-oss-20b", reasoning:true, input:["text"],
-      cost:{input:0,output:0,cacheRead:0,cacheWrite:0}, contextWindow:131072, maxTokens:2048 }],
+    models:(Array.isArray(bootstrap.models) && bootstrap.models.length ? bootstrap.models : [{id:String(bootstrap.modelId),name:String(bootstrap.modelId),reasoning:true,contextWindow:131072,maxTokens:2048}]).map((model)=>({
+      id:String(model.id), name:String(model.name || model.id), reasoning:model.reasoning!==false, input:["text"],
+      cost:{input:0,output:0,cacheRead:0,cacheWrite:0},
+      contextWindow:Number(model.contextWindow || 131072), maxTokens:Number(model.maxTokens || 2048),
+    })),
     streamSimple:makeRpcStreamFn(Number(bootstrap.timeoutSeconds || 300), String(bootstrap.mode)),
   });
   pi.registerCommand("lac-continuations",{
