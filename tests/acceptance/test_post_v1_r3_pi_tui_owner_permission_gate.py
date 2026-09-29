@@ -118,20 +118,19 @@ class PostV1R3PiTuiOwnerPermissionGateTests(unittest.TestCase):
         self.assertEqual(second["result"]["execution_state"], "SUCCEEDED")
         self.assertNotIn("owner_gate", second)
 
-    def test_allow_once_auto_creates_only_fresh_exact_approval_then_future_requests_ask(self):
+    def test_allow_once_is_exact_only_then_future_requests_return_to_five_choice_gate(self):
         gate = self.permission_gate("once.txt")
         result = self.decide(gate, "ALLOW_ONCE")
         self.assertEqual(result["result"]["execution_state"], "SUCCEEDED")
         self.assertEqual((self.workspace / "once.txt").read_text(), "once.txt")
 
+        policy = self.call("permissions.list", {})
+        self.assertFalse(any(rule["rule_id"].startswith("owner-permission:allow-once:") for rule in policy["rules"]))
         future = self.effect("once-future.txt")
-        exact = future.get("owner_gate")
-        self.assertIsInstance(exact, dict)
-        self.assertEqual(exact["kind"], "EXACT_APPROVAL")
+        gate2 = future.get("owner_gate")
+        self.assertIsInstance(gate2, dict)
+        self.assertEqual(gate2["kind"], "PERMISSION_DECISION")
         self.assertFalse((self.workspace / "once-future.txt").exists())
-        approved = self.approval(exact, True)
-        self.assertEqual(approved["result"]["execution_state"], "SUCCEEDED")
-        self.assertEqual((self.workspace / "once-future.txt").read_text(), "once-future.txt")
 
     def test_ask_every_time_uses_second_exact_owner_gate_and_rejection_dispatches_nothing(self):
         gate = self.permission_gate("ask.txt")
@@ -144,6 +143,20 @@ class PostV1R3PiTuiOwnerPermissionGateTests(unittest.TestCase):
         self.assertEqual(rejected["result"]["authority_outcome"], "DENY")
         self.assertEqual(rejected["result"]["execution_state"], "REJECTED")
         self.assertFalse((self.workspace / "ask.txt").exists())
+
+    def test_ask_every_time_can_change_default_to_always_deny_from_exact_gate(self):
+        gate = self.permission_gate("change-default.txt")
+        response = self.decide(gate, "ASK_EVERY_TIME")
+        exact = response["owner_gate"]
+        changed = self.broker.handle_rpc(
+            "approval_permission_decide",
+            {"challenge_id": exact["challenge_id"], "choice": "ALWAYS_DENY"},
+        )
+        self.assertEqual(changed["result"]["authority_outcome"], "DENY")
+        self.assertFalse((self.workspace / "change-default.txt").exists())
+        later = self.effect("change-default-later.txt")
+        self.assertEqual(later["result"]["authority_outcome"], "DENY")
+        self.assertNotIn("owner_gate", later)
 
     def test_deny_once_and_cancel_are_non_authorizing_and_do_not_create_standing_deny(self):
         first = self.permission_gate("deny-once.txt")
@@ -269,9 +282,17 @@ class PostV1R3PiTuiOwnerPermissionGateTests(unittest.TestCase):
         ):
             self.assertIn(label, extension)
         self.assertIn("ctx.ui.select(", extension)
-        self.assertIn("ctx.ui.confirm(", extension)
-        self.assertIn("Approval alone does not dispatch.", extension)
+        self.assertIn("Change default permission…", extension)
+        self.assertIn("approval_permission_decide", extension)
+        self.assertIn("Yes — allow this request once", extension)
+        self.assertIn("No — deny this request once", extension)
         self.assertIn("context: ctx", governed)
+        self.assertIn("/usr/bin/ls", governed)
+        self.assertIn("bare names such as ls are invalid", governed)
+        self.assertIn("never /workspace", governed)
+        legacy_prompt = (repo / "scripts" / "pi_v1_terminal.py").read_text()
+        self.assertIn("tool/controller/approval/continuation results are not user turns", legacy_prompt)
+        self.assertIn("execution_state is DENIED, REJECTED, or FAILED", legacy_prompt)
         self.assertNotIn("permissions.decide", governed)
         self.assertNotIn("approvals.approve", governed)
         self.assertIn('"admin_socket_visible"', host)

@@ -340,6 +340,10 @@ class AuthorityBroker(legacy.PiV1InteractiveSession):
             if not isinstance(payload, Mapping) or set(payload) != {"challenge_id", "approve"}:
                 fail("native Pi exact-approval request is malformed")
             return self.owner_gate.approval_decide(payload["challenge_id"], payload["approve"])
+        if kind == "approval_permission_decide":
+            if not isinstance(payload, Mapping) or set(payload) != {"challenge_id", "choice"}:
+                fail("native Pi approval permission-change request is malformed")
+            return self.owner_gate.approval_permission_decide(payload["challenge_id"], payload["choice"])
         if kind == "effect_request":
             result = self._effect(payload)
             if isinstance(result, dict):

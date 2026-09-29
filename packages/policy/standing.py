@@ -41,7 +41,7 @@ _SCOPE_FIELDS = (
     "resource_selector",
 )
 _ALLOWED_CONDITION_SOURCES = frozenset({"CAPABILITY", "RESOURCE", "REQUEST"})
-_ALLOWED_REQUEST_FIELDS = frozenset({"principal_id", "agent_id", "action", "resource"})
+_ALLOWED_REQUEST_FIELDS = frozenset({"request_id", "principal_id", "agent_id", "action", "resource"})
 _MISSING = object()
 
 

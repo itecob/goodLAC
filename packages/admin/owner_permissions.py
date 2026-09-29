@@ -6,10 +6,15 @@ from typing import Any, Mapping
 
 from packages.capabilities.quarantine import PendingPermissionRepository
 from packages.core import canonical_json
-from packages.policy.standing import StandingPolicyRepository, StandingPolicyRule
+from packages.policy.standing import (
+    StandingPolicyCondition,
+    StandingPolicyRepository,
+    StandingPolicyRule,
+)
 from packages.runtime.pi_continuation import (
     PiWorkflowContinuationError,
     PiWorkflowContinuationStore,
+    fresh_request_identity,
 )
 from packages.state.effect_requests import EffectRequestRepository
 from packages.state.store import SQLiteStateStore, StateStoreError
@@ -183,13 +188,32 @@ class OwnerPermissionDecisionService:
                 "next_action": "COMPLETE_NONAUTHORIZING_DENIAL",
             }
 
-        policy_value = {
-            "ALLOW_ONCE": "REQUIRE_APPROVAL",
-            "ALWAYS_ALLOW": "ALLOW",
-            "ASK_EVERY_TIME": "REQUIRE_APPROVAL",
-            "ALWAYS_DENY": "DENY",
-        }[choice]
-        rule_id = _rule_id(scope_values)
+        transient_exact_request = choice == "ALLOW_ONCE"
+        if transient_exact_request:
+            fresh_request_id, _fresh_idempotency_key = fresh_request_identity(continuation_id)
+            transient_material = {
+                "scope": scope_values,
+                "continuation_id": continuation_id,
+                "fresh_request_id": fresh_request_id,
+            }
+            transient_digest = hashlib.sha256(
+                canonical_json(transient_material).encode("utf-8")
+            ).hexdigest()
+            rule_id = f"owner-permission:allow-once:{transient_digest}"
+            policy_value = "REQUIRE_APPROVAL"
+            conditions = (
+                StandingPolicyCondition.create(
+                    source="REQUEST", key="request_id", equals=fresh_request_id
+                ),
+            )
+        else:
+            policy_value = {
+                "ALWAYS_ALLOW": "ALLOW",
+                "ASK_EVERY_TIME": "REQUIRE_APPROVAL",
+                "ALWAYS_DENY": "DENY",
+            }[choice]
+            rule_id = _rule_id(scope_values)
+            conditions = ()
         rule = StandingPolicyRule.create(
             rule_id=rule_id,
             principal_id=scope_values["principal_id"],
@@ -200,6 +224,7 @@ class OwnerPermissionDecisionService:
             resource_type=scope_values["resource_type"],
             resource_selector=scope_values["resource"],
             decision=policy_value,
+            conditions=conditions,
         )
         current = self._policy.current()
         rules = [] if current is None else [item for item in current.rules if item.rule_id != rule_id]
@@ -239,6 +264,7 @@ class OwnerPermissionDecisionService:
                 "policy_hash": snapshot.policy_hash,
                 "rule_id": rule.rule_id,
                 "decision": rule.decision.value,
+                "transient_exact_request": transient_exact_request,
             },
             "pending_resolution": resolution.to_material(),
             "continuation": self._continuations.status(continuation_id),

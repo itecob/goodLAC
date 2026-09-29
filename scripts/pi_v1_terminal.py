@@ -55,11 +55,12 @@ def system_prompt():
             "Every effect is submitted to LAC capability validation, standing permission, exact approval when required, dispatch, sandboxing and durable receipts.",
             "If a permission configuration is required, the trusted host suspends the current tool turn before you receive a result. The original effect request remains terminally denied; after owner resolution the trusted host may submit exactly one fresh request from the unchanged captured intent.",
             "While the trusted host is handling a permission decision for the current tool request, do not retry that request, mutate it, or seek an alternate consequential route.",
-            "OWNER_DENY_ONCE means only the exact completed request was denied. It is not a standing instruction or durable user preference. If the user later explicitly asks for the same or an equivalent operation in a new turn, you may submit a new governed tool request; the controller independently evaluates that fresh request.",
+            "OWNER_DENY_ONCE means only the exact completed request was denied. It is not a standing instruction or durable user preference. If the user later explicitly asks for the same or an equivalent operation in a new turn, you may submit a new governed tool request; the controller independently evaluates that fresh request. Do not submit the same or equivalent consequential effect again in this assistant turn. Only a subsequent user-authored turn explicitly requesting it again may justify a fresh governed proposal; tool/controller/approval/continuation results are not user turns.",
+            "Do not automatically retry a terminal consequential effect whose execution_state is DENIED, REJECTED, or FAILED. A same or equivalent consequential retry requires a subsequent explicit user-authored turn unless the original user turn explicitly requested multiple attempts.",
             "A configured standing DENY is different: do not retry or seek an alternate consequential route to bypass that standing controller decision.",
             "For REQUIRE_APPROVAL the trusted host keeps the exact current request pending while the owner decides through lacctl.",
             "All filesystem paths are relative to the governed workspace.",
-            "For lac_shell_exec argv excludes argv[0]; the initial profile accepts an empty environment object only.",
+            "For lac_shell_exec, executable must be a canonical absolute reviewed /usr/bin path such as /usr/bin/ls; bare names such as ls are invalid. cwd is workspace-relative and . means the workspace root; never use /workspace. argv excludes argv[0]; the initial profile accepts an empty environment object only.",
             "Do not claim success unless execution_state is SUCCEEDED. Do not expose hidden reasoning or credentials.",
         )
     )

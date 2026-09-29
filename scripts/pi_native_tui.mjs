@@ -123,19 +123,38 @@ async function resolveOwnerGate(response, ctx, signal) {
     }
 
     if(gate.kind==="EXACT_APPROVAL") {
-      let approved=false;
+      let selected;
       try {
-        approved=await ctx.ui.confirm(
-          "goodLAC exact approval",
-          `Project: ${project.path}\nAction: ${action}\nScope: ${resource}\n\nAllow this exact request once?\n\nApproval alone does not dispatch.`,
+        selected=await ctx.ui.select(
+          `goodLAC exact approval — ${project.path}\nAction: ${action}\nScope: ${resource}\n\nCurrent default: Ask every time\n\nApproval alone does not dispatch.`,
+          ["Yes — allow this request once","No — deny this request once","Change default permission…"],
           { signal, timeout },
         );
       } catch(error) {
         await bestEffortRpc("approval_decide",{challenge_id:String(gate.challenge_id || ""),approve:false});
         throw error;
       }
-      current=await rpc("approval_decide",{challenge_id:String(gate.challenge_id || ""),approve:approved===true});
-      continue;
+      if(selected===undefined || selected==="No — deny this request once") {
+        current=await rpc("approval_decide",{challenge_id:String(gate.challenge_id || ""),approve:false});
+        continue;
+      }
+      if(selected==="Yes — allow this request once") {
+        current=await rpc("approval_decide",{challenge_id:String(gate.challenge_id || ""),approve:true});
+        continue;
+      }
+      if(selected==="Change default permission…") {
+        const changed=await ctx.ui.select(
+          `Change goodLAC permission — ${project.path}\nAction: ${action}\nScope: ${resource}`,
+          [...OWNER_PERMISSION_LABELS],
+          { signal, timeout },
+        );
+        if(changed===undefined) { current=response; continue; }
+        const choice=OWNER_PERMISSION_VALUES.get(changed);
+        if(!choice) throw new Error("LAC owner permission selection is not recognized");
+        current=await rpc("approval_permission_decide",{challenge_id:String(gate.challenge_id || ""),choice});
+        continue;
+      }
+      throw new Error("LAC exact approval selection is not recognized");
     }
 
     throw new Error(`unknown LAC owner gate kind: ${String(gate.kind)}`);

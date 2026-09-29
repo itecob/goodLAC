@@ -83,9 +83,9 @@ function makeSchemas(Type) {
     lac_fs_replace: Type.Object({ path: Type.String(), content: Type.String() }, closed),
     lac_shell_exec: Type.Object(
       {
-        executable: Type.String(),
+        executable: Type.String({ description: "Canonical absolute reviewed executable path under /usr/bin, for example /usr/bin/ls. Bare command names such as ls are invalid." }),
         argv: Type.Array(Type.String()),
-        cwd: Type.String(),
+        cwd: Type.String({ description: "Workspace-relative directory. Use . for the governed workspace root; absolute paths such as /workspace are invalid." }),
         environment: Type.Record(Type.String(), Type.String()),
       },
       closed,
@@ -125,7 +125,7 @@ export function createGovernedLacTools({ Type, executeLac }) {
     lac_fs_read: "Read one UTF-8 file through the LAC governed filesystem adapter.",
     lac_fs_create: "Create one UTF-8 file through the LAC governed filesystem adapter.",
     lac_fs_replace: "Replace one UTF-8 file through the LAC governed filesystem adapter.",
-    lac_shell_exec: "Execute one exact command through the LAC governed shell adapter. executable is the program path; argv contains only arguments after the executable and excludes argv[0] (do not repeat the executable in argv).",
+    lac_shell_exec: "Execute one exact command through the LAC governed shell adapter. executable MUST be a canonical absolute reviewed /usr/bin path such as /usr/bin/ls; bare names such as ls are invalid. cwd MUST be workspace-relative; use . for the workspace root and never /workspace. argv contains only arguments after the executable and excludes argv[0]. environment must be {} in the current profile.",
   };
 
   return GOVERNED_TOOL_NAMES.map((name) => ({

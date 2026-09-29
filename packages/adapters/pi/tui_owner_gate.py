@@ -7,7 +7,13 @@ from pathlib import Path
 from typing import Any, Callable, Mapping
 
 from packages.admin import AdminRequest, AdminService
-from packages.adapters.pi.production import canonical_project_root, pi_v1_project_application_id
+from packages.adapters.pi.production import (
+    PI_V1_AGENT_ID,
+    PI_V1_PRINCIPAL_ID,
+    PI_V1_SKILL_ID,
+    canonical_project_root,
+    pi_v1_project_application_id,
+)
 from packages.capabilities import PendingPermissionRepository
 from packages.state import SQLiteStateStore
 
@@ -408,6 +414,129 @@ class PiTuiOwnerGate:
             self._trace_result(source, result)
         return {"ok": True, "result": dict(result)}
 
+    def _policy_snapshot(self) -> dict[str, Any]:
+        snapshot = self._admin_call("permissions.list", {})
+        if not isinstance(snapshot, Mapping):
+            raise PiTuiOwnerGateConflict("standing permission snapshot is malformed")
+        rules = snapshot.get("rules")
+        defaults = snapshot.get("defaults")
+        if not isinstance(rules, list) or not isinstance(defaults, list):
+            raise PiTuiOwnerGateConflict("standing permission snapshot lost rules/defaults")
+        return dict(snapshot)
+
+    def _resource_ask_rule(self, record: Mapping[str, Any]) -> dict[str, Any]:
+        snapshot = self._policy_snapshot()
+        matches = []
+        for item in snapshot["rules"]:
+            if not isinstance(item, Mapping) or item.get("decision") != "REQUIRE_APPROVAL":
+                continue
+            scope = item.get("scope")
+            if not isinstance(scope, Mapping) or item.get("conditions") != []:
+                continue
+            if (
+                scope.get("principal_id") == PI_V1_PRINCIPAL_ID
+                and scope.get("application_id") == self.application_id
+                and scope.get("agent_id") == PI_V1_AGENT_ID
+                and scope.get("skill_id") == PI_V1_SKILL_ID
+                and scope.get("action") == record.get("action")
+                and scope.get("resource_selector") == record.get("resource")
+            ):
+                matches.append(dict(item))
+        if len(matches) != 1:
+            raise PiTuiOwnerGateConflict("exact approval is not bound to one standing Ask every time rule")
+        return matches[0]
+
+    def _replace_rule_decision(self, rule: Mapping[str, Any], decision: str) -> None:
+        snapshot = self._policy_snapshot()
+        rule_id = rule.get("rule_id")
+        replacement = dict(rule)
+        replacement["decision"] = decision
+        rules = [replacement if isinstance(item, Mapping) and item.get("rule_id") == rule_id else item for item in snapshot["rules"]]
+        self._admin_call("permissions.replace", {"rules": rules, "defaults": snapshot["defaults"]})
+
+    def _revoke_rule_if_present(self, rule_id: str) -> None:
+        snapshot = self._policy_snapshot()
+        if any(isinstance(item, Mapping) and item.get("rule_id") == rule_id for item in snapshot["rules"]):
+            self._admin_call("permissions.revoke", {"kind": "RULE", "id": rule_id})
+
+    def _validate_approval_record(self, record: Mapping[str, Any]) -> None:
+        view = self._admin_call("approvals.show", {"decision_id": record["decision_id"]})
+        if not isinstance(view, Mapping):
+            raise PiTuiOwnerGateConflict("approval candidate is malformed")
+        request = view.get("request")
+        decision = view.get("decision")
+        if (
+            not isinstance(request, Mapping)
+            or not isinstance(decision, Mapping)
+            or request.get("request_id") != record["request_id"]
+            or request.get("canonical_hash") != record["canonical_request_hash"]
+            or decision.get("decision_id") != record["decision_id"]
+        ):
+            raise PiTuiOwnerGateConflict("exact approval challenge became stale")
+
+    def _finish_approval_record(self, record: Mapping[str, Any], approve: bool) -> dict[str, Any]:
+        self._validate_approval_record(record)
+        self._admin_call(
+            "approvals.approve" if approve else "approvals.reject",
+            {"decision_id": record["decision_id"]},
+        )
+        if record["origin"] == "continuation":
+            self._pending_record(record["pending_id"])
+            result = self._resume_result(record)
+        elif record["origin"] == "effect":
+            payload = record.get("payload")
+            if not isinstance(payload, Mapping):
+                raise PiTuiOwnerGateConflict("exact effect approval lost captured request")
+            response = self._retry_effect(payload)
+            if not isinstance(response, Mapping) or response.get("ok") is not True:
+                raise PiTuiOwnerGateConflict("exact approved effect retry failed closed")
+            result = response.get("result")
+            if not isinstance(result, Mapping):
+                raise PiTuiOwnerGateConflict("exact approved effect retry result is malformed")
+            result = dict(result)
+        else:
+            raise PiTuiOwnerGateConflict("unknown exact approval challenge origin")
+        return self._trace_and_return(record, result)
+
+    def approval_permission_decide(self, challenge_id: str, choice: str) -> dict[str, Any]:
+        choice = _required_text(choice, "choice", maximum=32).upper()
+        if choice not in _PERMISSION_CHOICES:
+            raise PiTuiOwnerGateError("unsupported owner permission choice")
+        record = self._consume(self._approval_challenges, challenge_id)
+        self._validate_approval_record(record)
+        rule = self._resource_ask_rule(record)
+        rule_id = str(rule["rule_id"])
+
+        if choice == "ASK_EVERY_TIME":
+            synthetic = {
+                "authority_outcome": "REQUIRE_APPROVAL",
+                "execution_state": "PENDING_APPROVAL",
+                "decision_id": record["decision_id"],
+                "request_id": record["request_id"],
+            }
+            return self._approval_challenge(
+                result=synthetic,
+                origin=str(record["origin"]),
+                payload=record.get("payload") if isinstance(record.get("payload"), Mapping) else record.get("expected_message"),
+                continuation_id=record.get("continuation_id"),
+                pending_id=record.get("pending_id"),
+            )
+        if choice == "ALWAYS_ALLOW":
+            self._replace_rule_decision(rule, "ALLOW")
+            return self._finish_approval_record(record, True)
+        if choice == "ALWAYS_DENY":
+            self._replace_rule_decision(rule, "DENY")
+            return self._finish_approval_record(record, False)
+        if choice == "ALLOW_ONCE":
+            result = self._finish_approval_record(record, True)
+            self._revoke_rule_if_present(rule_id)
+            return result
+        if choice == "DENY_ONCE":
+            result = self._finish_approval_record(record, False)
+            self._revoke_rule_if_present(rule_id)
+            return result
+        raise PiTuiOwnerGateError("unsupported owner permission transition")
+
     def permission_decide(self, challenge_id: str, choice: str) -> dict[str, Any]:
         choice = _required_text(choice, "choice", maximum=32).upper()
         if choice not in _PERMISSION_CHOICES:
@@ -436,11 +565,14 @@ class PiTuiOwnerGate:
 
         result = self._resume_result(record)
         if choice == "ALLOW_ONCE" and self._is_exact_approval(result):
-            # Exact approval creation is canonical admin state only. Dispatch still requires
-            # a separate continuation resume, which performs normal pre-dispatch re-evaluation.
+            policy = decision.get("policy") if isinstance(decision, Mapping) else None
+            transient_rule_id = policy.get("rule_id") if isinstance(policy, Mapping) else None
+            if not isinstance(transient_rule_id, str) or not transient_rule_id.startswith("owner-permission:allow-once:"):
+                raise PiTuiOwnerGateConflict("Allow once lost exact transient policy binding")
             self._approval_view(result)
             self._admin_call("approvals.approve", {"decision_id": result["decision_id"]})
             result = self._resume_result(record)
+            self._revoke_rule_if_present(transient_rule_id)
             return self._trace_and_return(record, result)
 
         if choice == "ASK_EVERY_TIME" and self._is_exact_approval(result):
@@ -484,39 +616,4 @@ class PiTuiOwnerGate:
             challenge_id,
             permit_expired_non_authorizing=not approve,
         )
-        view = self._admin_call("approvals.show", {"decision_id": record["decision_id"]})
-        if not isinstance(view, Mapping):
-            raise PiTuiOwnerGateConflict("approval candidate is malformed")
-        request = view.get("request")
-        decision = view.get("decision")
-        if (
-            not isinstance(request, Mapping)
-            or not isinstance(decision, Mapping)
-            or request.get("request_id") != record["request_id"]
-            or request.get("canonical_hash") != record["canonical_request_hash"]
-            or decision.get("decision_id") != record["decision_id"]
-        ):
-            raise PiTuiOwnerGateConflict("exact approval challenge became stale")
-        self._admin_call(
-            "approvals.approve" if approve else "approvals.reject",
-            {"decision_id": record["decision_id"]},
-        )
-
-        if record["origin"] == "continuation":
-            self._pending_record(record["pending_id"])
-            result = self._resume_result(record)
-        elif record["origin"] == "effect":
-            payload = record.get("payload")
-            if not isinstance(payload, Mapping):
-                raise PiTuiOwnerGateConflict("exact effect approval lost captured request")
-            response = self._retry_effect(payload)
-            if not isinstance(response, Mapping) or response.get("ok") is not True:
-                raise PiTuiOwnerGateConflict("exact approved effect retry failed closed")
-            result = response.get("result")
-            if not isinstance(result, Mapping):
-                raise PiTuiOwnerGateConflict("exact approved effect retry result is malformed")
-            result = dict(result)
-        else:
-            raise PiTuiOwnerGateConflict("unknown exact approval challenge origin")
-
-        return self._trace_and_return(record, result)
+        return self._finish_approval_record(record, approve)

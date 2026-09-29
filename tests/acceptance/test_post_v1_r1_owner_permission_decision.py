@@ -93,11 +93,13 @@ class PostV1R1OwnerPermissionDecisionTests(unittest.TestCase):
     def reject(self, decision_id):
         return self.call("approvals.reject", {"decision_id": decision_id})
 
-    def test_allow_once_uses_require_approval_then_one_exact_approval_and_future_requests_ask(self):
+    def test_allow_once_uses_exact_transient_approval_rule_and_future_requests_return_to_first_use(self):
         message, blocked, status = self.block("allow-once-a", "allow-once-a.txt")
         original = blocked["request_id"]
         choice = self.decide(status, "ALLOW_ONCE")
         self.assertEqual(choice["policy"]["decision"], "REQUIRE_APPROVAL")
+        self.assertIs(choice["policy"]["transient_exact_request"], True)
+        self.assertTrue(choice["policy"]["rule_id"].startswith("owner-permission:allow-once:"))
         self.assertEqual(choice["next_action"], "RESUME_THEN_APPROVE_EXACT")
         self.assertEqual(choice["subject"]["resource"], "filesystem:workspace")
 
@@ -119,11 +121,9 @@ class PostV1R1OwnerPermissionDecisionTests(unittest.TestCase):
         self.assertIsNotNone(PendingPermissionRepository(self.store).get_closure(original))
 
         later = self.runtime.submit_message(self.message("allow-once-b", "allow-once-b.txt"))
-        self.assertEqual(
-            (later["authority_outcome"], later["execution_state"]),
-            ("REQUIRE_APPROVAL", "PENDING_APPROVAL"),
-        )
-        self.assertFalse(later["permission_configuration"]["required"])
+        self.assertEqual((later["authority_outcome"], later["execution_state"]), ("DENY", "DENIED"))
+        self.assertTrue(later["permission_configuration"]["required"])
+        self.assertEqual(later["workflow_continuation"]["state"], "WAITING_PERMISSION")
         self.assertFalse((self.workspace / "allow-once-b.txt").exists())
 
     def test_always_allow_continues_current_and_later_matching_requests_without_prompt(self):

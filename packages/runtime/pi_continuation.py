@@ -131,6 +131,11 @@ def _fresh_identity(continuation_id: str) -> tuple[str, str]:
     )
 
 
+def fresh_request_identity(continuation_id: str) -> tuple[str, str]:
+    """Controller-only deterministic identity for the continuation's sole fresh request."""
+    return _fresh_identity(_required_text(continuation_id, "continuation_id"))
+
+
 def _resolution_prefix(pending_id: str) -> str:
     digest = hashlib.sha256(pending_id.encode("utf-8")).hexdigest()
     return f"{_PENDING_ADMIN_PREFIX}{digest}."
