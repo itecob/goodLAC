@@ -69,6 +69,8 @@ Provide a concise installed owner command surface for the same bounded choices. 
 
 ### R5 — Integrated owner UAT and release qualification
 
+Status: `COMPLETE` — integrated qualification and owner UAT PASS. The exact review candidate is the resulting R5 closeout commit. R6 remains inactive until separately authorized by the owner, and `1.0.0-rc.12` remains unaccepted pending R6.
+
 Run real owner UAT from at least two ordinary project directories and exercise Allow once, Always allow, Ask every time, Deny once, Always deny, overwrite/replace, restart/recovery, scope display, and exact project isolation. Record bounded owner evidence and produce the `1.0.0-rc.12` review candidate only after integrated qualification passes.
 
 ### R5-R001 — Multi-Pi administrator control-plane blocker remediation
@@ -97,6 +99,8 @@ The R5-R001 blocker is closed. R5 remains active for integrated qualification an
 `1.0.0-rc.12` is not accepted.
 
 ### R6 — Fresh independent security/product review
+
+Status: `INACTIVE` — R5 is closed, but R6 requires explicit owner authorization. `1.0.0-rc.12` is not accepted until a fresh independent reviewer returns PASS for the exact R5 candidate.
 
 A fresh reviewer, not the implementation agent, reviews the exact R5 candidate. Final disposition is `PASS` or `BLOCKED`. The prior rc.11 PASS remains historical baseline either way.
 
