@@ -32,3 +32,21 @@ sandboxing, the four-tool model effect surface, or dispatch authority.
 
 The Qwen endpoint remains experimental model-comparison infrastructure and is not evidence that
 `1.0.0-rc.12` is accepted.
+
+## Owner UAT closeout
+
+Owner UAT passed on 2026-09-29 against implementation/runtime commit
+`996c1629f9d560c64e04a9102df9cd713aae29f3`.
+
+The installed Pi model selector exposed both governed model routes and harmless governed shell
+execution succeeded under both models with separate `Allow Once` owner decisions. GPT-OSS exhibited
+a model-side retry/replay interpretation weakness on an ordinary repeated explicit user request;
+explicit fresh-request wording corrected it. Qwen did not exhibit that behavior under the
+equivalent ordinary prompt. No controller authority failure was observed.
+
+Standing shell-scope semantics are accepted from deterministic R5-R003 qualification rather than
+creating persistent live policies solely to duplicate that coverage.
+
+R5-R003 status: `COMPLETE`.
+
+R5 remains active. R6 remains inactive. `1.0.0-rc.12` remains unaccepted.

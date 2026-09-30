@@ -73,7 +73,7 @@ Run real owner UAT from at least two ordinary project directories and exercise A
 
 ### R5-R001 — Multi-Pi administrator control-plane blocker remediation
 
-Status: `ACTIVE` — discovered during R5 owner UAT before the first permission choice.
+Status: `COMPLETE` — deterministic remediation qualification passed at implementation commit `3cb10d94e349df2f1da76f298ceb0d80b4d322be`; subsequent owner UAT continued on the remediated shared administrator control plane.
 
 R5 reached the installed governed Pi path only after retained regression, candidate build/install,
 doctor/pin checks, and external FreeToken readiness passed. The first Pi launch then failed because
@@ -93,7 +93,7 @@ protections and R1-R4 authority invariants, add deterministic multi-session isol
 lifecycle coverage, repair the R5 orphan-process bug, and add an installed concurrent-Pi owner-UAT
 scenario.
 
-R5 remains `BLOCKED` until this remediation passes and a fresh integrated owner UAT is rerun.
+The R5-R001 blocker is closed. R5 remains active for integrated qualification and owner UAT.
 `1.0.0-rc.12` is not accepted.
 
 ### R6 — Fresh independent security/product review
@@ -102,7 +102,7 @@ A fresh reviewer, not the implementation agent, reviews the exact R5 candidate. 
 
 ### R5-R003 — Shell permission scope and governed model selection
 
-Status: `ACTIVE` until owner UAT closes this implementation.
+Status: `COMPLETE` — retained qualification and installed owner UAT passed at `996c1629f9d560c64e04a9102df9cd713aae29f3`.
 
 Refine standing `shell.exec` permission scope to exact command, exact executable, or all shell in
 the current governed project. Preserve exact-request-only one-time choices. Also expose the
