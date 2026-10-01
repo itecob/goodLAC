@@ -100,7 +100,7 @@ The R5-R001 blocker is closed. R5 remains active for integrated qualification an
 
 ### R6 — Fresh independent security/product review
 
-Status: `INACTIVE` — R5 is closed, but R6 requires explicit owner authorization. `1.0.0-rc.12` is not accepted until a fresh independent reviewer returns PASS for the exact R5 candidate.
+Status: `ACTIVE / RE-REVIEW REQUIRED` — the owner authorized R6. The initial R6 review identified `R6-B001-RC12-CANDIDATE-NOT-MATERIALIZED`: the completed R1-R5 train still carried the historical rc.11 productization identity. The bounded remediation materializes rc.12 without changing authority semantics. `1.0.0-rc.12` remains unaccepted until a fresh independent reviewer returns PASS for the exact post-remediation candidate.
 
 A fresh reviewer, not the implementation agent, reviews the exact R5 candidate. Final disposition is `PASS` or `BLOCKED`. The prior rc.11 PASS remains historical baseline either way.
 

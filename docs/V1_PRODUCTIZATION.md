@@ -1,4 +1,4 @@
-# LAC v1 Productization — 1.0.0-rc.11 candidate
+# LAC v1 Productization — 1.0.0-rc.12 candidate
 
 `LAC-V001` packages the accepted governed Pi reference path without creating a second authority boundary.
 Canonical capability, policy, approval, emergency, identity, lease, receipt, credential and continuation state remains in LAC.
@@ -238,3 +238,12 @@ Normal resume/retry remains separate, so emergency pause, deny precedence, curre
 re-evaluation, exact approval binding and project isolation remain authoritative.
 This R4 implementation remains part of the `1.0.0-rc.12` remediation train and is not an
 accepted release until R5 integrated owner UAT and R6 fresh independent review pass.
+
+## rc.12 post-v1 remediation candidate materialization
+
+`1.0.0-rc.12` is the release-candidate identity for the completed post-v1 R1-R5 remediation train.
+The independently accepted `1.0.0-rc.11` Phase 7 candidate and its historical evidence remain immutable.
+The rc.12 transition changes release/candidate identity and current-version qualification only; it does not
+change controller authority semantics. Current release qualification proves an rc.12 installation can upgrade
+from an rc.11 installation and roll back exactly to that rc.11 installation state. rc.12 remains unaccepted
+until the fresh R6 independent review returns PASS and the owner explicitly accepts the release.
