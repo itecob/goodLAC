@@ -1,8 +1,8 @@
 {
-  "active_task": "POSTV1-R6-FRESH-INDEPENDENT-REVIEW",
+  "active_task": "NONE",
   "blockers": [],
-  "last_accepted_release": "1.0.0-rc.11",
-  "next_action": "Perform a fresh independent POSTV1-R6 security/product re-review of the exact rc.12 candidate produced by the authorized R6-B001 candidate-materialization package. 1.0.0-rc.12 remains unaccepted until that exact candidate receives PASS and the owner explicitly accepts it.",
+  "last_accepted_release": "1.0.0-rc.12",
+  "next_action": "Post-v1 remediation/productization roadmap is closed at accepted release 1.0.0-rc.12. Accepted source candidate is f83fcf57a30b85288796f04161c8e1fc2fc28936. Any new runtime, authority-semantic, product, publication, or legal activation work requires a separate explicit owner authorization.",
   "nonblocking_notes": [
     "Fresh independent Phase 4 re-review passed at live reviewed HEAD 78a1b8c580778f8ae5cb11a856fa771bc1f64308; reviewed P4-B002 implementation commit cd61b1c95a65782dfb9e9442d3422885df8a11f7; no Phase 4 blockers remain.",
     "The accepted A004 owner terminal launches real pinned Pi Agent Core 0.85.1 inside the qualified sandbox with only LAC-governed tools, but that path still uses the earlier fixed-ALLOW qualification policy rather than the completed Phase 4 permission-management runtime.",
@@ -46,10 +46,11 @@
     "R5-R003 adds deterministic shell standing scopes (exact command / executable / project shell) and registers bounded GPT-OSS/Qwen model routes for Pi native model selection. This does not accept 1.0.0-rc.12 or activate R6.",
     "POSTV1-R5-R003 implementation/runtime commit 996c1629f9d560c64e04a9102df9cd713aae29f3 passed retained qualification and owner UAT. Deterministic coverage proved exact-command, executable, and project-shell standing scopes and one-time exact-request behavior. Installed Pi /model exposed GPT-OSS and Qwen; harmless governed shell execution succeeded under both with fresh Allow Once decisions. GPT-OSS incorrectly treated an ordinary repeated explicit user request as an automatic retry until the user explicitly identified it as a fresh request; Qwen did not exhibit that behavior. This is model-comparison evidence, not a controller authority defect. R5-R003 is complete; R5 remains active, R6 inactive, and rc.12 unaccepted.",
     "POSTV1-R5 integrated owner UAT and release qualification closed PASS on 2026-09-30. Final bounded recovery UAT ran against pre-closeout HEAD 16989dbeba72b9c03da21a3d2db2496633321c23 and runtime 996c1629f9d560c64e04a9102df9cd713aae29f3; the complete R5 matrix covers Allow once, Always allow, Ask every time, Deny once, Always deny, overwrite/replace, restart/recovery, scope display, two ordinary project directories, and exact standing-policy/recovery project isolation. R5 is COMPLETE; R6 remains INACTIVE and rc.12 UNACCEPTED pending explicit owner authorization of a fresh independent review.",
-    "Owner authorized bounded remediation of R6-B001-RC12-CANDIDATE-NOT-MATERIALIZED. Historical accepted rc.11 review candidate 818ec607e55f73ef93864ec5a86a793a062262ff remains immutable; the completed post-v1 R1-R5 train is materialized as rc.12 with no authority-semantic change, then requires fresh R6 re-review before acceptance."
+    "Owner authorized bounded remediation of R6-B001-RC12-CANDIDATE-NOT-MATERIALIZED. Historical accepted rc.11 review candidate 818ec607e55f73ef93864ec5a86a793a062262ff remains immutable; the completed post-v1 R1-R5 train is materialized as rc.12 with no authority-semantic change, then requires fresh R6 re-review before acceptance.",
+    "Fresh independent POSTV1-R6 security/product re-review PASS for exact rc.12 source candidate f83fcf57a30b85288796f04161c8e1fc2fc28936 on 2026-10-01. The reviewer independently inspected the live source, Git branch/ref identity, R1-R5 acceptance surfaces, rc.12 materialization delta, retained qualification evidence, upgrade/rollback coverage, and owner double-build attestation. The Web-File-Tool boundary was read-only/non-executable, so owner-host tests and git status were not represented as freshly reviewer-executed. The owner then explicitly accepted 1.0.0-rc.12 on 2026-10-01. Historical accepted rc.11 review candidate 818ec607e55f73ef93864ec5a86a793a062262ff and all Phase 7/rc.11 evidence remain immutable. This closeout changes workflow/documentation/evidence state only and does not install, publish, or change runtime/authority semantics."
   ],
   "phase": "POST_V1_REMEDIATION_PRODUCTIZATION",
-  "phase_status": "ACTIVE",
+  "phase_status": "COMPLETE",
   "project_version": "1.0.0-rc.12",
   "schema": "lac.project-state/v1",
   "target_release": "1.0.0-rc.12"

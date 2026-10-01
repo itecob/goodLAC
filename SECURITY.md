@@ -4,7 +4,7 @@
 
 This policy applies to security issues in the goodLAC repository and the exact versions identified by the repository's durable project state.
 
-The current durable state identifies **1.0.0-rc.11** as the last accepted release candidate. The project does not yet publish a general long-term support policy for earlier or future versions.
+The current durable state identifies **1.0.0-rc.12** as the last accepted release candidate. The project does not yet publish a general long-term support policy for earlier or future versions.
 
 ## Reporting a vulnerability
 

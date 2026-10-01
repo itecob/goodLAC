@@ -245,5 +245,6 @@ accepted release until R5 integrated owner UAT and R6 fresh independent review p
 The independently accepted `1.0.0-rc.11` Phase 7 candidate and its historical evidence remain immutable.
 The rc.12 transition changes release/candidate identity and current-version qualification only; it does not
 change controller authority semantics. Current release qualification proves an rc.12 installation can upgrade
-from an rc.11 installation and roll back exactly to that rc.11 installation state. rc.12 remains unaccepted
-until the fresh R6 independent review returns PASS and the owner explicitly accepts the release.
+from an rc.11 installation and roll back exactly to that rc.11 installation state. Fresh R6 independent
+re-review returned PASS for exact source candidate `f83fcf57a30b85288796f04161c8e1fc2fc28936`, and the owner
+explicitly accepted `1.0.0-rc.12` on 2026-10-01. Installation and publication remain separate actions.

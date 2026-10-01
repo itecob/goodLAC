@@ -100,7 +100,7 @@ The R5-R001 blocker is closed. R5 remains active for integrated qualification an
 
 ### R6 — Fresh independent security/product review
 
-Status: `ACTIVE / RE-REVIEW REQUIRED` — the owner authorized R6. The initial R6 review identified `R6-B001-RC12-CANDIDATE-NOT-MATERIALIZED`: the completed R1-R5 train still carried the historical rc.11 productization identity. The bounded remediation materializes rc.12 without changing authority semantics. `1.0.0-rc.12` remains unaccepted until a fresh independent reviewer returns PASS for the exact post-remediation candidate.
+Status: `COMPLETE / PASS / OWNER ACCEPTED` — the initial R6 review identified `R6-B001-RC12-CANDIDATE-NOT-MATERIALIZED`; bounded remediation materialized rc.12 without changing authority semantics. Fresh independent re-review returned PASS for exact source candidate `f83fcf57a30b85288796f04161c8e1fc2fc28936`, and the owner explicitly accepted `1.0.0-rc.12` on 2026-10-01. Historical rc.11 candidate `818ec607e55f73ef93864ec5a86a793a062262ff` and its evidence remain immutable. Installation/publication are separate actions.
 
 A fresh reviewer, not the implementation agent, reviews the exact R5 candidate. Final disposition is `PASS` or `BLOCKED`. The prior rc.11 PASS remains historical baseline either way.
 
@@ -113,3 +113,17 @@ the current governed project. Preserve exact-request-only one-time choices. Also
 accepted GPT-OSS endpoint and the bounded Qwen comparison endpoint through Pi's native model
 selector without changing goodLAC authority semantics. Retained regression and owner UAT are
 required before R5 can close.
+
+
+## Post-v1 roadmap closeout
+
+The R1-R6 post-v1 remediation/productization roadmap is closed `PASS` on 2026-10-01.
+
+- accepted release: `1.0.0-rc.12`;
+- accepted source candidate: `f83fcf57a30b85288796f04161c8e1fc2fc28936`;
+- prior accepted rc.11 review candidate preserved: `818ec607e55f73ef93864ec5a86a793a062262ff`;
+- R6 blocker set: none;
+- runtime/authority-semantic change in acceptance closeout: none;
+- installation/publication performed by acceptance closeout: no.
+
+Future work requires a new explicit owner authorization and must not rewrite the historical rc.11 or rc.12 qualification record.
