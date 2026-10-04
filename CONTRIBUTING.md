@@ -1,71 +1,49 @@
 # Contributing to goodLAC
 
-goodLAC is developed by ITECOB Inc. around explicit authority and effect-control boundaries. Contributions that change a trust boundary require correspondingly strong tests and evidence.
+goodLAC is developed by ITECOB Inc. around explicit authority and effect-control boundaries.
 
-## Contributor licensing status
+## Launch contribution policy
 
-> **Contributor licensing terms are being finalized. ITECOB Inc. may require completion of a contributor agreement before accepting external code contributions.**
+External code and other copyrightable contributions are **not currently being accepted for incorporation into goodLAC**.
 
-The intended contributor model is:
+Please do not open a pull request containing code or other copyrightable material for incorporation into goodLAC at this time. Such pull requests may be closed without review or merge.
 
-- the contributor retains copyright ownership of their contribution;
-- the contributor confirms they have authority to contribute the work;
-- ITECOB Inc. receives sufficiently broad, perpetual rights to use, reproduce, modify, distribute, sublicense, and relicense accepted contributions;
-- ITECOB Inc. must be able to distribute accepted contributions under both the public goodLAC license and separate commercial licenses;
+The following are welcome:
+
+- bug reports;
+- feature requests;
+- ideas;
+- reproducible technical observations;
+- security reports through the private process in `SECURITY.md`; and
+- technical discussion.
+
+ITECOB Inc. may independently investigate, design, or implement ideas raised through those channels.
+
+Submitting feedback, an idea, a bug report, or participating in discussion does not give the submitter any ownership interest in goodLAC, ITECOB Inc., the goodLAC brand, or other project material.
+
+## Future contributor model
+
+If external code contributions are opened later, ITECOB intends to activate a contributor agreement before accepting copyrightable external contributions.
+
+The currently approved policy direction is:
+
+- contributors retain copyright ownership of contributions they independently create;
+- contributors do not acquire ownership of pre-existing goodLAC, ITECOB Inc., the goodLAC brand, or unrelated project material;
+- accepted contributors grant ITECOB sufficiently broad, permanent rights to use, reproduce, modify, distribute, sublicense, relicense, and commercially license their accepted contributions;
+- ITECOB must be able to distribute accepted contributions under the public goodLAC licence and separate commercial agreements;
 - applicable patent rights and third-party restrictions must be addressed; and
-- ITECOB Inc. is not obligated to accept, merge, maintain, or distribute a contribution.
+- ITECOB is not obligated to accept, merge, maintain, or distribute a contribution.
 
-`CLA-DRAFT.md` records the current draft framework. It is **not active** and requires legal review before activation.
+A contributor-agreement framework exists but is **not active** and is not a launch dependency while external code contributions remain closed.
 
 No automated CLA acceptance should be inferred from this repository.
-
-## Before opening a pull request
-
-1. Keep the change bounded to a clearly stated problem.
-2. Identify any authority, policy, approval, credential, identity, persistence, sandbox, network, or effect boundary touched by the change.
-3. Do not treat capability registration, model output, audit records, or administrative disposition as authorization.
-4. Add or update deterministic tests appropriate to the affected boundary.
-5. Preserve existing third-party notices and disclose any new externally sourced material or licensing restriction.
-6. Do not silently rename `LAC`/`lac` compatibility identifiers as part of unrelated branding work.
-7. Run the relevant regression gates and `git diff --check`.
-
-## Security-sensitive changes
-
-Security-sensitive changes must preserve the documented invariants unless an explicit architecture decision authorizes a change.
-
-In particular:
-
-- new capabilities must not silently create authority;
-- exact approvals must remain bound to the exact canonical operation;
-- policy must remain current at dispatch;
-- credentials must remain outside agent/model context;
-- unknown or inconsistent authority state must fail closed;
-- denied or closed effects must not be revived by later policy changes;
-- emergency pause must remain authoritative; and
-- administration must remain isolated from the governed runtime surface.
-
-See `docs/ARCHITECTURE.md`.
-
-## Pull-request information
-
-A pull request should explain:
-
-- the problem being solved;
-- files and trust boundaries changed;
-- tests run;
-- evidence produced;
-- compatibility implications;
-- whether third-party code or material is introduced; and
-- whether any public documentation, licensing, or security statement changes.
-
-The repository pull-request template captures these items.
 
 ## Security reports
 
 Do not submit undisclosed vulnerabilities through a public pull request or issue. Follow `SECURITY.md`.
 
-## Acceptance
+## Project development
 
-ITECOB Inc. may decline, defer, limit, or request changes to any contribution.
+ITECOB's internal development and release process uses stronger trust-boundary review, deterministic regression, evidence, and continuity controls than are necessary for public feedback.
 
-Until a reviewed contributor agreement is activated, ITECOB Inc. may defer merging external code when accepting the contribution could create ambiguity about the rights needed to continue public and commercial distribution.
+Internal build/session orchestration is not part of the public product merely because it exists in ITECOB's authoritative private development repository.

@@ -1,0 +1,318 @@
+# goodLAC Community License v1.0
+
+This is a source-available licence, not an OSI-approved open-source licence.
+
+## 1. Parties and scope
+
+The licensor is **ITECOB Inc.** ("ITECOB", "Licensor", "we", "us").
+
+"You" means the person or legal entity exercising rights granted by this License.
+
+"Software" means original goodLAC source code, executable code, documentation, and other material that ITECOB makes publicly available under this License, excluding Third-Party Material.
+
+"Third-Party Material" means software, documentation, data, names, trademarks, or other material owned or controlled by another party and governed by separate terms, licences, or notices.
+
+This License applies only to material that ITECOB owns or has authority to license. It does not relicense Third-Party Material.
+
+## 2. Definitions
+
+**Internal Use** means use by a person or organization to operate that person's or organization's own systems, accounts, resources, employees, workflows, or internal business functions. Internal Use includes using goodLAC to help produce work or deliverables later provided to paying customers, provided goodLAC itself is not being supplied or operated as functionality for those customers.
+
+**Third-Party Operational Use** means using goodLAC itself to control, administer, authorize, operate, host, manage, or provide systems, accounts, resources, workflows, users, or service functionality for or on behalf of a third party as ongoing functionality.
+
+**Productized Use** means incorporating goodLAC into software, SaaS, a hosted service, managed service, OEM or white-label offering, paid product, or another product or service in which goodLAC supplies functionality provided to third parties.
+
+**Modified Version** means any version of goodLAC in which any person other than ITECOB has changed, added, removed, replaced, patched, or otherwise modified Software material.
+
+**Redistribute** or **Redistribution** means supplying, transferring, publishing, making available for download, or otherwise providing a copy of the Software or a Modified Version to another person or legal entity.
+
+**Complete Corresponding Source** means the source code and source-form material needed to understand, build, install, and modify the redistributed Modified Version, including the modifications made to goodLAC, but excluding generally available system tools or Third-Party Material that is independently obtained under its own terms.
+
+## 3. Acceptance
+
+You do not accept this License merely by viewing or obtaining a copy of publicly available goodLAC material for inspection.
+
+By installing, running, modifying, redistributing, or otherwise exercising rights that ITECOB grants under this License, you accept and agree to its terms.
+
+If you do not agree to this License, do not exercise rights granted by it.
+
+## 4. Community-use grant
+
+Subject to this License, ITECOB grants you a non-exclusive, worldwide, royalty-free right to use, reproduce as reasonably necessary for permitted use, and modify the Software for:
+
+- personal use;
+- research;
+- education;
+- self-hosting for your own personal use;
+- Internal Use by an organization of any size or entity type;
+- internal business administration;
+- internal employee workflows;
+- internal email, calendar, marketing, development, finance, operations, HR, research, and similar workflows;
+- Internal Use that helps produce work ultimately delivered to paying customers; and
+- ordinary unpaid personal assistance between individuals.
+
+Internal Use is not conditioned on organization size, revenue, for-profit status, nonprofit status, or charitable status.
+
+Nothing in this section grants Productized Use or Third-Party Operational Use.
+
+## 5. Private modifications
+
+You may modify goodLAC for permitted personal or Internal Use and keep the source of those modifications private if you do not Redistribute the Modified Version.
+
+Every Modified Version must nevertheless carry the modification notice required by Section 8 in the modified repository, package, distribution, or other durable material representing that version.
+
+The modification notice requirement exists to prevent a modified build from being mistaken for an official ITECOB distribution if it is later copied, deployed, transferred, or encountered by another person.
+
+## 6. Noncommercial redistribution
+
+You may Redistribute unmodified goodLAC on a noncommercial basis if you:
+
+1. preserve this License;
+2. preserve applicable copyright and NOTICE material;
+3. preserve applicable third-party notices; and
+4. do not state or imply that you are ITECOB Inc. or that ITECOB has endorsed your redistribution.
+
+You may not sell, license, rent, charge for access to, or otherwise require payment specifically for goodLAC itself without a separate commercial licence from ITECOB.
+
+Reasonable professional fees for installation, configuration, migration, training, auditing, or support are not treated as a sale of goodLAC where the fee is for those services, the deployment is for the customer's own Internal Use, and the arrangement does not otherwise constitute Productized Use or Third-Party Operational Use.
+
+## 7. Modified redistribution and same-license requirement
+
+You may Redistribute a Modified Version on a noncommercial basis only if:
+
+1. the Modified Version remains under this same goodLAC Community License;
+2. this License is provided with the Modified Version;
+3. applicable copyright, NOTICE, attribution, and third-party notices are preserved;
+4. the modification notice required by Section 8 is included;
+5. the Modified Version uses a primary project or product name clearly different from `goodLAC`, unless ITECOB expressly authorizes otherwise;
+6. Complete Corresponding Source is provided with the Modified Version or made available at no additional charge through a clear and durable source location; and
+7. the redistribution does not constitute Productized Use, Third-Party Operational Use, sale of goodLAC, sale of the Modified Version, or another use requiring a separate commercial licence.
+
+You may not relicense a Modified Version in a manner that removes, weakens, or bypasses this License's conditions for the goodLAC-derived work.
+
+## 8. Required notice for every Modified Version
+
+Every Modified Version must clearly and prominently communicate all of the following facts:
+
+- it is based on goodLAC by ITECOB Inc.;
+- it has been modified from the official goodLAC distribution;
+- it is not an official ITECOB Inc. distribution;
+- ITECOB Inc. has not reviewed, verified, certified, approved, or endorsed the modifications unless ITECOB expressly states otherwise;
+- ITECOB Inc. makes no representation that the Modified Version preserves the security, authority, compatibility, or operational properties of the official goodLAC release; and
+- ITECOB Inc. does not provide support for the modifications or the Modified Version under this Community License.
+
+The notice must remain with the Modified Version in its repository, package, distribution, or equivalent durable accompanying material.
+
+Substantially equivalent wording is allowed. Exact wording is not required.
+
+The following wording may be copied verbatim:
+
+> **Based on goodLAC by ITECOB Inc.**
+>
+> This version has been modified from the official goodLAC distribution and is not an official ITECOB Inc. release.
+>
+> ITECOB Inc. has not reviewed, verified, certified, approved, or endorsed these modifications and makes no representation that this modified version preserves the security, authority, compatibility, or operational properties of the official goodLAC release.
+>
+> ITECOB Inc. does not provide support for these modifications or for this modified distribution.
+
+ITECOB's official unmodified distribution does not require a separate "unmodified" status declaration beyond its ordinary copyright, License, NOTICE, version, and release information.
+
+## 9. Attribution, names, and brand use
+
+Accurate factual reference to goodLAC is permitted.
+
+A permitted Modified Version may state, in substance:
+
+> Based on goodLAC by ITECOB Inc.
+
+A Modified Version must not use `goodLAC` as its primary product or project name unless ITECOB expressly authorizes that use.
+
+This License does not authorize false or misleading claims including:
+
+- Official goodLAC;
+- goodLAC Certified;
+- goodLAC Verified;
+- Official goodLAC Partner;
+- ITECOB approved;
+- ITECOB certified; or
+- equivalent endorsement, verification, certification, partnership, or approval claims.
+
+This License does not state that `goodLAC` is a registered trademark and does not grant rights to use any future ITECOB trademark or logo except as necessary for accurate attribution or factual reference permitted by this License.
+
+## 10. Uses requiring a separate commercial licence
+
+This License does not grant Productized Use or Third-Party Operational Use.
+
+A separate commercial licence from ITECOB is required for, without limitation:
+
+- selling or licensing goodLAC itself;
+- selling or licensing a Modified Version;
+- charging for access to goodLAC functionality;
+- embedding goodLAC into commercial software or a paid product;
+- SaaS incorporating goodLAC;
+- hosted goodLAC services;
+- managed goodLAC services;
+- OEM or white-label offerings;
+- using goodLAC as part of software sold or licensed to customers;
+- operating goodLAC on behalf of customers as ongoing functionality;
+- using goodLAC to control, administer, authorize, or operate customer systems or accounts as an ongoing service; or
+- another commercial offering in which goodLAC supplies functionality being sold or operated for a third party.
+
+Commercial licence enquiries may be sent to:
+
+**support@itecob.com**
+
+Commercial licences are separate individually negotiated agreements. This Community License creates no automatic entitlement to a commercial licence and establishes no fixed price, renewal structure, warranty, service level, or other term for a future commercial agreement.
+
+## 11. Historical repository versions
+
+This License applies to original goodLAC material owned or licensable by ITECOB that ITECOB makes publicly available in the official goodLAC repository history, including earlier commits and release candidates, unless a particular version expressly states that different licence terms apply.
+
+The public repository history exists in part to preserve goodLAC's development lineage and provenance. Historical availability does not mean that an earlier development state is recommended, supported, or suitable for ordinary use.
+
+No goodLAC version becomes commercially unrestricted merely because of age.
+
+Third-Party Material in repository history remains governed by its own applicable terms.
+
+## 12. Patent grant
+
+To the extent ITECOB owns or controls patent claims that are necessarily infringed solely by exercising rights expressly granted to you under this License, ITECOB grants you a worldwide, non-exclusive, royalty-free patent licence solely to the extent necessary to exercise those permitted rights.
+
+This patent licence does not expand the uses permitted under this License. Productized Use, Third-Party Operational Use, and other use requiring a separate commercial licence remain outside this grant.
+
+If you initiate patent litigation alleging that goodLAC, or material incorporated into goodLAC by ITECOB, infringes a patent, the patent licence granted to you under this section terminates upon filing of that claim, to the maximum extent permitted by applicable law.
+
+## 13. Third-party material
+
+Third-Party Material remains governed by its applicable third-party licences, notices, and conditions.
+
+Nothing in this License grants rights that ITECOB does not own or have authority to grant.
+
+You are responsible for complying with third-party terms applicable to material you use, modify, combine, or redistribute.
+
+See `THIRD_PARTY_NOTICES.md` and `UPSTREAM_LOCK.json` where applicable.
+
+## 14. No support or service commitment
+
+This License does not include technical support, maintenance, implementation assistance, consulting, updates, upgrades, security response times, availability commitments, or service levels from ITECOB.
+
+ITECOB may separately choose to provide services, documentation, updates, or assistance. Doing so does not create an ongoing obligation unless ITECOB expressly agrees otherwise in a separate agreement.
+
+ITECOB has no obligation to diagnose or support a Modified Version or third-party modification.
+
+## 15. As-is software; user responsibility
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE SOFTWARE IS PROVIDED **"AS IS"** AND **"AS AVAILABLE"**, WITH ALL FAULTS AND WITHOUT WARRANTIES OR GUARANTEES OF ANY KIND, EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE.
+
+WITHOUT LIMITING THE FOREGOING, ITECOB DISCLAIMS, TO THE MAXIMUM EXTENT PERMITTED BY LAW, WARRANTIES OR CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, NON-INFRINGEMENT, ACCURACY, SECURITY, RELIABILITY, AVAILABILITY, COMPATIBILITY, AND ERROR-FREE OR UNINTERRUPTED OPERATION.
+
+You are responsible for determining whether goodLAC and any connected model, agent, tool, integration, configuration, permission, output, or workflow are appropriate for your intended use.
+
+You are responsible for your deployment, configuration, permissions, credentials, integrations, operating environment, supervision, decisions, services, actions, and resulting consequences.
+
+goodLAC does not replace professional judgement, review, supervision, or legal, regulatory, fiduciary, professional, safety, or other duties applicable to you.
+
+If you use goodLAC in legal, medical, financial, employment, safety-critical, regulated, or other professional contexts, you remain responsible for the duties and standards applicable to that activity.
+
+## 16. Limitation of liability
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, ITECOB AND ITS DIRECTORS, OFFICERS, EMPLOYEES, CONTRACTORS, AGENTS, AFFILIATES, SUCCESSORS, AND LICENSORS WILL NOT BE LIABLE FOR INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, EXEMPLARY, PUNITIVE, OR SIMILAR DAMAGES ARISING OUT OF OR RELATING TO THE SOFTWARE, THIS LICENSE, OR YOUR USE OR INABILITY TO USE THE SOFTWARE.
+
+THIS EXCLUSION INCLUDES, TO THE MAXIMUM EXTENT PERMITTED BY LAW, LOSS OF PROFITS, REVENUE, BUSINESS, BUSINESS OPPORTUNITY, GOODWILL, DATA, USE, OR BUSINESS INTERRUPTION.
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, ALL LIABILITY THAT CAN LAWFULLY BE EXCLUDED IS EXCLUDED.
+
+WHERE LIABILITY CANNOT LAWFULLY BE EXCLUDED BUT MAY LAWFULLY BE LIMITED, ITECOB'S TOTAL AGGREGATE LIABILITY ARISING OUT OF OR RELATING TO THIS COMMUNITY LICENSE, THE SOFTWARE, OR PERMITTED USE OF THE SOFTWARE WILL NOT EXCEED **CAD $100 IN TOTAL**.
+
+The CAD $100 amount is an aggregate liability ceiling, not an automatic payment, bounty, compensation entitlement, or amount payable per incident, claimant, user, customer, or affected third party.
+
+Nothing in this License excludes or limits liability to the extent applicable law prohibits that exclusion or limitation.
+
+A separate commercial agreement may contain different terms.
+
+## 17. Indemnification for your conduct
+
+To the extent permitted by applicable law, you agree to indemnify, defend, and hold harmless ITECOB and its directors, officers, employees, contractors, agents, affiliates, successors, and licensors from third-party claims, damages, liabilities, losses, costs, and reasonable legal expenses arising from:
+
+- your use or misuse of goodLAC;
+- services you provide using goodLAC;
+- your configuration, instructions, content, integrations, deployment, or operation;
+- your violation of this License or applicable law; or
+- your infringement or violation of another person's rights.
+
+This obligation applies only to the extent the third-party claim arises from your conduct or responsibility and does not apply to the extent the claim results directly from ITECOB's own unlawful conduct or from liability that applicable law does not permit ITECOB to exclude, limit, or transfer.
+
+## 18. Termination and cure
+
+Except for breaches subject to immediate termination below, if you materially breach this License and the breach is reasonably capable of correction, ITECOB will provide notice of the breach and you will have 30 days after receiving notice to fully cure it.
+
+If you fully cure the breach within that 30-day period, your rights under this License will continue and will not terminate because of that cured breach. If you do not fully cure it within that period, your rights under this License terminate at the end of the cure period.
+
+ITECOB may terminate rights immediately, to the extent permitted by law, where the breach involves:
+
+- deliberate or repeated violation of the commercial-use restrictions;
+- unlawful use;
+- intentional false claims of ITECOB affiliation, certification, verification, approval, or endorsement;
+- deliberate removal or falsification of required licence, attribution, provenance, or modification notices; or
+- conduct that cannot reasonably be cured.
+
+Termination does not retroactively make previously compliant conduct unlawful and does not remove obligations, liabilities, or restrictions that by their nature survive termination.
+
+goodLAC contains no technical licence-enforcement, telemetry, remote-monitoring, or phone-home mechanism for the purpose of detecting licence violations. Compliance remains the licensee's responsibility. ITECOB may enforce this License when it becomes aware of sufficient evidence of a breach through lawful means.
+
+## 19. Licence versions and required future updates
+
+ITECOB may publish revised versions of the goodLAC Community License.
+
+Unless ITECOB expressly designates a revised licence as a **Required License Update**, a copy of goodLAC remains governed by the Community License version otherwise applicable to that copy.
+
+ITECOB may designate a revised licence as a Required License Update where ITECOB reasonably determines that a change is necessary or appropriate to address a material:
+
+- legal or regulatory issue;
+- security or safety issue;
+- abuse or misuse issue;
+- compliance issue;
+- intellectual-property or licensing issue;
+- protection of users, third parties, or ITECOB;
+- defect or material ambiguity in the licence; or
+- issue affecting the intended distinction between permitted Community Use and use requiring a separate commercial licence.
+
+ITECOB will provide reasonable public notice of a Required License Update, identify the material changes, and specify a future effective date.
+
+To the maximum extent permitted by applicable law, continued exercise of rights granted by this License after the stated effective date constitutes acceptance of the Required License Update.
+
+A Required License Update does not retroactively make conduct that complied with the previously applicable licence unlawful before the new effective date.
+
+Where applicable law requires additional notice, consent, termination rights, cancellation rights, or other procedures, those requirements control.
+
+## 20. Official notice channels
+
+The official goodLAC repository is an authoritative location for notices concerning this License.
+
+ITECOB may also provide notice through release notes, its website, email, or other reasonable public channels.
+
+Unless applicable law requires otherwise, ITECOB is not required to identify or individually contact every recipient of goodLAC.
+
+## 21. Severability
+
+If a provision of this License is held invalid or unenforceable, that provision will be enforced to the maximum extent legally permitted or severed to the minimum extent necessary, and the remaining provisions will continue in effect.
+
+## 22. No waiver
+
+ITECOB's failure or delay in enforcing a provision of this License does not waive that provision or ITECOB's right to enforce it later.
+
+A waiver is effective only if expressly stated in writing by an authorized representative of ITECOB.
+
+## 23. Governing law and jurisdiction
+
+This License is governed by the laws of the Province of Ontario and the federal laws of Canada applicable in Ontario, without regard to conflict-of-laws rules to the extent those rules would require application of another jurisdiction's law.
+
+Subject to mandatory law that requires otherwise, disputes arising from or relating to this License are to be brought before the courts of Ontario, Canada.
+
+## 24. Entire community-use permission
+
+This License states the public permissions ITECOB grants for the Software.
+
+No statement in marketing material, documentation, an issue, discussion, support interaction, or other communication expands the rights granted by this License unless ITECOB expressly identifies that communication as an amendment or separate written licence.
+
+A separate commercial agreement may grant different rights and obligations to a specific party.

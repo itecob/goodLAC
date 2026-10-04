@@ -2,7 +2,7 @@
 
 **Status:** Accepted for Phase 2 H001  
 **Decision:** `bubblewrap`  
-**Evidence:** `qualification/evidence/h001_sandbox.json`
+**Evidence:** historical sandbox qualification evidence is retained privately by ITECOB Inc.
 
 ## Context
 

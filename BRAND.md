@@ -48,7 +48,7 @@ Do not claim that goodLAC is patented, patent-pending, trademark-registered, cer
 
 ## Permitted factual references
 
-Accurate factual references are permitted under the intended policy, for example:
+Accurate factual references are permitted, for example:
 
 - "Based on goodLAC by ITECOB Inc."
 - "Designed to integrate with goodLAC."
@@ -70,25 +70,32 @@ Third parties must not claim or imply any of the following without specific auth
 - an official goodLAC badge or logo
 - endorsement, verification, partnership, or approval by ITECOB Inc.
 
-Technical conformance and brand endorsement are separate. A third party may publish a technically reproducible conformance assessment without thereby receiving permission to use an official endorsement mark or badge.
+Technical conformance and brand endorsement are separate.
 
-## Forks
+## Modified versions
 
-Under the intended Community License, a permitted fork may use its own name and branding.
+Any Modified Version of goodLAC must use a primary project or product name clearly different from `goodLAC` unless ITECOB Inc. expressly authorizes otherwise.
 
-A redistributed fork must clearly disclose that it is derived from goodLAC and must not imply that it is the official project or has ITECOB endorsement.
+Every Modified Version must carry a clear notice communicating substantially the following facts:
 
-Required project-level attribution should be substantively equivalent to:
+- it is based on goodLAC by ITECOB Inc.;
+- it has been modified;
+- it is not an official ITECOB Inc. distribution;
+- ITECOB Inc. has not reviewed, verified, certified, approved, or endorsed the modifications unless expressly stated otherwise;
+- ITECOB Inc. makes no representation that the modified version preserves official goodLAC's security, authority, compatibility, or operational properties; and
+- ITECOB Inc. does not provide support for the modifications or modified distribution under the Community License.
 
-> Based on goodLAC by ITECOB Inc.
+The notice requirement applies to every Modified Version. It is not conditioned on whether the version is public, private, internal, or redistributed.
 
-Attribution in a README or equivalent project documentation is intended to be sufficient unless another express requirement applies. goodLAC branding is not intended to be mandatory inside the running UI merely to satisfy attribution.
+The notice must remain with the modified repository, package, distribution, or equivalent durable material.
 
-## Installers and service providers
+Substantially equivalent wording is permitted. Exact wording is not required.
 
-Third-party installation, configuration, migration, training, auditing, or support does not make the provider an official, verified, certified, or approved goodLAC provider.
+See `docs/MODIFIED_VERSION_NOTICE.md` for a copy/paste example.
 
-There is currently no qualified `goodLAC verify-install` system.
+## Official distribution
+
+ITECOB's official unmodified distribution does not require a separate "official/unmodified" status declaration beyond ordinary copyright, licence, NOTICE, version, and release information.
 
 ## Historical records
 
