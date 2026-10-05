@@ -1,3 +1,5 @@
+# goodLAC
+
 <p align="center">
   <img
     src="assets/goodlac-hero.png"
@@ -5,7 +7,6 @@
     width="100%"
   />
 </p>
-# goodLAC
 
 **goodLAC** is a source-available **Local Agent Controller (LAC)** developed by **ITECOB Inc.**
 
