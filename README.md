@@ -2,7 +2,7 @@
 
 <p align="center">
   <img
-    src="assets/goodlac-hero.png"
+    src="assets/assets/goodLAC Repo Image.png"
     alt="goodLAC — Local Agent Controller"
     width="100%"
   />
