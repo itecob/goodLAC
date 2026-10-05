@@ -85,11 +85,9 @@ A process is not "goodLAC-governed" merely because it can call goodLAC. The qual
 
 Technical identifiers such as `lac.*` schemas, `LAC_*` environment variables, `lacctl`, `lac-pi`, `/lac-resume`, and the existing `local-agent-controller` state/configuration paths are compatibility identifiers. Public branding does not imply that those interfaces have been renamed.
 
-## Quick start
+## Try goodLAC
 
-The self-contained permission walkthrough requires Linux, Git, and Python 3.10 or newer.
-
-After public-release activation:
+The fastest way to evaluate the authority/permission model requires Linux, Git, and Python 3.10 or newer:
 
 ```bash
 git clone https://github.com/itecob/goodLAC.git
@@ -97,23 +95,15 @@ cd goodLAC
 python3 scripts/p006_owner_permission_demo.py --auto
 ```
 
-The walkthrough uses temporary local state and synthetic effects. It demonstrates capability registration, denied requests, permission changes, conditional permissions, explicit approval, and duplicate prevention.
+The walkthrough uses temporary local state and synthetic effects. It demonstrates permission discovery, standing policy, explicit approval, deny behavior, conditional permissions, and duplicate-effect prevention.
 
-Run the repository's Python unit, integration, and acceptance suites with:
+## Install goodLAC
 
-```bash
-scripts/test-c010
-```
+For the supported `1.0.0-rc.12` source-install path, prerequisites, deterministic distribution build, installation, `lac-doctor`, governed Pi launch, runtime limitations, and rollback:
 
-Later integration/profile gates have additional Linux sandbox and pinned-runtime prerequisites documented under `docs/`.
+**[Read the installation guide](docs/INSTALL.md)**
 
-## Installation and governed Pi
-
-The v1 productization code provides versioned user-level installation, rollback, configuration, `lac-doctor`, owner administration commands, and the default-governed `pi` entrypoint.
-
-The current technical installation paths intentionally retain the `local-agent-controller` namespace for compatibility. Public branding does not move existing user state or silently migrate protocol identifiers.
-
-See:
+Additional technical references:
 
 - [`docs/V1_PRODUCTIZATION.md`](docs/V1_PRODUCTIZATION.md)
 - [`docs/PI_V1_GOVERNED_PROFILE.md`](docs/PI_V1_GOVERNED_PROFILE.md)
@@ -177,7 +167,7 @@ External code and other copyrightable contributions are **not currently being ac
 
 Bug reports, feature requests, ideas, technical discussion, and other feedback are welcome. ITECOB Inc. may independently investigate, design, or implement ideas raised through those channels.
 
-The contributor agreement remains a draft and is not a launch dependency while external code contributions are closed.
+A contributor-agreement framework exists but is not active while external code contributions remain closed.
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
@@ -185,7 +175,7 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 Undisclosed vulnerabilities must not be reported through public issues or pull requests.
 
-At public launch, the designated private reporting mechanism is **GitHub Private Vulnerability Reporting** through the repository's Security interface. That feature must be enabled when the repository is made public.
+The designated private reporting mechanism for the public repository is **GitHub Private Vulnerability Reporting** through the repository's Security interface.
 
 See [`SECURITY.md`](SECURITY.md).
 

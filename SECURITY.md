@@ -18,7 +18,7 @@ Use the repository's:
 
 interface to submit a private report.
 
-There is no separate fallback security email designated for launch. GitHub Private Vulnerability Reporting must therefore be enabled before the repository is made public.
+There is no separate fallback security email designated. GitHub Private Vulnerability Reporting is the designated private reporting path for the public repository.
 
 ## What to include
 

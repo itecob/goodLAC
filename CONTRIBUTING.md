@@ -34,7 +34,7 @@ The currently approved policy direction is:
 - applicable patent rights and third-party restrictions must be addressed; and
 - ITECOB is not obligated to accept, merge, maintain, or distribute a contribution.
 
-A contributor-agreement framework exists but is **not active** and is not a launch dependency while external code contributions remain closed.
+A contributor-agreement framework exists but is **not active** while external code contributions remain closed.
 
 No automated CLA acceptance should be inferred from this repository.
 
