@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en" data-release="1.0.0-rc.12">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="goodLAC 1.0.0-rc.12 user manual — Security architecture">
+  <title>Security architecture · goodLAC 1.0.0-rc.12</title>
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="layout">
+  <aside class="sidebar">
+    <a class="brand" href="../index.html">good<span>LAC</span></a>
+    <div class="version">User manual · 1.0.0-rc.12</div>
+    <nav data-manual-nav aria-label="Manual sections">
+      <a href="../index.html">Home</a>
+<a href="what-is.html">What goodLAC is</a>
+<a href="quickstart.html">Quick evaluation</a>
+<a href="installation.html">Installation</a>
+<a href="governed-pi.html">Governed Pi</a>
+<a href="projects.html">Projects & identity</a>
+<a href="permissions.html">Permissions</a>
+<a href="administration.html">Owner administration</a>
+<a href="providers.html">Providers & adapters</a>
+<a href="security.html" aria-current="page">Security model</a>
+<a href="reliability.html">Receipts & durable truth</a>
+<a href="troubleshooting.html">Troubleshooting</a>
+<a href="release.html">Release & limitations</a>
+<a href="policies.html">Policies & references</a>
+<a href="faq.html">FAQ</a>
+    </nav>
+    <div class="repo-link"><a href="https://github.com/itecob/goodLAC">GitHub repository ↗</a></div>
+  </aside>
+  <main id="content">
+    <div class="breadcrumbs">Manual / Security architecture</div>
+    <header class="page-header">
+      <div>
+        <div class="eyebrow">Security</div>
+        <h1>Security architecture</h1>
+      </div>
+    </header>
+    
+<p class="lede">goodLAC's security model is an authority/effect boundary, not a claim that every deployment is vulnerability-free.</p>
+<h2>Key controls in the qualified path</h2>
+<ul>
+<li>Default-governed Pi with explicit ungoverned bypass.</li>
+<li>Bubblewrap sandbox with constrained filesystem/process/network/environment authority.</li>
+<li>Controller-owned identity and capability validation.</li>
+<li>Deterministic standing policy and deny precedence.</li>
+<li>Exact one-request approvals.</li>
+<li>Policy re-evaluation immediately before dispatch.</li>
+<li>Durable emergency pause.</li>
+<li>Execution leases, idempotency, receipts, and durable effect truth.</li>
+<li>Credential separation from model context.</li>
+<li>Owner-only administration surface outside governed sandboxes.</li>
+</ul>
+<h2>Credential separation</h2>
+<p>Agents receive bounded effect interfaces, not service credentials. Credential-bearing integrations resolve credentials outside the model context. Request schemas and public receipt projections are designed to avoid carrying authority/credential material across consumer boundaries.</p>
+<h2>Fail-closed cases</h2>
+<p>Unknown capabilities, unsupported scope/material, malformed or stale authority objects, invalid identity bindings, unavailable required services, expired approvals/requests, inconsistent continuation state, and other invalid authority conditions close rather than silently broadening authority.</p>
+<h2>Security reporting</h2>
+<p>Do not publish undisclosed vulnerabilities in issues, discussions, or pull requests. Use GitHub Private Vulnerability Reporting through the repository's <a href="https://github.com/itecob/goodLAC/security">Security interface</a>.</p>
+<p>No response-time, remediation-time, bounty, disclosure deadline, or service-level commitment is promised unless ITECOB Inc. expressly agrees to one for a specific matter.</p>
+
+    <footer>
+      <p>This manual documents goodLAC <strong>1.0.0-rc.12</strong>. Model output is never authorization.</p>
+      <p><a href="https://github.com/itecob/goodLAC">Repository</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SECURITY.md">Security policy</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SUPPORT.md">Support</a></p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

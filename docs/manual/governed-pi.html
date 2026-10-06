@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en" data-release="1.0.0-rc.12">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="goodLAC 1.0.0-rc.12 user manual — Governed Pi usage">
+  <title>Governed Pi usage · goodLAC 1.0.0-rc.12</title>
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="layout">
+  <aside class="sidebar">
+    <a class="brand" href="../index.html">good<span>LAC</span></a>
+    <div class="version">User manual · 1.0.0-rc.12</div>
+    <nav data-manual-nav aria-label="Manual sections">
+      <a href="../index.html">Home</a>
+<a href="what-is.html">What goodLAC is</a>
+<a href="quickstart.html">Quick evaluation</a>
+<a href="installation.html">Installation</a>
+<a href="governed-pi.html" aria-current="page">Governed Pi</a>
+<a href="projects.html">Projects & identity</a>
+<a href="permissions.html">Permissions</a>
+<a href="administration.html">Owner administration</a>
+<a href="providers.html">Providers & adapters</a>
+<a href="security.html">Security model</a>
+<a href="reliability.html">Receipts & durable truth</a>
+<a href="troubleshooting.html">Troubleshooting</a>
+<a href="release.html">Release & limitations</a>
+<a href="policies.html">Policies & references</a>
+<a href="faq.html">FAQ</a>
+    </nav>
+    <div class="repo-link"><a href="https://github.com/itecob/goodLAC">GitHub repository ↗</a></div>
+  </aside>
+  <main id="content">
+    <div class="breadcrumbs">Manual / Governed Pi usage</div>
+    <header class="page-header">
+      <div>
+        <div class="eyebrow">Operation</div>
+        <h1>Governed Pi usage</h1>
+      </div>
+    </header>
+    
+<p class="lede">The installed <code>pi</code> command enters the goodLAC-governed Pi profile by default.</p>
+<h2>First launch</h2>
+<p>Change into the project directory you want to govern, then launch:</p>
+<pre><code>cd /path/to/your/project
+pi</code></pre>
+<p>With the default <code>workspace_mode=launch-cwd</code>, the canonical launch directory becomes the session project. A fixed workspace can be configured explicitly by the owner.</p>
+<h2>Model-facing effect surface</h2>
+<ul>
+<li><code>lac_fs_read</code></li>
+<li><code>lac_fs_create</code></li>
+<li><code>lac_fs_replace</code></li>
+<li><code>lac_shell_exec</code></li>
+</ul>
+<p>Stock Pi built-in tools are disabled in the governed profile. The selected project is mounted read-only at <code>/workspace</code> in the Pi sandbox; consequential writes and shell effects still go through controller-backed tools.</p>
+<h2>Sandbox boundary</h2>
+<p>The qualified native Pi path runs inside Bubblewrap with host network unavailable to the governed Pi process. Owner administration sockets, service credentials, project-local extensions/resources, and general host filesystem/process authority are not exposed to the model process.</p>
+<h2>Dangerous bypass</h2>
+<pre><code>pi --dangerously-bypass-lac ...</code></pre>
+<div class="callout danger"><strong>This path is explicitly ungoverned.</strong> It exists as an owner/debug escape hatch. Do not describe effects created through it as goodLAC-governed.</div>
+<h2>Continuation commands</h2>
+<p>The trusted goodLAC Pi extension adds owner-visible commands for durable blocked-workflow recovery:</p>
+<pre><code>/lac-continuations
+/lac-resume &lt;continuation_id&gt;</code></pre>
+<p>Startup may report recoverable continuation state, but restart never auto-dispatches an effect.</p>
+
+    <footer>
+      <p>This manual documents goodLAC <strong>1.0.0-rc.12</strong>. Model output is never authorization.</p>
+      <p><a href="https://github.com/itecob/goodLAC">Repository</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SECURITY.md">Security policy</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SUPPORT.md">Support</a></p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

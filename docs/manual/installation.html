@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en" data-release="1.0.0-rc.12">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="goodLAC 1.0.0-rc.12 user manual — Installation and prerequisites">
+  <title>Installation and prerequisites · goodLAC 1.0.0-rc.12</title>
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="layout">
+  <aside class="sidebar">
+    <a class="brand" href="../index.html">good<span>LAC</span></a>
+    <div class="version">User manual · 1.0.0-rc.12</div>
+    <nav data-manual-nav aria-label="Manual sections">
+      <a href="../index.html">Home</a>
+<a href="what-is.html">What goodLAC is</a>
+<a href="quickstart.html">Quick evaluation</a>
+<a href="installation.html" aria-current="page">Installation</a>
+<a href="governed-pi.html">Governed Pi</a>
+<a href="projects.html">Projects & identity</a>
+<a href="permissions.html">Permissions</a>
+<a href="administration.html">Owner administration</a>
+<a href="providers.html">Providers & adapters</a>
+<a href="security.html">Security model</a>
+<a href="reliability.html">Receipts & durable truth</a>
+<a href="troubleshooting.html">Troubleshooting</a>
+<a href="release.html">Release & limitations</a>
+<a href="policies.html">Policies & references</a>
+<a href="faq.html">FAQ</a>
+    </nav>
+    <div class="repo-link"><a href="https://github.com/itecob/goodLAC">GitHub repository ↗</a></div>
+  </aside>
+  <main id="content">
+    <div class="breadcrumbs">Manual / Installation and prerequisites</div>
+    <header class="page-header">
+      <div>
+        <div class="eyebrow">Getting started</div>
+        <h1>Installation and prerequisites</h1>
+      </div>
+    </header>
+    
+<p class="lede">rc.12 uses a source-install path and deliberately fails closed rather than silently downloading or substituting qualification-sensitive runtime dependencies.</p>
+<h2>Supported public baseline</h2>
+<ul>
+<li>Linux</li><li>Python 3.10+</li><li>Git</li>
+<li>Node.js compatible with the pinned Pi requirement (<code>&gt;=22.19.0</code>)</li>
+<li>Bubblewrap (<code>bwrap</code>)</li><li><code>fd</code></li><li><code>rg</code> / ripgrep</li>
+</ul>
+<p>The accepted managed local-model path additionally expects the exact qualified Pi and FreeToken checkouts, accepted local model/runtime assets, and the runtime environment used by that path. The accepted FreeToken runtime path was qualified with a CUDA 13 toolkit.</p>
+<h2>1. Clone goodLAC</h2>
+<pre><code>git clone https://github.com/itecob/goodLAC.git
+cd goodLAC</code></pre>
+<h2>2. Provision pinned Pi</h2>
+<p>Expected checkout: <code>~/.cache/local-agent-controller/phase0/upstream/pi</code><br>Pinned commit: <code>da840b6216578c2a571d0374ac6a2091a83f9d91</code></p>
+<pre><code>mkdir -p ~/.cache/local-agent-controller/phase0/upstream
+git clone https://github.com/earendil-works/pi.git   ~/.cache/local-agent-controller/phase0/upstream/pi
+git -C ~/.cache/local-agent-controller/phase0/upstream/pi   checkout --detach da840b6216578c2a571d0374ac6a2091a83f9d91
+python3 scripts/verify_pi_pin.py</code></pre>
+<p>Install the pinned checkout's JavaScript dependencies using that checkout's upstream package-manager instructions. Do not substitute a different revision.</p>
+<h2>3. Provision pinned FreeToken</h2>
+<p>Expected checkout: <code>~/.cache/local-agent-controller/phase0/upstream/freetoken</code><br>Pinned commit: <code>af71ba43206e124f5ff6419b47ee36c6e9981078</code></p>
+<pre><code>git clone https://github.com/FlashML-org/FreeToken.git   ~/.cache/local-agent-controller/phase0/upstream/freetoken
+git -C ~/.cache/local-agent-controller/phase0/upstream/freetoken   checkout --detach af71ba43206e124f5ff6419b47ee36c6e9981078
+python3 scripts/verify_freetoken_pin.py</code></pre>
+<div class="callout warn"><strong>No one-command heavyweight runtime bootstrap exists in rc.12.</strong> The managed launcher expects already-provisioned qualified runtime/model assets and does not silently substitute a model, FreeToken revision, CUDA environment, or other qualification-sensitive dependency.</div>
+<h2>4. Build and install</h2>
+<pre><code>mkdir -p dist
+python3 scripts/lac-v1 build   --output dist/local-agent-controller-1.0.0-rc.12.tar.gz
+
+python3 scripts/lac-v1 install   --archive dist/local-agent-controller-1.0.0-rc.12.tar.gz</code></pre>
+<p>The distribution is built from the Git index, not arbitrary unstaged worktree bytes.</p>
+<h2>5. Verify</h2>
+<pre><code>~/.local/bin/lac-doctor --static</code></pre>
+<p>After Pi, FreeToken, and the local-model runtime assets are provisioned:</p>
+<pre><code>~/.local/bin/lac-doctor</code></pre>
+<p>A complete managed-runtime installation should report <code>"ok": true</code>.</p>
+<h2>Installed commands</h2>
+<table><thead><tr><th>Command</th><th>Purpose</th></tr></thead><tbody>
+<tr><td><code>pi</code></td><td>Default-governed Pi entrypoint.</td></tr>
+<tr><td><code>lac-pi</code></td><td>Compatibility alias for the governed Pi path.</td></tr>
+<tr><td><code>lacctl</code></td><td>Owner administration client.</td></tr>
+<tr><td><code>lac-owner</code></td><td>Bounded owner UX, including first-use decisions.</td></tr>
+<tr><td><code>lac-config</code></td><td>Non-authoritative runtime/path configuration.</td></tr>
+<tr><td><code>lac-doctor</code></td><td>Installation and prerequisite verification.</td></tr>
+</tbody></table>
+
+    <footer>
+      <p>This manual documents goodLAC <strong>1.0.0-rc.12</strong>. Model output is never authorization.</p>
+      <p><a href="https://github.com/itecob/goodLAC">Repository</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SECURITY.md">Security policy</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SUPPORT.md">Support</a></p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

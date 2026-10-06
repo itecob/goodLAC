@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en" data-release="1.0.0-rc.12">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="goodLAC 1.0.0-rc.12 user manual — goodLAC user manual">
+  <title>goodLAC user manual · goodLAC 1.0.0-rc.12</title>
+  <link rel="stylesheet" href="manual/assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="layout">
+  <aside class="sidebar">
+    <a class="brand" href="index.html">good<span>LAC</span></a>
+    <div class="version">User manual · 1.0.0-rc.12</div>
+    <nav data-manual-nav aria-label="Manual sections">
+      <a href="index.html" aria-current="page">Home</a>
+<a href="manual/what-is.html">What goodLAC is</a>
+<a href="manual/quickstart.html">Quick evaluation</a>
+<a href="manual/installation.html">Installation</a>
+<a href="manual/governed-pi.html">Governed Pi</a>
+<a href="manual/projects.html">Projects & identity</a>
+<a href="manual/permissions.html">Permissions</a>
+<a href="manual/administration.html">Owner administration</a>
+<a href="manual/providers.html">Providers & adapters</a>
+<a href="manual/security.html">Security model</a>
+<a href="manual/reliability.html">Receipts & durable truth</a>
+<a href="manual/troubleshooting.html">Troubleshooting</a>
+<a href="manual/release.html">Release & limitations</a>
+<a href="manual/policies.html">Policies & references</a>
+<a href="manual/faq.html">FAQ</a>
+    </nav>
+    <div class="repo-link"><a href="https://github.com/itecob/goodLAC">GitHub repository ↗</a></div>
+  </aside>
+  <main id="content">
+    <div class="breadcrumbs">User manual</div>
+    <header class="page-header">
+      <div>
+        <div class="eyebrow">Versioned documentation</div>
+        <h1>goodLAC user manual</h1>
+      </div>
+    </header>
+    
+<img class="hero" src="manual/assets/goodLAC-hero.png" alt="goodLAC — Local Agent Controller">
+<p class="lede"><strong>goodLAC</strong> is a local-first authority and effect-control boundary for agent systems. An AI model may propose an action; deterministic controller code decides whether the action is authorized and whether the bounded effect may occur.</p>
+<div class="callout"><strong>Central invariant:</strong> Model output is never authorization.</div>
+<div class="card-grid">
+  <section class="card"><h3>Evaluate first</h3><p>Run the synthetic permission demo without provisioning the full model runtime.</p><p><a href="manual/quickstart.html">Quick evaluation →</a></p></section>
+  <section class="card"><h3>Install the governed path</h3><p>Provision the exact qualified dependencies, build the deterministic distribution, install it, and run <code>lac-doctor</code>.</p><p><a href="manual/installation.html">Installation →</a></p></section>
+  <section class="card"><h3>Understand permissions</h3><p>Capability registration, standing policy, and exact approval are separate authority concepts.</p><p><a href="manual/permissions.html">Permission model →</a></p></section>
+  <section class="card"><h3>Know the boundary</h3><p>rc.12 has explicit limitations, including no generic provider/adapter first-connect admission gate.</p><p><a href="manual/release.html">Release & limitations →</a></p></section>
+</div>
+<h2>What this manual covers</h2>
+<p>This documentation applies specifically to <strong>1.0.0-rc.12</strong>, the first goodLAC release intended for ordinary public use. It covers the qualified Linux reference path, default-governed Pi, project identity, permissions, owner administration, provider and external-consumer boundaries, security architecture, durable effect truth, troubleshooting, rollback, licensing, support, and public project policy.</p>
+<h2>Qualified reference path</h2>
+<ul>
+  <li>Linux reference platform.</li>
+  <li>Pinned Pi 0.85.1 reference harness.</li>
+  <li>Four model-facing consequential tools: <code>lac_fs_read</code>, <code>lac_fs_create</code>, <code>lac_fs_replace</code>, and <code>lac_shell_exec</code>.</li>
+  <li>Controller-owned policy, approvals, identity, leases, receipts, emergency state, and capability registry.</li>
+  <li>Explicit dangerous bypass for owner/debug use; that path is not governed.</li>
+</ul>
+
+    <footer>
+      <p>This manual documents goodLAC <strong>1.0.0-rc.12</strong>. Model output is never authorization.</p>
+      <p><a href="https://github.com/itecob/goodLAC">Repository</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SECURITY.md">Security policy</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SUPPORT.md">Support</a></p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

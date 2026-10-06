@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en" data-release="1.0.0-rc.12">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="goodLAC 1.0.0-rc.12 user manual — Permission model">
+  <title>Permission model · goodLAC 1.0.0-rc.12</title>
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="layout">
+  <aside class="sidebar">
+    <a class="brand" href="../index.html">good<span>LAC</span></a>
+    <div class="version">User manual · 1.0.0-rc.12</div>
+    <nav data-manual-nav aria-label="Manual sections">
+      <a href="../index.html">Home</a>
+<a href="what-is.html">What goodLAC is</a>
+<a href="quickstart.html">Quick evaluation</a>
+<a href="installation.html">Installation</a>
+<a href="governed-pi.html">Governed Pi</a>
+<a href="projects.html">Projects & identity</a>
+<a href="permissions.html" aria-current="page">Permissions</a>
+<a href="administration.html">Owner administration</a>
+<a href="providers.html">Providers & adapters</a>
+<a href="security.html">Security model</a>
+<a href="reliability.html">Receipts & durable truth</a>
+<a href="troubleshooting.html">Troubleshooting</a>
+<a href="release.html">Release & limitations</a>
+<a href="policies.html">Policies & references</a>
+<a href="faq.html">FAQ</a>
+    </nav>
+    <div class="repo-link"><a href="https://github.com/itecob/goodLAC">GitHub repository ↗</a></div>
+  </aside>
+  <main id="content">
+    <div class="breadcrumbs">Manual / Permission model</div>
+    <header class="page-header">
+      <div>
+        <div class="eyebrow">Authority</div>
+        <h1>Permission model</h1>
+      </div>
+    </header>
+    
+<p class="lede">Capability registration, standing permission, and exact approval are separate. Conflating them would create accidental authority.</p>
+<h2>1. Capability registration</h2>
+<p>A versioned manifest describes what an application/skill may request. Registration is owner/admin-only in the canonical registry and grants zero authority.</p>
+<h2>2. Standing policy</h2>
+<p>Standing policy returns only <code>ALLOW</code>, <code>REQUIRE_APPROVAL</code>, or <code>DENY</code>. User-facing “Ask” means <code>REQUIRE_APPROVAL</code>; it is not a fourth runtime authority state.</p>
+<p>At equal specificity, conflict resolves <strong>DENY &gt; REQUIRE_APPROVAL &gt; ALLOW</strong>. Absence of an applicable configured rule/default is <code>DENY</code>.</p>
+<h2>3. Exact approval</h2>
+<p>When policy returns <code>REQUIRE_APPROVAL</code>, an owner approval binds one exact canonical request. Approval creation itself does not execute the effect. Current policy is re-evaluated before dispatch; a current deny still wins.</p>
+<h2>First-use capability / permission discovery</h2>
+<p>Unknown actions, resource scopes, unsupported capability versions, materially new argument shapes, or valid registered requests with no configured standing permission fail closed. The current effect is terminally denied, no execution lease or adapter mutation occurs, and bounded owner-reviewable permission work may be created or aggregated.</p>
+<div class="callout warn"><strong>The original denied request never revives.</strong> Later owner configuration can only affect a fresh request.</div>
+<h2>Owner choices in governed Pi</h2>
+<table><thead><tr><th>Choice</th><th>Effect</th></tr></thead><tbody>
+<tr><td>Allow once</td><td>Configures <code>REQUIRE_APPROVAL</code> for the bound scope, creates a fresh continuation request, then requires an exact one-time approval before a separate resume can execute.</td></tr>
+<tr><td>Always allow</td><td>Creates a scoped standing allow rule for future matching requests.</td></tr>
+<tr><td>Ask every time</td><td>Creates standing <code>REQUIRE_APPROVAL</code>; each matching request needs an exact owner approval.</td></tr>
+<tr><td>Deny once</td><td>Closes only the exact continuation and creates no standing policy.</td></tr>
+<tr><td>Always deny</td><td>Creates a scoped standing deny rule.</td></tr>
+</tbody></table>
+<p>Cancellation is non-authorizing. Owner-choice input does not bypass capability validation, emergency pause, deny precedence, current-policy re-evaluation, exact approval binding, leases, sandboxing, or idempotency.</p>
+<h2>Restart / continuation behavior</h2>
+<p>Continuation state is durable, non-authoritative workflow metadata. Restart can recover blocked state, but it cannot dispatch automatically. A continuation may submit at most one fresh request derived from immutable captured intent; that request receives the full current authority evaluation.</p>
+
+    <footer>
+      <p>This manual documents goodLAC <strong>1.0.0-rc.12</strong>. Model output is never authorization.</p>
+      <p><a href="https://github.com/itecob/goodLAC">Repository</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SECURITY.md">Security policy</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SUPPORT.md">Support</a></p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

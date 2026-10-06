@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en" data-release="1.0.0-rc.12">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="goodLAC 1.0.0-rc.12 user manual — Quick evaluation / demo">
+  <title>Quick evaluation / demo · goodLAC 1.0.0-rc.12</title>
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="layout">
+  <aside class="sidebar">
+    <a class="brand" href="../index.html">good<span>LAC</span></a>
+    <div class="version">User manual · 1.0.0-rc.12</div>
+    <nav data-manual-nav aria-label="Manual sections">
+      <a href="../index.html">Home</a>
+<a href="what-is.html">What goodLAC is</a>
+<a href="quickstart.html" aria-current="page">Quick evaluation</a>
+<a href="installation.html">Installation</a>
+<a href="governed-pi.html">Governed Pi</a>
+<a href="projects.html">Projects & identity</a>
+<a href="permissions.html">Permissions</a>
+<a href="administration.html">Owner administration</a>
+<a href="providers.html">Providers & adapters</a>
+<a href="security.html">Security model</a>
+<a href="reliability.html">Receipts & durable truth</a>
+<a href="troubleshooting.html">Troubleshooting</a>
+<a href="release.html">Release & limitations</a>
+<a href="policies.html">Policies & references</a>
+<a href="faq.html">FAQ</a>
+    </nav>
+    <div class="repo-link"><a href="https://github.com/itecob/goodLAC">GitHub repository ↗</a></div>
+  </aside>
+  <main id="content">
+    <div class="breadcrumbs">Manual / Quick evaluation / demo</div>
+    <header class="page-header">
+      <div>
+        <div class="eyebrow">Getting started</div>
+        <h1>Quick evaluation / demo</h1>
+      </div>
+    </header>
+    
+<p class="lede">The fastest evaluation path demonstrates the permission model using temporary local state and synthetic effects. It does not require the full managed model runtime.</p>
+<h2>Prerequisites</h2>
+<ul><li>Linux</li><li>Git</li><li>Python 3.10 or newer</li></ul>
+<h2>Run the demo</h2>
+<pre><code>git clone https://github.com/itecob/goodLAC.git
+cd goodLAC
+python3 scripts/p006_owner_permission_demo.py --auto</code></pre>
+<p>The demo exercises permission discovery, standing policy, explicit approval, deny behavior, conditional permissions, and duplicate-effect prevention.</p>
+<div class="callout warn"><strong>This is an evaluation path, not the full managed Pi installation.</strong> It uses temporary state and synthetic effects.</div>
+<h2>What to look for</h2>
+<ul>
+<li>A request can be valid but still denied when no standing permission exists.</li>
+<li>An owner decision can configure future policy without reviving the original denied effect.</li>
+<li>Exact approval is separate from standing permission.</li>
+<li>Duplicate effect prevention is controller-owned.</li>
+</ul>
+
+    <footer>
+      <p>This manual documents goodLAC <strong>1.0.0-rc.12</strong>. Model output is never authorization.</p>
+      <p><a href="https://github.com/itecob/goodLAC">Repository</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SECURITY.md">Security policy</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SUPPORT.md">Support</a></p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

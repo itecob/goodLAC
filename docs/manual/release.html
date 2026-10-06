@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en" data-release="1.0.0-rc.12">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="goodLAC 1.0.0-rc.12 user manual — Release information and known rc.12 limitations">
+  <title>Release information and known rc.12 limitations · goodLAC 1.0.0-rc.12</title>
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="layout">
+  <aside class="sidebar">
+    <a class="brand" href="../index.html">good<span>LAC</span></a>
+    <div class="version">User manual · 1.0.0-rc.12</div>
+    <nav data-manual-nav aria-label="Manual sections">
+      <a href="../index.html">Home</a>
+<a href="what-is.html">What goodLAC is</a>
+<a href="quickstart.html">Quick evaluation</a>
+<a href="installation.html">Installation</a>
+<a href="governed-pi.html">Governed Pi</a>
+<a href="projects.html">Projects & identity</a>
+<a href="permissions.html">Permissions</a>
+<a href="administration.html">Owner administration</a>
+<a href="providers.html">Providers & adapters</a>
+<a href="security.html">Security model</a>
+<a href="reliability.html">Receipts & durable truth</a>
+<a href="troubleshooting.html">Troubleshooting</a>
+<a href="release.html" aria-current="page">Release & limitations</a>
+<a href="policies.html">Policies & references</a>
+<a href="faq.html">FAQ</a>
+    </nav>
+    <div class="repo-link"><a href="https://github.com/itecob/goodLAC">GitHub repository ↗</a></div>
+  </aside>
+  <main id="content">
+    <div class="breadcrumbs">Manual / Release information and known rc.12 limitations</div>
+    <header class="page-header">
+      <div>
+        <div class="eyebrow">Reference</div>
+        <h1>Release information and known rc.12 limitations</h1>
+      </div>
+    </header>
+    
+<p class="lede"><strong>1.0.0-rc.12</strong> is the first goodLAC release intended for ordinary public use.</p>
+<h2>Release identity</h2>
+<p>Accepted private rc.12 source candidate: <code>f83fcf57a30b85288796f04161c8e1fc2fc28936</code>.</p>
+<p>The public repository preserves a privacy-sanitized historical lineage. Earlier development states are provenance, not recommendations to deploy those states.</p>
+<h2>Qualified platform</h2>
+<p>The accepted reference path is Linux. Qualification claims do not automatically extend to unreviewed operating systems, modified builds, alternate harnesses, unrelated runtime combinations, or future dependency revisions.</p>
+<h2>Known limitations</h2>
+<ul>
+<li>No one-command public bootstrap for the heavyweight managed Pi/FreeToken/model runtime assets.</li>
+<li>No generic provider/adapter first-connect admission gate in rc.12.</li>
+<li>The default governed Pi model-facing consequential surface is exactly four LAC tools; generic Gmail/Calendar adapters are separate integration capabilities.</li>
+<li>The v0.1 owner admin boundary is designed for a single-owner Linux machine and does not claim protection from arbitrary unsandboxed software already running as that same owner UID.</li>
+<li>No qualified <code>goodLAC verify-install</code> system exists.</li>
+<li>No general long-term-support, maintenance, response-time, or SLA commitment is published.</li>
+</ul>
+<h2>Do not infer roadmap features</h2>
+<p>Future design ideas are not current authority properties. In particular, capability registration plus effect permission is <em>not</em> equivalent to generic provider/adapter admission approval.</p>
+
+    <footer>
+      <p>This manual documents goodLAC <strong>1.0.0-rc.12</strong>. Model output is never authorization.</p>
+      <p><a href="https://github.com/itecob/goodLAC">Repository</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SECURITY.md">Security policy</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SUPPORT.md">Support</a></p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

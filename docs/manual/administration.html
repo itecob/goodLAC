@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en" data-release="1.0.0-rc.12">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="goodLAC 1.0.0-rc.12 user manual — Owner administration">
+  <title>Owner administration · goodLAC 1.0.0-rc.12</title>
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="layout">
+  <aside class="sidebar">
+    <a class="brand" href="../index.html">good<span>LAC</span></a>
+    <div class="version">User manual · 1.0.0-rc.12</div>
+    <nav data-manual-nav aria-label="Manual sections">
+      <a href="../index.html">Home</a>
+<a href="what-is.html">What goodLAC is</a>
+<a href="quickstart.html">Quick evaluation</a>
+<a href="installation.html">Installation</a>
+<a href="governed-pi.html">Governed Pi</a>
+<a href="projects.html">Projects & identity</a>
+<a href="permissions.html">Permissions</a>
+<a href="administration.html" aria-current="page">Owner administration</a>
+<a href="providers.html">Providers & adapters</a>
+<a href="security.html">Security model</a>
+<a href="reliability.html">Receipts & durable truth</a>
+<a href="troubleshooting.html">Troubleshooting</a>
+<a href="release.html">Release & limitations</a>
+<a href="policies.html">Policies & references</a>
+<a href="faq.html">FAQ</a>
+    </nav>
+    <div class="repo-link"><a href="https://github.com/itecob/goodLAC">GitHub repository ↗</a></div>
+  </aside>
+  <main id="content">
+    <div class="breadcrumbs">Manual / Owner administration</div>
+    <header class="page-header">
+      <div>
+        <div class="eyebrow">Authority</div>
+        <h1>Owner administration</h1>
+      </div>
+    </header>
+    
+<p class="lede">Owner administration is deliberately separate from the governed runtime surface.</p>
+<h2>Administrator boundary</h2>
+<p>On the qualified Linux path, the administrator endpoint is an owner-only Unix-domain socket under the owner runtime directory. The controller validates directory ownership/permissions and Linux peer credentials. Governed agent sandboxes do not receive that socket.</p>
+<p>The v0.1 boundary does not claim protection against arbitrary already-compromised unsandboxed software running as the same owner UID.</p>
+<h2>Common commands</h2>
+<pre><code>lacctl skills list
+lacctl permissions list
+lacctl pending list
+lacctl approvals list
+lacctl emergency status
+
+lac-owner decide &lt;allow-once|always-allow|ask-every-time|deny-once|always-deny&gt;   &lt;continuation_id&gt; &lt;pending_id&gt;</code></pre>
+<h2>Low-level policy administration</h2>
+<pre><code>lacctl permissions set --file &lt;policy.json&gt;
+lacctl permissions revoke &lt;rule|default&gt; &lt;id&gt;</code></pre>
+<p><code>permissions set --file</code> is a low-level administrator/scripting primitive, not the ordinary first-use workflow.</p>
+<h2>Emergency pause</h2>
+<pre><code>lacctl emergency pause
+lacctl emergency status
+lacctl emergency resume</code></pre>
+<div class="callout"><strong>Emergency resume is not retroactive authorization.</strong> It does not revive a request that already completed as denied/blocked, and it does not bypass current policy or approval checks.</div>
+<h2>Exact approvals</h2>
+<pre><code>lacctl approvals show &lt;decision_id&gt;
+lacctl approvals approve &lt;decision_id&gt;
+lacctl approvals reject &lt;decision_id&gt;</code></pre>
+<p>Approvals are exact, immutable decisions tied to canonical request material and expiry. They do not dispatch by themselves.</p>
+
+    <footer>
+      <p>This manual documents goodLAC <strong>1.0.0-rc.12</strong>. Model output is never authorization.</p>
+      <p><a href="https://github.com/itecob/goodLAC">Repository</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SECURITY.md">Security policy</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SUPPORT.md">Support</a></p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

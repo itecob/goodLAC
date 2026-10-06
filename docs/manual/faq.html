@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en" data-release="1.0.0-rc.12">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="goodLAC 1.0.0-rc.12 user manual — FAQ">
+  <title>FAQ · goodLAC 1.0.0-rc.12</title>
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="layout">
+  <aside class="sidebar">
+    <a class="brand" href="../index.html">good<span>LAC</span></a>
+    <div class="version">User manual · 1.0.0-rc.12</div>
+    <nav data-manual-nav aria-label="Manual sections">
+      <a href="../index.html">Home</a>
+<a href="what-is.html">What goodLAC is</a>
+<a href="quickstart.html">Quick evaluation</a>
+<a href="installation.html">Installation</a>
+<a href="governed-pi.html">Governed Pi</a>
+<a href="projects.html">Projects & identity</a>
+<a href="permissions.html">Permissions</a>
+<a href="administration.html">Owner administration</a>
+<a href="providers.html">Providers & adapters</a>
+<a href="security.html">Security model</a>
+<a href="reliability.html">Receipts & durable truth</a>
+<a href="troubleshooting.html">Troubleshooting</a>
+<a href="release.html">Release & limitations</a>
+<a href="policies.html">Policies & references</a>
+<a href="faq.html" aria-current="page">FAQ</a>
+    </nav>
+    <div class="repo-link"><a href="https://github.com/itecob/goodLAC">GitHub repository ↗</a></div>
+  </aside>
+  <main id="content">
+    <div class="breadcrumbs">Manual / FAQ</div>
+    <header class="page-header">
+      <div>
+        <div class="eyebrow">Reference</div>
+        <h1>FAQ</h1>
+      </div>
+    </header>
+    
+<h2>Does installing goodLAC automatically install a complete local model stack?</h2>
+<p>No. rc.12 deliberately does not provide a one-command public bootstrap for the heavyweight qualified Pi/FreeToken/model runtime assets.</p>
+<h2>Is every <code>pi</code> process automatically governed?</h2>
+<p>No. The installed goodLAC <code>pi</code> entrypoint is governed by default. Direct upstream execution or <code>pi --dangerously-bypass-lac</code> is not governed.</p>
+<h2>Does registering a capability authorize it?</h2>
+<p>No. Registration grants zero authority. Standing permission and, when required, exact approval are separate.</p>
+<h2>If a first request is denied because permission is not configured, does approving later revive it?</h2>
+<p>No. The original request remains closed. The bounded continuation mechanism can create at most one fresh request from immutable captured intent, and that fresh request receives full current evaluation.</p>
+<h2>Does “Allow once” just run the denied request?</h2>
+<p>No. It uses the fresh-request continuation path and exact approval semantics; the original denied request does not revive.</p>
+<h2>Do permissions cross projects?</h2>
+<p>The qualified project-aware path binds permissions to controller-derived project identity. A rule created for Project A does not authorize Project B.</p>
+<h2>Can the model call owner administration commands?</h2>
+<p>The qualified governed Pi sandbox does not expose the owner administrator socket, and the model-facing effect surface does not include an administration tool.</p>
+<h2>Does rc.12 approve new providers/adapters before first connection?</h2>
+<p>No. rc.12 does not implement a generic first-connect provider/adapter admission gate. Capability registration and effect authorization are separate, narrower controls.</p>
+<h2>What happens during emergency pause?</h2>
+<p>New consequential effects are blocked. Resuming the emergency state does not retroactively authorize or replay already-closed work.</p>
+<h2>Where do I report a vulnerability?</h2>
+<p>Use the repository's <a href="https://github.com/itecob/goodLAC/security">GitHub Private Vulnerability Reporting</a> interface, not a public issue or discussion.</p>
+
+    <footer>
+      <p>This manual documents goodLAC <strong>1.0.0-rc.12</strong>. Model output is never authorization.</p>
+      <p><a href="https://github.com/itecob/goodLAC">Repository</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SECURITY.md">Security policy</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SUPPORT.md">Support</a></p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

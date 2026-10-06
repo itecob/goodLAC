@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en" data-release="1.0.0-rc.12">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="goodLAC 1.0.0-rc.12 user manual — What goodLAC is">
+  <title>What goodLAC is · goodLAC 1.0.0-rc.12</title>
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="layout">
+  <aside class="sidebar">
+    <a class="brand" href="../index.html">good<span>LAC</span></a>
+    <div class="version">User manual · 1.0.0-rc.12</div>
+    <nav data-manual-nav aria-label="Manual sections">
+      <a href="../index.html">Home</a>
+<a href="what-is.html" aria-current="page">What goodLAC is</a>
+<a href="quickstart.html">Quick evaluation</a>
+<a href="installation.html">Installation</a>
+<a href="governed-pi.html">Governed Pi</a>
+<a href="projects.html">Projects & identity</a>
+<a href="permissions.html">Permissions</a>
+<a href="administration.html">Owner administration</a>
+<a href="providers.html">Providers & adapters</a>
+<a href="security.html">Security model</a>
+<a href="reliability.html">Receipts & durable truth</a>
+<a href="troubleshooting.html">Troubleshooting</a>
+<a href="release.html">Release & limitations</a>
+<a href="policies.html">Policies & references</a>
+<a href="faq.html">FAQ</a>
+    </nav>
+    <div class="repo-link"><a href="https://github.com/itecob/goodLAC">GitHub repository ↗</a></div>
+  </aside>
+  <main id="content">
+    <div class="breadcrumbs">Manual / What goodLAC is</div>
+    <header class="page-header">
+      <div>
+        <div class="eyebrow">Concepts</div>
+        <h1>What goodLAC is</h1>
+      </div>
+    </header>
+    
+<p class="lede">goodLAC separates an agent's proposal from the authority to create a real effect.</p>
+<h2>The authority split</h2>
+<p>The model or agent can express intent. The controller owns capability validation, identity binding, deterministic standing policy, exact approvals, emergency state, execution leases, dispatch, receipts, and other authority-relevant state.</p>
+<div class="callout"><strong>Registration is not permission.</strong> A registered capability merely describes what may be requested. It grants zero authority.</div>
+<h2>What goodLAC is not</h2>
+<p>goodLAC is not an AI model, general-purpose agent, memory system, workflow engine, AI operating system, or general-purpose secret manager. A process is not goodLAC-governed merely because it can call the controller. The qualified governed path also constrains alternate effect routes, ambient filesystem/process/network authority, credentials, and administrator access.</p>
+<h2>Core invariants</h2>
+<ul>
+<li>Controller mandatory for governed consequential effects.</li>
+<li>Least privilege and deterministic authority decisions.</li>
+<li>Exact approval binding and current-policy re-evaluation before dispatch.</li>
+<li>Deny precedence and fail-closed handling of unknown or inconsistent state.</li>
+<li>Durable effect truth, idempotency, and receipts.</li>
+<li>Credential separation and no model-side administrator authority.</li>
+<li>Emergency pause and restart/continuation safety.</li>
+<li>Audit records describe events; they do not grant authority.</li>
+</ul>
+<h2>Two different surfaces</h2>
+<p>The runtime surface accepts governed requests. The owner administration surface changes registry, policy, approvals, and emergency state. The Linux rc.12 administration path uses an owner-only Unix-domain socket that is not mounted into governed agent sandboxes.</p>
+
+    <footer>
+      <p>This manual documents goodLAC <strong>1.0.0-rc.12</strong>. Model output is never authorization.</p>
+      <p><a href="https://github.com/itecob/goodLAC">Repository</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SECURITY.md">Security policy</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SUPPORT.md">Support</a></p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

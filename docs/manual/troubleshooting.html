@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en" data-release="1.0.0-rc.12">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="goodLAC 1.0.0-rc.12 user manual — Troubleshooting, lac-doctor, and rollback">
+  <title>Troubleshooting, lac-doctor, and rollback · goodLAC 1.0.0-rc.12</title>
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="layout">
+  <aside class="sidebar">
+    <a class="brand" href="../index.html">good<span>LAC</span></a>
+    <div class="version">User manual · 1.0.0-rc.12</div>
+    <nav data-manual-nav aria-label="Manual sections">
+      <a href="../index.html">Home</a>
+<a href="what-is.html">What goodLAC is</a>
+<a href="quickstart.html">Quick evaluation</a>
+<a href="installation.html">Installation</a>
+<a href="governed-pi.html">Governed Pi</a>
+<a href="projects.html">Projects & identity</a>
+<a href="permissions.html">Permissions</a>
+<a href="administration.html">Owner administration</a>
+<a href="providers.html">Providers & adapters</a>
+<a href="security.html">Security model</a>
+<a href="reliability.html">Receipts & durable truth</a>
+<a href="troubleshooting.html" aria-current="page">Troubleshooting</a>
+<a href="release.html">Release & limitations</a>
+<a href="policies.html">Policies & references</a>
+<a href="faq.html">FAQ</a>
+    </nav>
+    <div class="repo-link"><a href="https://github.com/itecob/goodLAC">GitHub repository ↗</a></div>
+  </aside>
+  <main id="content">
+    <div class="breadcrumbs">Manual / Troubleshooting, lac-doctor, and rollback</div>
+    <header class="page-header">
+      <div>
+        <div class="eyebrow">Operations</div>
+        <h1>Troubleshooting, lac-doctor, and rollback</h1>
+      </div>
+    </header>
+    
+<p class="lede">Start with static verification, then verify the full managed runtime only after the qualified dependencies and model assets are present.</p>
+<h2>Static checks</h2>
+<pre><code>~/.local/bin/lac-doctor --static</code></pre>
+<p>Use this after installation even if the heavyweight managed model runtime is not yet provisioned.</p>
+<h2>Full checks</h2>
+<pre><code>~/.local/bin/lac-doctor</code></pre>
+<p>A complete managed-runtime setup should report <code>"ok": true</code>.</p>
+<h2>Common failure classes</h2>
+<ul>
+<li><strong>Pi or FreeToken pin mismatch:</strong> verify exact checkout commits; do not substitute revisions.</li>
+<li><strong>Missing Pi dependencies:</strong> install the pinned Pi checkout's required JavaScript dependencies.</li>
+<li><strong>Managed runtime unavailable:</strong> rc.12 expects already-provisioned qualified FreeToken/model/runtime assets.</li>
+<li><strong>Admin plane unavailable or wrong state identity:</strong> governed Pi fails closed rather than attaching to a mismatched authority store.</li>
+<li><strong>Permission discovery:</strong> the original request is denied; configure owner policy and use the bounded fresh-request continuation workflow.</li>
+<li><strong>Emergency paused:</strong> inspect/resume through owner administration. Resume does not revive already-closed requests.</li>
+</ul>
+<h2>Rollback</h2>
+<pre><code>python3 ~/.local/share/local-agent-controller/current/app/scripts/lac-v1 rollback</code></pre>
+<p>rc.12 versioned installation preserves/restores the prior supported install state. The rc.12 productization path performs no controller database migration, so rollback does not need to rewrite canonical controller data.</p>
+<div class="callout warn"><strong>Backup nuance:</strong> installation creates a preinstall controller-database backup as an install-safety artifact. Do not rely on the productization documentation's older wording that implies this backup necessarily remains after rollback; rollback cleanup may remove the productization backup directory.</div>
+<h2>Need help?</h2>
+<p>Public bugs and feature requests: <a href="https://github.com/itecob/goodLAC/issues">GitHub Issues</a>. Undisclosed vulnerabilities: <a href="https://github.com/itecob/goodLAC/security">Private Vulnerability Reporting</a>. Commercial licensing: <strong>support@itecob.com</strong>.</p>
+
+    <footer>
+      <p>This manual documents goodLAC <strong>1.0.0-rc.12</strong>. Model output is never authorization.</p>
+      <p><a href="https://github.com/itecob/goodLAC">Repository</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SECURITY.md">Security policy</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SUPPORT.md">Support</a></p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

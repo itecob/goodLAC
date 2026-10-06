@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en" data-release="1.0.0-rc.12">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="goodLAC 1.0.0-rc.12 user manual — Projects, workspaces, and identity">
+  <title>Projects, workspaces, and identity · goodLAC 1.0.0-rc.12</title>
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="layout">
+  <aside class="sidebar">
+    <a class="brand" href="../index.html">good<span>LAC</span></a>
+    <div class="version">User manual · 1.0.0-rc.12</div>
+    <nav data-manual-nav aria-label="Manual sections">
+      <a href="../index.html">Home</a>
+<a href="what-is.html">What goodLAC is</a>
+<a href="quickstart.html">Quick evaluation</a>
+<a href="installation.html">Installation</a>
+<a href="governed-pi.html">Governed Pi</a>
+<a href="projects.html" aria-current="page">Projects & identity</a>
+<a href="permissions.html">Permissions</a>
+<a href="administration.html">Owner administration</a>
+<a href="providers.html">Providers & adapters</a>
+<a href="security.html">Security model</a>
+<a href="reliability.html">Receipts & durable truth</a>
+<a href="troubleshooting.html">Troubleshooting</a>
+<a href="release.html">Release & limitations</a>
+<a href="policies.html">Policies & references</a>
+<a href="faq.html">FAQ</a>
+    </nav>
+    <div class="repo-link"><a href="https://github.com/itecob/goodLAC">GitHub repository ↗</a></div>
+  </aside>
+  <main id="content">
+    <div class="breadcrumbs">Manual / Projects, workspaces, and identity</div>
+    <header class="page-header">
+      <div>
+        <div class="eyebrow">Operation</div>
+        <h1>Projects, workspaces, and identity</h1>
+      </div>
+    </header>
+    
+<p class="lede">Permissions and continuation state are bound to a controller-derived project identity, not merely a model-supplied path string.</p>
+<h2>Workspace selection precedence</h2>
+<ol>
+<li>Explicit governed <code>--workspace</code> override.</li>
+<li>Configured fixed workspace when <code>workspace_mode=fixed</code>.</li>
+<li>Canonical launch current working directory.</li>
+</ol>
+<p>The selected path must already exist and be a directory. Launch-CWD mode does not rewrite persistent owner configuration.</p>
+<h2>Project identity</h2>
+<p>goodLAC derives project-specific application identity from trusted canonical host metadata. The model cannot supply or replace that identity. Standing permissions, pending permission discovery, owner decisions, exact approvals, and continuation recovery are evaluated against the project-specific binding.</p>
+<div class="callout"><strong>Cross-project isolation:</strong> a standing permission created from Project A does not authorize Project B.</div>
+<h2>Inside governed Pi</h2>
+<p>The selected project is mounted read-only at <code>/workspace</code>. Project-local Pi extensions, skills, prompt templates, themes, context files, and session persistence are disabled in the qualified governed profile.</p>
+<h2>Configuration</h2>
+<p><code>lac-config show</code> exposes non-authoritative settings including <code>workspace</code>, <code>workspace_mode</code>, controller state path, trace path, Pi checkout, and runtime mode. Configuration cannot set policy or approval authority.</p>
+
+    <footer>
+      <p>This manual documents goodLAC <strong>1.0.0-rc.12</strong>. Model output is never authorization.</p>
+      <p><a href="https://github.com/itecob/goodLAC">Repository</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SECURITY.md">Security policy</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SUPPORT.md">Support</a></p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

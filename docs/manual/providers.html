@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en" data-release="1.0.0-rc.12">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="goodLAC 1.0.0-rc.12 user manual — Model providers, consumers, and adapters">
+  <title>Model providers, consumers, and adapters · goodLAC 1.0.0-rc.12</title>
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="layout">
+  <aside class="sidebar">
+    <a class="brand" href="../index.html">good<span>LAC</span></a>
+    <div class="version">User manual · 1.0.0-rc.12</div>
+    <nav data-manual-nav aria-label="Manual sections">
+      <a href="../index.html">Home</a>
+<a href="what-is.html">What goodLAC is</a>
+<a href="quickstart.html">Quick evaluation</a>
+<a href="installation.html">Installation</a>
+<a href="governed-pi.html">Governed Pi</a>
+<a href="projects.html">Projects & identity</a>
+<a href="permissions.html">Permissions</a>
+<a href="administration.html">Owner administration</a>
+<a href="providers.html" aria-current="page">Providers & adapters</a>
+<a href="security.html">Security model</a>
+<a href="reliability.html">Receipts & durable truth</a>
+<a href="troubleshooting.html">Troubleshooting</a>
+<a href="release.html">Release & limitations</a>
+<a href="policies.html">Policies & references</a>
+<a href="faq.html">FAQ</a>
+    </nav>
+    <div class="repo-link"><a href="https://github.com/itecob/goodLAC">GitHub repository ↗</a></div>
+  </aside>
+  <main id="content">
+    <div class="breadcrumbs">Manual / Model providers, consumers, and adapters</div>
+    <header class="page-header">
+      <div>
+        <div class="eyebrow">Architecture</div>
+        <h1>Model providers, consumers, and adapters</h1>
+      </div>
+    </header>
+    
+<p class="lede">Inference, external-consumer integration, and effect adapters are replaceable boundaries. They are not authority sources.</p>
+<h2>ModelProvider boundary</h2>
+<p>The rc.12 local model-provider implementation targets pinned FreeToken through an explicit loopback HTTP endpoint. Model requests contain inference data such as messages, sampling controls, tools, and timeout—not principal, approval, lease, dispatcher, effect-adapter, service credential, password, bearer token, or API-key authority fields.</p>
+<p>FreeToken-specific failures—unavailable endpoint, malformed responses, unsupported structured-output/seed requests, timeout, or cancellation—fail closed and do not change policy, approvals, leases, effects, or sandbox state.</p>
+<h2>External consumer model</h2>
+<p>An external consumer can submit strict typed request material, but goodLAC binds controller-owned principal, agent, application, and skill identity. Consumer-supplied authority, approvals, administrator operations, capability revision, credential references, or lease/executor identifiers are rejected.</p>
+<p>Capability declarations are descriptive. Canonical capability registration remains owner/admin-only and grants zero authority. Unregistered capability use fails closed through the pending-permission path.</p>
+<h2>Effect adapters</h2>
+<p>Typed effect adapters receive work only after controller evaluation and lease creation. Credential-bearing integrations keep credentials outside the governed model context. The repository includes generic Gmail and Google Calendar adapters, but they are not part of the default four-tool Pi model surface and require separate credentials, configuration, permissions, and integration work.</p>
+<h2>Important rc.12 limitation</h2>
+<div class="callout warn"><strong>rc.12 does not implement a generic first-connect provider/adapter admission gate.</strong> An entirely new provider/adapter identity is not generically held in a controller-owned pending-admission state before it can establish controller-side communication. Do not treat capability registration or effect permission as that stronger admission property.</div>
+<p>What rc.12 <em>does</em> enforce is narrower and current: unregistered capabilities fail closed; canonical capability registration is owner/admin-only; registration grants zero authority; and effect permission/approval remains separately required.</p>
+
+    <footer>
+      <p>This manual documents goodLAC <strong>1.0.0-rc.12</strong>. Model output is never authorization.</p>
+      <p><a href="https://github.com/itecob/goodLAC">Repository</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SECURITY.md">Security policy</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SUPPORT.md">Support</a></p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

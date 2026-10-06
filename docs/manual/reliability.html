@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en" data-release="1.0.0-rc.12">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="goodLAC 1.0.0-rc.12 user manual — Receipts, idempotency, and durable truth">
+  <title>Receipts, idempotency, and durable truth · goodLAC 1.0.0-rc.12</title>
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="layout">
+  <aside class="sidebar">
+    <a class="brand" href="../index.html">good<span>LAC</span></a>
+    <div class="version">User manual · 1.0.0-rc.12</div>
+    <nav data-manual-nav aria-label="Manual sections">
+      <a href="../index.html">Home</a>
+<a href="what-is.html">What goodLAC is</a>
+<a href="quickstart.html">Quick evaluation</a>
+<a href="installation.html">Installation</a>
+<a href="governed-pi.html">Governed Pi</a>
+<a href="projects.html">Projects & identity</a>
+<a href="permissions.html">Permissions</a>
+<a href="administration.html">Owner administration</a>
+<a href="providers.html">Providers & adapters</a>
+<a href="security.html">Security model</a>
+<a href="reliability.html" aria-current="page">Receipts & durable truth</a>
+<a href="troubleshooting.html">Troubleshooting</a>
+<a href="release.html">Release & limitations</a>
+<a href="policies.html">Policies & references</a>
+<a href="faq.html">FAQ</a>
+    </nav>
+    <div class="repo-link"><a href="https://github.com/itecob/goodLAC">GitHub repository ↗</a></div>
+  </aside>
+  <main id="content">
+    <div class="breadcrumbs">Manual / Receipts, idempotency, and durable truth</div>
+    <header class="page-header">
+      <div>
+        <div class="eyebrow">Architecture</div>
+        <h1>Receipts, idempotency, and durable truth</h1>
+      </div>
+    </header>
+    
+<p class="lede">Execution state is durable controller truth. Audit is evidence; it is not authority.</p>
+<h2>Canonical lifecycle</h2>
+<pre><code>PROPOSED -&gt; EVALUATING -&gt; {DENIED | PENDING_APPROVAL | AUTHORIZED}
+PENDING_APPROVAL -&gt; {REJECTED | APPROVED}
+APPROVED -&gt; AUTHORIZED   # only after current-policy re-evaluation
+AUTHORIZED -&gt; LEASED -&gt; EXECUTING -&gt; {SUCCEEDED | FAILED}</code></pre>
+<p>Additional terminal states include cancelled, expired, and revoked states where applicable.</p>
+<h2>Execution leases</h2>
+<p>A short-lived transactional lease provides single-machine ownership for dispatch and helps prevent concurrent duplicate execution.</p>
+<h2>Idempotency</h2>
+<p>Canonical request/idempotency bindings and terminal receipts allow identical, correctly bound retries to replay durable results rather than invoke an adapter a second time. Cross-binding reuse fails closed.</p>
+<h2>Receipts</h2>
+<p>Receipts bind the request, adapter, input hash, outcome, result hash, timing, and any bounded upstream reference. They record what happened; they do not grant permission to do something else.</p>
+<h2>Crash ambiguity</h2>
+<p>goodLAC does not guess that an ambiguous mutation is safe to repeat. For mutation-capable filesystem/shell effects, uncertain prepared/executing state remains fail-closed for explicit reconciliation rather than risking a duplicate consequential effect.</p>
+
+    <footer>
+      <p>This manual documents goodLAC <strong>1.0.0-rc.12</strong>. Model output is never authorization.</p>
+      <p><a href="https://github.com/itecob/goodLAC">Repository</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SECURITY.md">Security policy</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SUPPORT.md">Support</a></p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>
