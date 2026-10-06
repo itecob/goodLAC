@@ -14,6 +14,8 @@ goodLAC provides a deterministic authority and effect-control boundary for agent
 
 > **Model output is not authorization.**
 
+**[Read the goodLAC user manual](https://itecob.github.io/goodLAC/)**
+
 goodLAC is a source-available product/source-code project of ITECOB Inc. The public product brand is **goodLAC**. `LAC` remains the technical abbreviation and compatibility namespace used by the implementation.
 
 ## Current qualified implementation
