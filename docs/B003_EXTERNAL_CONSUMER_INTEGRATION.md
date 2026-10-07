@@ -1,7 +1,7 @@
 # B003 Generic External-Consumer Integration
 
 **Task:** `LAC-B003`
-**Status:** corrected Phase 4 candidate; P4-B002 durable four-dimensional request ownership pending fresh independent re-review after owner verification
+**Status:** ACCEPTED FOUNDATION — Phase 4 external-consumer contract and durable four-dimensional request binding were subsequently accepted and retained through goodLAC `1.0.0-rc.12`. This document describes that accepted foundation; later release/productization documents supersede its historical task-status wording where applicable.
 
 ## Boundary proved
 

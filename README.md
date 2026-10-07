@@ -112,6 +112,11 @@ Additional technical references:
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - [`docs/THREAT_MODEL.md`](docs/THREAT_MODEL.md)
 
+Additional integration and roadmap references:
+
+- [`docs/INTEGRATING_GOODLAC.md`](docs/INTEGRATING_GOODLAC.md) — requirements for integrating another agent harness/application without leaving alternate consequential-effect paths.
+- [`ROADMAP.md`](ROADMAP.md) — public architectural direction, including model/inference-layer/harness independence and the distinction between tested configurations and certification.
+
 ## Licensing status
 
 The operative licence is the **[goodLAC Community License v1.0](LICENSE)**.
