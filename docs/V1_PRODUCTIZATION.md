@@ -39,6 +39,17 @@ Restart never auto-dispatches D001 workflow continuation. The accepted explicit 
 
 `scripts/lac-v1 build --output <archive>` builds a deterministic gzip/tar distribution from the exact staged Git index. File content comes from Git index objects, not mutable unstaged worktree bytes. Archive timestamps/owners are normalized; repeated builds from the same index are byte-identical.
 
+## First-time-user doctor semantics
+
+The productization doctor has two intentionally different levels:
+
+- `lac-doctor --static` validates the installed release, default-governed wrapper/shell binding and system-level prerequisites, including the actual Node version requirement (`>=22.19.0`).
+- full `lac-doctor` additionally validates the exact Pi and FreeToken source pins, the checkout-local Pi `tsx` dependency required by the source launcher, and—when `runtime=manage`—the accepted FreeToken CLI environment, `ninja`, exact GPT-OSS snapshot and CUDA 13 toolkit.
+
+Endpoint readiness is diagnostic rather than a prerequisite for doctor success because managed mode is permitted to start the exact qualified endpoint on demand. Missing managed assets remain a doctor failure and the governed launcher continues to fail closed.
+
+This productization check does not change authority semantics, model-facing tools, permission policy, approvals, dispatch or effect execution.
+
 ## Release qualification
 
 `scripts/test-v001` runs clean-install, upgrade/rollback, configuration, state-preservation and installed-wrapper acceptance, then runs the complete retained `scripts/test-pi003` chain. The owner package additionally runs the exact V001 lifecycle first in a disposable Git worktree at the expected preinstall commit before mutating the live repository.

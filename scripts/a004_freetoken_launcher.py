@@ -206,8 +206,12 @@ def probe_exact_endpoint(assets: RuntimeAssets, *, timeout: float = 2.0) -> tupl
     model = data[0]
     if model.get("id") != SERVED_MODEL_ID:
         return False, f"model id mismatch: {model.get('id')!r}"
-    root = _resolve_model_root(model.get("root"))
-    if root is not None and root != assets.model_snapshot.resolve():
+    reported_root = model.get("root")
+    root = _resolve_model_root(reported_root)
+    if root is None:
+        return False, f"model snapshot root unavailable or invalid: {reported_root!r}"
+    expected_root = assets.model_snapshot.resolve()
+    if root != expected_root:
         return False, f"model snapshot mismatch: {root}"
     return True, "exact accepted endpoint"
 

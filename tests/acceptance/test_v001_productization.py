@@ -6,9 +6,11 @@ import subprocess
 import tarfile
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 from packages.productization import v1
+from scripts import a004_freetoken_launcher as managed_runtime
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -42,13 +44,84 @@ class V001ProductizationTests(unittest.TestCase):
             self.assertEqual(cfg["runtime"], "manage")
             self.assertFalse((home / ".config/systemd/user").exists())
             self.assertFalse(state["database_migrated"])
-            doctor = v1.doctor(home, static_only=True)
+            # Static-doctor success must not depend on whatever tools happen to
+            # be installed on the machine running this acceptance test. Model
+            # the documented supported host prerequisites explicitly.
+            required_bins = {"git", "node", "bwrap", "fd", "rg"}
+
+            def fake_which(name: str):
+                return "/usr/bin/true" if name in required_bins else None
+
+            with mock.patch.object(v1.shutil, "which", side_effect=fake_which), \
+                 mock.patch.object(v1, "_node_requirement", return_value=(True, "v22.19.0")):
+                doctor = v1.doctor(home, static_only=True)
+
             self.assertFalse(doctor["persistent_service_autostart"])
             self.assertTrue(doctor["default_pi_is_governed"])
             self.assertTrue(doctor["dangerous_bypass_is_explicit"])
+            self.assertTrue(doctor["node"])
+            self.assertTrue(doctor["node_version"])
+            self.assertEqual(doctor["node_version_observed"], "v22.19.0")
             self.assertTrue(doctor["ok"])
             v1.rollback(home)
             self.assertEqual(list(home.iterdir()), [])
+
+    def test_node_minimum_version_parser_is_exact(self):
+        self.assertEqual(v1._parse_semver_triplet("v22.19.0"), (22, 19, 0))
+        self.assertEqual(v1._parse_semver_triplet("22.23.2"), (22, 23, 2))
+        self.assertIsNone(v1._parse_semver_triplet("22.18"))
+        self.assertLess((22, 18, 9), v1.NODE_MIN_VERSION)
+        self.assertGreaterEqual((22, 19, 0), v1.NODE_MIN_VERSION)
+
+    def test_managed_endpoint_requires_exact_resolvable_model_root(self):
+        with tempfile.TemporaryDirectory() as raw:
+            home = Path(raw) / "home"
+            home.mkdir()
+            assets = managed_runtime.runtime_assets(home)
+            assets.model_snapshot.mkdir(parents=True)
+            other_root = home / "other-model-snapshot"
+            other_root.mkdir()
+
+            health = {
+                "status": "ok",
+                "maintenance": "serving",
+                "version": managed_runtime.FREETOKEN_VERSION,
+                "model": managed_runtime.SERVED_MODEL_ID,
+            }
+
+            def probe(root_marker=Ellipsis):
+                model = {"id": managed_runtime.SERVED_MODEL_ID}
+                if root_marker is not Ellipsis:
+                    model["root"] = root_marker
+                models = {"data": [model]}
+                with mock.patch.object(
+                    managed_runtime,
+                    "_http_json",
+                    side_effect=[health, models],
+                ):
+                    return managed_runtime.probe_exact_endpoint(assets)
+
+            exact, detail = probe(str(assets.model_snapshot))
+            self.assertTrue(exact)
+            self.assertEqual(detail, "exact accepted endpoint")
+
+            exact, detail = probe(str(other_root))
+            self.assertFalse(exact)
+            self.assertIn("model snapshot mismatch", detail)
+
+            exact, detail = probe()
+            self.assertFalse(exact)
+            self.assertIn("model snapshot root unavailable or invalid", detail)
+
+            for malformed in ("", 7, {"path": str(assets.model_snapshot)}):
+                with self.subTest(malformed=malformed):
+                    exact, detail = probe(malformed)
+                    self.assertFalse(exact)
+                    self.assertIn("model snapshot root unavailable or invalid", detail)
+
+            exact, detail = probe(str(home / "does-not-exist"))
+            self.assertFalse(exact)
+            self.assertIn("model snapshot root unavailable or invalid", detail)
 
     def test_config_is_bounded_and_owner_ux_is_admin_api_alias_only(self):
         with tempfile.TemporaryDirectory() as raw:

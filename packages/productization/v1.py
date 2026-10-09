@@ -879,6 +879,81 @@ def owner_command(home: Path | None, extra: list[str]) -> int:
     return launch_ctl(home, extra)
 
 
+NODE_MIN_VERSION = (22, 19, 0)
+
+
+def _parse_semver_triplet(value: str) -> tuple[int, int, int] | None:
+    if not isinstance(value, str):
+        return None
+    raw = value.strip()
+    if raw.startswith("v"):
+        raw = raw[1:]
+    parts = raw.split(".")
+    if len(parts) < 3:
+        return None
+    try:
+        return int(parts[0]), int(parts[1]), int(parts[2].split("-", 1)[0])
+    except (TypeError, ValueError):
+        return None
+
+
+def _node_requirement() -> tuple[bool, str | None]:
+    node = shutil.which("node")
+    if not node:
+        return False, None
+    try:
+        proc = subprocess.run(
+            [node, "--version"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return False, None
+    version = proc.stdout.strip() if proc.returncode == 0 else None
+    parsed = _parse_semver_triplet(version or "")
+    return bool(parsed is not None and parsed >= NODE_MIN_VERSION), version
+
+
+def _pi_dependencies_ready(config: Mapping[str, Any]) -> bool:
+    try:
+        checkout = Path(str(config["pi_checkout"])).expanduser().resolve(strict=True)
+        _resolve_pinned_pi_source_cli(checkout)
+    except (OSError, ProductizationError):
+        return False
+    return True
+
+
+def _managed_runtime_checks(home: Path | None = None) -> dict[str, Any]:
+    from scripts import a004_freetoken_launcher as managed_runtime
+
+    assets = managed_runtime.runtime_assets(home)
+    checks: dict[str, Any] = {
+        "managed_freetoken_cli": assets.ft.is_file() and os.access(assets.ft, os.X_OK),
+        "managed_ninja": assets.ninja.is_file() and os.access(assets.ninja, os.X_OK),
+        "managed_model_snapshot": (assets.model_snapshot / "config.json").is_file(),
+    }
+    try:
+        managed_runtime.validate_runtime_assets(assets)
+        checks["managed_runtime_assets"] = True
+    except managed_runtime.A004RuntimeError:
+        checks["managed_runtime_assets"] = False
+    try:
+        toolkit = managed_runtime.discover_cuda_toolkit()
+        checks["cuda13_toolkit"] = True
+        checks["cuda_toolkit_release"] = toolkit.release
+    except managed_runtime.A004RuntimeError:
+        checks["cuda13_toolkit"] = False
+        checks["cuda_toolkit_release"] = None
+
+    ready, detail = managed_runtime.probe_exact_endpoint(assets, timeout=1.0)
+    checks["managed_runtime_endpoint_ready"] = ready
+    checks["managed_runtime_endpoint_detail"] = detail
+    return checks
+
+
 def doctor(home: Path | None = None, *, static_only: bool = False) -> dict[str, Any]:
     app = current_app(home)
     config = load_config(home)
@@ -886,6 +961,7 @@ def doctor(home: Path | None = None, *, static_only: bool = False) -> dict[str, 
     user_pi = p["bin"] / "pi"
     direct_governed = user_pi.is_symlink() and user_pi.resolve() == p["current"].joinpath("bin", "pi").resolve()
     shell_override_configured = _shell_integration_configured(home, user_pi)
+    node_ok, node_version = _node_requirement()
     checks: dict[str, Any] = {
         "schema": "lac.v1-doctor/v1", "version": RELEASE_VERSION,
         "linux": sys.platform.startswith("linux"), "python": sys.version_info >= (3, 10),
@@ -894,16 +970,32 @@ def doctor(home: Path | None = None, *, static_only: bool = False) -> dict[str, 
         "shell_override_configured": shell_override_configured,
         "owner_shell": _target_shell(),
         "dangerous_bypass_is_explicit": True,
+        "git": shutil.which("git") is not None,
+        "node": shutil.which("node") is not None,
+        "node_version": node_ok,
+        "node_version_observed": node_version,
+        "bwrap": shutil.which("bwrap") is not None,
+        "fd": shutil.which("fd") is not None,
+        "rg": shutil.which("rg") is not None,
     }
-    for binary in ("git", "node", "bwrap", "fd", "rg"):
-        checks[binary] = shutil.which(binary) is not None
     if not static_only:
-        env = dict(os.environ); env["LAC_PI_CHECKOUT"] = config["pi_checkout"]
+        env = dict(os.environ)
+        env["HOME"] = str(p["home"])
+        env["LAC_PI_CHECKOUT"] = config["pi_checkout"]
         for script, key in (("verify_pi_pin.py", "pi_pin"), ("verify_freetoken_pin.py", "freetoken_pin")):
             proc = subprocess.run(["python3", str(app / "scripts" / script)], cwd=app, env=env,
                                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, check=False)
             checks[key] = proc.returncode == 0
-    positive = {k: v for k, v in checks.items() if k not in {"schema", "version", "persistent_service_autostart", "owner_shell"}}
+        checks["pi_dependencies"] = _pi_dependencies_ready(config)
+        if config["runtime"] == "manage":
+            checks.update(_managed_runtime_checks(home))
+
+    informational = {
+        "schema", "version", "persistent_service_autostart", "owner_shell",
+        "node_version_observed", "cuda_toolkit_release",
+        "managed_runtime_endpoint_ready", "managed_runtime_endpoint_detail",
+    }
+    positive = {k: v for k, v in checks.items() if k not in informational}
     checks["ok"] = all(v is True for v in positive.values()) and checks["persistent_service_autostart"] is False
     return checks
 
