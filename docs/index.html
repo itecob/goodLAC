@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="goodLAC 1.0.0-rc.12 user manual — goodLAC user manual">
-  <title>goodLAC user manual · goodLAC 1.0.0-rc.12</title>
+  <meta name="description" content="goodLAC — local-first authority and effect control for AI agents">
+  <title>goodLAC · local-first authority and effect control</title>
   <link rel="stylesheet" href="manual/assets/site.css">
 </head>
 <body>
@@ -34,22 +34,50 @@
   </aside>
   <main id="content">
     <div class="breadcrumbs">User manual</div>
-    <header class="page-header">
+    <header class="page-header landing-header">
       <div>
-        <div class="eyebrow">Versioned documentation</div>
-        <h1>goodLAC user manual</h1>
+        <div class="eyebrow">Local-first authority and effect control</div>
+        <h1>goodLAC</h1>
+        <p class="landing-tagline">Model output is not authorization.</p>
+        <p class="lede">goodLAC is a local-first control plane for AI agents: deterministic authorization, permissions, approvals, sandboxing, and governed tool execution.</p>
+        <div class="cta-row" aria-label="Primary links">
+          <a class="button" href="manual/quickstart.html">Get started</a>
+          <a class="button secondary" href="manual/what-is.html">Read the manual</a>
+          <a class="button secondary" href="https://github.com/itecob/goodLAC">View GitHub</a>
+        </div>
       </div>
     </header>
     
 <img class="hero" src="manual/assets/goodLAC-hero.png" alt="goodLAC — Local Agent Controller">
-<p class="lede"><strong>goodLAC</strong> is a local-first authority and effect-control boundary for agent systems. An AI model may propose an action; deterministic controller code decides whether the action is authorized and whether the bounded effect may occur.</p>
 <div class="callout"><strong>Central invariant:</strong> Model output is never authorization.</div>
+<section class="landing-section">
+  <div class="eyebrow">The problem</div>
+  <h2>Keep proposal separate from permission</h2>
+  <p>AI agents increasingly request consequential actions. The model can express intent, but it should not become the permission system or the executor. goodLAC places a deterministic control boundary between an agent harness and the effects it may request.</p>
+  <p class="flow" aria-label="Conceptual goodLAC control flow"><span>Agent / harness</span><b>→</b><span>goodLAC</span><b>→</b><span>policy · identity · approvals · leases</span><b>→</b><span>bounded effect</span></p>
+</section>
+<section class="landing-section">
+  <div class="eyebrow">What goodLAC provides</div>
+  <h2>A controller-owned authority boundary</h2>
+  <div class="card-grid">
+    <section class="card"><h3>Deterministic authority</h3><p>Capability registration, policy, identity, exact approvals, and deny precedence are evaluated by the controller.</p></section>
+    <section class="card"><h3>Bounded effects</h3><p>Policy is re-evaluated before dispatch, with leases, idempotency, durable receipts, and effect truth.</p></section>
+    <section class="card"><h3>Interruptible operation</h3><p>Emergency pause and fail-closed handling keep consequential execution under explicit owner and system control.</p></section>
+    <section class="card"><h3>Separated credentials</h3><p>Credentials and privileged executors remain outside the untrusted model or agent context.</p></section>
+  </div>
+</section>
 <div class="card-grid">
   <section class="card"><h3>Evaluate first</h3><p>Run the synthetic permission demo without provisioning the full model runtime.</p><p><a href="manual/quickstart.html">Quick evaluation →</a></p></section>
   <section class="card"><h3>Install the governed path</h3><p>Provision the exact qualified dependencies, build the deterministic distribution, install it, and run <code>lac-doctor</code>.</p><p><a href="manual/installation.html">Installation →</a></p></section>
   <section class="card"><h3>Understand permissions</h3><p>Capability registration, standing policy, and exact approval are separate authority concepts.</p><p><a href="manual/permissions.html">Permission model →</a></p></section>
   <section class="card"><h3>Know the boundary</h3><p>rc.12 has explicit limitations, including no generic provider/adapter first-connect admission gate.</p><p><a href="manual/release.html">Release & limitations →</a></p></section>
 </div>
+<section class="landing-section">
+  <div class="eyebrow">Release and integration</div>
+  <h2>Start with the accepted release</h2>
+  <p><strong>1.0.0-rc.12</strong> is the current accepted release candidate and the first release intended for ordinary public use. The <code>main</code> branch is the current public development/publication state and may contain post-release fixes; it is not the historical rc.12 source snapshot.</p>
+  <p class="link-row"><a class="button" href="https://github.com/itecob/goodLAC/releases/tag/v1.0.0-rc.12">Release notes</a> <a class="button secondary" href="manual/installation.html">Install rc.12</a> <a class="button secondary" href="https://github.com/itecob/goodLAC/blob/main/docs/INTEGRATING_GOODLAC.md">Integration contract</a></p>
+</section>
 <h2>What this manual covers</h2>
 <p>This documentation applies specifically to <strong>1.0.0-rc.12</strong>, the first goodLAC release intended for ordinary public use. It covers the qualified Linux reference path, default-governed Pi, project identity, permissions, owner administration, provider and external-consumer boundaries, security architecture, durable effect truth, troubleshooting, rollback, licensing, support, and public project policy.</p>
 <h2>Qualified reference path</h2>
@@ -60,10 +88,20 @@
   <li>Controller-owned policy, approvals, identity, leases, receipts, emergency state, and capability registry.</li>
   <li>Explicit dangerous bypass for owner/debug use; that path is not governed.</li>
 </ul>
+<section class="landing-section">
+  <div class="eyebrow">Community and trust</div>
+  <h2>Choose the right public channel</h2>
+  <div class="card-grid">
+    <section class="card"><h3>Discussions</h3><p>Ask questions, share integration experience, and follow project updates in the community.</p><p><a href="https://github.com/itecob/goodLAC/discussions">Join Discussions →</a></p></section>
+    <section class="card"><h3>Issues</h3><p>Use the structured forms for reproducible bugs and bounded feature requests.</p><p><a href="https://github.com/itecob/goodLAC/issues">Open an issue →</a></p></section>
+    <section class="card"><h3>Security</h3><p>Do not disclose vulnerabilities publicly. Use GitHub Private Vulnerability Reporting.</p><p><a href="https://github.com/itecob/goodLAC/security">Report privately →</a></p></section>
+    <section class="card"><h3>Roadmap</h3><p>Read the directional architectural roadmap and distinguish tested configurations from certification.</p><p><a href="https://github.com/itecob/goodLAC/blob/main/ROADMAP.md">View roadmap →</a></p></section>
+  </div>
+</section>
 
     <footer>
       <p>This manual documents goodLAC <strong>1.0.0-rc.12</strong>. Model output is never authorization.</p>
-      <p><a href="https://github.com/itecob/goodLAC">Repository</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SECURITY.md">Security policy</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SUPPORT.md">Support</a></p>
+      <p><a href="https://github.com/itecob/goodLAC">Repository</a> · <a href="https://github.com/itecob/goodLAC/releases/tag/v1.0.0-rc.12">Release</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SECURITY.md">Security policy</a> · <a href="https://github.com/itecob/goodLAC/blob/main/SUPPORT.md">Support</a></p>
     </footer>
   </main>
 </div>

@@ -54,7 +54,17 @@ p, li { max-width: 78ch; }
 .hero {
   width: 100%; display: block; border: 1px solid var(--line); border-radius: .8rem; background: var(--panel);
 }
+.landing-tagline { margin: -.55rem 0 .8rem; color: var(--accent); font-size: clamp(1.25rem, 2.4vw, 1.7rem); font-weight: 750; letter-spacing: -.02em; }
 .lede { font-size: 1.15rem; color: #d5dde5; }
+.cta-row, .link-row { display: flex; flex-wrap: wrap; gap: .65rem; align-items: center; margin: 1.2rem 0; }
+.button { display: inline-block; padding: .58rem .82rem; border: 1px solid var(--accent); border-radius: .45rem; background: var(--accent); color: #071018; font-weight: 750; text-decoration: none; }
+.button:hover { background: #b7e8fb; color: #071018; text-decoration: none; }
+.button.secondary { background: transparent; color: var(--accent); }
+.button.secondary:hover { background: var(--panel-2); color: white; }
+.landing-section { margin: 2.8rem 0; }
+.flow { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin: 1.2rem 0; padding: 1rem; border: 1px solid var(--line); border-radius: .7rem; background: var(--panel); color: #d5dde5; }
+.flow span { padding: .28rem .5rem; border-radius: .35rem; background: var(--panel-2); }
+.flow b { color: var(--accent-2); }
 .card-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 1rem; margin: 1.3rem 0; }
 .card { padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: .7rem; background: var(--panel); }
 .card h3 { margin: 0 0 .35rem; }
@@ -77,5 +87,7 @@ footer { border-top: 1px solid var(--line); margin-top: 3rem; padding-top: 1.4re
 @media (max-width: 560px) {
   nav[data-manual-nav] { grid-template-columns: 1fr; }
   .card-grid { grid-template-columns: 1fr; }
+  .flow { align-items: flex-start; flex-direction: column; }
+  .flow b { transform: rotate(90deg); }
   main { width: min(var(--max), calc(100% - 1.4rem)); }
 }
