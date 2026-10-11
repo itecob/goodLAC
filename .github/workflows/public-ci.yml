@@ -1,0 +1,133 @@
+name: Public CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  public-ci:
+    name: Bounded public checks
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Check repository and publication hygiene
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
+
+          required = (
+              "README.md", "LICENSE", "SECURITY.md", "CONTRIBUTING.md", "SUPPORT.md",
+              "docs/index.html", "docs/manual/assets/site.css", "docs/manual/assets/goodLAC-hero.png",
+          )
+          for path in required:
+              assert Path(path).is_file(), path
+
+          excluded = (
+              "PROJECT_" + "STATE.json", "NEXT_SESSION_" + "PROMPT.md", "tasks",
+              "public" + "ation", "qual" + "ification", ".aws",
+          )
+          for path in excluded:
+              assert not Path(path).exists(), path
+
+          needles = (
+              "/home/" + "kevin", "$HOME/" + "local-agent-controller",
+              "PROJECT_" + "STATE.json", "NEXT_SESSION_" + "PROMPT.md",
+              "public" + "ation/", "qual" + "ification/",
+          )
+          tracked = subprocess.check_output(["git", "ls-files"], text=True).splitlines()
+          for filename in tracked:
+              if filename == ".github/workflows/public-ci.yml":
+                  continue
+              try:
+                  text = Path(filename).read_text(encoding="utf-8")
+              except (UnicodeDecodeError, IsADirectoryError):
+                  continue
+              for needle in needles:
+                  assert needle not in text, (filename, needle)
+          PY
+
+      - name: Compile bounded public Python surfaces
+        run: |
+          python -m py_compile \
+            packages/productization/__init__.py \
+            packages/productization/v1.py \
+            scripts/lac-v1 \
+            scripts/a004_freetoken_launcher.py \
+            tests/acceptance/test_v001_productization.py
+
+      - name: Run deterministic productization checks
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: |
+          python -m unittest \
+            tests.acceptance.test_v001_productization.V001ProductizationTests.test_node_minimum_version_parser_is_exact \
+            tests.acceptance.test_v001_productization.V001ProductizationTests.test_managed_endpoint_requires_exact_resolvable_model_root \
+            tests.acceptance.test_v001_productization.V001ProductizationTests.test_config_is_bounded_and_owner_ux_is_admin_api_alias_only \
+            tests.acceptance.test_v001_productization.V001ProductizationTests.test_installed_wrappers_reference_only_installed_app_and_accepted_surfaces \
+            -v
+
+      - name: Check public invariants and documentation links
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: |
+          python - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+
+          required_tools = ("lac_fs_read", "lac_fs_create", "lac_fs_replace", "lac_shell_exec")
+          readme = Path("README.md").read_text(encoding="utf-8")
+          assert "Model output is not authorization" in readme
+          for tool in required_tools:
+              assert tool in readme, tool
+
+          html_root = Path("docs")
+          pages = sorted(html_root.rglob("*.html"))
+          assert pages, "no public HTML pages found"
+
+          class Links(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.targets = []
+              def handle_starttag(self, tag, attrs):
+                  attrs = dict(attrs)
+                  for key in ("href", "src"):
+                      if key in attrs:
+                          self.targets.append(attrs[key])
+
+          for page in pages:
+              parser = Links()
+              text = page.read_text(encoding="utf-8")
+              parser.feed(text)
+              assert "1.0.0-rc.12" in text, page
+              for target in parser.targets:
+                  if not target or target.startswith(("#", "http:", "https:", "mailto:", "data:")):
+                      continue
+                  target_path = (page.parent / target.split("#", 1)[0]).resolve()
+                  assert target_path.is_file(), f"{page}: missing local target {target}"
+
+          providers = Path("docs/manual/providers.html").read_text(encoding="utf-8")
+          assert "first-connect" in providers and "does not implement" in providers
+          installation = Path("docs/manual/installation.html").read_text(encoding="utf-8")
+          assert "No one-command heavyweight runtime bootstrap exists" in installation
+
+          for page in pages:
+              text = page.read_text(encoding="utf-8").lower()
+              assert "analytics" not in text, page
+              assert "jsdelivr" not in text, page
+              assert "unpkg" not in text, page
+          print(f"checked {len(pages)} public HTML pages and their local links")
+          PY
