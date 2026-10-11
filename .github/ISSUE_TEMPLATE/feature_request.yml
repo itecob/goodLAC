@@ -1,0 +1,57 @@
+name: Feature request
+description: Propose a bounded goodLAC capability or product change.
+title: "[Feature]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For open-ended ideas or early exploration, consider [GitHub Discussions](https://github.com/itecob/goodLAC/discussions) first.
+        Do not disclose undisclosed vulnerability details here; use [SECURITY.md](../../SECURITY.md) and GitHub Private Vulnerability Reporting instead.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem being solved
+      description: What user or operator problem exists today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: desired_outcome
+    attributes:
+      label: Desired outcome
+      description: Describe the result you want without requiring a particular implementation.
+    validations:
+      required: true
+
+  - type: textarea
+    id: affected_workflow
+    attributes:
+      label: Affected workflow or integration
+      description: Identify the harness, governed consumer integration, operator flow, or deployment context.
+    validations:
+      required: true
+
+  - type: textarea
+    id: current_gap
+    attributes:
+      label: Why existing behavior is insufficient
+    validations:
+      required: true
+
+  - type: textarea
+    id: authority_implications
+    attributes:
+      label: Authority or security implications
+      description: If known, explain effects on capability registration, policy, approvals, identity, credentials, persistence, sandboxing, dispatch, receipts, emergency control, or the model-facing effect surface.
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternative approaches considered
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Add sanitized examples, constraints, or evidence.

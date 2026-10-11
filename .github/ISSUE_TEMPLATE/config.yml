@@ -1,11 +1,17 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Security vulnerability
+  - name: Security vulnerability reporting
     url: https://github.com/itecob/goodLAC/security
     about: Report undisclosed vulnerabilities privately. Do not use a public issue.
-  - name: Installation and support information
-    url: https://github.com/itecob/goodLAC/blob/main/SUPPORT.md
-    about: Read installation, support, security and commercial-contact guidance.
+  - name: Installation and usage questions
+    url: https://github.com/itecob/goodLAC/discussions/categories/q-a
+    about: Ask installation and usage questions in Discussions Q&A.
+  - name: Community discussion and ideas
+    url: https://github.com/itecob/goodLAC/discussions
+    about: Discuss ideas, integrations, and project direction in Discussions.
   - name: Commercial licensing
     url: https://github.com/itecob/goodLAC/blob/main/COMMERCIAL-LICENSING.md
     about: Review the commercial-use boundary and contact channel.
+  - name: Support and project policy
+    url: https://github.com/itecob/goodLAC/blob/main/SUPPORT.md
+    about: Read support, security, installation, and contribution guidance.

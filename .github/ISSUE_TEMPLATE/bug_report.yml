@@ -1,0 +1,100 @@
+name: Bug report
+description: Report a reproducible goodLAC defect that is not an undisclosed security vulnerability.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not disclose an undisclosed vulnerability, exploit details, credentials, or secrets here.
+        If this may be a security vulnerability, stop and use [GitHub Private Vulnerability Reporting](https://github.com/itecob/goodLAC/security) and [SECURITY.md](../../SECURITY.md) instead.
+
+  - type: dropdown
+    id: version_state
+    attributes:
+      label: goodLAC version or state
+      options:
+        - 1.0.0-rc.12
+        - main
+        - other
+    validations:
+      required: true
+
+  - type: input
+    id: platform
+    attributes:
+      label: Linux distribution and version
+      placeholder: e.g. Ubuntu 24.04
+    validations:
+      required: true
+
+  - type: dropdown
+    id: installation_method
+    attributes:
+      label: Installation method
+      options:
+        - release or source archive
+        - git clone
+        - other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: harness
+    attributes:
+      label: Agent harness or governed consumer integration
+      options:
+        - Pi
+        - other
+        - not applicable
+    validations:
+      required: true
+
+  - type: dropdown
+    id: model_runtime
+    attributes:
+      label: Model runtime
+      options:
+        - FreeToken
+        - llama.cpp
+        - Ollama
+        - other
+        - not applicable
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem description
+      description: Describe the observed defect without including secrets or undisclosed vulnerability details.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: Provide the smallest safe, reproducible sequence.
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs or output
+      description: Sanitize credentials, tokens, private paths, and personal data before posting.
+
+  - type: checkboxes
+    id: security_routing
+    attributes:
+      label: Security routing acknowledgement
+      options:
+        - label: I confirm this report does not contain undisclosed vulnerability details; if it might, I will use private reporting instead.
+          required: true
