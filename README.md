@@ -1,5 +1,7 @@
 # goodLAC
 
+[![Public CI](https://github.com/itecob/goodLAC/actions/workflows/public-ci.yml/badge.svg?branch=main)](https://github.com/itecob/goodLAC/actions/workflows/public-ci.yml)
+
 <p align="center">
   <img
     src="assets/goodLAC-hero.png"
@@ -20,7 +22,9 @@ goodLAC is a source-available product/source-code project of ITECOB Inc. The pub
 
 ## Current qualified implementation
 
-The current accepted release candidate is **1.0.0-rc.12**.
+The current accepted release candidate is **[1.0.0-rc.12](https://github.com/itecob/goodLAC/releases/tag/v1.0.0-rc.12)**.
+
+The [`main`](https://github.com/itecob/goodLAC/tree/main) branch is the current public development/publication state and may include post-release fixes. It is not the historical source snapshot of the accepted rc.12 release.
 
 `1.0.0-rc.12` is the first goodLAC release intended for ordinary public use. Earlier repository history is retained primarily as development/provenance history. Earlier states may be incomplete, cumbersome to operate, or unsuitable for ordinary users even where they were technically executable.
 
@@ -116,6 +120,15 @@ Additional integration and roadmap references:
 
 - [`docs/INTEGRATING_GOODLAC.md`](docs/INTEGRATING_GOODLAC.md) — requirements for integrating another agent harness/application without leaving alternate consequential-effect paths.
 - [`ROADMAP.md`](ROADMAP.md) — public architectural direction, including model/inference-layer/harness independence and the distinction between tested configurations and certification.
+
+## Follow goodLAC
+
+- **Releases** are for software versions: use **Watch → Custom → Releases** if you want release notifications without every repository event.
+- **Discussions** are for project and community updates: use **Watch → Custom → Discussions** to follow announcements, questions, ideas, and integration conversations.
+
+## Public CI
+
+The Public CI workflow runs a reproducible subset of repository hygiene, syntax checks, focused deterministic tests, and documentation checks. It is a regression and trust signal, not the complete private qualification environment, heavyweight first-time reconstruction, or a replacement for owner UAT and independent qualification.
 
 ## Licensing status
 
