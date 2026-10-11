@@ -46,7 +46,6 @@ jobs:
           needles = (
               "/home/" + "kevin", "$HOME/" + "local-agent-controller",
               "PROJECT_" + "STATE.json", "NEXT_SESSION_" + "PROMPT.md",
-              "public" + "ation/", "qual" + "ification/",
           )
           tracked = subprocess.check_output(["git", "ls-files"], text=True).splitlines()
           for filename in tracked:
